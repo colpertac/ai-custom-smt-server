@@ -8,6 +8,7 @@ of the same tables on the server.
 
 - [Extract, edit, and rebuild a table](round-trip.md)
 - [Create a custom item](custom-item.md)
+- [Create a custom demon](custom-demon.md)
 
 ## Project layout
 
@@ -18,7 +19,7 @@ ai_custom_smt_server/
 └── scripts/
     ├── build-client-overlay.sh
     ├── apply-client-overlay.sh
-    └── install-phase3-shield.sh
+    └── install-shield-overlay.sh
 ```
 
 `client-overlay/` is the only client distribution output. Do not hand-edit

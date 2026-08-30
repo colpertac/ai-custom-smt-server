@@ -142,7 +142,7 @@ Build/apply the client overlay and install matching server files:
 ```bash
 ./scripts/build-client-overlay.sh
 ./scripts/apply-client-overlay.sh /path/to/disposable-client
-./scripts/install-phase3-shield.sh
+./scripts/install-shield-overlay.sh
 ```
 
 The server paths are:
@@ -153,7 +153,8 @@ The server paths are:
 ```
 
 These are loose replacements because package ZIPs cannot override existing
-loose Shield tables.
+loose Shield tables. (`install-phase3-shield.sh` is a compatibility wrapper
+for the same installer.)
 
 ## 7. Add a test drop
 

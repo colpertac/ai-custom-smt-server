@@ -79,15 +79,21 @@ See [docs/phase3.md](docs/phase3.md) and
 Start with an existing model, race, AI, and skill set. A visually new demon can
 come later.
 
-- [ ] Reserve a demon ID.
-- [ ] Add `DevilData` stats and growth data.
-- [ ] Add client name, model, icon, compendium, and related records.
-- [ ] Add a controlled spawn in the Phase 1 test zone.
+- [x] Reserve a demon ID.
+- [x] Add `DevilData` stats and growth data.
+- [x] Add client name, model, icon, compendium, and related records.
+- [x] Add a controlled spawn in the Phase 1 test zone.
 - [ ] Test combat, negotiation, summoning, storage, growth, and relog.
 - [ ] Add fusion/book data only after the base demon is stable.
 
 **Done when:** The demon works through its full lifecycle without a new server
 mechanic.
+
+See [docs/phase4.md](docs/phase4.md) and
+[guides/binarydata/custom-demon.md](guides/binarydata/custom-demon.md).
+
+Base spawn/name POC is installed; remaining checkboxes are the in-game
+lifecycle smoke and deferred book/fusion work.
 
 ## Phase 5 — Create a custom dungeon
 

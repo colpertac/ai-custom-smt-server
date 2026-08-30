@@ -14,7 +14,7 @@ empty global test map `90102`:
 - Package: `zzz_ai_custom_phase1.zip`
 - Zone partial ID: `900001`
 - Drop set ID: `900001`
-- Enemy: existing demon type `187`, level 5
+- Enemy: custom demon type `900001` (AI Test Demon; clone of Angel `187`), level 5
 - Drop: guaranteed Macca Note (`699`); Phase 3 also adds AI Test Token (`900001`)
 
 Source of truth:

@@ -17,7 +17,7 @@ members:
 ```text
 DynamicMap 90102
   └─ auto-applies ZonePartial 900001
-       ├─ Spawn 900001: existing EnemyType 187
+       ├─ Spawn 900001: EnemyType 900001 (AI Test Demon; clone of Angel 187)
        ├─ SpawnGroup 900001: one enemy
        └─ SpawnLocationGroup 900001: near (200,0), 15s respawn
 
@@ -128,9 +128,11 @@ Inside the partial, add:
 </member>
 ```
 
-This defines an enemy template but does not place it. EnemyType `187` is
-already used by stock content; TalkResist `100` disables negotiation for this
-test.
+This defines an enemy template but does not place it. EnemyType `900001` is
+the Phase 4 custom demon (clone of stock Angel `187`). See
+[custom-demon.md](binarydata/custom-demon.md). Early Phase 1 used stock `187`
+before BinaryData edits existed. TalkResist `100` disables negotiation for
+this test.
 
 See [syntax/spawn.md](syntax/spawn.md) for every available Spawn member,
 including AI overrides, gifts, direct drops, kill values, and negotiation

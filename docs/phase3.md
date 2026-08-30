@@ -56,7 +56,7 @@ a datastore package.
 
 ```bash
 /home/cat/repos/smt/ai_custom_smt_server/scripts/build-client-overlay.sh
-/home/cat/repos/smt/ai_custom_smt_server/scripts/install-phase3-shield.sh
+/home/cat/repos/smt/ai_custom_smt_server/scripts/install-shield-overlay.sh
 /home/cat/repos/smt/ai_custom_smt_server/scripts/apply-client-overlay.sh \
   /home/cat/software/smt/game/reimagine-phase3-test
 /home/cat/repos/smt/ai_custom_smt_server/scripts/package-phase1.sh

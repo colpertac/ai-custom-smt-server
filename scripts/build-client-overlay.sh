@@ -31,7 +31,7 @@ else
   echo "skip: ${CLIENT_SRC}/${FILE}.xml not present" >&2
 fi
 
-# Phase 3: full Shield ItemData / CItemData tables (encrypted .sbin)
+# Shield tables (encrypted .sbin). Source XML is gitignored proprietary data.
 build_shield() {
   local type="$1"
   local stem="$2"
@@ -56,9 +56,10 @@ build_shield() {
 
 build_shield item ItemData
 build_shield citem CItemData
+build_shield devil DevilData
 
 echo
 echo "Apply with:"
 echo "  ${SCRIPT_DIR}/apply-client-overlay.sh /path/to/client"
 echo "Install matching server Shield copies with:"
-echo "  ${SCRIPT_DIR}/install-phase3-shield.sh"
+echo "  ${SCRIPT_DIR}/install-shield-overlay.sh"

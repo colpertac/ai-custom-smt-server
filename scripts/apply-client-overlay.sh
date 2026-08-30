@@ -31,3 +31,4 @@ echo
 echo "Checks:"
 echo "  Phase 2: Sit help text may contain [AI P2] if that Client bin is present."
 echo "  Phase 3: inventory item 900001 should read 'AI Test Token' (needs Shield overlay)."
+echo "  Phase 4: zone 90102 enemy should read 'AI Test Demon' (needs DevilData overlay)."

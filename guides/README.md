@@ -9,6 +9,7 @@ server.
 - [Client BinaryData guides](binarydata/README.md)
   - [Extract, edit, and rebuild a table](binarydata/round-trip.md)
   - [Create a custom item](binarydata/custom-item.md)
+  - [Create a custom demon](binarydata/custom-demon.md)
 
 ## XML syntax
 
