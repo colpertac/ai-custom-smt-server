@@ -790,3 +790,29 @@ export async function getOpsIngestJob(
         : null,
   }
 }
+
+/** Encrypt plaintext webaccess.dat via sidecar → base64 ciphertext. */
+export async function encryptWebaccessViaSidecar(
+  plaintext: string,
+  actor?: string
+): Promise<string> {
+  const { status, json } = await opsFetch("/tools/webaccess-encrypt", {
+    method: "POST",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plaintext }),
+  })
+  if (status === 401) {
+    throw new Error("Ops sidecar unauthorized")
+  }
+  if (!json.ok || typeof json.encryptedBase64 !== "string") {
+    const detail =
+      typeof json.detail === "string"
+        ? json.detail
+        : typeof json.error === "string"
+          ? json.error
+          : `HTTP ${status}`
+    throw new Error(`webaccess encrypt failed: ${detail}`)
+  }
+  return json.encryptedBase64
+}

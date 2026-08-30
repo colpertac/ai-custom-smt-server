@@ -12,7 +12,12 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
   OPS_COMP_SCRIPTS   native: comp_hack/scripts (default ../comp_hack/scripts)
   OPS_COMPOSE_DIR    docker: deploy/ with docker-compose.yml
   OPS_AUDIT          append-only log path (default: ops/audit.log)
-  OPS_REHASH         path to comp_rehash (default comp_hack/build-current/bin)
+  OPS_REHASH         path to comp_rehash (default searches comp_hack build bins)
+  OPS_ENCRYPT        path to comp_encrypt (webaccess.sdat; also BIN_DIR)
+  OPS_DECRYPT        path to comp_decrypt (optional)
+
+  POST /tools/webaccess-encrypt  {"plaintext": "<login = http://HOST:10999/>\\n"}
+    → {"ok": true, "encryptedBase64": "..."}
 
   Lane C (Docker only): POST /publish/lane-c {"confirm": true}
     optional includeWebsite / website: also pull+recreate website
@@ -50,6 +55,7 @@ from freshness import (
     mark_overlay_rehash,
 )
 import ingest_jobs
+from encrypt_tools import run_comp_encrypt
 from rehash import run_comp_rehash
 from zip_ingest import KINDS, MAX_UPLOAD, MODES, ingest_zip_file, save_upload_stream
 
@@ -1078,6 +1084,51 @@ def handle_ingest_zip(handler: OpsHandler) -> tuple[int, bytes, str]:
     )
 
 
+def handle_tools_webaccess_encrypt(handler: OpsHandler) -> tuple[int, bytes, str]:
+    """Encrypt plaintext webaccess.dat → webaccess.sdat (base64 in JSON)."""
+    import base64
+
+    body = _read_json_body(handler, max_bytes=256_000)
+    plaintext_b64 = str(body.get("plaintextBase64") or "").strip()
+    plaintext_text = body.get("plaintext")
+    if plaintext_b64:
+        try:
+            plaintext = base64.b64decode(plaintext_b64, validate=True)
+        except Exception:
+            return json_bytes(
+                {"ok": False, "error": "invalid_plaintext_base64"},
+                400,
+            )
+    elif isinstance(plaintext_text, str):
+        plaintext = plaintext_text.encode("utf-8")
+    else:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "missing_plaintext",
+                "detail": "provide plaintext or plaintextBase64",
+            },
+            400,
+        )
+    if not plaintext.strip():
+        return json_bytes({"ok": False, "error": "empty_plaintext"}, 400)
+
+    ok, detail, encrypted = run_comp_encrypt(plaintext)
+    if not ok:
+        return json_bytes(
+            {"ok": False, "error": "encrypt_failed", "detail": detail},
+            502,
+        )
+    return json_bytes(
+        {
+            "ok": True,
+            "encryptedBase64": base64.b64encode(encrypted).decode("ascii"),
+            "bytes": len(encrypted),
+        },
+        200,
+    )
+
+
 def handle_publish_lane_b(_handler: OpsHandler) -> tuple[int, bytes, str]:
     """Rehash updater/overlay so ImagineUpdate picks up overlay files."""
     if ingest_jobs.busy():
@@ -1619,6 +1670,7 @@ ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]]
     ("GET", "/ingest/job"): handle_ingest_job,
     ("POST", "/restart/channel"): handle_restart_channel,
     ("POST", "/restart/services"): handle_restart_services,
+    ("POST", "/tools/webaccess-encrypt"): handle_tools_webaccess_encrypt,
 }
 
 

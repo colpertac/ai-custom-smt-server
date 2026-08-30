@@ -92,3 +92,6 @@ Keep the same contents in:
 - Updater workflow: [updater.md](updater.md)
 - Proxmox smoke: [../docs/proxmox-smoke.md](../docs/proxmox-smoke.md)
 - Channel ExternalIP: [../docs/docker-hub.md](../docs/docker-hub.md)
+- **Website admin → Download (Client prep):** generate a zip of the files above
+  (including encrypted `webaccess.sdat`) for baking into a distributable client;
+  set the public MediaFire/Drive link players use on `/download`.
