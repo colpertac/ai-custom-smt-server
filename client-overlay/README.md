@@ -10,5 +10,5 @@ client tree. Proprietary bins are gitignored; rebuild from `client-source/`.
 ../scripts/install-phase3-shield.sh
 ```
 
-See [../guides/client-binarydata.md](../guides/client-binarydata.md) and
-[../docs/phase3.md](../docs/phase3.md).
+See [the BinaryData guides](../guides/binarydata/README.md) and
+[the Phase 3 notes](../docs/phase3.md).

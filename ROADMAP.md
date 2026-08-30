@@ -49,7 +49,7 @@ restored before creating custom records.
 repeatable from human-editable source.
 
 See [docs/phase2.md](docs/phase2.md) and
-[guides/client-binarydata.md](guides/client-binarydata.md).
+[guides/binarydata/round-trip.md](guides/binarydata/round-trip.md).
 
 ## Phase 3 — Add one custom item
 
@@ -69,8 +69,8 @@ Start by reusing an existing icon and model.
 **Done when:** The item has the intended name and behavior, survives relogging,
 and creates no server-data validation errors.
 
-See [docs/phase3.md](docs/phase3.md). In-game confirmation of loot/name/stack
-is the remaining player-side smoke check.
+See [docs/phase3.md](docs/phase3.md) and
+[guides/binarydata/custom-item.md](guides/binarydata/custom-item.md).
 
 ## Phase 4 — Add one custom demon
 

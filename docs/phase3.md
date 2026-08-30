@@ -2,6 +2,9 @@
 
 Completed 2026-07-18.
 
+For the complete reproducible walkthrough, see
+[the custom-item guide](../guides/binarydata/custom-item.md).
+
 ## What was added
 
 Inert stackable custom item **AI Test Token**:

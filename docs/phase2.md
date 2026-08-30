@@ -3,7 +3,7 @@
 Completed 2026-07-18.
 
 For the repeatable workflow, see
-[guides/client-binarydata.md](../guides/client-binarydata.md).
+[guides/binarydata/round-trip.md](../guides/binarydata/round-trip.md).
 
 ## What was proven
 
