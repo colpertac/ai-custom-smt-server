@@ -22,14 +22,16 @@ server restored without reconstructing it manually.
 **Purpose:** Learn zones, spawn groups, drops, events, validation, and restart
 behavior without changing client BinaryData.
 
-- [ ] Copy one small existing zone definition into `server-content/zones/`.
-- [ ] Add or alter an enemy encounter using an existing demon and map.
-- [ ] Add a recognizable drop or NPC interaction.
-- [ ] Validate with `comp_verify server_data`.
-- [ ] Package the content as a datastore ZIP under `datastore/packages/`.
+- [x] Copy one small existing zone definition into `server-content/zones/`.
+- [x] Add or alter an enemy encounter using an existing demon and map.
+- [x] Add a recognizable drop or NPC interaction.
+- [x] Validate with `comp_verify server_data`.
+- [x] Package the content as a datastore ZIP under `datastore/packages/`.
 
 **Done when:** The custom encounter appears in-game and can be removed by
 removing one package.
+
+See [docs/phase1.md](docs/phase1.md) for install/test/remove details.
 
 ## Phase 2 — Build the BinaryData round-trip workflow
 

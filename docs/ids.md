@@ -22,6 +22,11 @@ BinaryData round trip and collision scan work.
 
 | Type | ID | Symbol/name | Status | References and notes |
 |---|---:|---|---|---|
+| Zone partial | 900001 | `ai_custom_phase1` | allocated | Auto-applies to DynamicMap `90102`; package `zzz_ai_custom_phase1.zip` |
+| Drop set | 900001 | `ai_custom_phase1` | allocated | Guaranteed Macca Note (`699`) for Phase 1 encounter |
+| Spawn | 900001 | Phase 1 test enemy | allocated | EnemyType `187`, level 5, near (200,0) on zone `90102` |
+| Spawn group | 900001 | Phase 1 test group | allocated | One copy of spawn `900001` |
+| Spawn location group | 900001 | Phase 1 test location | allocated | Immediate spawn, 15s respawn |
 | Item | TBD | Golden Apple | proposed | Confirm local client record before deciding whether this is stock/custom |
 | Item | TBD | Compressed Golden Apple | proposed | Requires client display data and compressor/decompressor behavior |
 | Demon | TBD | First custom demon | proposed | Initially reuse an existing model/race/AI |
