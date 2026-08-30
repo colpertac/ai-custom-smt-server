@@ -153,6 +153,8 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
     "Seconds an egg stays party-restricted before anyone can take it.",
   MaxMoveIncreaseSum:
     "Percent sum floor for MOVE1/MOVE2 move-speed caps (was constants.xml MAX_MOVE_INCREASE_SUM).",
+  ChatLogRetentionDays:
+    "Days to keep ChatLogEntry rows before hourly prune (0 = never prune).",
 }
 
 /** Setup.xml Account fields. */
