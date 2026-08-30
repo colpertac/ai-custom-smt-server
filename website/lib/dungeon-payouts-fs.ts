@@ -14,6 +14,7 @@ import {
   type DungeonPayoutFile,
   type PayoutListItem,
 } from "@/lib/dungeon-payout-types"
+import { getPayoutWireStatusMap } from "@/lib/payout-clear-loot-catalog"
 
 export function getPayoutsDir(): string {
   if (process.env.COMP_PAYOUTS_DIR) {
@@ -56,14 +57,17 @@ export async function listPayouts(): Promise<PayoutListItem[]> {
     return []
   }
 
+  const wireMap = await getPayoutWireStatusMap()
   const out: PayoutListItem[] = []
   for (const filename of entries) {
     if (!filename.endsWith(".json") || filename.startsWith(".")) continue
+    if (filename === "clear-loot-catalog.json") continue
     try {
       const raw = await fs.readFile(path.join(dir, filename), "utf8")
       const parsed = putPayoutSchema.safeParse(JSON.parse(raw))
       if (!parsed.success) continue
       const p = parsed.data.payout
+      const wire = wireMap.get(p.id)
       out.push({
         id: p.id,
         name: p.name,
@@ -77,6 +81,9 @@ export async function listPayouts(): Promise<PayoutListItem[]> {
         crateDropCount: p.crateDrops.length,
         clearItemCount: p.clearItems.length,
         filename,
+        wireStatus: wire?.status,
+        wireLiveEffect: wire?.liveEffect,
+        wireIssues: wire?.issues,
       })
     } catch {
       /* skip bad files */

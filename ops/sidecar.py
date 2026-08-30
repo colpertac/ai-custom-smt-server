@@ -14,12 +14,15 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
   OPS_AUDIT          append-only log path (default: ops/audit.log)
   OPS_REHASH         path to comp_rehash (default searches comp_hack build bins)
   OPS_ENCRYPT        path to comp_encrypt (webaccess.sdat; also BIN_DIR)
-  OPS_DECRYPT        path to comp_decrypt (optional)
+  OPS_DECRYPT        path to comp_decrypt (Shield BinaryData)
+  OPS_BDPATCH        path to comp_bdpatch (CEventMessage upsert)
 
   Compose: service `ops` on the smt network; website OPS_URL=http://ops:14710
 
   POST /tools/webaccess-encrypt  {"plaintext": "<login = http://HOST:10999/>\\n"}
     → {"ok": true, "encryptedBase64": "..."}
+  POST /client/ceventmessage/upsert  {"messages":[{"id":9180001,"lines":["25"]}]}
+    → merge into overlay CEventMessageData2.sbin + rehash
 
   Lane C (Docker only): POST /publish/lane-c {"confirm": true}
     optional includeWebsite / website: also pull+recreate website
@@ -59,6 +62,8 @@ from freshness import (
 import ingest_jobs
 from encrypt_tools import run_comp_encrypt
 from rehash import run_comp_rehash
+from ceventmessage import upsert_ceventmessages
+from service_logs import collect_service_logs
 from zip_ingest import KINDS, MAX_UPLOAD, MODES, ingest_zip_file, save_upload_stream
 
 REPO_ROOT = HERE.parent
@@ -155,7 +160,46 @@ def handle_metrics(_handler: OpsHandler) -> tuple[int, bytes, str]:
         comp_root=SMT_ROOT / "comp_hack",
     )
     payload["service"] = "ops-sidecar"
+    for proc in payload.get("processes") or []:
+        if not isinstance(proc, dict):
+            continue
+        name = str(proc.get("name") or "").lower()
+        if name not in {"lobby", "world", "channel"}:
+            continue
+        if proc.get("running") and not proc.get("error"):
+            continue
+        snap = collect_service_logs(
+            service=name,
+            runtime=runtime_dir(),
+            comp_root=SMT_ROOT / "comp_hack",
+            backend=backend,
+            lines=40,
+        )
+        if snap.get("ok") and snap.get("summary"):
+            proc["logSummary"] = snap["summary"]
     return json_bytes(payload, 200)
+
+
+def handle_service_logs(handler: OpsHandler) -> tuple[int, bytes, str]:
+    """GET /logs?service=channel&lines=80 — tail native/docker service logs."""
+    qs = parse_qs(urlparse(handler.path).query)
+    service = (qs.get("service") or [""])[0].strip().lower()
+    try:
+        lines = int((qs.get("lines") or ["80"])[0])
+    except ValueError:
+        lines = 80
+    backend = env("OPS_BACKEND", "native") or "native"
+    payload = collect_service_logs(
+        service=service or "channel",
+        runtime=runtime_dir(),
+        comp_root=SMT_ROOT / "comp_hack",
+        backend=backend,
+        lines=lines,
+    )
+    status = 200 if payload.get("ok") else 400
+    if payload.get("error") == "docker_logs_failed":
+        status = 502
+    return json_bytes(payload, status)
 
 
 def comp_scripts_dir() -> Path:
@@ -322,17 +366,57 @@ def _lane_a_env() -> dict[str, str]:
         "COMP_PAYOUTS_DIR", str(REPO_ROOT / "server-content" / "payouts")
     )
     run_env.setdefault(
+        "COMP_REPORT_REWARDS_DIR",
+        str(REPO_ROOT / "server-content" / "report-rewards"),
+    )
+    run_env.setdefault(
         "COMP_CONFIG_DIR", str(REPO_ROOT / "server-content" / "config")
     )
     run_env.setdefault("COMP_CONFIG_LIVE_DIR", str(runtime_dir() / "config"))
     return run_env
 
 
+def _normalize_cevent_messages(raw: object) -> list[dict]:
+    if not isinstance(raw, list):
+        return []
+    out: list[dict] = []
+    for row in raw:
+        if not isinstance(row, dict):
+            continue
+        try:
+            mid = int(row.get("id"))
+        except (TypeError, ValueError):
+            continue
+        lines_raw = row.get("lines")
+        if not isinstance(lines_raw, list):
+            continue
+        lines = [str(x)[:132] for x in lines_raw if x is not None]
+        if mid >= 1 and lines:
+            out.append({"id": mid, "lines": lines})
+    return out
+
+
+def upsert_cevent_from_messages(
+    messages: list[dict], *, rehash: bool = True
+) -> tuple[bool, str, dict]:
+    return upsert_ceventmessages(
+        runtime=runtime_dir(),
+        updater=updater_dir(),
+        messages=messages,
+        rehash=rehash,
+    )
+
+
 def run_lane_a_script(extra_args: list[str]) -> tuple[bool, str, dict]:
     script = WEBSITE / "scripts" / "publish-lane-a.ts"
     if not script.is_file():
         return False, f"not found: {script}", {}
-    cmd = ["node", "--experimental-strip-types", str(script), "--json", *extra_args]
+    # Prefer tsx so @/* path aliases in website lib resolve (node --strip-types does not).
+    tsx = WEBSITE / "node_modules" / ".bin" / "tsx"
+    if tsx.is_file():
+        cmd = [str(tsx), "--tsconfig", str(WEBSITE / "tsconfig.json"), str(script), "--json", *extra_args]
+    else:
+        cmd = ["node", "--experimental-strip-types", str(script), "--json", *extra_args]
     try:
         r = subprocess.run(
             cmd,
@@ -529,10 +613,14 @@ def _lane_a_payload(backend: str, payload: dict, **extra: object) -> dict:
         "releaseId": payload.get("releaseId"),
         "shopsCopied": payload.get("shopsCopied", 0),
         "payoutsPackaged": payload.get("payoutsPackaged", 0),
+        "reportRewardsPackaged": payload.get("reportRewardsPackaged", 0),
         "disabledPayouts": payload.get("disabledPayouts", []),
+        "disabledReportRewards": payload.get("disabledReportRewards", []),
         "skippedConflicts": payload.get("skippedConflicts", []),
         "warnings": payload.get("warnings", []),
         "errors": payload.get("errors", []),
+        "customEventMessages": payload.get("customEventMessages", []),
+        "clientOverlayUpdated": payload.get("clientOverlayUpdated"),
         "shopsDest": payload.get("shopsDest"),
         "payoutsZipPath": payload.get("payoutsZipPath"),
         "releasesDir": payload.get("releasesDir"),
@@ -540,6 +628,35 @@ def _lane_a_payload(backend: str, payload: dict, **extra: object) -> dict:
     }
     out.update(extra)
     return out
+
+
+def _maybe_upsert_cevent_after_lane_a(
+    payload: dict,
+) -> tuple[dict, str | None]:
+    """If Lane A carried custom dialog messages, patch client overlay."""
+    messages = _normalize_cevent_messages(payload.get("customEventMessages"))
+    if not messages:
+        return payload, None
+    ok, detail, info = upsert_cevent_from_messages(messages, rehash=True)
+    next_payload = dict(payload)
+    warnings = list(next_payload.get("warnings") or [])
+    if not ok:
+        errors = list(next_payload.get("errors") or [])
+        errors.append(f"CEventMessage upsert failed: {detail}")
+        next_payload["errors"] = errors
+        next_payload["ok"] = False
+        next_payload["clientOverlayUpdated"] = False
+        return next_payload, detail
+    next_payload["clientOverlayUpdated"] = True
+    warnings.append(
+        "Client overlay updated (CEventMessage) — players must run ImagineUpdate"
+    )
+    if info.get("ids"):
+        warnings.append(
+            f"Custom dialog message IDs: {', '.join(str(i) for i in info['ids'])}"
+        )
+    next_payload["warnings"] = warnings
+    return next_payload, None
 
 
 def handle_publish_lane_a_validate(_handler: OpsHandler) -> tuple[int, bytes, str]:
@@ -598,9 +715,25 @@ def handle_publish_lane_a_apply(handler: OpsHandler) -> tuple[int, bytes, str]:
             502,
         )
 
+    payload, upsert_err = _maybe_upsert_cevent_after_lane_a(payload)
+    if upsert_err:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "ceventmessage_upsert_failed",
+                "message": "Game content applied but client dialog overlay failed",
+                "detail": upsert_err,
+                **_lane_a_payload(backend, payload),
+                **freshness_public(runtime_dir()),
+            },
+            502,
+        )
+
     mark_content_change(
-        runtime_dir(), kinds=["shops", "payouts"], source="lane-a/apply"
+        runtime_dir(), kinds=["shops", "payouts", "report-rewards"], source="lane-a/apply"
     )
+    if payload.get("clientOverlayUpdated"):
+        mark_overlay_rehash(runtime_dir())
 
     restart_detail = ""
     restarted = False
@@ -627,6 +760,8 @@ def handle_publish_lane_a_apply(handler: OpsHandler) -> tuple[int, bytes, str]:
         if restarted
         else "Lane A applied (channel not restarted)"
     )
+    if payload.get("clientOverlayUpdated"):
+        message += "; client overlay updated (ImagineUpdate)"
     return json_bytes(
         {
             "ok": True,
@@ -668,7 +803,7 @@ def handle_publish_lane_a_rollback(handler: OpsHandler) -> tuple[int, bytes, str
         )
 
     mark_content_change(
-        runtime_dir(), kinds=["shops", "payouts"], source="lane-a/rollback"
+        runtime_dir(), kinds=["shops", "payouts", "report-rewards"], source="lane-a/rollback"
     )
 
     restart_detail = ""
@@ -733,9 +868,25 @@ def handle_publish_lane_a(handler: OpsHandler) -> tuple[int, bytes, str]:
             502,
         )
 
+    payload, upsert_err = _maybe_upsert_cevent_after_lane_a(payload)
+    if upsert_err:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "ceventmessage_upsert_failed",
+                "message": "Published but client dialog overlay failed",
+                "detail": upsert_err,
+                **_lane_a_payload(backend, payload),
+                **freshness_public(runtime_dir()),
+            },
+            502,
+        )
+
     mark_content_change(
-        runtime_dir(), kinds=["shops", "payouts"], source="lane-a/publish"
+        runtime_dir(), kinds=["shops", "payouts", "report-rewards"], source="lane-a/publish"
     )
+    if payload.get("clientOverlayUpdated"):
+        mark_overlay_rehash(runtime_dir())
 
     restart_detail = ""
     restarted = False
@@ -762,6 +913,8 @@ def handle_publish_lane_a(handler: OpsHandler) -> tuple[int, bytes, str]:
         if restarted
         else "Lane A published (channel not restarted)"
     )
+    if payload.get("clientOverlayUpdated"):
+        message += "; client overlay updated (ImagineUpdate)"
     return json_bytes(
         {
             "ok": True,
@@ -771,6 +924,38 @@ def handle_publish_lane_a(handler: OpsHandler) -> tuple[int, bytes, str]:
             **_lane_a_payload(backend, payload),
             **freshness_public(runtime_dir()),
         },
+        200,
+    )
+
+
+def handle_client_ceventmessage_upsert(handler: OpsHandler) -> tuple[int, bytes, str]:
+    """Merge custom CEventMessage rows into updater overlay + rehash."""
+    body = _read_json_body(handler, max_bytes=512_000)
+    messages = _normalize_cevent_messages(body.get("messages"))
+    if not messages:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "missing_messages",
+                "detail": "provide messages: [{id, lines}]",
+            },
+            400,
+        )
+    rehash = body.get("rehash", True)
+    if rehash is None:
+        rehash = True
+    ok, detail, info = upsert_cevent_from_messages(messages, rehash=bool(rehash))
+    if not ok:
+        return json_bytes(
+            {"ok": False, "error": "upsert_failed", "detail": detail, **info},
+            502,
+        )
+    if info.get("rehashed"):
+        mark_overlay_rehash(runtime_dir())
+    else:
+        mark_overlay_change(runtime_dir(), source="ceventmessage/upsert")
+    return json_bytes(
+        {"ok": True, "message": detail, **info, **freshness_public(runtime_dir())},
         200,
     )
 
@@ -1195,7 +1380,12 @@ def run_lane_a_config_script(extra_args: list[str]) -> tuple[bool, str, dict]:
     script = WEBSITE / "scripts" / "publish-lane-a-config.ts"
     if not script.is_file():
         return False, f"not found: {script}", {}
-    cmd = ["node", "--experimental-strip-types", str(script), "--json", *extra_args]
+    # Prefer tsx so @/* path aliases in website lib resolve (node --strip-types does not).
+    tsx = WEBSITE / "node_modules" / ".bin" / "tsx"
+    if tsx.is_file():
+        cmd = [str(tsx), "--tsconfig", str(WEBSITE / "tsconfig.json"), str(script), "--json", *extra_args]
+    else:
+        cmd = ["node", "--experimental-strip-types", str(script), "--json", *extra_args]
     try:
         r = subprocess.run(
             cmd,
@@ -1940,6 +2130,7 @@ def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
 ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]] = {
     ("GET", "/health"): handle_health,
     ("GET", "/metrics"): handle_metrics,
+    ("GET", "/logs"): handle_service_logs,
     ("POST", "/start"): handle_start,
     ("POST", "/stop"): handle_stop,
     ("POST", "/publish/lane-a"): handle_publish_lane_a,
@@ -1958,6 +2149,7 @@ ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]]
     ("POST", "/start/services"): handle_start_services,
     ("POST", "/stop/services"): handle_stop_services,
     ("POST", "/tools/webaccess-encrypt"): handle_tools_webaccess_encrypt,
+    ("POST", "/client/ceventmessage/upsert"): handle_client_ceventmessage_upsert,
 }
 
 

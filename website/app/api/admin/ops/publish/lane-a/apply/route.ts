@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { applyOpsLaneA } from "@/lib/ops-sidecar"
+import { applyLaneAOps } from "@/lib/lane-a-ops"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await applyOpsLaneA(releaseId, session.username, {
+    const result = await applyLaneAOps(releaseId, session.username, {
       restart,
     })
     if (!result.ok) {
@@ -48,10 +48,7 @@ export async function POST(request: Request) {
             "Lane A apply failed"
       return apiFail(msg, 502, "OPS")
     }
-    return apiOk(
-      result,
-      result.message || "Lane A applied"
-    )
+    return apiOk(result, result.message || "Lane A applied")
   } catch (error) {
     return apiFail(
       error instanceof Error ? error.message : "Lane A apply failed",

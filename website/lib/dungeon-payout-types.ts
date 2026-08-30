@@ -49,7 +49,13 @@ export type DungeonPayout = {
   /** Free-form notes (Coral, per-floor, sheet source, TBD IDs) */
   notes?: string
   enabled: boolean
+  /** Primary tier instance id (lobby / @dqa / catalog). */
   instanceId: number
+  /**
+   * All layout variant instance ids for this tier (e.g. 5421–5423).
+   * Dispatcher bool_currentInstance branches match any listed id.
+   */
+  instanceIds?: number[]
   /** ZONE_INSTANCE flag used to dedup bonus in one run */
   dedupFlag: number
   bossGroupId: number
@@ -84,4 +90,12 @@ export type PayoutListItem = {
   crateDropCount: number
   clearItemCount: number
   filename: string
+  /** From clear-loot-catalog.json — whether stock clear can grant this payout. */
+  wireStatus?:
+    | "wired"
+    | "partial"
+    | "hooks_ready"
+    | "unwired_stub"
+  wireLiveEffect?: string
+  wireIssues?: string[]
 }

@@ -13,8 +13,9 @@ export default async function AdminPayoutsPage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Set CP, crate loot, and clear rewards per dungeon. Edits stay in your
-        draft until you publish shops &amp; rewards from Overview.
+        Edit clear CP in the sheet. Boss crate items are under Dungeon loot.
+        Use the gear for rare advanced payout settings. Publish from Overview
+        when ready.
       </p>
       <DungeonPayoutsPanel />
     </div>

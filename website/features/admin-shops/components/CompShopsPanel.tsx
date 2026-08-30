@@ -9,6 +9,7 @@ import {
   type ShopDetail,
   type ShopProductRow,
 } from "@/features/admin-shops/api"
+import { lookupShopProducts } from "@/features/admin/promos-api"
 import {
   useAdminShop,
   useAdminShops,
@@ -30,9 +31,35 @@ import {
 } from "@/components/ui/card"
 import type { CompShop, CompShopTab } from "@/lib/comp-shop-xml"
 
-function currencyLabel(p: ShopProductRow): string {
-  if (!p.preview) return "?"
-  return p.preview.isCp ? "CP" : "Macca"
+function CurrencyBadge({ preview }: { preview: ShopProductRow["preview"] }) {
+  if (!preview) {
+    return (
+      <span
+        className="inline-block border border-border bg-muted/40 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+        title="Unknown until ProductID resolves against shop-products.json"
+      >
+        ?
+      </span>
+    )
+  }
+  if (preview.isCp) {
+    return (
+      <span
+        className="inline-block border border-[#6a8cff]/50 bg-[#1a2240] px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-[#9eb6ff] uppercase"
+        title="Sold for CP (item flag in ItemData — not settable in shop XML)"
+      >
+        CP
+      </span>
+    )
+  }
+  return (
+    <span
+      className="inline-block border border-gold-dim/60 bg-muted/60 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-gold-hot uppercase"
+      title="Sold for Macca (item flag in ItemData — not settable in shop XML)"
+    >
+      Macca
+    </span>
+  )
 }
 
 function toSaveBody(draft: ShopDetail): CompShop {
@@ -84,11 +111,58 @@ export function CompShopsPanel() {
   const [newShopName, setNewShopName] = useState("")
   const dirtyRef = useRef(false)
   const loadedShopKey = useRef<string | null>(null)
+  const previewGen = useRef(0)
 
   const isDirty = useMemo(() => {
     if (!draft || baseline == null) return false
     return shopFingerprint(draft) !== baseline
   }, [draft, baseline])
+
+  const productIdsKey = useMemo(() => {
+    if (!draft) return ""
+    return draft.tabs
+      .flatMap((t) => t.products.map((p) => p.productId))
+      .join(",")
+  }, [draft])
+
+  const refreshPreviews = useCallback(async (ids: number[]) => {
+    const gen = ++previewGen.current
+    const valid = ids.filter((n) => Number.isInteger(n) && n > 0)
+    try {
+      const data = await lookupShopProducts(valid)
+      if (gen !== previewGen.current) return
+      setDraft((prev) => {
+        if (!prev) return prev
+        const byId = new Map(
+          data.products.map((p) => [p.productId, p.preview] as const)
+        )
+        return {
+          ...prev,
+          productExtractPresent: data.productExtractPresent,
+          tabs: prev.tabs.map((tab) => ({
+            ...tab,
+            products: tab.products.map((p) => ({
+              ...p,
+              preview: byId.get(p.productId) ?? null,
+            })),
+          })),
+        }
+      })
+    } catch {
+      /* keep prior previews */
+    }
+  }, [])
+
+  useEffect(() => {
+    const ids = productIdsKey
+      .split(",")
+      .map((s) => Number(s))
+      .filter((n) => Number.isFinite(n))
+    const t = window.setTimeout(() => {
+      void refreshPreviews(ids)
+    }, 250)
+    return () => window.clearTimeout(t)
+  }, [productIdsKey, refreshPreviews])
 
   useEffect(() => {
     dirtyRef.current = isDirty
@@ -380,8 +454,9 @@ export function CompShopsPanel() {
             ) : null}
           </CardTitle>
           <CardDescription>
-            {draft?.filename ??
-              "ProductID is a ShopProductData id; currency comes from the item."}
+            {draft
+              ? `${draft.filename} — currency (Macca/CP) is fixed by the item, not the shop.`
+              : "ProductID is a ShopProductData id; Macca vs CP comes from the item flag."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -499,14 +574,16 @@ export function CompShopsPanel() {
                       <th className="py-1 pr-2 font-medium">Item</th>
                       <th className="py-1 pr-2 font-medium">Currency</th>
                       <th className="py-1 pr-2 font-medium">BasePrice</th>
-                      <th className="py-1 pr-2 font-medium">MerchantDesc</th>
+                      <th className="py-1 pr-2 font-medium" title="u8 string-table id">
+                        Desc ID
+                      </th>
                       <th className="py-1 font-medium" />
                     </tr>
                   </thead>
                   <tbody>
                     {tab.products.map((p, pi) => (
                       <tr
-                        key={`${p.productId}-${pi}`}
+                        key={`tab-${activeTab}-product-${pi}`}
                         className="border-b border-border/60"
                       >
                         <td className="py-1 pr-2 align-middle">
@@ -532,33 +609,50 @@ export function CompShopsPanel() {
                           {p.preview?.name ??
                             (p.preview ? `item ${p.preview.itemId}` : "—")}
                         </td>
-                        <td className="py-1 pr-2 align-middle text-xs">
-                          {currencyLabel(p)}
+                        <td className="py-1 pr-2 align-middle">
+                          <CurrencyBadge preview={p.preview} />
                         </td>
                         <td className="py-1 pr-2 align-middle">
-                          <Input
-                            className="h-8 w-24"
-                            type="number"
-                            value={p.basePrice}
-                            onChange={(e) => {
-                              const basePrice = Number(e.target.value)
-                              const products = [...tab.products]
-                              products[pi] = { ...p, basePrice }
-                              const tabs = [...draft.tabs]
-                              tabs[activeTab] = { ...tab, products }
-                              setDraft({ ...draft, tabs })
-                            }}
-                          />
+                          <div className="flex items-center gap-1.5">
+                            <Input
+                              className="h-8 w-24"
+                              type="number"
+                              value={p.basePrice}
+                              onChange={(e) => {
+                                const basePrice = Number(e.target.value)
+                                const products = [...tab.products]
+                                products[pi] = { ...p, basePrice }
+                                const tabs = [...draft.tabs]
+                                tabs[activeTab] = { ...tab, products }
+                                setDraft({ ...draft, tabs })
+                              }}
+                            />
+                            <span className="shrink-0 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                              {p.preview
+                                ? p.preview.isCp
+                                  ? "CP"
+                                  : "Macca"
+                                : "—"}
+                            </span>
+                          </div>
                         </td>
                         <td className="py-1 pr-2 align-middle">
                           <Input
                             className="h-8 w-20"
+                            type="number"
+                            min={0}
+                            max={255}
+                            title="Merchant description string-table id (0–255), not free text"
                             value={p.merchantDescription ?? ""}
                             onChange={(e) => {
+                              const raw = e.target.value.trim()
                               const products = [...tab.products]
                               products[pi] = {
                                 ...p,
-                                merchantDescription: e.target.value,
+                                merchantDescription:
+                                  raw === ""
+                                    ? undefined
+                                    : Number.parseInt(raw, 10),
                               }
                               const tabs = [...draft.tabs]
                               tabs[activeTab] = { ...tab, products }

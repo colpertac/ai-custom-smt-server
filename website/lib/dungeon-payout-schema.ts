@@ -39,6 +39,7 @@ export const dungeonPayoutSchema = z
     notes: z.string().max(1000).optional(),
     enabled: z.boolean(),
     instanceId: z.number().int().positive(),
+    instanceIds: z.array(z.number().int().positive()).min(1).max(12).optional(),
     dedupFlag: z.number().int().positive(),
     bossGroupId: z.number().int().positive(),
     dropSetId: z.number().int().positive(),

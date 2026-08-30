@@ -9,6 +9,7 @@ import {
   adminPageTitle,
   navItemActive,
 } from "@/features/admin/admin-nav"
+import { useLaneAPending } from "@/features/admin/lane-a-pending"
 import { cn } from "@/lib/utils"
 
 export function AdminShell({
@@ -20,6 +21,7 @@ export function AdminShell({
 }) {
   const pathname = usePathname()
   const title = adminPageTitle(pathname)
+  const laneA = useLaneAPending()
 
   return (
     <div className="flex min-h-[calc(100svh-3.5rem)] w-full flex-col lg:flex-row">
@@ -37,6 +39,8 @@ export function AdminShell({
           {ADMIN_NAV.map((item) => {
             const on = navItemActive(item, pathname)
             const Icon = item.icon
+            const showPendingDot =
+              item.href === "/admin" && laneA.pending
             return (
               <Link
                 key={item.href}
@@ -55,7 +59,16 @@ export function AdminShell({
                   )}
                   aria-hidden
                 />
-                {item.label}
+                <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                  <span className="truncate">{item.label}</span>
+                  {showPendingDot ? (
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
+                      title="Unpublished game content changes"
+                      aria-label="Unpublished game content changes"
+                    />
+                  ) : null}
+                </span>
               </Link>
             )
           })}

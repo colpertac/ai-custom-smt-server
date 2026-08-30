@@ -1,10 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Play, RotateCcw, Square } from "lucide-react"
+import { Play, RotateCcw, ScrollText, Square } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/kyClient"
 
@@ -19,6 +26,7 @@ type ProcessRow = {
   running: boolean
   status?: string
   error?: string
+  logSummary?: string
 }
 
 type Tone = "online" | "offline" | "error" | "unknown"
@@ -53,7 +61,7 @@ const DOT: Record<Tone, string> = {
 /**
  * Lobby / world / channel presence for the Power panel.
  * Polls metrics; orange + message when Docker inspect reports a boot failure.
- * Per-row start / stop / restart controls.
+ * Per-row start / stop / restart controls + log viewer.
  *
  * `workingAll` — parent bulk Start/Stop/Restart all is in flight.
  */
@@ -69,6 +77,11 @@ export function AdminServiceStatus({
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [ok, setOk] = useState<string | null>(null)
+  const [logService, setLogService] = useState<ServiceName | null>(null)
+  const [logText, setLogText] = useState<string>("")
+  const [logSummary, setLogSummary] = useState<string | null>(null)
+  const [logLoading, setLogLoading] = useState(false)
+  const [logError, setLogError] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     try {
@@ -98,6 +111,34 @@ export function AdminServiceStatus({
     wasWorkingAll.current = workingAll
   }, [workingAll, refresh])
 
+  const openLogs = useCallback(async (service: ServiceName) => {
+    setLogService(service)
+    setLogLoading(true)
+    setLogError(null)
+    setLogText("")
+    setLogSummary(null)
+    try {
+      const response = await api.get("admin/ops/logs", {
+        searchParams: { service, lines: "120" },
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: { text?: string; summary?: string }
+      }
+      if (!response.ok || !json.success) {
+        setLogError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      setLogText(json.data?.text || "(empty log)")
+      setLogSummary(json.data?.summary ?? null)
+    } catch (e) {
+      setLogError(e instanceof Error ? e.message : "Failed to load logs")
+    } finally {
+      setLogLoading(false)
+    }
+  }, [])
+
   const runAction = useCallback(
     async (service: ServiceName, action: ServiceAction) => {
       setBusy({ service, action })
@@ -114,17 +155,44 @@ export function AdminServiceStatus({
         }
         if (!response.ok || !json.success) {
           setError(json.message || `HTTP ${response.status}`)
+          await refresh()
+          // After a failed start/restart, open logs so the CRITICAL/ERROR is visible.
+          if (action === "start" || action === "restart") {
+            void openLogs(service)
+          }
           return
         }
         setOk(json.message || `${service} ${action} ok`)
         await refresh()
+        // If we started/restarted but it is still offline after refresh, show logs.
+        if (action === "start" || action === "restart") {
+          try {
+            const metricsRes = await api("admin/ops/metrics")
+            const metricsJson = (await metricsRes.json()) as {
+              success?: boolean
+              data?: { processes?: ProcessRow[] }
+            }
+            const proc = metricsJson.data?.processes?.find(
+              (p) => p.name.toLowerCase() === service
+            )
+            if (proc && !proc.running) {
+              setError(
+                `${service} exited after ${action}` +
+                  (proc.logSummary ? ` — ${proc.logSummary}` : "")
+              )
+              void openLogs(service)
+            }
+          } catch {
+            /* ignore */
+          }
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : `${action} failed`)
       } finally {
         setBusy(null)
       }
     },
-    [refresh]
+    [refresh, openLogs]
   )
 
   const byName = new Map((rows ?? []).map((p) => [p.name.toLowerCase(), p]))
@@ -141,6 +209,10 @@ export function AdminServiceStatus({
           const online = tone === "online"
           const offline = tone === "offline" || tone === "error"
           const err = tone === "error" && proc?.error ? proc.error : null
+          const hint =
+            !online && proc?.logSummary
+              ? proc.logSummary
+              : err
           const rowBusy = busy?.service === name || workingAll
           return (
             <li
@@ -188,9 +260,7 @@ export function AdminServiceStatus({
                   size="icon-xs"
                   title={`Start ${name}`}
                   aria-label={`Start ${name}`}
-                  disabled={
-                    anyBusy || online || tone === "unknown"
-                  }
+                  disabled={anyBusy || online || tone === "unknown"}
                   onClick={() => void runAction(name, "start")}
                 >
                   <Play
@@ -231,16 +301,78 @@ export function AdminServiceStatus({
                     )}
                   />
                 </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  title={`View ${name} logs`}
+                  aria-label={`View ${name} logs`}
+                  disabled={anyBusy}
+                  onClick={() => void openLogs(name)}
+                >
+                  <ScrollText />
+                </Button>
               </span>
-              {err ? (
-                <span className="w-full pl-4 text-[0.7rem] text-amber-800 dark:text-amber-300/90">
-                  {err}
+              {hint ? (
+                <span className="w-full pl-4 text-[0.7rem] text-amber-800 dark:text-amber-300/90 break-all">
+                  {hint}
                 </span>
               ) : null}
             </li>
           )
         })}
       </ul>
+
+      <Dialog
+        open={logService != null}
+        onOpenChange={(open) => {
+          if (!open) setLogService(null)
+        }}
+      >
+        <DialogContent
+          className={cn(
+            "flex max-h-[min(90dvh,calc(100vh-2rem))] w-full max-w-3xl flex-col gap-3 overflow-hidden sm:max-w-3xl"
+          )}
+        >
+          <DialogHeader className="shrink-0">
+            <DialogTitle className="capitalize">
+              {logService} logs
+            </DialogTitle>
+            <DialogDescription className="line-clamp-3 break-all">
+              {logSummary
+                ? logSummary
+                : "Recent lines from the service log (CRITICAL/ERROR called out in the summary when present)."}
+            </DialogDescription>
+          </DialogHeader>
+          {logLoading ? (
+            <p className="shrink-0 text-sm text-muted-foreground">Loading…</p>
+          ) : logError ? (
+            <FormAlert variant="error">{logError}</FormAlert>
+          ) : (
+            <pre className="min-h-0 flex-1 overflow-y-auto overscroll-contain rounded-md border border-border/60 bg-muted/30 p-3 text-[0.7rem] leading-relaxed whitespace-pre-wrap break-all font-mono">
+              {logText}
+            </pre>
+          )}
+          <div className="flex shrink-0 justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={!logService || logLoading}
+              onClick={() => logService && void openLogs(logService)}
+            >
+              Refresh
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setLogService(null)}
+            >
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

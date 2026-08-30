@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { publishOpsLaneA } from "@/lib/ops-sidecar"
+import { publishLaneAOps } from "@/lib/lane-a-ops"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await publishOpsLaneA(session.username, { restart })
+    const result = await publishLaneAOps(session.username, { restart })
     if (!result.ok) {
       const msg =
         result.error === "not_allowed"

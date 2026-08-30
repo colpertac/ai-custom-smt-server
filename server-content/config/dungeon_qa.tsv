@@ -1,0 +1,64 @@
+# Payout QA — tab-separated. dynamicMapId must match zoneinstance ZoneIDs/DynamicMapIDs pairs.
+# Tier vs layout: bronze/silver/gold are DIFFERENT instance id ranges (not 5401/5402/5403).
+#   Suginami bronze layouts 5401-5403 | silver 5421-5423 | gold 5481-5482
+#   Celu bronze 5501-5503 | silver 5521-5523 | gold 5531/5533/5535
+#   Quartz bronze 5701-5703 | silver 5711 | gold 5721
+#   Ichigaya bronze 5101-5103 | silver 5131 | gold 5151
+#   Catacomb bronze 6201-6203 | silver 6202 | gold 6203
+#   Nakano UG bronze 9201-9203 | silver 9221 | gold 9211-9212 (NOT 10502 romance / 10509 horse)
+#   Zhuque bronze 6301-6303 | silver 6302 | gold 6303
+#   Ueno Mirage bronze 10901 | silver 10902 | gold 10903 (12904 = parallel variant, not stock silver)
+#   Amala Maze Black instance 9103 (Creation Room); 9101 = Distortion Floor
+# Rows 1-9 (+26): payout wired (CP on kill). Rows 10-25: travel/boss QA only until lane A wiring.
+# id	label	instanceId	variantId	zoneId	dynamicMapId	x	y	spotId	dedupFlag	invuln	bossEvent	payoutId
+1	Suginami bronze	5401	0	540101	5401004	211.68	-12.01	0	900013	1	D54_540101_540X_BOSS	suginami-bronze
+2	Suginami silver	5421	0	540101	5421005	211.68	-12.01	0	901201	1	D54_540101_542X_NORMAL_BOSS	suginami-silver
+3	Suginami gold	5481	0	540101	5481006	431.03	-16.06	0	901202	1	D54_540101_548X_10000_04	suginami-gold
+4	Celu bronze	5501	0	550101	5501004	-1.32	-2386.27	0	901213	1	D55_550101_550X_10000_05	celu-bronze
+5	Celu silver	5521	0	550101	5521005	-1.32	-2386.27	0	901214	1	D55_550101_552X_10000_04	celu-silver
+6	Celu gold	5531	0	550102	5531008	6.32	-2273.31	0	901215	1	D55_550102_553X_10000_03	celu-gold
+7	Quartz bronze	5701	0	570101	5701004	-0.89	12.57	0	901218	1	D57_570101_BOSS_DEFAULT	quartz-bronze
+8	Quartz silver	5711	0	571101	5711001	0	0	0	901219	1	D57_571101_SPAWN_BOSS	quartz-silver
+9	Quartz gold	5721	0	572101	5721001	260.87	27.20	0	901220	1	D57_572101_SP01	quartz-gold
+10	Ichigaya bronze	5101	0	510101	5101005	-8921.10	2472.35	0	901205	1	D51_510101_SP02	ichigaya-bronze
+11	Ichigaya silver	5131	0	513101	5131001	0	0	0	901206	1	D51_513101_ACT19_BOSS_SPAWN	ichigaya-silver
+12	Ichigaya gold	5151	0	515101	5151001	0	0	0	901207	1	D51_515101_SP001b	ichigaya-gold
+13	Catacomb bronze	6201	0	620105	6201004	0	0	10000	901222	1	D62_620105_SPAWN_002a	catacomb-bronze
+14	Catacomb silver	6202	0	620105	6202004	0	0	10000	901223	1	D62_620105_SPAWN_002a	catacomb-silver
+15	Catacomb gold	6203	0	620105	6203005	0	0	10000	901224	1	D62_620105_6203005_SPAWN_002a	catacomb-gold
+16	Nakano UG bronze	9201	0	920110	9201004	0	0	0	901231	1	D920X_920110_SP01	nakano-ug-bronze
+17	Nakano UG silver	9221	0	920110	9221006	0	0	0	901232	1	D9221_06_SP_BOSS_02	nakano-ug-silver
+18	Nakano UG gold	9211	0	920110	9211005	0	0	0	901233	1	D920X_920110_SP01	nakano-ug-gold
+19	Zhuque bronze	6301	0	630102	6301003	17.99	385.67	10001	901225	1	D63_630102_630X_SP01	zhuque-bronze
+20	Zhuque silver	6302	0	630102	6302003	0	0	10001	901226	1	D63_630102_630X_SP01	zhuque-silver
+21	Zhuque gold	6303	0	630102	6303003	0	0	10001	901227	1	D63_630102_630X_SP01	zhuque-gold
+22	Mirage bronze	10901	0	1090101	10901001	0	0	0	901235	1	D1090X_10901_BOSS_01	mirage-bronze
+23	Mirage silver	10902	0	1090001	10902004	0	0	0	901236	1	D1090X_10902004_SP01	mirage-silver
+24	Mirage gold	10903	0	1090001	10903005	0	0	0	901237	1	D1090X_10903005_SP01	mirage-gold
+25	Amala Maze Black	9103	0	910312	9103012	0	0	0	901248	1	D9103_02_SP_LAST_BOSS	amala-maze-black
+26	Celu Tower (Bronze, Bearcat)	5501	0	550101	5501004	-1.32	-2386.27	0	901216	1	D55_550101_550X_10000_05	celu-bronze-bearcat
+27	Celu Tower (per floor)	5521	0	550101	5521005	-1.32	-2386.27	0	901217	1	D55_550101_552X_10000_04	celu-per-floor
+28	Diaspora Shinagawa	7601	0	760101	7601001	0	0	0	901241	1	D7601_SP001	diaspora-shinagawa
+29	Diaspora Suginami	7301	0	730101	7301001	0	0	0	901240	1	D7301_SP001	diaspora-suginami
+30	Distortion Floor	9101	0	910107	9101007	0	0	0	901249	1	D9101_07_PR002	distortion-floor
+31	Home II (Dungeon)	5301	0	530102	5301002	0	0	0	901246	1	D53_10001_2_01	home-ii
+32	Shinagawa Ice Cave	10401	0	1040112	10401012	0	0	0	901242	1	D104_1040112_TR01	ice-cave
+33	Old Ichigaya Camp (2-king)	5121	0	512101	5121005	0	0	0	901208	1	D51_512101_SP02	ichigaya-2king
+34	Old Ichigaya Camp (3-king)	5141	0	514102	5141002	0	0	0	901209	1	D51_514102_SP01	ichigaya-3king
+35	Old Ichigaya Camp (4-king)	11305	0	1130501	11305001	0	0	0	901210	1	D11305_ROUND1_TREASURE	ichigaya-4king
+36	Old Ichigaya Camp (Assassins)	11403	0	1140301	11305001	0	0	0	901211	1	D11403_ROUND1_TREASURE	ichigaya-assassins
+37	Old Ichigaya Camp (Tokisada)	11503	0	1150301	11305001	0	0	0	901212	1	D11305_ROUND1_TREASURE	ichigaya-tokisada
+38	Ikebukuro Mall	9101	0	910107	9101007	0	0	0	901247	1	D9101_07_PR002	ikebukuro-mall
+39	Ueno Mirage (Astaroth)	10901	0	1090002	10900001	-1370.68	-1975.6	0	901238	1	D1090X_10901_BOSS_00	mirage-astaroth
+40	Ueno Mirage (True Ishtar)	10901	0	1090002	10900001	-1370.68	-1975.6	0	901239	1	D1090X_10901_BOSS_00	mirage-ishtar
+41	Nakano Underground (per floor)	11504	0	1150404	11504001	0	0	0	901234	1	D11504_BOSS_DA	nakano-ug-per-floor
+42	Old Tokyo Metro	6901	0	690108	6901008	0	0	0	901245	1	D69_690108_SP00	old-tokyo-metro
+43	Shibuya Quartz (per floor)	5721	0	572101	5721001	260.87	27.20	0	901221	1	D57_572101_SP01	quartz-per-floor
+44	Suginami Tunnels (Bronze, Bearcat)	5401	0	540101	5401004	211.68	-12.01	0	901203	1	D54_540101_540X_BOSS_BEARCAT	suginami-bronze-bearcat
+45	Suginami Tunnels (?)	5491	0	542204	5491004	0	0	0	901204	1	D54_540101_5491004_TR03	suginami-unknown
+46	TMG Building (Lucifuge)	6601	0	660101	6601001	-4250.2	9.24	0	901243	1	D6601_SC002	tmg-lucifuge
+47	TMG Building (Yantra)	6602	0	660201	6602001	0	0	0	901244	1	D6602_PR001	tmg-yantra
+48	YOIDORE	6428	0	642801	6428001	0	0	0	901250	1	D6428_SP1_SPAWN	yoidore
+49	Kagurazaka Zhu Que (Amaterasu ♀)	10011	0	1000105	10001011	-29.47	6631.48	0	901230	1		zhuque-amaterasu-f
+50	Kagurazaka Zhu Que (Amaterasu ♂)	10005	0	1000105	10001006	-29.47	6631.48	0	901229	1		zhuque-amaterasu-m
+51	Kagurazaka Zhu Que (Susano-o)	6304	0	630406	6304006	0	0	0	901228	1	D63_630406_SP01	zhuque-susanoo

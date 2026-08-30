@@ -148,7 +148,7 @@ services:
       - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater
       - ./:/compose:ro
       - ops-audit:/var/log/smt-ops
-      # Optional: host dir with comp_rehash / comp_encrypt (Lane B + Client prep)
+      # Optional: host dir with comp_rehash / encrypt / decrypt / bdpatch
       - ${OPS_TOOLS_DIR:-./ops-tools}:/opt/comp-tools:ro
     healthcheck:
       test:

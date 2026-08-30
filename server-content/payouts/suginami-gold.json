@@ -3,18 +3,20 @@
   "payout": {
     "id": "suginami-gold",
     "name": "Suginami Tunnels (Gold)",
-    "description": "Catalog stub from End Chests CP sheet. Disabled until wired.",
+    "description": "Clear bonus for gold-tier instance 5481. Shares AI_PAY_SUGINAMI_AFTER_* with bronze/silver.",
     "family": "Suginami Tunnels",
     "difficulty": "gold",
     "mode": "normal",
-    "enabled": false,
-    "instanceId": 5403,
+    "notes": "Sheet CP 17 (working value 666). Shares dungeon_events-540X dispatcher.",
+    "enabled": true,
+    "instanceId": 5481,
+    "instanceIds": [5481, 5482],
     "dedupFlag": 901202,
     "bossGroupId": 901202,
     "dropSetId": 901102,
-    "spotId": 2,
+    "spotId": 5000,
     "crateCount": 5,
-    "cp": 17,
+    "cp": 100,
     "crateDrops": [
       {
         "itemId": 699,
@@ -25,12 +27,11 @@
     ],
     "clearItems": [],
     "hooks": {
-      "afterNormalLootEventId": "AI_PAY_SUGINAMI_GOLD_AFTER_NORMAL",
-      "afterFiendLootEventId": "AI_PAY_SUGINAMI_GOLD_AFTER_FIEND",
+      "afterNormalLootEventId": "AI_PAY_SUGINAMI_AFTER_NORMAL",
+      "afterFiendLootEventId": "AI_PAY_SUGINAMI_AFTER_FIEND",
       "bonusEventId": "AI_PAY_SUGINAMI_GOLD_BONUS",
       "bonusFiendEventId": "AI_PAY_SUGINAMI_GOLD_BONUS_FIEND",
-      "resumeNormalNext": "TODO_STOCK_RESUME_EVENT"
-    },
-    "notes": "Sheet CP 17."
+      "resumeNormalNext": "D54_540101_Q317_L"
+    }
   }
 }

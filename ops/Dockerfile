@@ -19,7 +19,7 @@ COPY --from=dockercli /usr/local/libexec/docker/cli-plugins/docker-compose \
 
 WORKDIR /ops
 COPY encrypt_tools.py first_boot.py freshness.py ingest_jobs.py metrics.py \
-  rehash.py sidecar.py zip_ingest.py ./
+  rehash.py sidecar.py zip_ingest.py ceventmessage.py service_logs.py ./
 
 ENV OPS_BIND=0.0.0.0 \
     OPS_PORT=14710 \

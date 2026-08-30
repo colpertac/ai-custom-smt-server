@@ -24,7 +24,7 @@ workflows are stable enough to film.
 | **1** | Dev QoL (next) | Better `@help` / command feedback · Tunable WorldSharedConfig knobs (logout delay, loot window, max move speed, …) | Unblocks *you* every session; low risk; no players/VPS needed |
 | **2** | Content polish (existing tracks) | Phase 8 translation batches · Phase 6 Magical Golden Apple retarget · dungeon crate/CP payouts (+ later webUI) | Builds on skills you already have; players feel it immediately |
 | **3** | Ops / deploy | Dockerize (no compile on VM) · then Oracle VPS · Phase 9 nginx/homelab polish as needed | Deploy after QoL+content loops exist; Docker before “ship to VPS” |
-| **4** | Website portal | Phase 7 hardening · item/armor wiki · **AI help** · character armory · **CP paid services (boost / appearance / guild rename)** · COMP shop + dungeon-payout webUI | Needs stable lobby APIs + data extracts; paid services after character list APIs |
+| **4** | Website portal | Phase 7 hardening · item/armor wiki · **AI help** · character armory · **CP paid services (boost / appearance / guild rename)** · **wiki cart → mailbox (16J)** · COMP shop + dungeon-payout webUI | Needs stable lobby APIs + data extracts; paid services / cart after character + mailbox APIs |
 | **5** | True custom assets | Custom item (icon/model) · custom zone (Blender/texture) · custom demon (model/audio) | Hardest craft; do after server/tools can *consume* the assets |
 | **6** | Social / platform | Battle.net–style launcher (friends/realm) · AI “fake players” (DeepSeek bots) | Needs presence APIs, scale, and a live world worth populating |
 | **7** | Teaching | YouTube tutorials (item/zone/demon/deploy/customize) | Film only after pipelines are repeatable |
@@ -193,6 +193,16 @@ appearance change (face/hair/skin/gender/…), guild rename, later extras
 **Depends on:** character list + world mutate APIs (with 16E); atomic CP debit;
 configurable prices. **Related:** existing `@levelup` / `@addcp` GM paths as
 implementation hints — not the player UX.
+
+#### D8. Wiki cart → mailbox delivery — **L** · Wave 4 / post-MVP
+
+Logged-in players add wiki items to a cart and check out; items land in the
+chosen character’s **mailbox** (web alternative to opening COMP shop in-game).
+Prices should follow managed COMP shop listings where possible. See roadmap
+**Phase 16J** — separate from D7/16G (services vs item storefront).
+
+**Depends on:** account session; character picker; mailbox grant API; Macca/CP
+debit + audit. **Synergy:** D2 wiki pages + 16C shop data for sellable catalog.
 
 ---
 

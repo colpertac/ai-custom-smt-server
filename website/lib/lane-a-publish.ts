@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto"
 import { promises as fs } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -5,14 +6,31 @@ import { fileURLToPath } from "node:url"
 import JSZip from "jszip"
 
 import {
+  generateBonusOnlyEventsXml,
   generateDropSetXml,
-  generateEventsXml,
+  generateSharedAfterEventsXml,
   payoutPackagePaths,
+  sharedAfterPackagePath,
 } from "./dungeon-payout-generate.ts"
 import { putPayoutSchema } from "./dungeon-payout-schema.ts"
-import type { DungeonPayoutFile } from "./dungeon-payout-types.ts"
+import type { DungeonPayout, DungeonPayoutFile } from "./dungeon-payout-types.ts"
+import { loadClearLootCatalog } from "./payout-clear-loot-catalog.ts"
+import { buildReportRewardsPackageFiles } from "./report-reward-generate.ts"
+import {
+  readAllReportDungeons,
+  readChoiceMessagesStore,
+  readReportRewardGlobal,
+  writeChoiceMessagesStore,
+  writePublishedReportRewardsDigest,
+  clearPublishedReportRewardsDigest,
+  workingReportRewardsJsonDigest,
+} from "./report-rewards-fs.ts"
+import type { CustomEventMessage } from "./report-reward-types.ts"
+import { parseCompShopXml } from "./comp-shop-xml.ts"
+import { validateCompShop } from "./comp-shops-fs.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
+export const LANE_A_REPORT_REWARDS_ZIP = "zzz_ai_custom_report_rewards_admin.zip"
 export const LANE_A_RELEASES_KEEP = 5
 
 const LIB_DIR = path.dirname(fileURLToPath(import.meta.url))
@@ -33,12 +51,18 @@ export type LaneAPublishResult = {
   shopsCopied: number
   shopsRemoved: number
   payoutsPackaged: number
+  reportRewardsPackaged: number
   disabledPayouts: string[]
+  disabledReportRewards: string[]
   skippedConflicts: string[]
   warnings: string[]
   errors: string[]
+  /** Custom CEventMessage rows to upsert into client overlay on apply. */
+  customEventMessages?: CustomEventMessage[]
+  clientOverlayUpdated?: boolean
   shopsDest: string
   payoutsZipPath: string
+  reportRewardsZipPath: string
   releasesDir?: string
   releasePath?: string
   error?: string
@@ -186,34 +210,290 @@ async function listPayoutIds(): Promise<{ id: string; enabled: boolean }[]> {
   return out
 }
 
-async function existingDropSetIds(packagesDest: string): Promise<Set<number>> {
-  const ids = new Set<number>()
+type PackageIndex = {
+  dropSets: Map<number, string[]>
+  events: Map<string, string[]>
+}
+
+async function scanForeignPackages(
+  packagesDest: string
+): Promise<PackageIndex> {
+  const dropSets = new Map<number, string[]>()
+  const events = new Map<string, string[]>()
   let entries: string[]
   try {
     entries = await fs.readdir(packagesDest)
   } catch {
-    return ids
+    return { dropSets, events }
   }
+
   for (const name of entries) {
-    if (!name.endsWith(".zip") || name === LANE_A_PAYOUTS_ZIP) continue
+    if (
+      !name.endsWith(".zip") ||
+      name === LANE_A_PAYOUTS_ZIP ||
+      name === LANE_A_REPORT_REWARDS_ZIP
+    ) {
+      continue
+    }
+    // Ignore operator-disabled packages (…zip.disabled / …zip.disabled-*)
+    if (/\.zip\.disabled/i.test(name)) continue
     try {
       const buf = await fs.readFile(path.join(packagesDest, name))
       const zip = await JSZip.loadAsync(buf)
       for (const [entryName, entry] of Object.entries(zip.files)) {
-        if (entry.dir) continue
-        if (!/dropset/i.test(entryName) || !entryName.endsWith(".xml")) continue
+        if (entry.dir || !entryName.endsWith(".xml")) continue
         const xml = await entry.async("string")
-        for (const m of xml.matchAll(
-          /<member\s+name="ID">\s*(\d+)\s*<\/member>/gi
-        )) {
-          ids.add(Number(m[1]))
+        if (/dropset/i.test(entryName)) {
+          for (const m of xml.matchAll(
+            /<member\s+name="ID">\s*(\d+)\s*<\/member>/gi
+          )) {
+            const id = Number(m[1])
+            const list = dropSets.get(id) ?? []
+            if (!list.includes(name)) list.push(name)
+            dropSets.set(id, list)
+          }
+        }
+        if (/(^|\/)events?\//i.test(entryName)) {
+          for (const m of xml.matchAll(
+            /<member\s+name="ID">\s*([^<]+?)\s*<\/member>/gi
+          )) {
+            const id = m[1].trim()
+            if (!id || /^\d+$/.test(id)) continue
+            const list = events.get(id) ?? []
+            if (!list.includes(name)) list.push(name)
+            events.set(id, list)
+          }
         }
       }
     } catch {
-      /* skip */
+      /* skip corrupt zip */
     }
   }
-  return ids
+  return { dropSets, events }
+}
+
+function payoutHookEventIds(payout: {
+  hooks: {
+    afterNormalLootEventId: string
+    afterFiendLootEventId: string
+    bonusEventId: string
+    bonusFiendEventId: string
+  }
+}): string[] {
+  const h = payout.hooks
+  return [
+    h.afterNormalLootEventId,
+    h.afterFiendLootEventId,
+    h.bonusEventId,
+    h.bonusFiendEventId,
+  ].filter(Boolean)
+}
+
+export type PayoutLiveConflict = {
+  payoutId: string
+  dropSetId: number
+  dropSetPackages: string[]
+  eventIds: string[]
+  eventPackages: string[]
+}
+
+/** Enabled working payouts that would brick channel or be skipped on publish. */
+export async function listPayoutLiveConflicts(): Promise<PayoutLiveConflict[]> {
+  const packagesLive = path.join(getRuntimeDir(), "datastore", "packages")
+  const index = await scanForeignPackages(packagesLive)
+  const items = await listPayoutIds()
+  const out: PayoutLiveConflict[] = []
+  for (const item of items) {
+    if (!item.enabled) continue
+    let file: DungeonPayoutFile
+    try {
+      file = await readPayoutJson(item.id)
+    } catch {
+      continue
+    }
+    const payout = file.payout
+    const dropSetPackages = index.dropSets.get(payout.dropSetId) ?? []
+    const eventIds = payoutHookEventIds(payout)
+    const eventPackages = [
+      ...new Set(eventIds.flatMap((id) => index.events.get(id) ?? [])),
+    ]
+    if (dropSetPackages.length || eventPackages.length) {
+      out.push({
+        payoutId: payout.id,
+        dropSetId: payout.dropSetId,
+        dropSetPackages,
+        eventIds: eventIds.filter((id) => (index.events.get(id) ?? []).length),
+        eventPackages,
+      })
+    }
+  }
+  return out
+}
+
+/**
+ * Rename foreign packages that own DropSets/events claimed by enabled payouts
+ * so Lane A admin zip can load (channel rejects duplicate event/DropSet IDs).
+ */
+export async function retirePackagesBlockingLaneA(): Promise<{
+  retired: string[]
+  skipped: string[]
+}> {
+  const packagesLive = path.join(getRuntimeDir(), "datastore", "packages")
+  const conflicts = await listPayoutLiveConflicts()
+  const toRetire = new Set<string>()
+  for (const c of conflicts) {
+    for (const z of c.dropSetPackages) toRetire.add(z)
+    for (const z of c.eventPackages) toRetire.add(z)
+  }
+  const retired: string[] = []
+  const skipped: string[] = []
+  const stamp = new Date().toISOString().replace(/[:.]/g, "")
+  for (const name of [...toRetire].sort()) {
+    const src = path.join(packagesLive, name)
+    const dest = path.join(
+      packagesLive,
+      `${name}.disabled-by-lane-a-${stamp}`
+    )
+    try {
+      await fs.rename(src, dest)
+      retired.push(name)
+    } catch {
+      skipped.push(name)
+    }
+  }
+  return { retired, skipped }
+}
+
+async function shopsTreeDigest(dir: string): Promise<string> {
+  const files = await listShopFiles(dir)
+  const h = createHash("sha256")
+  for (const filename of files) {
+    try {
+      const buf = await fs.readFile(path.join(dir, filename))
+      h.update(filename)
+      h.update("\0")
+      h.update(buf)
+      h.update("\0")
+    } catch {
+      h.update(filename)
+      h.update("\0missing\0")
+    }
+  }
+  return h.digest("hex")
+}
+
+/**
+ * Fingerprint of every payout JSON in the working copy (enabled or not).
+ * Used for pending-publish UI — package digests skip disabled payouts.
+ */
+async function workingPayoutsJsonDigest(): Promise<string> {
+  const dir = payoutsWorkingDir()
+  let entries: string[]
+  try {
+    entries = await fs.readdir(dir)
+  } catch {
+    return createHash("sha256").digest("hex")
+  }
+  const files = entries
+    .filter((f) => f.endsWith(".json") && !f.startsWith("."))
+    .sort((a, b) => a.localeCompare(b))
+  const h = createHash("sha256")
+  for (const filename of files) {
+    try {
+      const buf = await fs.readFile(path.join(dir, filename))
+      h.update(filename)
+      h.update("\0")
+      h.update(buf)
+      h.update("\0")
+    } catch {
+      h.update(filename)
+      h.update("\0missing\0")
+    }
+  }
+  return h.digest("hex")
+}
+
+function workingPayoutsStampPath(): string {
+  return path.join(getReleasesDir(), "working-payouts.digest")
+}
+
+async function readPublishedPayoutsJsonDigest(): Promise<string | null> {
+  try {
+    const raw = (await fs.readFile(workingPayoutsStampPath(), "utf8")).trim()
+    return raw || null
+  } catch {
+    return null
+  }
+}
+
+async function readPublishedReportRewardsDigest(): Promise<string | null> {
+  try {
+    const stampPath = path.join(getReleasesDir(), "working-report-rewards.digest")
+    return (await fs.readFile(stampPath, "utf8")).trim()
+  } catch {
+    return null
+  }
+}
+
+async function writePublishedPayoutsJsonDigest(): Promise<void> {
+  const digest = await workingPayoutsJsonDigest()
+  const stampPath = workingPayoutsStampPath()
+  await ensureDir(path.dirname(stampPath))
+  await fs.writeFile(stampPath, `${digest}\n`, "utf8")
+}
+
+async function clearPublishedPayoutsJsonDigest(): Promise<void> {
+  try {
+    await fs.unlink(workingPayoutsStampPath())
+  } catch {
+    /* missing ok */
+  }
+}
+
+export type LaneAPendingStatus = {
+  pending: boolean
+  shopsDirty: boolean
+  payoutsDirty: boolean
+  reportRewardsDirty: boolean
+}
+
+/**
+ * True when working shops/payouts differ from what is live on the game server
+ * (admin must Publish shops & payouts on Overview).
+ *
+ * Payouts compare working JSON to a stamp written on successful publish so
+ * disabled / conflict-skipped drafts still show as pending.
+ */
+export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
+  const runtime = getRuntimeDir()
+  const shopsLive = path.join(runtime, "datastore", "shops")
+
+  const [shopsWorking, shopsLiveDigest, payoutsWorking, publishedPayouts, reportWorking, publishedReports] =
+    await Promise.all([
+      shopsTreeDigest(shopsWorkingDir()),
+      shopsTreeDigest(shopsLive),
+      workingPayoutsJsonDigest(),
+      readPublishedPayoutsJsonDigest(),
+      workingReportRewardsJsonDigest(),
+      readPublishedReportRewardsDigest(),
+    ])
+
+  const shopsDirty = shopsWorking !== shopsLiveDigest
+  // No stamp yet → any working payout draft counts as unpublished.
+  const payoutsDirty =
+    publishedPayouts == null
+      ? payoutsWorking !== createHash("sha256").digest("hex")
+      : payoutsWorking !== publishedPayouts
+  const reportRewardsDirty =
+    publishedReports == null
+      ? reportWorking !== createHash("sha256").update("").digest("hex")
+      : reportWorking !== publishedReports
+  return {
+    pending: shopsDirty || payoutsDirty || reportRewardsDirty,
+    shopsDirty,
+    payoutsDirty,
+    reportRewardsDirty,
+  }
 }
 
 function emptyResult(
@@ -227,7 +507,9 @@ function emptyResult(
     shopsCopied: 0,
     shopsRemoved: 0,
     payoutsPackaged: 0,
+    reportRewardsPackaged: 0,
     disabledPayouts: [],
+    disabledReportRewards: [],
     skippedConflicts: [],
     warnings: [],
     errors: [],
@@ -237,6 +519,12 @@ function emptyResult(
       "datastore",
       "packages",
       LANE_A_PAYOUTS_ZIP
+    ),
+    reportRewardsZipPath: path.join(
+      runtime,
+      "datastore",
+      "packages",
+      LANE_A_REPORT_REWARDS_ZIP
     ),
     ...partial,
   }
@@ -251,6 +539,23 @@ async function writeManifest(
     `${JSON.stringify(data, null, 2)}\n`,
     "utf8"
   )
+}
+
+function parseCustomEventMessages(raw: unknown): CustomEventMessage[] {
+  if (!Array.isArray(raw)) return []
+  const out: CustomEventMessage[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const id = Math.floor(Number((row as { id?: unknown }).id))
+    const linesRaw = (row as { lines?: unknown }).lines
+    if (!Number.isFinite(id) || id < 1 || !Array.isArray(linesRaw)) continue
+    const lines = linesRaw
+      .filter((l): l is string => typeof l === "string")
+      .map((l) => l.slice(0, 132))
+    if (!lines.length) continue
+    out.push({ id, lines })
+  }
+  return out
 }
 
 async function pruneReleases(releasesDir: string): Promise<void> {
@@ -334,10 +639,15 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
   const candidateShops = path.join(releasePath, "candidate", "shops")
   const candidatePackages = path.join(releasePath, "candidate", "packages")
   const candidateZip = path.join(candidatePackages, LANE_A_PAYOUTS_ZIP)
+  const candidateReportZip = path.join(
+    candidatePackages,
+    LANE_A_REPORT_REWARDS_ZIP
+  )
 
   const warnings: string[] = []
   const errors: string[] = []
   const disabledPayouts: string[] = []
+  const disabledReportRewards: string[] = []
   const skippedConflicts: string[] = []
 
   await ensureDir(candidateShops)
@@ -354,6 +664,17 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
       const xml = await fs.readFile(src, "utf8")
       if (!xml.trim() || !xml.includes("<")) {
         errors.push(`Invalid or empty shop XML: ${filename}`)
+        continue
+      }
+      try {
+        const shop = parseCompShopXml(xml, filename)
+        for (const issue of validateCompShop(shop, null)) {
+          errors.push(`${filename}: ${issue.path}: ${issue.message}`)
+        }
+      } catch (e) {
+        errors.push(
+          `${filename}: ${e instanceof Error ? e.message : "parse failed"}`
+        )
         continue
       }
       await copyFileSafe(src, path.join(candidateShops, filename))
@@ -383,14 +704,28 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
   let payoutsPackaged = 0
   try {
     const items = await listPayoutIds()
-    const takenDropSets = await existingDropSetIds(packagesLive)
+    const foreign = await scanForeignPackages(packagesLive)
     const usedInCandidate = new Set<number>()
+    const usedEvents = new Set<string>()
+    const catalog = await loadClearLootCatalog()
+    const stockNextTargets = new Set<string>()
+    for (const ev of catalog?.clearLootEvents ?? []) {
+      if (ev.next) stockNextTargets.add(ev.next)
+    }
+    if (!catalog) {
+      warnings.push(
+        "clear-loot-catalog.json missing — skipped stock-next gate for payout AFTER IDs"
+      )
+    }
 
     if (!items.length) {
       warnings.push("No payout JSON files in working copy")
     }
 
     const zip = new JSZip()
+    /** Enabled payouts that passed DropSet foreign conflict checks. */
+    const eligible: DungeonPayout[] = []
+
     for (const item of items) {
       if (!item.enabled) {
         disabledPayouts.push(item.id)
@@ -398,9 +733,10 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
       }
       const file = await readPayoutJson(item.id)
       const payout = file.payout
-      if (takenDropSets.has(payout.dropSetId)) {
+      const dropOwners = foreign.dropSets.get(payout.dropSetId) ?? []
+      if (dropOwners.length) {
         skippedConflicts.push(
-          `${payout.id} (DropSet ${payout.dropSetId} already in another package)`
+          `${payout.id} (DropSet ${payout.dropSetId} in ${dropOwners.join(", ")})`
         )
         continue
       }
@@ -410,11 +746,97 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
         )
         continue
       }
-      const paths = payoutPackagePaths(payout)
-      zip.file(paths.eventsPath, generateEventsXml(payout))
-      zip.file(paths.dropSetPath, generateDropSetXml(payout))
       usedInCandidate.add(payout.dropSetId)
-      payoutsPackaged++
+      eligible.push(payout)
+    }
+
+    // Group by shared AFTER IDs so one dispatcher Event is emitted per family.
+    const byAfter = new Map<string, DungeonPayout[]>()
+    for (const payout of eligible) {
+      const key = `${payout.hooks.afterNormalLootEventId}\0${payout.hooks.afterFiendLootEventId}`
+      const group = byAfter.get(key) ?? []
+      group.push(payout)
+      byAfter.set(key, group)
+    }
+
+    for (const group of byAfter.values()) {
+      const head = group[0]
+      const afterNormal = head.hooks.afterNormalLootEventId
+      const afterFiend = head.hooks.afterFiendLootEventId
+      const resume = head.hooks.resumeNormalNext
+
+      for (const p of group) {
+        if (p.hooks.resumeNormalNext !== resume) {
+          errors.push(
+            `Shared AFTER group ${afterNormal}: resume mismatch (${head.id}=${resume} vs ${p.id}=${p.hooks.resumeNormalNext})`
+          )
+        }
+      }
+
+      // Stock splice gate: AFTER must be the next of some clear-loot event.
+      if (
+        catalog &&
+        stockNextTargets.size > 0 &&
+        !stockNextTargets.has(afterNormal)
+      ) {
+        errors.push(
+          `Enabled payout(s) ${group.map((p) => p.id).join(", ")}: AFTER ${afterNormal} is not the next of any stock clear-loot event (not mapped yet — patch stock or run payout-wire-families)`
+        )
+      }
+
+      const sharedEventIds = [afterNormal, afterFiend]
+      const allHookIds = [
+        ...sharedEventIds,
+        ...group.flatMap((p) => [
+          p.hooks.bonusEventId,
+          p.hooks.bonusFiendEventId,
+        ]),
+      ]
+
+      const eventHits = allHookIds
+        .map((id) => {
+          const owners = foreign.events.get(id) ?? []
+          return owners.length ? `${id}←${owners.join("|")}` : null
+        })
+        .filter(Boolean)
+      if (eventHits.length) {
+        for (const p of group) {
+          skippedConflicts.push(
+            `${p.id} (event IDs already loaded: ${eventHits.join("; ")} — disable that package or change hooks)`
+          )
+        }
+        continue
+      }
+
+      for (const id of allHookIds) {
+        if (usedEvents.has(id)) {
+          errors.push(
+            `Duplicate event ID ${id} within candidate (shared AFTER group ${afterNormal}, payouts ${group.map((p) => p.id).join(", ")})`
+          )
+        }
+        usedEvents.add(id)
+      }
+
+      try {
+        zip.file(
+          sharedAfterPackagePath(afterNormal),
+          generateSharedAfterEventsXml(group)
+        )
+      } catch (e) {
+        errors.push(
+          e instanceof Error
+            ? e.message
+            : `Failed to build shared AFTER for ${afterNormal}`
+        )
+        continue
+      }
+
+      for (const payout of group) {
+        const paths = payoutPackagePaths(payout)
+        zip.file(paths.eventsPath, generateBonusOnlyEventsXml(payout))
+        zip.file(paths.dropSetPath, generateDropSetXml(payout))
+        payoutsPackaged++
+      }
     }
 
     if (payoutsPackaged > 0) {
@@ -425,7 +847,7 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
       await fs.writeFile(candidateZip, buf)
     } else if (items.length) {
       warnings.push(
-        "No payout package in candidate (all disabled or DropSet conflicts)"
+        "No payout package in candidate (all disabled or package conflicts)"
       )
     }
   } catch (e) {
@@ -442,8 +864,78 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
     )
   }
   if (skippedConflicts.length) {
+    // Enabled payouts that cannot ship must fail Check/Publish — silent skip
+    // left Suginami bronze on the old Phase 13 package (CP never updated).
+    errors.push(
+      `Enabled payout(s) blocked by another live package (DropSet or event ID conflict). Retire/rename the old .zip under datastore/packages/ (or use retire packages), then Check again: ${skippedConflicts.join("; ")}`
+    )
+  }
+
+  let reportRewardsPackaged = 0
+  let customEventMessages: CustomEventMessage[] = []
+  try {
+    const globalFile = await readReportRewardGlobal()
+    const allDungeons = await readAllReportDungeons()
+    for (const d of allDungeons) {
+      if (!d.enabled) disabledReportRewards.push(d.id)
+    }
+    const choiceStore = await readChoiceMessagesStore()
+    const {
+      files: packageFiles,
+      warnings: reportWarnings,
+      choiceStore: nextChoiceStore,
+      customEventMessages: customMsgs,
+      choiceMessagesAllocated,
+    } = buildReportRewardsPackageFiles(
+      allDungeons,
+      globalFile.global,
+      choiceStore
+    )
+    warnings.push(...reportWarnings)
+    customEventMessages = customMsgs
+    if (choiceMessagesAllocated) {
+      await writeChoiceMessagesStore(nextChoiceStore)
+    }
+    const enabledCount = allDungeons.filter((d) => d.enabled).length
+    if (Object.keys(packageFiles).length) {
+      const foreign = await scanForeignPackages(packagesLive)
+      const prefix = globalFile.global.eventPrefix
+      const coreEvents = [`${prefix}_END`, `${prefix}_GREET`, `${prefix}_PROMPT`]
+      const eventHits = coreEvents.filter(
+        (id) => (foreign.events.get(id)?.length ?? 0) > 0
+      )
+      if (eventHits.length) {
+        errors.push(
+          `Report trade events already in another package: ${eventHits.join(", ")}`
+        )
+      } else {
+        const zip = new JSZip()
+        for (const [relPath, content] of Object.entries(packageFiles)) {
+          zip.file(relPath, content)
+        }
+        const buf = await zip.generateAsync({
+          type: "nodebuffer",
+          compression: "DEFLATE",
+        })
+        await fs.writeFile(candidateReportZip, buf)
+        reportRewardsPackaged = 1
+      }
+    } else if (enabledCount > 0) {
+      warnings.push(
+        "Report rewards dungeons enabled but package empty — add trade tiers and at least one trader NPC"
+      )
+    }
+  } catch (e) {
+    errors.push(
+      e instanceof Error
+        ? `Report rewards: ${e.message}`
+        : "Report rewards packaging failed"
+    )
+  }
+
+  if (disabledReportRewards.length) {
     warnings.push(
-      `Skipped conflicting payout(s): ${skippedConflicts.join("; ")}`
+      `${disabledReportRewards.length} disabled dungeon(s) skipped (enable in /admin/dungeon-loot)`
     )
   }
 
@@ -456,8 +948,15 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
     )
   }
 
-  if (shopsCopied === 0 && payoutsPackaged === 0 && willRemove.length === 0) {
-    errors.push("Nothing to publish — seed shops/payouts working copy first")
+  if (
+    shopsCopied === 0 &&
+    payoutsPackaged === 0 &&
+    reportRewardsPackaged === 0 &&
+    willRemove.length === 0
+  ) {
+    errors.push(
+      "Nothing to publish — seed shops, payouts, or report-rewards working copy first"
+    )
   }
 
   const ok = errors.length === 0
@@ -469,10 +968,13 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
     shopsRemoved: willRemove.length,
     shopsToRemove: willRemove,
     payoutsPackaged,
+    reportRewardsPackaged,
     disabledPayouts,
+    disabledReportRewards,
     skippedConflicts,
     warnings,
     errors,
+    customEventMessages,
   })
 
   return {
@@ -482,12 +984,16 @@ export async function validateLaneA(): Promise<LaneAPublishResult> {
     shopsCopied,
     shopsRemoved: willRemove.length,
     payoutsPackaged,
+    reportRewardsPackaged,
     disabledPayouts,
+    disabledReportRewards,
     skippedConflicts,
     warnings,
     errors,
+    customEventMessages,
     shopsDest: shopsLive,
     payoutsZipPath: path.join(packagesLive, LANE_A_PAYOUTS_ZIP),
+    reportRewardsZipPath: path.join(packagesLive, LANE_A_REPORT_REWARDS_ZIP),
     releasesDir,
     releasePath,
     error: ok ? undefined : errors.join("; "),
@@ -508,11 +1014,18 @@ export async function applyLaneA(
     "packages",
     LANE_A_PAYOUTS_ZIP
   )
+  const candidateReportZip = path.join(
+    releasePath,
+    "candidate",
+    "packages",
+    LANE_A_REPORT_REWARDS_ZIP
+  )
   const previousShops = path.join(releasePath, "previous", "shops")
   const previousPackages = path.join(releasePath, "previous", "packages")
   const shopsLive = path.join(runtime, "datastore", "shops")
   const packagesLive = path.join(runtime, "datastore", "packages")
   const liveZip = path.join(packagesLive, LANE_A_PAYOUTS_ZIP)
+  const liveReportZip = path.join(packagesLive, LANE_A_REPORT_REWARDS_ZIP)
 
   if (!(await pathExists(path.join(releasePath, "candidate")))) {
     return emptyResult("failed", runtime, {
@@ -558,6 +1071,12 @@ export async function applyLaneA(
     if (await pathExists(liveZip)) {
       await copyFileSafe(liveZip, path.join(previousPackages, LANE_A_PAYOUTS_ZIP))
     }
+    if (await pathExists(liveReportZip)) {
+      await copyFileSafe(
+        liveReportZip,
+        path.join(previousPackages, LANE_A_REPORT_REWARDS_ZIP)
+      )
+    }
 
     // Full mirror: copy candidate shops, delete live shops absent from candidate.
     const mirror = await mirrorShops(candidateShops, shopsLive)
@@ -569,6 +1088,12 @@ export async function applyLaneA(
       await fs.unlink(liveZip)
     }
 
+    if (await pathExists(candidateReportZip)) {
+      await copyFileSafe(candidateReportZip, liveReportZip)
+    } else if (await pathExists(liveReportZip)) {
+      await fs.unlink(liveReportZip)
+    }
+
     const shopsCopied =
       typeof manifest.shopsCopied === "number"
         ? manifest.shopsCopied
@@ -578,6 +1103,12 @@ export async function applyLaneA(
       typeof manifest.payoutsPackaged === "number"
         ? manifest.payoutsPackaged
         : (await pathExists(candidateZip))
+          ? 1
+          : 0
+    const reportRewardsPackaged =
+      typeof manifest.reportRewardsPackaged === "number"
+        ? manifest.reportRewardsPackaged
+        : (await pathExists(candidateReportZip))
           ? 1
           : 0
 
@@ -598,10 +1129,13 @@ export async function applyLaneA(
       shopsRemoved,
       shopsRemovedFiles: mirror.removed,
       payoutsPackaged,
+      reportRewardsPackaged,
       warnings,
     })
     await setLatest(releasesDir, releaseId)
     await pruneReleases(releasesDir)
+    await writePublishedPayoutsJsonDigest()
+    await writePublishedReportRewardsDigest()
 
     return {
       ok: true,
@@ -613,16 +1147,25 @@ export async function applyLaneA(
         typeof manifest.payoutsPackaged === "number"
           ? manifest.payoutsPackaged
           : payoutsPackaged,
+      reportRewardsPackaged:
+        typeof manifest.reportRewardsPackaged === "number"
+          ? manifest.reportRewardsPackaged
+          : reportRewardsPackaged,
       disabledPayouts: Array.isArray(manifest.disabledPayouts)
         ? (manifest.disabledPayouts as string[])
+        : [],
+      disabledReportRewards: Array.isArray(manifest.disabledReportRewards)
+        ? (manifest.disabledReportRewards as string[])
         : [],
       skippedConflicts: Array.isArray(manifest.skippedConflicts)
         ? (manifest.skippedConflicts as string[])
         : [],
       warnings,
       errors: [],
+      customEventMessages: parseCustomEventMessages(manifest.customEventMessages),
       shopsDest: shopsLive,
       payoutsZipPath: liveZip,
+      reportRewardsZipPath: liveReportZip,
       releasesDir,
       releasePath,
     }
@@ -667,9 +1210,16 @@ export async function rollbackLaneA(
     "packages",
     LANE_A_PAYOUTS_ZIP
   )
+  const previousReportZip = path.join(
+    releasePath,
+    "previous",
+    "packages",
+    LANE_A_REPORT_REWARDS_ZIP
+  )
   const shopsLive = path.join(runtime, "datastore", "shops")
   const packagesLive = path.join(runtime, "datastore", "packages")
   const liveZip = path.join(packagesLive, LANE_A_PAYOUTS_ZIP)
+  const liveReportZip = path.join(packagesLive, LANE_A_REPORT_REWARDS_ZIP)
 
   if (!(await pathExists(path.join(releasePath, "previous")))) {
     return emptyResult("failed", runtime, {
@@ -694,6 +1244,12 @@ export async function rollbackLaneA(
       await fs.unlink(liveZip)
     }
 
+    if (await pathExists(previousReportZip)) {
+      await copyFileSafe(previousReportZip, liveReportZip)
+    } else if (await pathExists(liveReportZip)) {
+      await fs.unlink(liveReportZip)
+    }
+
     let manifest: Record<string, unknown> = {}
     try {
       manifest = JSON.parse(
@@ -715,6 +1271,8 @@ export async function rollbackLaneA(
       shopsRemoved: mirror.removed.length,
       shopsRemovedFiles: mirror.removed,
     })
+    await clearPublishedPayoutsJsonDigest()
+    await clearPublishedReportRewardsDigest()
 
     return {
       ok: true,
@@ -723,12 +1281,15 @@ export async function rollbackLaneA(
       shopsCopied: mirror.copied,
       shopsRemoved: mirror.removed.length,
       payoutsPackaged: (await pathExists(previousZip)) ? 1 : 0,
+      reportRewardsPackaged: (await pathExists(previousReportZip)) ? 1 : 0,
       disabledPayouts: [],
+      disabledReportRewards: [],
       skippedConflicts: [],
       warnings,
       errors: [],
       shopsDest: shopsLive,
       payoutsZipPath: liveZip,
+      reportRewardsZipPath: liveReportZip,
       releasesDir,
       releasePath,
     }

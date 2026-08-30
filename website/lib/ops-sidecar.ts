@@ -49,6 +49,8 @@ export type OpsProcessMetric = {
   /** Docker state: running | exited | restarting | … */
   status?: string
   error?: string
+  /** Last CRITICAL/ERROR (or last line) from service log when offline. */
+  logSummary?: string
 }
 
 export type OpsHostMetrics = {
@@ -97,11 +99,15 @@ export type OpsLaneAPublishResult = {
   restarted?: boolean
   shopsCopied?: number
   payoutsPackaged?: number
+  reportRewardsPackaged?: number
   disabledPayouts?: string[]
+  disabledReportRewards?: string[]
   skippedConflicts?: string[]
   warnings?: string[]
   errors?: string[]
   restartError?: string
+  clientOverlayUpdated?: boolean
+  customEventMessages?: Array<{ id: number; lines: string[] }>
 }
 
 function mapOpsLaneAResult(
@@ -129,8 +135,17 @@ function mapOpsLaneAResult(
       typeof json.payoutsPackaged === "number"
         ? json.payoutsPackaged
         : undefined,
+    reportRewardsPackaged:
+      typeof json.reportRewardsPackaged === "number"
+        ? json.reportRewardsPackaged
+        : undefined,
     disabledPayouts: Array.isArray(json.disabledPayouts)
       ? json.disabledPayouts.filter((v): v is string => typeof v === "string")
+      : undefined,
+    disabledReportRewards: Array.isArray(json.disabledReportRewards)
+      ? json.disabledReportRewards.filter(
+          (v): v is string => typeof v === "string"
+        )
       : undefined,
     skippedConflicts: Array.isArray(json.skippedConflicts)
       ? json.skippedConflicts.filter((v): v is string => typeof v === "string")
@@ -143,6 +158,13 @@ function mapOpsLaneAResult(
       : undefined,
     restartError:
       typeof json.restartError === "string" ? json.restartError : undefined,
+    clientOverlayUpdated:
+      typeof json.clientOverlayUpdated === "boolean"
+        ? json.clientOverlayUpdated
+        : undefined,
+    customEventMessages: Array.isArray(json.customEventMessages)
+      ? (json.customEventMessages as Array<{ id: number; lines: string[] }>)
+      : undefined,
   }
 }
 
@@ -318,6 +340,7 @@ function parseProcessMetrics(raw: unknown): OpsProcessMetric[] {
       container: typeof o.container === "string" ? o.container : undefined,
       status: typeof o.status === "string" ? o.status : undefined,
       error: typeof o.error === "string" ? o.error : undefined,
+      logSummary: typeof o.logSummary === "string" ? o.logSummary : undefined,
     })
   }
   return out
@@ -335,6 +358,43 @@ export async function getOpsMetrics(actor?: string): Promise<OpsMetrics> {
     error: typeof json.error === "string" ? json.error : undefined,
     host: parseHostMetrics(json.host),
     processes: parseProcessMetrics(json.processes),
+  }
+}
+
+export type OpsServiceLogs = {
+  ok: boolean
+  service?: string
+  summary?: string
+  text?: string
+  lineCount?: number
+  error?: string
+  detail?: string
+  sources?: Array<{ path: string; exists: boolean; lines: number }>
+}
+
+export async function getOpsServiceLogs(
+  service: "lobby" | "world" | "channel",
+  options?: { lines?: number; actor?: string }
+): Promise<OpsServiceLogs> {
+  const lines = options?.lines ?? 100
+  const { status, json } = await opsFetch(
+    `/logs?service=${encodeURIComponent(service)}&lines=${lines}`,
+    { actor: options?.actor }
+  )
+  if (status === 401) {
+    return { ok: false, error: "unauthorized" }
+  }
+  return {
+    ok: Boolean(json.ok),
+    service: typeof json.service === "string" ? json.service : service,
+    summary: typeof json.summary === "string" ? json.summary : undefined,
+    text: typeof json.text === "string" ? json.text : undefined,
+    lineCount: typeof json.lineCount === "number" ? json.lineCount : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+    sources: Array.isArray(json.sources)
+      ? (json.sources as OpsServiceLogs["sources"])
+      : undefined,
   }
 }
 
@@ -871,4 +931,36 @@ export async function encryptWebaccessViaSidecar(
     throw new Error(`webaccess encrypt failed: ${detail}`)
   }
   return json.encryptedBase64
+}
+
+/** Merge custom CEventMessage rows into updater overlay + rehash. */
+export async function upsertCeventMessagesViaSidecar(
+  messages: Array<{ id: number; lines: string[] }>,
+  actor?: string
+): Promise<{ ok: boolean; detail?: string; updated?: number }> {
+  if (!messages.length) return { ok: true, updated: 0 }
+  const { status, json } = await opsFetch("/client/ceventmessage/upsert", {
+    method: "POST",
+    actor,
+    timeoutMs: 600_000,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages, rehash: true }),
+  })
+  if (status === 401) {
+    return { ok: false, detail: "Ops sidecar unauthorized" }
+  }
+  if (!json.ok) {
+    const detail =
+      typeof json.detail === "string"
+        ? json.detail
+        : typeof json.error === "string"
+          ? json.error
+          : `HTTP ${status}`
+    return { ok: false, detail }
+  }
+  return {
+    ok: true,
+    detail: typeof json.message === "string" ? json.message : undefined,
+    updated: typeof json.updated === "number" ? json.updated : messages.length,
+  }
 }

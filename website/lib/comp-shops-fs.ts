@@ -6,7 +6,7 @@ import {
   parseCompShopXml,
   serializeCompShop,
   type CompShop,
-} from "@/lib/comp-shop-xml"
+} from "./comp-shop-xml.ts"
 
 const MAX_TABS = 100
 
@@ -130,6 +130,28 @@ export function validateCompShop(
           path: `${base}.basePrice`,
           message: "BasePrice must be an integer ≥ 0",
         })
+      }
+      if (p.merchantDescription !== undefined) {
+        if (
+          !Number.isInteger(p.merchantDescription) ||
+          p.merchantDescription < 0 ||
+          p.merchantDescription > 255
+        ) {
+          issues.push({
+            path: `${base}.merchantDescription`,
+            message:
+              "MerchantDescription must be a u8 id (0–255), not free text — invalid values crash the channel",
+          })
+        }
+      }
+      if (p.moonRestrict !== undefined && p.moonRestrict !== "") {
+        const moon = Number.parseInt(p.moonRestrict, 0)
+        if (!Number.isFinite(moon) || moon < 0 || moon > 65535) {
+          issues.push({
+            path: `${base}.moonRestrict`,
+            message: "MoonRestrict must be a u16 (decimal or 0x… hex)",
+          })
+        }
       }
     })
   })

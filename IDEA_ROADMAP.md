@@ -226,6 +226,7 @@ Build in this order:
 - [x] COMP shop “where to get” on item pages (managed `compshop-*.xml` only).
 - [ ] Regenerate wiki data as part of the content build.
 - [ ] **Post-MVP:** item acquisition analyzer — scan drops, quests, zone loot tables, and world NPC shops to show non-COMP sources (fancy scraper / cross-file analyzer).
+- [ ] **Post-MVP:** wiki cart → mailbox buy flow — see **16J** (not 16G).
 
 ### 16C — COMP shop editor
 
@@ -483,6 +484,32 @@ where possible). Clan rename touches a unique name key.
 
 **Done when:** A player can spend CP on at least boost + appearance from the
 site without a GM, and CP balance updates correctly.
+
+### 16J — Wiki cart → mailbox delivery (post-MVP)
+
+**Not** 16G. 16G is one-shot **character services** (boost / appearance / rename).
+This is a **player web storefront**: while logged in, browse any wiki item,
+add to cart, check out, and receive the goods in the character’s **in-game
+mailbox** — so you don’t need to open COMP shop in-game.
+
+**Depends on:** account session (exists); character picker / world APIs (overlap
+16E/16G); mailbox grant path on lobby/channel (may need new API); Macca and/or
+CP debit with audit. Prefer selling items that already appear in managed COMP
+shops (16C / wiki “where to get”) so prices stay consistent — open catalog
+policy can come later.
+
+- [ ] Cart + checkout UI on wiki item pages (logged-in only) and a cart page.
+- [ ] Character select (“deliver to”) with logged-out / offline rules.
+- [ ] Price resolution from COMP shop listings (Macca / CP); reject unpriced
+  or non-sellable items unless an allowlist says otherwise.
+- [ ] Atomic debit + mailbox delivery API; idempotent orders; audit log.
+- [ ] Rate limits, stack caps, and abuse checks (no GM items / trade-locked
+  abuse without explicit policy).
+- [ ] Optional later: gift to another character, order history, restock sync
+  when admin edits shops.
+
+**Done when:** A logged-in player can buy a listed wiki item for Macca or CP and
+find it in that character’s mailbox without opening COMP in-game.
 
 ### 16F — AI player help (optional / parallel)
 

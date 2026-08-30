@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest"
 
 import {
   applyEconomyPreset,
-  ECONOMY_PRESETS,
   presetCpForPayout,
 } from "@/features/admin-payouts/cpPresets"
+import { DEFAULT_CP_PRESETS } from "@/lib/cp-presets-store"
 import type { PayoutListItem } from "@/lib/dungeon-payout-types"
 
 function item(
@@ -21,9 +21,17 @@ function item(
   }
 }
 
+const generous = {
+  ...DEFAULT_CP_PRESETS.find((p) => p.id === "generous")!,
+  sortOrder: 2,
+}
+const grindy = {
+  ...DEFAULT_CP_PRESETS.find((p) => p.id === "grindy")!,
+  sortOrder: 0,
+}
+
 describe("cpPresets", () => {
   it("maps B/S/G for generous", () => {
-    const g = ECONOMY_PRESETS.generous
     expect(
       presetCpForPayout(
         item({
@@ -32,25 +40,24 @@ describe("cpPresets", () => {
           difficulty: "bronze",
           mode: "normal",
         }),
-        g
+        generous
       )
     ).toBe(50)
     expect(
       presetCpForPayout(
         item({ id: "b", name: "B", difficulty: "silver", mode: "normal" }),
-        g
+        generous
       )
     ).toBe(120)
     expect(
       presetCpForPayout(
         item({ id: "c", name: "C", difficulty: "gold", mode: "normal" }),
-        g
+        generous
       )
     ).toBe(250)
   })
 
   it("scales bearcat and diaspora", () => {
-    const grind = ECONOMY_PRESETS.grindy
     expect(
       presetCpForPayout(
         item({
@@ -59,7 +66,7 @@ describe("cpPresets", () => {
           difficulty: "bronze",
           mode: "bearcat",
         }),
-        grind
+        grindy
       )
     ).toBe(8)
     expect(
@@ -70,7 +77,7 @@ describe("cpPresets", () => {
           difficulty: "bronze",
           mode: "diaspora",
         }),
-        grind
+        grindy
       )
     ).toBe(120)
   })
@@ -85,7 +92,7 @@ describe("cpPresets", () => {
           mode: "normal",
         }),
       ],
-      "generous"
+      generous
     )
     expect(map["suginami-bronze"]).toBe(50)
   })

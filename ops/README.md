@@ -16,8 +16,14 @@ cd deploy && docker compose up -d --build ops website
 - Service `ops` on the `smt` bridge; **not** published to the host.
 - Website uses `OPS_URL=http://ops:14710`.
 - `OPS_BACKEND=docker` + `/var/run/docker.sock` for restart / Lane C.
-- Optional: put `comp_rehash` / `comp_encrypt` in `deploy/ops-tools/` (or
-  `OPS_TOOLS_DIR`) for Lane B + Client prep.
+- Put Linux amd64 tools in `deploy/ops-tools/` (or `OPS_TOOLS_DIR`), mounted
+  at `/opt/comp-tools` (`BIN_DIR`):
+  - `comp_rehash` — Lane B overlay hashlist
+  - `comp_encrypt` / `comp_decrypt` — Shield BinaryData + Client prep
+  - `comp_bdpatch` — custom CEventMessage dialog strings (Dungeon loot NPC
+    packages). **Required in Docker** when publishing packages whose item
+    cost is not a stock label (10/50/100/…). Stock-only packages still work
+    without bdpatch.
 
 **B) Host process (local Next dev)**:
 
@@ -105,7 +111,15 @@ content upload).
 | `OPS_RUNTIME` | `comp_hack/runtime` or `deploy/data` | Datastore root |
 | `OPS_UPDATER_ROOT` / `UPDATER_ROOT` | `updater/` | Overlay dest for kind=overlay |
 | `OPS_AUDIT` | `ops/audit.log` | Append-only JSON lines |
-| `OPS_REHASH` | `comp_hack/build-current/bin/comp_rehash` | Lane B |
-| `OPS_TOOLS_DIR` | `deploy/ops-tools` | Optional mount of `comp_*` tools |
+| `OPS_REHASH` | `comp_hack/build-*/bin/comp_rehash` | Lane B |
+| `OPS_ENCRYPT` / `OPS_DECRYPT` | same bin dir | Shield encrypt/decrypt |
+| `OPS_BDPATCH` | same bin dir | `ceventmessage` load/save |
+| `OPS_TOOLS_DIR` | `deploy/ops-tools` | Mount of `comp_*` tools (`BIN_DIR`) |
+
+**Custom NPC dialog strings:** `POST /client/ceventmessage/upsert` merges
+message rows into `CEventMessageData2.sbin`, writes
+`updater/overlay/BinaryData/Shield/`, then rehashes. Lane A apply calls this
+when report-rewards packages need non-stock button labels. Players must run
+ImagineUpdate after.
 
 Admin BFF: `GET /api/admin/ops/health` (`userLevel >= 1000`).

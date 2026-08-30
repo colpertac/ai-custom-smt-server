@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  generateBonusOnlyEventsXml,
   generateDropSetXml,
   generateEventsXml,
+  generateSharedAfterEventsXml,
 } from "@/lib/dungeon-payout-generate"
 import { putPayoutSchema } from "@/lib/dungeon-payout-schema"
 import type { DungeonPayout } from "@/lib/dungeon-payout-types"
@@ -34,16 +36,46 @@ describe("dungeon payout schema", () => {
 describe("dungeon payout generate", () => {
   it("emits DropSet id and crate rates", () => {
     const xml = generateDropSetXml(payout)
-    expect(xml).toContain('<member name="ID">900003</member>')
+    expect(xml).toContain(`<member name="ID">${payout.dropSetId}</member>`)
     expect(xml).toContain('<member name="ItemType">699</member>')
     expect(xml).toContain('<member name="MutexID">1</member>')
   })
 
   it("emits CP and instance gate", () => {
     const xml = generateEventsXml(payout)
-    expect(xml).toContain('<member name="value">10</member>')
+    expect(xml).toContain(`<member name="value">${payout.cp}</member>`)
     expect(xml).toContain("<element>5401</element>")
-    expect(xml).toContain("AI_P13_5401_CLEAR_BONUS")
+    expect(xml).toContain(payout.hooks.bonusEventId)
+    expect(xml).toContain('<member name="sourceContext">ALL</member>')
+    expect(xml).toContain('<member name="stopOnFailure">false</member>')
+    const cpIdx = xml.indexOf("ActionUpdatePoints")
+    const lootIdx = xml.indexOf("ActionCreateLoot")
+    expect(cpIdx).toBeGreaterThan(-1)
+    expect(lootIdx).toBeGreaterThan(-1)
+    expect(cpIdx).toBeLessThan(lootIdx)
+  })
+
+  it("merges shared AFTER branches for a family", () => {
+    const silver: DungeonPayout = {
+      ...payout,
+      id: "suginami-silver",
+      instanceId: 5402,
+      hooks: {
+        ...payout.hooks,
+        bonusEventId: "AI_PAY_SUGINAMI_SILVER_BONUS",
+        bonusFiendEventId: "AI_PAY_SUGINAMI_SILVER_BONUS_FIEND",
+      },
+    }
+    const shared = generateSharedAfterEventsXml([payout, silver])
+    expect(shared).toContain(payout.hooks.afterNormalLootEventId)
+    expect(shared).toContain("<element>5401</element>")
+    expect(shared).toContain("<element>5402</element>")
+    expect(shared).toContain(payout.hooks.bonusEventId)
+    expect(shared).toContain("AI_PAY_SUGINAMI_SILVER_BONUS")
+    expect(shared).not.toContain("EventPerformActions")
+    const bonus = generateBonusOnlyEventsXml(payout)
+    expect(bonus).toContain("EventPerformActions")
+    expect(bonus).not.toContain(payout.hooks.afterNormalLootEventId)
   })
 
   it("emits clear items when present", () => {

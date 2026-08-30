@@ -1,3 +1,4 @@
+import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { fetcher, type ApiErrorBody } from "@/lib/fetcher"
 import { api } from "@/lib/kyClient"
 import type { ShopProductInfo } from "@/lib/shop-products"
@@ -30,22 +31,40 @@ export const fetchAdminShops = () => fetcher<ShopListItem[]>("admin/shops")
 export const fetchAdminShop = (shopId: number) =>
   fetcher<ShopDetail>(`admin/shops/${shopId}`)
 
-export const createAdminShop = (payload: { shopId: number; name: string }) =>
-  fetcher<{ shopId: number; filename: string }>("admin/shops", {
-    method: "POST",
-    json: payload,
-  })
+export const createAdminShop = async (payload: {
+  shopId: number
+  name: string
+}) => {
+  const result = await fetcher<{ shopId: number; filename: string }>(
+    "admin/shops",
+    {
+      method: "POST",
+      json: payload,
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
 
-export const saveAdminShop = (shopId: number, body: CompShop) =>
-  fetcher<{ shopId: number; filename: string }>(`admin/shops/${shopId}`, {
-    method: "PUT",
-    json: body,
-  })
+export const saveAdminShop = async (shopId: number, body: CompShop) => {
+  const result = await fetcher<{ shopId: number; filename: string }>(
+    `admin/shops/${shopId}`,
+    {
+      method: "PUT",
+      json: body,
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
 
-export const deleteAdminShop = (shopId: number) =>
-  fetcher<{ shopId: number }>(`admin/shops/${shopId}`, {
+export const deleteAdminShop = async (shopId: number) => {
+  const result = await fetcher<{ shopId: number }>(`admin/shops/${shopId}`, {
     method: "DELETE",
   })
+  notifyLaneAPendingChanged()
+  return result
+}
 
 async function downloadBlob(path: string, filename: string): Promise<void> {
   const response = await api(path)

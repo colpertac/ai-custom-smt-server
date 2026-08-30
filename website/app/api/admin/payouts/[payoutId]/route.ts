@@ -8,6 +8,10 @@ import {
   readPayout,
   writePayout,
 } from "@/lib/dungeon-payouts-fs"
+import {
+  getPayoutWireStatus,
+  isUnwiredForLive,
+} from "@/lib/payout-clear-loot-catalog"
 import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ payoutId: string }> }
@@ -68,6 +72,20 @@ export async function PUT(request: Request, { params }: Params) {
   }
   if (parsed.data.payout.id !== payoutId) {
     return apiFail("payout id mismatch with URL", 400, "VALIDATION")
+  }
+
+  if (parsed.data.payout.enabled) {
+    const wire = await getPayoutWireStatus(payoutId)
+    if (isUnwiredForLive(wire)) {
+      const detail =
+        wire?.issues?.join("; ") ||
+        "Stock dungeon clear events do not call this payout’s AFTER_* hooks yet"
+      return apiFail(
+        `Cannot enable '${payoutId}' until it is live-wired. ${detail}. Editing CP still saves; clears will not grant it.`,
+        400,
+        "PAYOUT_UNWIRED"
+      )
+    }
   }
 
   try {

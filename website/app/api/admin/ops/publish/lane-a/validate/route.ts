@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { validateOpsLaneA } from "@/lib/ops-sidecar"
+import { validateLaneAOps } from "@/lib/lane-a-ops"
 import { requireWebSession } from "@/lib/web-session"
 
 function failMessage(result: {
@@ -31,7 +31,7 @@ export async function POST() {
   }
 
   try {
-    const result = await validateOpsLaneA(session.username)
+    const result = await validateLaneAOps(session.username)
     if (!result.ok) {
       return apiFail(failMessage(result), 502, "OPS")
     }
@@ -41,6 +41,9 @@ export async function POST() {
       result.shopsCopied != null ? `${result.shopsCopied} shop(s)` : null,
       result.payoutsPackaged != null
         ? `${result.payoutsPackaged} payout(s)`
+        : null,
+      result.reportRewardsPackaged != null
+        ? `${result.reportRewardsPackaged} report-reward pack(s)`
         : null,
     ].filter(Boolean)
     return apiOk(result, parts.join(" — "))

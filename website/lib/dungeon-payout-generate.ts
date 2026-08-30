@@ -76,7 +76,7 @@ ${indent}            </pair>`
   return `
 ${indent}<element>
 ${indent}    <object name="ActionAddRemoveItems">
-${indent}        <member name="sourceContext">PARTY</member>
+${indent}        <member name="sourceContext">ALL</member>
 ${indent}        <member name="location">INSTANCE</member>
 ${indent}        <member name="notify">true</member>
 ${indent}        <member name="items">
@@ -89,6 +89,8 @@ ${indent}</element>`
 function bonusActionsXml(payout: DungeonPayout, indent: string): string {
   const spots = spotElements(payout.crateCount, payout.spotId, `${indent}                `)
   const clear = clearItemActions(payout.clearItems, indent)
+  // Dedup flag first; CP before loot (stock defeat chains often fire with no
+  // player client — PARTY CP would be skipped). CreateLoot must not abort CP.
   return `${indent}<element>
 ${indent}    <object name="ActionUpdateZoneFlags">
 ${indent}        <member name="type">ZONE_INSTANCE</member>
@@ -101,9 +103,18 @@ ${indent}        </member>
 ${indent}    </object>
 ${indent}</element>
 ${indent}<element>
+${indent}    <object name="ActionUpdatePoints">
+${indent}        <member name="sourceContext">ALL</member>
+${indent}        <member name="location">INSTANCE</member>
+${indent}        <member name="pointType">CP</member>
+${indent}        <member name="value">${payout.cp}</member>
+${indent}    </object>
+${indent}</element>
+${indent}<element>
 ${indent}    <object name="ActionCreateLoot">
 ${indent}        <member name="sourceContext">SOURCE</member>
 ${indent}        <member name="location">ZONE</member>
+${indent}        <member name="stopOnFailure">false</member>
 ${indent}        <member name="isBossBox">true</member>
 ${indent}        <member name="bossGroupID">${payout.bossGroupId}</member>
 ${indent}        <member name="dropSetIDs">
@@ -113,18 +124,20 @@ ${indent}        <member name="locations">
 ${spots}
 ${indent}        </member>
 ${indent}    </object>
-${indent}</element>
-${indent}<element>
-${indent}    <object name="ActionUpdatePoints">
-${indent}        <member name="sourceContext">PARTY</member>
-${indent}        <member name="location">INSTANCE</member>
-${indent}        <member name="pointType">CP</member>
-${indent}        <member name="value">${payout.cp}</member>
-${indent}    </object>
 ${indent}</element>${clear}`
 }
 
+function payoutInstanceIds(payout: DungeonPayout): number[] {
+  const ids = payout.instanceIds?.length
+    ? payout.instanceIds
+    : [payout.instanceId]
+  return [...new Set(ids)].sort((a, b) => a - b)
+}
+
 function branchGateXml(payout: DungeonPayout, nextId: string, indent: string): string {
+  const instanceParams = payoutInstanceIds(payout)
+    .map((id) => `${indent}                        <element>${id}</element>`)
+    .join("\n")
   return `${indent}<element>
 ${indent}    <object>
 ${indent}        <member name="next">${esc(nextId)}</member>
@@ -133,7 +146,7 @@ ${indent}            <element>
 ${indent}                <object name="EventScriptCondition">
 ${indent}                    <member name="scriptID">bool_currentInstance</member>
 ${indent}                    <member name="params">
-${indent}                        <element>${payout.instanceId}</element>
+${instanceParams}
 ${indent}                    </member>
 ${indent}                </object>
 ${indent}            </element>
@@ -154,34 +167,76 @@ ${indent}    </object>
 ${indent}</element>`
 }
 
-export function generateEventsXml(payout: DungeonPayout): string {
-  const h = payout.hooks
-  const branchNormal = branchGateXml(payout, h.bonusEventId, "            ")
-  const branchFiend = branchGateXml(payout, h.bonusFiendEventId, "            ")
-  const actions = bonusActionsXml(payout, "            ")
+/**
+ * Shared AFTER_* dispatcher for payouts that share the same stock splice IDs
+ * (e.g. Suginami bronze/silver/gold). One Event with N instance branches.
+ */
+export function generateSharedAfterEventsXml(payouts: DungeonPayout[]): string {
+  if (!payouts.length) {
+    throw new Error("generateSharedAfterEventsXml requires at least one payout")
+  }
+  const head = payouts[0]
+  const afterNormal = head.hooks.afterNormalLootEventId
+  const afterFiend = head.hooks.afterFiendLootEventId
+  const resume = head.hooks.resumeNormalNext
+  for (const p of payouts) {
+    if (p.hooks.afterNormalLootEventId !== afterNormal) {
+      throw new Error(
+        `Shared AFTER normal mismatch: ${head.id} vs ${p.id} (${afterNormal} vs ${p.hooks.afterNormalLootEventId})`
+      )
+    }
+    if (p.hooks.afterFiendLootEventId !== afterFiend) {
+      throw new Error(
+        `Shared AFTER fiend mismatch: ${head.id} vs ${p.id} (${afterFiend} vs ${p.hooks.afterFiendLootEventId})`
+      )
+    }
+    if (p.hooks.resumeNormalNext !== resume) {
+      throw new Error(
+        `Shared resume mismatch: ${head.id} vs ${p.id} (${resume} vs ${p.hooks.resumeNormalNext})`
+      )
+    }
+  }
+
+  const ids = payouts.map((p) => p.id).join(", ")
+  const branchNormal = payouts
+    .map((p) => branchGateXml(p, p.hooks.bonusEventId, "            "))
+    .join("\n")
+  const branchFiend = payouts
+    .map((p) => branchGateXml(p, p.hooks.bonusFiendEventId, "            "))
+    .join("\n")
 
   return `<objects>
     <!--
-      Generated by Phase 16D payout editor from ${esc(payout.id)}.
-      Instance ${payout.instanceId} — ${esc(payout.name)}
-      Stock loot events must next → ${esc(h.afterNormalLootEventId)} /
-      ${esc(h.afterFiendLootEventId)} (one-time datastore patch).
+      Shared clear dispatcher for: ${esc(ids)}.
+      Stock loot events must next → ${esc(afterNormal)} / ${esc(afterFiend)}.
     -->
     <object name="Event">
-        <member name="ID">${esc(h.afterNormalLootEventId)}</member>
-        <member name="next">${esc(h.resumeNormalNext)}</member>
+        <member name="ID">${esc(afterNormal)}</member>
+        <member name="next">${esc(resume)}</member>
         <member name="branches">
 ${branchNormal}
         </member>
     </object>
 
     <object name="Event">
-        <member name="ID">${esc(h.afterFiendLootEventId)}</member>
+        <member name="ID">${esc(afterFiend)}</member>
         <member name="branches">
 ${branchFiend}
         </member>
     </object>
+</objects>
+`
+}
 
+/** Per-payout CLEAR_BONUS / CLEAR_BONUS_FIEND only (AFTER lives in shared file). */
+export function generateBonusOnlyEventsXml(payout: DungeonPayout): string {
+  const h = payout.hooks
+  const actions = bonusActionsXml(payout, "            ")
+  return `<objects>
+    <!--
+      Bonus actions for ${esc(payout.id)} (instance ${payout.instanceId}).
+      Reached via shared AFTER dispatcher → ${esc(h.bonusEventId)}.
+    -->
     <object name="EventPerformActions">
         <member name="ID">${esc(h.bonusEventId)}</member>
         <member name="next">${esc(h.resumeNormalNext)}</member>
@@ -200,6 +255,25 @@ ${actions}
 `
 }
 
+/** Full single-payout package (solo export / single-member family). */
+export function generateEventsXml(payout: DungeonPayout): string {
+  const shared = generateSharedAfterEventsXml([payout])
+  const bonus = generateBonusOnlyEventsXml(payout)
+  // Merge <objects>…</objects> bodies
+  const sharedBody = shared
+    .replace(/^<objects>\s*/i, "")
+    .replace(/\s*<\/objects>\s*$/i, "")
+  const bonusBody = bonus
+    .replace(/^<objects>\s*/i, "")
+    .replace(/\s*<\/objects>\s*$/i, "")
+  return `<objects>
+${sharedBody}
+
+${bonusBody}
+</objects>
+`
+}
+
 export function payoutPackagePaths(payout: DungeonPayout): {
   eventsPath: string
   dropSetPath: string
@@ -208,4 +282,14 @@ export function payoutPackagePaths(payout: DungeonPayout): {
     eventsPath: `events/ai_custom_payout_${payout.id}.xml`,
     dropSetPath: `data/dropset/ai_custom_payout_${payout.id}.xml`,
   }
+}
+
+/** Stable zip path for a shared AFTER dispatcher group. */
+export function sharedAfterPackagePath(afterNormalLootEventId: string): string {
+  const slug = afterNormalLootEventId
+    .replace(/^AI_PAY_/i, "")
+    .replace(/_AFTER_NORMAL$/i, "")
+    .replace(/[^a-zA-Z0-9_-]+/g, "_")
+    .toLowerCase()
+  return `events/ai_custom_payout_dispatch_${slug || "shared"}.xml`
 }

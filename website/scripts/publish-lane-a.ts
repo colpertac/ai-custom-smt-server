@@ -5,12 +5,15 @@
  *   pnpm run publish-lane-a -- --validate --json
  *   pnpm run publish-lane-a -- --apply <releaseId> --json
  *   pnpm run publish-lane-a -- --rollback [--release <id>] --json
+ *   pnpm run publish-lane-a -- --retire-conflicts --json
  *
  * Env: OPS_RUNTIME, OPS_RELEASES_DIR, COMP_SHOPS_DIR, COMP_PAYOUTS_DIR
  */
 import {
   applyLaneA,
+  listPayoutLiveConflicts,
   publishLaneA,
+  retirePackagesBlockingLaneA,
   rollbackLaneA,
   validateLaneA,
 } from "../lib/lane-a-publish.ts"
@@ -20,6 +23,7 @@ const json = args.includes("--json")
 const validateOnly = args.includes("--validate")
 const applyIdx = args.indexOf("--apply")
 const rollback = args.includes("--rollback")
+const retireConflicts = args.includes("--retire-conflicts")
 const releaseFlag = args.indexOf("--release")
 
 function printResult(result: {
@@ -28,11 +32,13 @@ function printResult(result: {
   releaseId?: string
   shopsCopied: number
   payoutsPackaged: number
+  reportRewardsPackaged: number
   warnings: string[]
   errors?: string[]
   error?: string
   shopsDest: string
   payoutsZipPath: string
+  reportRewardsZipPath: string
 }) {
   if (json) {
     console.log(JSON.stringify(result))
@@ -45,11 +51,35 @@ function printResult(result: {
     return
   }
   console.log(
-    `Lane A ${result.phase}${result.releaseId ? ` [${result.releaseId}]` : ""}: ${result.shopsCopied} shop(s), ${result.payoutsPackaged} payout(s)`
+    `Lane A ${result.phase}${result.releaseId ? ` [${result.releaseId}]` : ""}: ${result.shopsCopied} shop(s), ${result.payoutsPackaged} payout(s), ${result.reportRewardsPackaged} report-reward pack(s)`
   )
   console.log(`shops → ${result.shopsDest}`)
   console.log(`payouts → ${result.payoutsZipPath}`)
+  console.log(`report rewards → ${result.reportRewardsZipPath}`)
   for (const w of result.warnings) console.log(`warn: ${w}`)
+}
+
+if (retireConflicts) {
+  const retired = await retirePackagesBlockingLaneA()
+  const remaining = await listPayoutLiveConflicts()
+  if (json) {
+    console.log(JSON.stringify({ ...retired, remaining }))
+  } else {
+    console.log(
+      retired.retired.length
+        ? `Retired: ${retired.retired.join(", ")}`
+        : "No packages retired"
+    )
+    if (retired.skipped.length) {
+      console.error(`Skipped: ${retired.skipped.join(", ")}`)
+    }
+    if (remaining.length) {
+      console.error(
+        `Still conflicting: ${remaining.map((c) => c.payoutId).join(", ")}`
+      )
+    }
+  }
+  process.exit(retired.skipped.length || remaining.length ? 1 : 0)
 }
 
 let result

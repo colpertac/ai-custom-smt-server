@@ -13,7 +13,7 @@ export function FormAlert({
   role?: "alert" | "status"
 }) {
   return (
-    <p
+    <div
       role={role ?? (variant === "error" || variant === "warning" ? "alert" : "status")}
       className={cn(
         "border px-3 py-2 text-sm font-medium leading-snug",
@@ -22,12 +22,12 @@ export function FormAlert({
         variant === "success" &&
           "border-gold-dim/70 bg-primary/15 text-gold-hot",
         variant === "warning" &&
-          "border-[#c9a227]/80 bg-[#3a2e10] text-[#ffe9a8]",
+          "border-orange-500/70 bg-orange-950/40 text-orange-100",
         className
       )}
     >
       {children}
-    </p>
+    </div>
   )
 }
 

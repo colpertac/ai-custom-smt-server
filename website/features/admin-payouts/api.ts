@@ -1,38 +1,65 @@
+import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { fetcher, type ApiErrorBody } from "@/lib/fetcher"
 import { api } from "@/lib/kyClient"
+import type { PayoutLiveConflict } from "@/lib/lane-a-publish"
 import type {
   DungeonPayoutFile,
   PayoutListItem,
 } from "@/lib/dungeon-payout-types"
 
-export type { PayoutListItem }
+export type { PayoutListItem, PayoutLiveConflict }
 
 export const fetchAdminPayouts = () =>
   fetcher<PayoutListItem[]>("admin/payouts")
 
+export const fetchAdminPayoutConflicts = () =>
+  fetcher<{ conflicts: PayoutLiveConflict[] }>("admin/payouts/conflicts")
+
+export const retireAdminPayoutConflictPackages = () =>
+  fetcher<{
+    retired: string[]
+    skipped: string[]
+    conflicts: PayoutLiveConflict[]
+  }>("admin/payouts/conflicts", { method: "POST" })
+
 export const fetchAdminPayout = (id: string) =>
   fetcher<DungeonPayoutFile>(`admin/payouts/${encodeURIComponent(id)}`)
 
-export const createAdminPayout = (payload: {
+export const createAdminPayout = async (payload: {
   id: string
   name: string
   instanceId: number
-}) =>
-  fetcher<{ id: string }>("admin/payouts", {
+}) => {
+  const result = await fetcher<{ id: string }>("admin/payouts", {
     method: "POST",
     json: payload,
   })
+  notifyLaneAPendingChanged()
+  return result
+}
 
-export const saveAdminPayout = (id: string, body: DungeonPayoutFile) =>
-  fetcher<{ id: string }>(`admin/payouts/${encodeURIComponent(id)}`, {
-    method: "PUT",
-    json: body,
-  })
+export const saveAdminPayout = async (id: string, body: DungeonPayoutFile) => {
+  const result = await fetcher<{ id: string }>(
+    `admin/payouts/${encodeURIComponent(id)}`,
+    {
+      method: "PUT",
+      json: body,
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
 
-export const deleteAdminPayout = (id: string) =>
-  fetcher<{ id: string }>(`admin/payouts/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-  })
+export const deleteAdminPayout = async (id: string) => {
+  const result = await fetcher<{ id: string }>(
+    `admin/payouts/${encodeURIComponent(id)}`,
+    {
+      method: "DELETE",
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
 
 async function downloadBlob(path: string, filename: string): Promise<void> {
   const response = await api(path)

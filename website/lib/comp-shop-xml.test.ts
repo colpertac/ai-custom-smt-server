@@ -32,7 +32,7 @@ describe("comp-shop-xml round-trip", () => {
     expect(a.tabs[0].products[0]).toMatchObject({
       productId: 12063,
       basePrice: 3,
-      merchantDescription: "31",
+      merchantDescription: 31,
     })
 
     const again = parseCompShopXml(serializeCompShop(a), a.filename)

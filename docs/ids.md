@@ -36,13 +36,15 @@ collision-checked against local `ItemData`/`CItemData` before allocation.
 | Item | 900003 | Compressed Magical Golden Apple | deferred | Definitions kept; apple `CurrencyCompressor` disabled until Phase 10/17A |
 | Drop set | 900002 | Golden Apple decompress | allocated | GiftDropSet: 50000× Magical Golden Apple `21941` |
 | Skill | 900001 | Golden Apple decompress | allocated | function 320; GiftBoxID `900002`; cost item `900003` |
-| Drop set | 900003 | Phase 13 clear crate | allocated | Weighted Macca Note + exclusive Token/item; package `zzz_ai_custom_phase13.zip` |
+| Drop set | 900003 | Phase 13 clear crate | allocated | Weighted Macca Note + exclusive Token/item; package `zzz_ai_custom_phase13.zip` (legacy live until Lane A owns Suginami) |
 | Boss group | 900013 | Phase 13 Suginami bonus crates | allocated | Bronze `@instance 5401` clear bonus; also ZONE_INSTANCE flag key for payout dedup |
+| Drop set | 901100 | Suginami bronze (admin) | allocated | `suginami-bronze` Lane A DropSet; use after retiring Phase 13 package ownership |
 | Drop set | 901101–901199 | Phase 16D payout stubs | reserved | `scripts/payout-seed-catalog.sh`; one DropSet per catalog stub |
 | Boss group / instance flag | 901201–901299 | Phase 16D payout stubs | reserved | Same script; dedup flag == bossGroupID per stub |
 | CurrencyCompressor | 1 | Macca | allocated | Stock: `799` → `699` @ 50000 (`data/compressors/00_stock.xml`) |
 | CurrencyCompressor | 2 | Mag | allocated | Stock: `800` → `27375` @ 50000 |
 | CurrencyCompressor | 900001 | Magical Golden Apple | deferred | Was `21941` → `900003` @ 50000; disabled in phase6 package |
+| CEventMessage | 9180000–9180999 | Report-trade custom package labels | reserved | One ID per item cost; mapped in `server-content/report-rewards/choice-messages.json`; patched into client `CEventMessageData2` via ops upsert + ImagineUpdate. Stock costs keep jackfrost IDs (130711–130718, 2000203). |
 
 ## Known existing IDs
 

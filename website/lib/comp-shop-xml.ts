@@ -43,7 +43,9 @@ export type ShopPassthroughMember = {
 export type CompShopProduct = {
   productId: number
   basePrice: number
-  merchantDescription?: string
+  /** u8 string-table id (not free text). */
+  merchantDescription?: number
+  /** Often hex like 0x8002 — keep raw string. */
   moonRestrict?: string
   passthrough: ShopPassthroughMember[]
 }
@@ -140,7 +142,7 @@ function parseProduct(obj: XmlElement): CompShopProduct {
   const members = directMembers(obj)
   let productId = 0
   let basePrice = 0
-  let merchantDescription: string | undefined
+  let merchantDescription: number | undefined
   let moonRestrict: string | undefined
 
   for (const m of members) {
@@ -148,8 +150,10 @@ function parseProduct(obj: XmlElement): CompShopProduct {
     const raw = textContent(m).trim()
     if (name === "ProductID") productId = Number.parseInt(raw, 10) || 0
     else if (name === "BasePrice") basePrice = Number.parseInt(raw, 10) || 0
-    else if (name === "MerchantDescription") merchantDescription = raw
-    else if (name === "MoonRestrict") moonRestrict = raw
+    else if (name === "MerchantDescription") {
+      const n = Number.parseInt(raw, 10)
+      if (Number.isFinite(n)) merchantDescription = n
+    } else if (name === "MoonRestrict") moonRestrict = raw
   }
 
   return {
@@ -276,10 +280,10 @@ function writeProduct(lines: string[], level: number, product: CompShopProduct) 
   )
   if (
     product.merchantDescription !== undefined &&
-    product.merchantDescription !== ""
+    Number.isFinite(product.merchantDescription)
   ) {
     lines.push(
-      `${indent(level + 2)}<member name="MerchantDescription">${escapeXmlText(product.merchantDescription)}</member>`
+      `${indent(level + 2)}<member name="MerchantDescription">${Math.trunc(product.merchantDescription)}</member>`
     )
   }
   lines.push(

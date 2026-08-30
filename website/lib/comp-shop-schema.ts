@@ -9,7 +9,7 @@ const passthroughSchema = z.object({
 const productSchema = z.object({
   productId: z.number().int().positive(),
   basePrice: z.number().int().min(0),
-  merchantDescription: z.string().optional(),
+  merchantDescription: z.number().int().min(0).max(255).optional(),
   moonRestrict: z.string().optional(),
   passthrough: z.array(passthroughSchema).default([]),
 })
