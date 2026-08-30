@@ -65,6 +65,9 @@ Require `user_level >= 1000` (plus per-route level constants).
 | `/api/admin/delete_account` | Delete by `username` |
 | `/api/admin/online` | Aggregate online counts (`total`, per-world `character_count`); optional `targets` for account/character lookup |
 | `/api/admin/message_world` | World-wide ticker (`type: "ticker"`, `mode` 0–4 like `@announce`) or console chat (`type: "console"`). Requires `world_id` + `message`. Wired in website Admin overview → Announce. |
+| `/api/admin/get_promos` | List promos (`code`, `startTime`, `endTime`, `useLimit`, `limitType`, `items` as shop product IDs). Wired in website Admin → Promos. |
+| `/api/admin/create_promo` | Create promo: `code` (exactly 16 letters A–Z; client Promotion Code field), `startTime`, `endTime`, `useLimit` (0–255; 0 = unlimited), `limitType` (`account`\|`character`\|`world`), `items` (non-empty shop product IDs). |
+| `/api/admin/delete_promo` | Delete all promos with `code`. |
 | `/api/admin/kick_player`, … | Other tools (not wired in website yet) |
 
 Updating/deleting the session’s own account clears the COMP API session.

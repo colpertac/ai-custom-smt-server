@@ -273,6 +273,94 @@ export async function adminMessageWorld(
   return { error: String(data.error ?? "Unknown error") }
 }
 
+export type PromoLimitType = "character" | "world" | "account"
+
+export type AdminPromo = {
+  code: string
+  startTime: number
+  endTime: number
+  useLimit: number
+  limitType: PromoLimitType
+  items: number[]
+}
+
+function parsePromoLimitType(raw: unknown): PromoLimitType {
+  const s = String(raw ?? "")
+  if (s === "character" || s === "world" || s === "account") return s
+  return "account"
+}
+
+/** Lobby `/admin/get_promos` — happy path returns `promos` (no `error: Success`). */
+export async function adminGetPromos(
+  auth: CompAuthState
+): Promise<AdminPromo[]> {
+  const data = await authenticatedRequest(auth, "/admin/get_promos")
+  if (data.error && data.error !== "Success") {
+    throw new CompApiError(String(data.error), 502, data)
+  }
+  const raw = Array.isArray(data.promos) ? data.promos : []
+  const promos: AdminPromo[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as JsonObject
+    const itemsRaw = Array.isArray(o.items) ? o.items : []
+    promos.push({
+      code: String(o.code ?? ""),
+      startTime: Number(o.startTime ?? 0),
+      endTime: Number(o.endTime ?? 0),
+      useLimit: Number(o.useLimit ?? 0),
+      limitType: parsePromoLimitType(o.limitType),
+      items: itemsRaw.map((id) => Number(id)).filter((n) => Number.isFinite(n)),
+    })
+  }
+  return promos
+}
+
+export function isCreatePromoSuccess(error: string): boolean {
+  return (
+    error === "Success" ||
+    error.startsWith("Promotion with that code already exists")
+  )
+}
+
+export function isDeletePromoSuccess(error: string): boolean {
+  return /^Deleted \d+ promotions\.$/.test(error)
+}
+
+/** Lobby `/admin/create_promo`. */
+export async function adminCreatePromo(
+  auth: CompAuthState,
+  payload: {
+    code: string
+    startTime: number
+    endTime: number
+    useLimit: number
+    limitType: PromoLimitType
+    items: number[]
+  }
+): Promise<{ error: string }> {
+  const data = await authenticatedRequest(auth, "/admin/create_promo", {
+    code: payload.code,
+    startTime: payload.startTime,
+    endTime: payload.endTime,
+    useLimit: payload.useLimit,
+    limitType: payload.limitType,
+    items: payload.items,
+  })
+  return { error: String(data.error ?? "Unknown error") }
+}
+
+/** Lobby `/admin/delete_promo` — deletes all promos with that code. */
+export async function adminDeletePromo(
+  auth: CompAuthState,
+  code: string
+): Promise<{ error: string }> {
+  const data = await authenticatedRequest(auth, "/admin/delete_promo", {
+    code,
+  })
+  return { error: String(data.error ?? "Unknown error") }
+}
+
 export async function adminUpdateAccount(
   auth: CompAuthState,
   payload: {
