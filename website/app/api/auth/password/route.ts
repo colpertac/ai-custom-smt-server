@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         return apiFail(result.error, 400, "PASSWORD")
       }
       await clearSession()
-      return apiOk(null, "Password changed")
+      return apiOk(null, "Password changed — sign in again")
     })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {

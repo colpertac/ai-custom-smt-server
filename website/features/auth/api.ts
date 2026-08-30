@@ -24,6 +24,12 @@ export const fetchSessionUser = (fresh = false) =>
 export const changePassword = (payload: ChangePasswordInput) =>
   fetcher<null>("auth/password", { method: "POST", json: payload })
 
+export const skipForcedPasswordChange = () =>
+  fetcher<{ mustChangePassword: boolean }>("auth/password/skip", {
+    method: "POST",
+    json: {},
+  })
+
 export const changeDisplayName = (payload: {
   dispName: string
 }) =>

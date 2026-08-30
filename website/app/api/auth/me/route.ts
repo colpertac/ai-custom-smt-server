@@ -19,6 +19,7 @@ function sessionFromCookie() {
       username: session.username,
       dispName: session.dispName ?? session.username,
       userLevel: session.userLevel ?? 0,
+      mustChangePassword: Boolean(session.mustChangePassword),
     }
   })
 }
@@ -48,6 +49,7 @@ export async function GET(request: Request) {
         lastLogin: details.lastLogin,
         banReason: details.banReason,
         banInitiator: details.banInitiator,
+        mustChangePassword: Boolean(session.mustChangePassword),
       })
     })
   } catch (error) {

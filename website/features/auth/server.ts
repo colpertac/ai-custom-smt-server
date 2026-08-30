@@ -11,6 +11,7 @@ export async function getServerUser(): Promise<SessionUser | null> {
     username: session.username,
     dispName: session.dispName,
     userLevel: session.userLevel,
+    mustChangePassword: Boolean(session.mustChangePassword),
   }
 }
 
@@ -27,5 +28,6 @@ export async function redirectIfLoggedIn(to = "/account"): Promise<void> {
 export async function requireAdmin(): Promise<SessionUser> {
   const user = await requireAuth()
   if (!isAdminLevel(user.userLevel)) redirect("/account")
+  if (user.mustChangePassword) redirect("/account")
   return user
 }

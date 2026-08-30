@@ -5,9 +5,11 @@ import {
 } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
+import { isDefaultAdminCredentials, SKIP_DEFAULT_ADMIN_PASSWORD_PROMPT_KEY } from "@/lib/default-admin"
 import { loginSchema } from "@/features/auth/schemas/login.schema"
 import { classifyLoginError } from "@/lib/login-errors"
 import { sealSession } from "@/lib/session"
+import { getSiteSetting } from "@/lib/site-settings-store"
 
 export async function POST(request: Request) {
   const blocked = await guardApiMutation("login", 10, 60_000)
@@ -33,11 +35,15 @@ export async function POST(request: Request) {
     const auth = await authenticate(parsed.data.username, parsed.data.password)
     const detailsRaw = await authenticatedRequest(auth, "/account/get_details")
     const details = parseAccountDetails(detailsRaw)
+    const mustChangePassword =
+      isDefaultAdminCredentials(parsed.data.username, parsed.data.password) &&
+      getSiteSetting(SKIP_DEFAULT_ADMIN_PASSWORD_PROMPT_KEY) !== "1"
 
     await sealSession({
       ...auth,
       dispName: details.dispName,
       userLevel: details.userLevel,
+      mustChangePassword,
     })
 
     return apiOk({
@@ -46,6 +52,7 @@ export async function POST(request: Request) {
       userLevel: details.userLevel,
       email: details.email,
       cp: details.cp,
+      mustChangePassword,
     })
   } catch (error) {
     const fail = classifyLoginError(error)

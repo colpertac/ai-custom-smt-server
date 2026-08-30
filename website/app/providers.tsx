@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { ConfirmProvider } from "@/components/confirm-dialog"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ForcePasswordChangeDialog } from "@/features/auth/components/ForcePasswordChangeDialog"
 import type { SessionUser } from "@/features/auth/types/session"
 import { queryClient } from "@/lib/queryClient"
 
@@ -27,6 +28,7 @@ export function Providers({
       <ThemeProvider>
         <ConfirmProvider>
           {children}
+          <ForcePasswordChangeDialog />
           <ReactQueryDevtools initialIsOpen={false} />
         </ConfirmProvider>
       </ThemeProvider>

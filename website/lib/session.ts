@@ -14,6 +14,8 @@ export type WebSession = CompAuthState & {
   /** Cached display fields from last successful get_details. */
   dispName?: string
   userLevel?: number
+  /** Logged in with default admin password — force change. */
+  mustChangePassword?: boolean
 }
 
 /** A256GCM requires a 32-byte key; derive from the configured secret. */
@@ -65,6 +67,7 @@ export async function readSession(): Promise<WebSession | null> {
         typeof payload.dispName === "string" ? payload.dispName : undefined,
       userLevel:
         typeof payload.userLevel === "number" ? payload.userLevel : undefined,
+      mustChangePassword: Boolean(payload.mustChangePassword),
     }
   } catch {
     return null

@@ -10,4 +10,6 @@ export type SessionUser = {
   lastLogin?: number
   banReason?: string
   banInitiator?: string
+  /** True when logged in with default admin/admin123 — must change before continuing. */
+  mustChangePassword?: boolean
 }

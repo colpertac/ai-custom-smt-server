@@ -12,6 +12,7 @@ import {
   logout,
   register,
   resetPasswordWithToken,
+  skipForcedPasswordChange,
 } from "@/features/auth/api"
 import type { ChangeDisplayNameInput } from "@/features/auth/schemas/changeDisplayName.schema"
 import type { ChangeEmailInput } from "@/features/auth/schemas/changeEmail.schema"
@@ -76,6 +77,19 @@ export function useChangePassword() {
     onSuccess: () => {
       queryClient.setQueryData(["session"], null)
       queryClient.setQueryData(["session", "fresh"], null)
+    },
+  })
+}
+
+export function useSkipForcedPasswordChange() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: skipForcedPasswordChange,
+    onSuccess: () => {
+      queryClient.setQueryData(["session"], (prev: SessionUser | null) =>
+        prev ? { ...prev, mustChangePassword: false } : prev
+      )
+      void queryClient.invalidateQueries({ queryKey: ["session"] })
     },
   })
 }

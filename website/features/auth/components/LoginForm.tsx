@@ -26,7 +26,11 @@ export function LoginForm() {
 
   function onSubmit(data: LoginInput) {
     loginMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (user) => {
+        if (user.mustChangePassword) {
+          router.refresh()
+          return
+        }
         router.push("/account")
         router.refresh()
       },
