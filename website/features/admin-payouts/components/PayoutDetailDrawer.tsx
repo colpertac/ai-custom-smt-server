@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Plus, Trash2 } from "lucide-react"
 
 import { downloadAdminPayoutZip } from "@/features/admin-payouts/api"
+import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -42,6 +43,7 @@ export function PayoutDetailDrawer({
   onDelete,
   onClearSelection,
 }: Props) {
+  const confirm = useConfirm()
   const [exportPending, setExportPending] = useState(false)
   const [exportError, setExportError] = useState<string | null>(null)
 
@@ -69,9 +71,12 @@ export function PayoutDetailDrawer({
   async function onDownloadZip() {
     setExportError(null)
     if (isDirty) {
-      const ok = window.confirm(
-        "This payout has unsaved changes. Save them, then export the working copy?"
-      )
+      const ok = await confirm({
+        title: "Save before export?",
+        description:
+          "This payout has unsaved changes. Save them, then export the working copy?",
+        confirmLabel: "Save and export",
+      })
       if (!ok) return
       try {
         await onSave()

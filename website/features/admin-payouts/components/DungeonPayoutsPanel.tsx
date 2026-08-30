@@ -26,6 +26,7 @@ import {
   useSaveAdminPayout,
   useSaveAllAdminPayouts,
 } from "@/features/admin-payouts/hooks"
+import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -81,6 +82,7 @@ function isCpDirty(
 }
 
 export function DungeonPayoutsPanel() {
+  const confirm = useConfirm()
   const { data: list, isLoading, isError, error } = useAdminPayouts()
   const createMutation = useCreateAdminPayout()
   const saveMutation = useSaveAdminPayout()
@@ -132,15 +134,28 @@ export function DungeonPayoutsPanel() {
     return () => window.removeEventListener("beforeunload", onBeforeUnload)
   }, [])
 
-  const confirmDiscard = useCallback(() => {
+  const confirmDiscard = useCallback(async () => {
     if (!dirtyRef.current) return true
-    return window.confirm(UNSAVED_MSG)
-  }, [])
+    return confirm({
+      title: "Discard unsaved changes?",
+      description: UNSAVED_MSG,
+      confirmLabel: "Discard",
+      variant: "destructive",
+    })
+  }, [confirm])
 
   const openPayout = useCallback(
     async (id: string) => {
       if (id === selectedId) return
-      if (dirtyDrawer && !window.confirm(UNSAVED_MSG)) return
+      if (dirtyDrawer) {
+        const ok = await confirm({
+          title: "Discard unsaved changes?",
+          description: UNSAVED_MSG,
+          confirmLabel: "Discard",
+          variant: "destructive",
+        })
+        if (!ok) return
+      }
       setSelectedId(id)
       saveMutation.reset()
       try {
@@ -162,7 +177,7 @@ export function DungeonPayoutsPanel() {
         )
       }
     },
-    [selectedId, dirtyDrawer, cpOverrides, saveMutation]
+    [selectedId, dirtyDrawer, cpOverrides, saveMutation, confirm]
   )
 
   const filteredList = useMemo(() => {
@@ -198,28 +213,30 @@ export function DungeonPayoutsPanel() {
   }
 
   const applyPreset = (presetId: EconomyPresetId) => {
-    const rows = list ?? []
-    if (!rows.length) return
-    const preset = ECONOMY_PRESETS[presetId]
-    if (
-      !window.confirm(
-        `Apply “${preset.label}” CP preset to all ${rows.length} payouts?\n\n` +
+    void (async () => {
+      const rows = list ?? []
+      if (!rows.length) return
+      const preset = ECONOMY_PRESETS[presetId]
+      const ok = await confirm({
+        title: `Apply “${preset.label}” preset?`,
+        description:
+          `Apply to all ${rows.length} payouts.\n\n` +
           `Bronze ${preset.bronze} · Silver ${preset.silver} · Gold ${preset.gold}` +
           ` (bearcat ×${preset.bearcatMult}, diaspora ${preset.diaspora}).\n\n` +
-          `Changes stay unsaved until you hit Save all dirty.`
-      )
-    ) {
-      return
-    }
-    const next = applyEconomyPreset(rows, presetId)
-    setCpOverrides(next)
-    setBatchOk(false)
-    if (draft && next[draft.payout.id] != null) {
-      setDraft({
-        ...draft,
-        payout: { ...draft.payout, cp: next[draft.payout.id] },
+          `Changes stay unsaved until you hit Save all dirty.`,
+        confirmLabel: "Apply preset",
       })
-    }
+      if (!ok) return
+      const next = applyEconomyPreset(rows, presetId)
+      setCpOverrides(next)
+      setBatchOk(false)
+      if (draft && next[draft.payout.id] != null) {
+        setDraft({
+          ...draft,
+          payout: { ...draft.payout, cp: next[draft.payout.id] },
+        })
+      }
+    })()
   }
 
   const saveAllDirty = async () => {
@@ -337,9 +354,13 @@ export function DungeonPayoutsPanel() {
             onClick={() => {
               void (async () => {
                 if (anyDirty) {
-                  const ok = window.confirm(
-                    "You have unsaved sheet changes. Export will use the last saved working copy only. Continue?"
-                  )
+                  const ok = await confirm({
+                    title: "Export without saving?",
+                    description:
+                      "You have unsaved sheet changes. Export will use the last saved working copy only. Continue?",
+                    confirmLabel: "Export anyway",
+                    variant: "destructive",
+                  })
                   if (!ok) return
                 }
                 setExportAllPending(true)
@@ -433,22 +454,24 @@ export function DungeonPayoutsPanel() {
               size="sm"
               disabled={createMutation.isPending}
               onClick={() => {
-                if (!confirmDiscard()) return
-                const id = newId.trim()
-                const name = newName.trim()
-                const instanceId = Number.parseInt(newInstanceId, 10)
-                if (!id || !name || !Number.isInteger(instanceId)) return
-                createMutation.mutate(
-                  { id, name, instanceId },
-                  {
-                    onSuccess: (data) => {
-                      setShowCreate(false)
-                      setNewId("")
-                      setNewName("")
-                      void openPayout(data.id)
-                    },
-                  }
-                )
+                void (async () => {
+                  if (!(await confirmDiscard())) return
+                  const id = newId.trim()
+                  const name = newName.trim()
+                  const instanceId = Number.parseInt(newInstanceId, 10)
+                  if (!id || !name || !Number.isInteger(instanceId)) return
+                  createMutation.mutate(
+                    { id, name, instanceId },
+                    {
+                      onSuccess: (data) => {
+                        setShowCreate(false)
+                        setNewId("")
+                        setNewName("")
+                        void openPayout(data.id)
+                      },
+                    }
+                  )
+                })()
               }}
             >
               Create
@@ -561,31 +584,43 @@ export function DungeonPayoutsPanel() {
           }}
           onDelete={() => {
             if (!draft) return
-            if (
-              !window.confirm(
-                `Delete working-copy payout ${draft.payout.id}?`
-              )
-            ) {
-              return
-            }
-            deleteMutation.mutate(draft.payout.id, {
-              onSuccess: () => {
-                setSelectedId(null)
-                setDraft(null)
-                setBaseline(null)
-                setCpOverrides((prev) => {
-                  const next = { ...prev }
-                  delete next[draft.payout.id]
-                  return next
-                })
-              },
-            })
+            void (async () => {
+              const ok = await confirm({
+                title: "Delete this payout?",
+                description: `Working-copy payout ${draft.payout.id} will be removed.`,
+                confirmLabel: "Delete",
+                variant: "destructive",
+              })
+              if (!ok) return
+              deleteMutation.mutate(draft.payout.id, {
+                onSuccess: () => {
+                  setSelectedId(null)
+                  setDraft(null)
+                  setBaseline(null)
+                  setCpOverrides((prev) => {
+                    const next = { ...prev }
+                    delete next[draft.payout.id]
+                    return next
+                  })
+                },
+              })
+            })()
           }}
           onClearSelection={() => {
-            if (dirtyDrawer && !window.confirm(UNSAVED_MSG)) return
-            setSelectedId(null)
-            setDraft(null)
-            setBaseline(null)
+            void (async () => {
+              if (dirtyDrawer) {
+                const ok = await confirm({
+                  title: "Discard unsaved changes?",
+                  description: UNSAVED_MSG,
+                  confirmLabel: "Discard",
+                  variant: "destructive",
+                })
+                if (!ok) return
+              }
+              setSelectedId(null)
+              setDraft(null)
+              setBaseline(null)
+            })()
           }}
         />
       </div>

@@ -12,6 +12,7 @@ import {
   useDeleteAdminAccount,
   useUpdateAdminAccount,
 } from "@/features/admin/hooks"
+import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -49,6 +50,7 @@ function toForm(a: AdminAccount): EditForm {
 }
 
 export function AdminAccountsPanel() {
+  const confirm = useConfirm()
   const { data, isLoading, isError, error } = useAdminAccounts()
   const updateMutation = useUpdateAdminAccount()
   const deleteMutation = useDeleteAdminAccount()
@@ -154,15 +156,18 @@ export function AdminAccountsPanel() {
                 updateMutation.mutate({ username: current.username, payload })
               }
               onDelete={() => {
-                if (
-                  confirm(
-                    `Delete account ${current.username}? This cannot be undone.`
-                  )
-                ) {
+                void (async () => {
+                  const ok = await confirm({
+                    title: "Delete this account?",
+                    description: `Account ${current.username} will be removed permanently. This cannot be undone.`,
+                    confirmLabel: "Delete",
+                    variant: "destructive",
+                  })
+                  if (!ok) return
                   deleteMutation.mutate(current.username, {
                     onSuccess: () => setSelected(null),
                   })
-                }
+                })()
               }}
             />
           ) : (

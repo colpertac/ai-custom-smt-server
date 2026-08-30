@@ -1,13 +1,15 @@
 import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
-import { newsPosts } from "@/content/news"
+import { listPublishedNews } from "@/lib/news-store"
 import { cn } from "@/lib/utils"
 import { readSession } from "@/lib/session"
 
+export const dynamic = "force-dynamic"
+
 export default async function HomePage() {
   const session = await readSession()
-  const latest = newsPosts.slice(0, 3)
+  const latest = listPublishedNews().slice(0, 3)
 
   return (
     <>
@@ -131,12 +133,12 @@ export default async function HomePage() {
         <ul className="mt-4 space-y-4">
           {latest.map((post) => (
             <li
-              key={post.slug}
+              key={post.id}
               className="flex flex-wrap items-baseline gap-3 text-sm"
             >
               <span className="font-mono text-xs text-[#666]">{post.date}</span>
               <Link
-                href={`/news/${post.slug}`}
+                href={`/news/${post.id}`}
                 className="text-foreground hover:text-gold-dim"
               >
                 {post.title}

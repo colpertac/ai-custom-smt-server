@@ -16,6 +16,7 @@ import {
   useDeleteAdminShop,
   useSaveAdminShop,
 } from "@/features/admin-shops/hooks"
+import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -66,6 +67,7 @@ const UNSAVED_MSG =
   "You have unsaved shop changes. Leave without saving?"
 
 export function CompShopsPanel() {
+  const confirm = useConfirm()
   const { data: list, isLoading, isError, error } = useAdminShops()
   const [filter, setFilter] = useState("")
   const [exportPending, setExportPending] = useState(false)
@@ -123,15 +125,20 @@ export function CompShopsPanel() {
     return () => window.removeEventListener("beforeunload", onBeforeUnload)
   }, [])
 
-  const confirmDiscard = useCallback(() => {
+  const confirmDiscard = useCallback(async () => {
     if (!dirtyRef.current) return true
-    return window.confirm(UNSAVED_MSG)
-  }, [])
+    return confirm({
+      title: "Discard unsaved changes?",
+      description: UNSAVED_MSG,
+      confirmLabel: "Discard",
+      variant: "destructive",
+    })
+  }, [confirm])
 
   const selectShop = useCallback(
-    (shopId: number) => {
+    async (shopId: number) => {
       if (shopId === selectedId) return
-      if (!confirmDiscard()) return
+      if (!(await confirmDiscard())) return
       loadedShopKey.current = null
       setSelectedId(shopId)
     },
@@ -234,25 +241,32 @@ export function CompShopsPanel() {
                     className="mr-1 shrink-0 self-center text-[#ff9b9b] hover:bg-[#3a1010] hover:text-[#ffc9c9]"
                     disabled={deleteMutation.isPending}
                     onClick={() => {
-                      if (selectedId === s.shopId && !confirmDiscard()) return
-                      if (
-                        !window.confirm(
-                          `Delete working-copy shop ${s.shopId} (${s.name})?`
-                        )
-                      ) {
-                        return
-                      }
-                      deleteMutation.reset()
-                      deleteMutation.mutate(s.shopId, {
-                        onSuccess: () => {
-                          if (selectedId === s.shopId) {
-                            setSelectedId(null)
-                            setDraft(null)
-                            setBaseline(null)
-                            loadedShopKey.current = null
-                          }
-                        },
-                      })
+                      void (async () => {
+                        if (
+                          selectedId === s.shopId &&
+                          !(await confirmDiscard())
+                        ) {
+                          return
+                        }
+                        const ok = await confirm({
+                          title: "Delete this shop?",
+                          description: `Working-copy shop ${s.shopId} (${s.name}) will be removed.`,
+                          confirmLabel: "Delete",
+                          variant: "destructive",
+                        })
+                        if (!ok) return
+                        deleteMutation.reset()
+                        deleteMutation.mutate(s.shopId, {
+                          onSuccess: () => {
+                            if (selectedId === s.shopId) {
+                              setSelectedId(null)
+                              setDraft(null)
+                              setBaseline(null)
+                              loadedShopKey.current = null
+                            }
+                          },
+                        })
+                      })()
                     }}
                   >
                     <Trash2 />
@@ -314,25 +328,27 @@ export function CompShopsPanel() {
               size="sm"
               disabled={createMutation.isPending}
               onClick={() => {
-                if (!confirmDiscard()) return
-                const shopId = Number.parseInt(
-                  newShopId.trim() || String(nextSuggestedId),
-                  10
-                )
-                const name = newShopName.trim() || `Shop ${shopId}`
-                if (!Number.isInteger(shopId) || shopId <= 0) return
-                createMutation.reset()
-                createMutation.mutate(
-                  { shopId, name },
-                  {
-                    onSuccess: (data) => {
-                      setNewShopId("")
-                      setNewShopName("")
-                      loadedShopKey.current = null
-                      setSelectedId(data.shopId)
-                    },
-                  }
-                )
+                void (async () => {
+                  if (!(await confirmDiscard())) return
+                  const shopId = Number.parseInt(
+                    newShopId.trim() || String(nextSuggestedId),
+                    10
+                  )
+                  const name = newShopName.trim() || `Shop ${shopId}`
+                  if (!Number.isInteger(shopId) || shopId <= 0) return
+                  createMutation.reset()
+                  createMutation.mutate(
+                    { shopId, name },
+                    {
+                      onSuccess: (data) => {
+                        setNewShopId("")
+                        setNewShopName("")
+                        loadedShopKey.current = null
+                        setSelectedId(data.shopId)
+                      },
+                    }
+                  )
+                })()
               }}
             >
               <Plus data-icon="inline-start" />

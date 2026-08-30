@@ -6,7 +6,10 @@ export type NewsPost = {
   body: string[]
 }
 
-/** Static news for Phase 16A. Swap for MD/CMS later if needed. */
+/**
+ * Seed-only source for first boot of `news_posts` in web.sqlite.
+ * Runtime reads go through `@/lib/news-store`.
+ */
 export const newsPosts: NewsPost[] = [
   {
     slug: "oracle-smoke",
