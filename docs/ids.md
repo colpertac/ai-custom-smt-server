@@ -29,12 +29,20 @@ collision-checked against local `ItemData`/`CItemData` before allocation.
 | Spawn location group | 900001 | Phase 1 test location | allocated | Immediate spawn, 15s respawn |
 | Item | 900001 | AI Test Token | allocated | Clone of stock `501`; `ItemData`/`CItemData`; icon `501`, model `0`; free in local scan of 16581 records |
 | Demon | 900001 | AI Test Demon | allocated | Clone of stock Angel `187`; `DevilData` only; model `63`; fusion flags cleared; free in scan of 5301 records |
-| Item | TBD | Golden Apple | proposed | Confirm local client record before deciding whether this is stock/custom |
-| Item | TBD | Compressed Golden Apple | proposed | Requires client display data and compressor/decompressor behavior |
-| Zone | TBD | First custom zone | proposed | Initially clone a client-known Zone/DynamicMap pair |
-| Zone instance | TBD | First custom dungeon | proposed | Allocate only after the zone experiment |
-| Drop set | TBD | Golden Apple decompressor | proposed | One-entry GiftDropSet is a possible implementation |
-| Skill | TBD | Golden Apple decompressor | proposed | May reuse function ID 320 rather than add a function |
+| Zone partial | 900002 | `ai_custom_phase5` | allocated | Auto-applies to DynamicMap `5201001` (Home III Service Entrance); package `zzz_ai_custom_phase5.zip` |
+| Zone instance | 900001 | AI Test Dungeon | allocated | `@instance 900001`; zone `520101`/`5201001` (same as stock 5201); LobbyID `20102`; GroupID `2` |
+| Zone instance variant | 900001 | AI Test Dungeon NORMAL | allocated | `InstanceType=NORMAL`; optional `@instance 900001 900001` |
+| Item | 900002 | Golden Apple (legacy) | retired | Phase 6 POC base; compressor now uses stock `21941` |
+| Item | 900003 | Compressed Magical Golden Apple | deferred | Definitions kept; apple `CurrencyCompressor` disabled until Phase 10/17A |
+| Drop set | 900002 | Golden Apple decompress | allocated | GiftDropSet: 50000× Magical Golden Apple `21941` |
+| Skill | 900001 | Golden Apple decompress | allocated | function 320; GiftBoxID `900002`; cost item `900003` |
+| Drop set | 900003 | Phase 13 clear crate | allocated | Weighted Macca Note + exclusive Token/item; package `zzz_ai_custom_phase13.zip` |
+| Boss group | 900013 | Phase 13 Suginami bonus crates | allocated | Bronze `@instance 5401` clear bonus; also ZONE_INSTANCE flag key for payout dedup |
+| Drop set | 901101–901199 | Phase 16D payout stubs | reserved | `scripts/payout-seed-catalog.sh`; one DropSet per catalog stub |
+| Boss group / instance flag | 901201–901299 | Phase 16D payout stubs | reserved | Same script; dedup flag == bossGroupID per stub |
+| CurrencyCompressor | 1 | Macca | allocated | Stock: `799` → `699` @ 50000 (`data/compressors/00_stock.xml`) |
+| CurrencyCompressor | 2 | Mag | allocated | Stock: `800` → `27375` @ 50000 |
+| CurrencyCompressor | 900001 | Magical Golden Apple | deferred | Was `21941` → `900003` @ 50000; disabled in phase6 package |
 
 ## Known existing IDs
 
@@ -46,6 +54,7 @@ These are references, not project allocations:
 | Item | 699 | Macca Note | `/etc/comp_hack/constants.xml` |
 | Item | 800 | Magnetite | `/etc/comp_hack/constants.xml` |
 | Item | 27375 | Mag Presser | `/etc/comp_hack/constants.xml` |
+| Item | 21941 | Magical Golden Apple | Stock Vivian XP feed; Phase 6 compressor base |
 | Skill function | 320 | `SKILL_RANDOM_ITEM` | Existing server behavior |
 | Zone/DynamicMap | 90102 | Empty global test candidate | Existing client/server-known pair |
 
@@ -55,7 +64,6 @@ Do not use these until they are confirmed against the local client:
 
 | Type | ID | Claimed meaning | Source |
 |---|---:|---|---|
-| Item | 21941 | Golden Apple/base resource | Third-party `comp_client.xml` |
 | Item | 49386 | Compressed Golden Apple | Third-party `comp_client.xml` |
 
 Those IDs may belong to that server's private client overlay rather than the

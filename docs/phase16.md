@@ -33,6 +33,7 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `/download` | Client / updater / portal links from env |
 | `/admin` | Account list + edit/delete (`userLevel >= 1000`) |
 | `/admin/shops` | COMP shop working-copy editor + XML/zip export |
+| `/admin/payouts` | Dungeon payout editor + Event/DropSet package export |
 | `/account` | Details + display name / email / password forms |
 
 ### Env (website)
@@ -45,6 +46,7 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `LOBBY_PROBE_HOST` / `CHANNEL_PROBE_HOST` | Docker DNS defaults `lobby` / `channel` |
 | `COMP_SHOPS_DIR` | Working-copy COMP shops (default `../server-content/shops`) |
 | `SHOP_PRODUCTS_PATH` | Optional override for `shop-products.json` |
+| `COMP_PAYOUTS_DIR` | Working-copy dungeon payouts (default `../server-content/payouts`) |
 
 ### HTTPS (ops)
 
@@ -82,6 +84,28 @@ into channel datastore `shops/` → restart/reload content as usual.
 from shop XML. `BasePrice` is the charged amount; `ProductID` is a
 ShopProductData id (not an item id).
 
-### 16D–F
+### 16D — Dungeon payout editor (MVP done)
 
-Not started. Payout editor, armory, AI help (ideas D6).
+Stable JSON schema under `server-content/payouts/` (seed:
+`suginami-bronze.json` from Phase 13). Admin UI edits CP, crate DropSet rows
+(weights / mutex), and clear-item grants (e.g. Magical Golden Apple `21941`).
+Export downloads a zip of generated Event + DropSet XML — no live mutation.
+
+| Item | Status |
+| --- | --- |
+| Payout JSON schema + Zod validation | Done |
+| Seed Suginami bronze from Phase 13 | Done |
+| Catalog stubs from private-server CP sheet (~50) | Done (`scripts/payout-seed-catalog.sh`) |
+| Generate Event + DropSet XML | Done (`lib/dungeon-payout-generate.ts`) |
+| Admin BFF list/get/put/delete/export | Done (`/api/admin/payouts/*`) |
+| Admin UI `/admin/payouts` | Done |
+| Auto-patch stock `dungeon_events-*.xml` next hooks | Out of scope (still one-time datastore patch) |
+| Full item-name search / multi-dungeon catalog | Follow-up |
+
+**Install:** download zip → install like Phase 13 packages under
+`datastore/packages/` (or merge `events/` + `data/dropset/`). Stock loot events
+must still `next` into the payout’s `AFTER_*` hook IDs.
+
+### 16E–F
+
+Not started. Armory, AI help (ideas D6).

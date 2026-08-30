@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Plus, Trash2 } from "lucide-react"
 
 import {
-  adminShopExportUrl,
-  adminShopsExportAllUrl,
+  downloadAdminShopXml,
+  downloadAdminShopsZipAll,
   type ShopDetail,
   type ShopProductRow,
 } from "@/features/admin-shops/api"
@@ -68,6 +68,8 @@ const UNSAVED_MSG =
 export function CompShopsPanel() {
   const { data: list, isLoading, isError, error } = useAdminShops()
   const [filter, setFilter] = useState("")
+  const [exportPending, setExportPending] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const detailQuery = useAdminShop(selectedId)
   const createMutation = useCreateAdminShop()
@@ -141,6 +143,18 @@ export function CompShopsPanel() {
     if (!ids.length) return 9000
     return Math.max(...ids) + 1
   }, [list])
+
+  async function runExport(fn: () => Promise<void>) {
+    setExportError(null)
+    setExportPending(true)
+    try {
+      await fn()
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : "Download failed")
+    } finally {
+      setExportPending(false)
+    }
+  }
 
   const shops = useMemo(() => {
     const rows = list ?? []
@@ -326,13 +340,16 @@ export function CompShopsPanel() {
             </Button>
           </div>
 
-          <a
-            href={adminShopsExportAllUrl()}
-            download
-            className="inline-flex h-7 items-center justify-center border border-border bg-muted/40 px-2.5 text-xs font-semibold hover:border-gold-dim hover:text-gold-hot"
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={exportPending}
+            onClick={() => void runExport(() => downloadAdminShopsZipAll())}
           >
-            Download all (zip)
-          </a>
+            {exportPending ? "Downloading…" : "Download all (zip)"}
+          </Button>
+          {exportError && <FormAlert variant="error">{exportError}</FormAlert>}
         </CardContent>
       </Card>
 
@@ -613,13 +630,18 @@ export function CompShopsPanel() {
                 >
                   {saveMutation.isPending ? "Saving…" : "Save"}
                 </Button>
-                <a
-                  href={adminShopExportUrl(draft.shopId)}
-                  download
-                  className="inline-flex h-8 items-center justify-center border border-border bg-muted/40 px-3 text-xs font-semibold hover:border-gold-dim hover:text-gold-hot"
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={exportPending || !draft}
+                  onClick={() => {
+                    if (!draft) return
+                    void runExport(() => downloadAdminShopXml(draft.shopId))
+                  }}
                 >
-                  Download XML
-                </a>
+                  {exportPending ? "Downloading…" : "Download XML"}
+                </Button>
               </div>
             </div>
           )}

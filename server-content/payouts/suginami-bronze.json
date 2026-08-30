@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "payout": {
+    "id": "suginami-bronze",
+    "name": "Suginami Tunnels (Bronze)",
+    "description": "Phase 13 MVP clear bonus for instance 5401. Stock loot events must next into the generated AFTER_* hooks.",
+    "enabled": true,
+    "instanceId": 5401,
+    "dedupFlag": 900013,
+    "bossGroupId": 900013,
+    "dropSetId": 900003,
+    "spotId": 2,
+    "crateCount": 5,
+    "cp": 10,
+    "crateDrops": [
+      {
+        "itemId": 699,
+        "minStack": 1,
+        "maxStack": 3,
+        "rate": 100
+      },
+      {
+        "itemId": 900001,
+        "minStack": 1,
+        "maxStack": 1,
+        "rate": 60,
+        "mutexId": 1
+      },
+      {
+        "itemId": 1,
+        "minStack": 1,
+        "maxStack": 2,
+        "rate": 40,
+        "mutexId": 1
+      }
+    ],
+    "clearItems": [],
+    "hooks": {
+      "afterNormalLootEventId": "AI_P13_5401_AFTER_NORMAL_LOOT",
+      "afterFiendLootEventId": "AI_P13_5401_AFTER_FIEND_LOOT",
+      "bonusEventId": "AI_P13_5401_CLEAR_BONUS",
+      "bonusFiendEventId": "AI_P13_5401_CLEAR_BONUS_FIEND",
+      "resumeNormalNext": "D54_540101_Q317_L"
+    },
+    "family": "Suginami Tunnels",
+    "difficulty": "bronze",
+    "mode": "normal",
+    "notes": "Phase 13 live (+10 CP). End Chests sheet lists 4 CP — keep Phase 13 value until you retune."
+  }
+}

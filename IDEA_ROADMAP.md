@@ -236,18 +236,16 @@ Build in this order:
 
 ### 16D — Dungeon payout editor
 
-Admin webUI so economy tuning does not require hand-editing every dungeon
-event file. Private-server range: grindy (~5 CP) to generous (~100+ CP), plus
-crate tables and Golden Apple clear payouts.
+**Status:** MVP done — working-copy JSON at `/admin/payouts` + Event/DropSet zip export.
 
-- [ ] Define payout XML/schema **with** this editor (deferred from Phase 13;
-  Suginami prototype events remain the live source of truth until then).
-- [ ] Finish stable payout format covering **all** target dungeons
-  (CP, crate DropSets, Golden Apple / similar clear grants).
-- [ ] List dungeons/difficulties in the website admin UI.
-- [ ] Edit CP amount, crate item weights, and Golden Apple (etc.) clear amounts.
-- [ ] Validate item IDs, weights, CP values, and duplicate rewards.
-- [ ] Export a reviewable server-content package (no direct live mutation).
+- [x] Define payout JSON schema **with** this editor (Phase 13 Suginami seed).
+- [x] Format covers CP, crate DropSets, and Golden Apple–style clear grants.
+- [x] List dungeons/difficulties in the website admin UI.
+- [x] Edit CP amount, crate item weights, and clear-item amounts.
+- [x] Validate item IDs, weights, CP values, and duplicate rewards.
+- [x] Export a reviewable server-content package (no direct live mutation).
+- [ ] Auto-wire stock dungeon event `next` hooks (still manual / Phase 13 patch).
+- [ ] Expand catalog beyond seeded entries (silver/gold / more dungeons).
 
 ### 16E — Character armory
 
