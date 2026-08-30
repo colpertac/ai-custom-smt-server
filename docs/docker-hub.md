@@ -26,16 +26,16 @@ Prereqs: Docker logged in (`docker login`), COMP built.
 JOBS=16 /home/cat/repos/smt/comp_hack/scripts/build.sh
 
 # Pack + push game image
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-hub.sh
+./deploy/scripts/docker-push-hub.sh
 
 # Build + push website image
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-website-hub.sh
+./deploy/scripts/docker-push-website-hub.sh
 ```
 
 Manual equivalent:
 
 ```bash
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-pack-runtime.sh
+./deploy/scripts/docker-pack-runtime.sh
 docker tag smt-comp:local colpertac/smt-comp:latest
 docker push colpertac/smt-comp:latest
 ```
@@ -44,7 +44,7 @@ Override Hub user/name:
 
 ```bash
 DOCKER_HUB_USER=colpertac IMAGE_NAME=smt-comp \
-  /home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-hub.sh
+  ./deploy/scripts/docker-push-hub.sh
 ```
 
 ---
@@ -61,7 +61,7 @@ cd ~/docker/smt
 ### 2. Compose + templates
 
 ```bash
-REPO=/home/cat/repos/smt/ai_custom_smt_server/deploy
+REPO=/path/to/ai-custom-smt-server/deploy
 cp "$REPO/docker-compose.yml" "$REPO/entrypoint.sh" "$REPO/.env.example" ~/docker/smt/
 cp -a "$REPO/config" ~/docker/smt/
 cp -a "$REPO/mariadb" ~/docker/smt/

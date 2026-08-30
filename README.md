@@ -1,63 +1,72 @@
-# AI Custom SMT Server
+# SMT Private Server — Docker stack
 
-Planning and source-controlled customization workspace for a personal SMT:
-IMAGINE server based on COMP_hack and the 1.666/Reimagine client.
+Docker Compose deployment, ops sidecar, admin website, and docs for running a
+[COMP_hack](https://github.com/colpertac/comp_hack)-based Shin Megami Tensei
+IMAGINE private server.
 
-This directory is intentionally separate from:
+## What's in this repo
 
-- `../comp_hack/` — upstream server and tools
-- `../ai/` — notes for `smt_py`
-- `/home/cat/software/smt/game/reimagine/` — working game client
+| Path | Purpose |
+| --- | --- |
+| [`deploy/`](deploy/) | `install.sh`, compose, nginx, seed config |
+| [`deploy/scripts/`](deploy/scripts/) | Build/push Hub images, deploy bundles |
+| [`ops/`](ops/) | Admin control-plane sidecar (Docker socket) |
+| [`website/`](website/) | Next.js account site + admin UI |
+| [`docs/`](docs/) | Setup guides (Oracle VPS, Docker Hub, backups, …) |
 
-## Goals
+Game server source lives in a separate repo — clone as a **sibling**:
 
-- Custom zones, items, and demons
-- Configurable currency/resource compressors, including Golden Apples
-- Custom client behavior such as an invulnerability/developer-mode toggle
-- A substantially complete English translation
-- A modern account and server website
-- A reproducible client updater overlay
-
-See [ROADMAP.md](ROADMAP.md) for the recommended order and acceptance checks.
-See [AI/phases/research-notes.md](AI/phases/research-notes.md) for concrete early
-findings (zone packages, compression IDs, tool gaps).
-The frozen Phase 0 state and recovery procedure are in
-[AI/phases/baseline.md](AI/phases/baseline.md). New custom identifiers must be recorded
-in [docs/ids.md](docs/ids.md). Phase 1 encounter package notes are in
-[AI/phases/phase1.md](AI/phases/phase1.md). Practical walkthroughs and XML syntax
-references are indexed under [guides/](guides/README.md).
-Phase 7 website notes: [AI/phases/phase7.md](AI/phases/phase7.md),
-[docs/lobby-api.md](docs/lobby-api.md), app in [`website/`](website/).
-
-## Intended layout
-
-```text
-ai_custom_smt_server/
-├── ROADMAP.md / IDEA_ROADMAP.md  # human primary reading
-├── AI/                 # agent context (ideas, armory, phase notes)
-├── docs/               # ops docs (IDs, deploy, lobby API, backups)
-├── guides/             # practical walkthroughs / XML syntax
-├── scripts/            # helpers; portrait tools in scripts/portrait/
-├── server-content/     # zones, events, scripts, shops, packages
-├── client-overlay/     # client file replacements
-├── translation/        # translation source and tooling
-├── website/            # Next.js site + portrait queue CLIs
-└── work/               # local captures / scratch
+```bash
+git clone https://github.com/colpertac/comp_hack.git ../comp_hack
 ```
 
-## Ground rules
+Published Docker images: `colpertac/smt-comp`, `colpertac/smt-website`.
 
-1. Keep the currently working server and Reimagine client as known-good
-   baselines.
-2. Give custom records IDs from a documented private range and maintain an ID
-   registry.
-3. Never edit the only copy of a compiled BinaryData file; retain source XML
-   and a reproducible build command.
-4. Client and server definitions must be updated together.
-5. Do not commit copyrighted game assets or extracted client BinaryData to a
-   public repository.
-6. Treat `comp_client.xml` as configuration for features that already exist in
-   `comp_client.dll`; XML entries do not implement new features.
-7. Put port 10999 behind a private interface/firewall when the website becomes
-   remotely accessible.
+## Quick start
 
+Prereqs: Docker + Compose v2, correct system clock (NTP).
+
+```bash
+cd deploy
+./install.sh --ip YOUR.LAN.OR.PUBLIC.IP
+# or install under home (no sudo):
+./install.sh --ip YOUR.IP --prefix "$HOME/smt"
+```
+
+Open `http://YOUR.IP:3000` — default admin `admin` / `admin123` (change on first login).
+
+Full walkthrough: [docs/youtube-1.0-setup.md](docs/youtube-1.0-setup.md).
+
+## Publish images (maintainers)
+
+Build COMP on the host, then from this repo:
+
+```bash
+../comp_hack/scripts/build.sh          # game binaries
+./deploy/scripts/docker-push-hub.sh    # colpertac/smt-comp
+./deploy/scripts/docker-push-website-hub.sh
+```
+
+See [docs/docker-hub.md](docs/docker-hub.md).
+
+## Layout on disk
+
+```text
+your-workspace/
+├── comp_hack/              # game server (separate repo)
+└── ai-custom-smt-server/   # this repo
+    ├── deploy/
+    ├── ops/
+    ├── website/
+    └── docs/
+```
+
+Runtime data (`data/`, `updater/`, custom zones) stays on the host — not in git.
+Upload game files through the admin UI after install.
+
+## License
+
+Website and ops tooling: see repository license (if added).
+COMP_hack is AGPL — see [colpertac/comp_hack](https://github.com/colpertac/comp_hack).
+
+Do **not** commit copyrighted game assets (BinaryData, client files) to any public repo.

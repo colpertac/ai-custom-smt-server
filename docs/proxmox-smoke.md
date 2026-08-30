@@ -22,18 +22,16 @@ NAS stage (build PC): `/mnt/axecat/smt/` → `//192.168.0.230/Playground/smt`
 ## A — Stage from the build PC
 
 ```bash
-# Publish images when they change:
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-hub.sh
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-website-hub.sh
+# Publish images when they change (from this repo):
+./deploy/scripts/docker-push-hub.sh
+./deploy/scripts/docker-push-website-hub.sh
 
-# Refresh overlay if client-overlay changed:
-cd /home/cat/repos/smt/ai_custom_smt_server
-./scripts/seed-updater-base.sh --overlay-only   # once / after base wipe
-./scripts/build-updater-overlay.sh
+# Refresh updater overlay (local dev machine — not in this repo):
+#   seed-updater-base.sh --overlay-only && build-updater-overlay.sh
 
 # Copy compose + data + updater to the share (or use the zip bundler):
-./scripts/stage-proxmox-bundle.sh
-# Generic zip (scp/Oracle): ./scripts/make-deploy-bundle.sh -o /tmp/smt-deploy.zip
+./deploy/scripts/stage-proxmox-bundle.sh
+# Generic zip (scp/Oracle): ./deploy/scripts/make-deploy-bundle.sh -o /tmp/smt-deploy.zip
 ```
 
 Staged layout:

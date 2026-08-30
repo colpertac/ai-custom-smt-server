@@ -1,3 +1,17 @@
+# --- Local-only (not published to GitHub) ---
+/AI/
+/client-overlay/
+/client-source/
+/guides/
+/nginx/
+/scripts/
+/server-content/
+/translation/
+/updater/
+/work/
+/IDEA_ROADMAP.md
+/ROADMAP.md
+
 # Scratch and extracted editable client source (proprietary)
 work/
 client-source/BinaryData/
@@ -30,17 +44,6 @@ updater/*.local
 updater/**/*.compressed
 updater/**/hashlist.dat
 
-# Built packages are tracked so installs stay reproducible.
-# Keep staging leftovers out of git.
-server-content/packages/*.tmp
-server-content/packages/stage/
-
-# Phase 16C COMP shop working copy (seed locally; do not commit XML)
-server-content/shops/compshop-*.xml
-
-# Phase 16I server config working copy (seed from runtime/config; do not commit)
-server-content/config/*.xml
-
 # Ops sidecar audit trail (local)
 ops/audit.log
 
@@ -56,6 +59,8 @@ build/
 node_modules/
 .next/
 dist/
+website/tsconfig.tsbuildinfo
+website/next-env.d.ts
 .venv/
 __pycache__/
 *.pyc
@@ -63,4 +68,4 @@ __pycache__/
 
 # Phase 14 staged COMP binaries (packed into Docker; do not commit)
 deploy/bin/
-
+website/os

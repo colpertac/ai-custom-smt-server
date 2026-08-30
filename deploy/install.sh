@@ -181,7 +181,7 @@ resolve_install_paths() {
   INSTALL_PREFIX="$(realpath -m "$INSTALL_PREFIX")"
   DEPLOY_DIR="$INSTALL_PREFIX/deploy"
 
-  if [[ "$(realpath "$SCRIPT_DIR")" == "$(realpath "$DEPLOY_DIR")" ]]; then
+  if [[ "$(realpath "$SCRIPT_DIR")" == "$(realpath -m "$DEPLOY_DIR")" ]]; then
     echo "Using existing install at $DEPLOY_DIR"
     return 0
   fi
@@ -212,6 +212,14 @@ need_cmd() {
 need_cmd docker
 docker info >/dev/null 2>&1 || die "Docker daemon not running. Start Docker, then retry. $DOCKER_INSTALL_URL"
 docker compose version >/dev/null 2>&1 || die "'docker compose' missing. Install Docker Compose v2: $DOCKER_INSTALL_URL"
+
+# Wrong VM clock breaks Docker Hub TLS (certs look "not yet valid").
+if command -v timedatectl >/dev/null 2>&1; then
+  if ! timedatectl status 2>/dev/null | grep -qE 'System clock synchronized: yes|NTP service: active'; then
+    echo "warning: system clock may be wrong — sync before pulling images:" >&2
+    echo "  sudo timedatectl set-ntp true && sleep 3 && timedatectl status" >&2
+  fi
+fi
 
 [[ -f "$DEPLOY_DIR/docker-compose.yml" ]] || die "docker-compose.yml not found in $DEPLOY_DIR"
 [[ -f "$DEPLOY_DIR/.env.example" ]] || die ".env.example not found in $DEPLOY_DIR"
@@ -327,8 +335,13 @@ echo "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env — keep pr
 
 cd "$DEPLOY_DIR"
 echo "Pulling Hub images and starting stack…"
-# Pull published services only — ops is built from ../ops (not on Hub yet).
-docker compose pull lobby world channel website updater || true
+if ! docker compose pull lobby world channel website updater 2>&1; then
+  echo >&2
+  echo "error: docker pull failed (often VM clock not synced — see timedatectl status)" >&2
+  echo "  sudo timedatectl set-ntp true" >&2
+  echo "  cd $DEPLOY_DIR && docker compose pull && docker compose up -d --build" >&2
+  exit 1
+fi
 docker compose up -d --build
 
 echo

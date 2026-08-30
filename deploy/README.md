@@ -30,9 +30,9 @@ Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxm
 [website-updater-docker.md](../docs/website-updater-docker.md), [oracle-vps.md](../docs/oracle-vps.md).
 
 ```bash
-# Publish (build PC)
-../scripts/docker-push-hub.sh
-../scripts/docker-push-website-hub.sh
+# Publish (build PC — clone comp_hack as sibling ../comp_hack)
+./scripts/docker-push-hub.sh
+./scripts/docker-push-website-hub.sh
 
 # Manual run (without install script)
 cp .env.example .env   # EXTERNAL_IP, SESSION_SECRET, OPS_TOKEN, UPDATER_ROOT, …

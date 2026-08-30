@@ -11,7 +11,7 @@ uses `lobby:10999` on the Docker bridge.
 ## Publish website (build PC)
 
 ```bash
-/home/cat/repos/smt/ai_custom_smt_server/scripts/docker-push-website-hub.sh
+./deploy/scripts/docker-push-website-hub.sh
 ```
 
 ## Homelab / Proxmox

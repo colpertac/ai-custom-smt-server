@@ -160,18 +160,18 @@ journalctl -u docker -n 40 --no-pager
 ## 3. Build zip on the build PC, copy to VPS
 
 ```bash
-cd /home/cat/repos/smt/ai_custom_smt_server
+cd /path/to/ai-custom-smt-server
 
 # Refresh Hub images if binaries/website changed
-./scripts/docker-push-hub.sh
-./scripts/docker-push-website-hub.sh
+./deploy/scripts/docker-push-hub.sh
+./deploy/scripts/docker-push-website-hub.sh
 
 # Overlay-only updater (after client-overlay / VersionData / ImagineUpdate changes)
 ./scripts/seed-updater-base.sh --overlay-only   # once / after wipe
 ./scripts/build-updater-overlay.sh
 
 # Zip compose + data (datastore/BinaryData/…) + updater
-./scripts/make-deploy-bundle.sh -o /tmp/smt-oracle.zip
+./deploy/scripts/make-deploy-bundle.sh -o /tmp/smt-oracle.zip
 ```
 
 Copy and unpack on the VPS:
