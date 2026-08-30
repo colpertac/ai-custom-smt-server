@@ -21,6 +21,7 @@ import {
   getObjectFields,
   loadSchemaRegistry,
   OBJGEN_ROOT_OBJECT,
+  schemaPathsBundled,
   schemaPathsForCompHack,
   type SchemaRegistry,
 } from "./objgen-schema.ts"
@@ -100,9 +101,15 @@ async function fileDigest(p: string): Promise<string | null> {
 
 export async function getSchemaRegistry(): Promise<SchemaRegistry> {
   if (schemaCache) return schemaCache
-  schemaCache = await loadSchemaRegistry(
-    schemaPathsForCompHack(getCompHackRoot())
+  const bundled = schemaPathsBundled(
+    path.join(LIB_DIR, "vendor-schemas")
   )
+  // Prefer live COMP_HACK_ROOT when present; fall back to vendored schemas
+  // (Docker Hub website image has no full comp_hack tree).
+  const candidates = process.env.COMP_HACK_ROOT?.trim()
+    ? [...schemaPathsForCompHack(getCompHackRoot()), ...bundled]
+    : [...bundled, ...schemaPathsForCompHack(getCompHackRoot())]
+  schemaCache = await loadSchemaRegistry(candidates)
   return schemaCache
 }
 

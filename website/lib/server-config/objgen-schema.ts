@@ -291,6 +291,19 @@ export function schemaPathsForCompHack(compHackRoot: string): string[] {
   ]
 }
 
+/** Schemas vendored for Docker / Hub images (no full comp_hack tree). */
+export function schemaPathsBundled(vendorDir: string): string[] {
+  return [
+    path.join(vendorDir, "serverconfig.xml"),
+    path.join(vendorDir, "databaseconfig.xml"),
+    path.join(vendorDir, "databaseconfig_sqlite3.xml"),
+    path.join(vendorDir, "databaseconfig_mariadb.xml"),
+    path.join(vendorDir, "lobbyconfig.xml"),
+    path.join(vendorDir, "worldconfig.xml"),
+    path.join(vendorDir, "channelconfig.xml"),
+  ]
+}
+
 export const OBJGEN_ROOT_OBJECT: Record<
   "lobby" | "world" | "channel",
   string

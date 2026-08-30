@@ -644,6 +644,19 @@
     cursor: pointer;
   }
 
+  /* Native selects: force dark popup + readable option colors (OS defaults clash with site tokens). */
+  select {
+    color-scheme: dark;
+    background-color: var(--input);
+    color: var(--foreground);
+  }
+
+  select option,
+  select optgroup {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+  }
+
   ::selection {
     background: color-mix(in srgb, var(--gold) 35%, transparent);
     color: #fff;

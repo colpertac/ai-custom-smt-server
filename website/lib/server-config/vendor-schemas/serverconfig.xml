@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objgen>
+    <object name="ServerConfig" persistent="false">
+        <member type="string" name="DiffieHellmanKeyPair"
+            regex="^[a-fA-F0-9]{256}|$"/>
+        <member type="u16" name="Port"/>
+        <member type="enum" name="DatabaseType" default="MARIADB">
+            <value>MARIADB</value>
+            <value>SQLITE3</value>
+        </member>
+        <member type="bool" name="MultithreadMode" default="true"/>
+        <member type="list" name="DataStore">
+            <element type="string"/>
+        </member>
+        <member type="bool" name="DataStoreSync" default="true"/>
+        <member type="string" name="LogFile"/>
+        <member type="bool" name="LogFileTimestamp" default="true"/>
+        <member type="bool" name="LogFileAppend" default="true"/>
+        <member type="bool" name="LogRotation" default="false"/>
+        <member type="bool" name="LogCompression" default="true"/>
+        <member type="s32" name="LogRotationCount" default="3"/>
+        <member type="s32" name="LogRotationDays" default="1"/>
+        <member type="map" name="LogLevels">
+            <key type="string"/>
+            <value type="enum" name="LogLevel">
+                <value>LEVEL_DEBUG</value>
+                <value>LEVEL_INFO</value>
+                <value>LEVEL_WARNING</value>
+                <value>LEVEL_ERROR</value>
+                <value>LEVEL_CRITICAL</value>
+            </value>
+        </member>
+        <member type="string" name="CapturePath"/>
+        <member type="string" name="ServerConstantsPath"/>
+        <member type="bool" name="MemoryDiagnostic" default="false"/>
+    </object>
+    <object name="WorldSharedConfig" persistent="false">
+        <member type="s32" name="TimeOffset" default="540"/>
+        <member type="string" name="GreetMessage"
+           default="Welcome to the COMP_hack Server!"/>
+        <member type="string" name="COMPShopMessage"
+           default="Welcome to the COMP Shop!"/>
+        <member type="bool" name="MoveCorrection" default="true"/>
+        <member type="bool" name="AutoCompressCurrency"/>
+        <member type="bool" name="NRAStatusNull" default="true"/>
+        <member type="bool" name="DeathPenaltyDisabled"/>
+        <member type="bool" name="DeadTokuseiDisabled"/>
+        <member type="float" name="DropLuckScalingCap" default="-1.0"/>
+        <member type="float" name="XPBonus"/>
+        <member type="float" name="ExpertiseBonus"/>
+        <member type="float" name="DropRateBonus"/>
+        <member type="float" name="LoginPointBonus"/>
+        <member type="float" name="FusionGaugeBonus" default="3.0"/>
+        <member type="float" name="BethelBonus"/>
+        <member type="float" name="DigitalizePointBonus"/>
+        <member type="float" name="LevelUpBonusChance" default="20.0"/>
+        <member type="u8" name="LevelUpBonusMax" default="1"/>
+        <member type="u16" name="EnabledDemonQuests" default="0x0777"
+            max="0x07FF"/>
+        <member type="u32" name="BazaarMarketCost" default="0"/>
+        <member type="u32" name="BazaarMarketTime" default="0"/>
+        <member type="float" name="CritDefenseReduction" default="1.0"
+            min="0.0" max="1.0"/>
+        <member type="s8" name="LevelCap" min="1" max="99" default="99"/>
+        <member type="u8" name="ReunionMax" min="9" max="99"/>
+        <member type="bool" name="BikeBoostHide" default="true"/>
+        <member type="u16" name="PvPQueueWait" default="120"/>
+        <member type="array" name="PvPGhosts" size="2">
+            <element type="u8"/>
+        </member>
+        <member type="bool" name="PentalphaPayoutAll" default="false"/>
+        <member type="array" name="PentalphaMinMaxPayout" size="2">
+            <element type="s32" default="-1"/>
+        </member>
+        <member type="u16" name="DailyGPLoss" default="3"/>
+        <member type="map" name="ChannelDistribution">
+            <key type="u32"/>
+            <value type="u8"/>
+        </member>
+        <member type="enum" name="AIAggroLimit">
+            <value>PLAYER_SHARED</value>
+            <value>INDEPENDENT</value>
+            <value>NONE</value>
+        </member>
+        <member type="bool" name="AICombatStagger" default="true"/>
+        <member type="bool" name="AIEstomaBossIgnore" default="false"/>
+        <member type="bool" name="AIEstomaChargeIgnore" default="false"/>
+        <member type="u16" name="AIEstomaDuration" default="30"/>
+        <member type="bool" name="AILazyPathing" default="true"/>
+        <member type="bool" name="IFramesEnabled" default="true"/>
+        <member type="u16" name="SpawnSpamUserLevel" default="500"/>
+        <member type="s32" name="SpawnSpamUserMax" default="30"/>
+        <member type="s32" name="SpawnSpamGlobalZoneMax" default="100"/>
+        <member type="s32" name="SpawnSpamInstanceZoneMax" default="30"/>
+        <member type="bool" name="AutobanSpawnSpammers" default="false"/>
+        <member type="f32" name="ClockSkewThreshold" default="1.5"/>
+        <member type="u32" name="ClockSkewCount" default="5"/>
+        <member type="bool" name="AutobanClockSkew" default="false"/>
+        <!-- Phase 12: tunable gameplay timings (seconds unless noted) -->
+        <member type="u16" name="LogoutDelay" default="10" min="0" max="60"/>
+        <member type="u16" name="LootBodyDuration" default="120" min="1"
+            max="3600"/>
+        <member type="u16" name="LootBodyEmptyDuration" default="10" min="1"
+            max="600"/>
+        <member type="u16" name="LootRestrictedDuration" default="60" min="0"
+            max="3600"/>
+        <member type="u16" name="LootBodyPostLootRemove" default="10" min="0"
+            max="600"/>
+        <!-- Demon egg (contract): despawn and party free-for-all unlock. -->
+        <member type="u16" name="LootEggDuration" default="300" min="1"
+            max="3600"/>
+        <member type="u16" name="LootEggRestrictedDuration" default="120"
+            min="0" max="3600"/>
+        <!-- Percent sum floor for MOVE1/MOVE2 caps (was constants.xml
+             MAX_MOVE_INCREASE_SUM). -->
+        <member type="u16" name="MaxMoveIncreaseSum" default="50" min="0"
+            max="1000"/>
+    </object>
+</objgen>

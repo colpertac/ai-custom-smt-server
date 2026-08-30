@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 import {
   ADMIN_NAV,
@@ -35,17 +36,25 @@ export function AdminShell({
         >
           {ADMIN_NAV.map((item) => {
             const on = navItemActive(item, pathname)
+            const Icon = item.icon
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "shrink-0 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
+                  "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
                   on
                     ? "border-gold bg-[#161c28] text-foreground"
                     : "border-transparent text-muted-foreground hover:bg-[#121824] hover:text-foreground"
                 )}
               >
+                <Icon
+                  className={cn(
+                    "size-3.5 shrink-0",
+                    on ? "text-gold-dim" : "text-muted-foreground"
+                  )}
+                  aria-hidden
+                />
                 {item.label}
               </Link>
             )
@@ -54,9 +63,10 @@ export function AdminShell({
         <div className="hidden border-t border-border p-2 lg:block">
           <Link
             href="/account"
-            className="block px-2 py-1.5 text-[0.65rem] text-muted-foreground no-underline hover:text-gold-dim"
+            className="flex items-center gap-1.5 px-2 py-1.5 text-[0.65rem] text-muted-foreground no-underline hover:text-gold-dim"
           >
-            ← Account
+            <ArrowLeft className="size-3 shrink-0" aria-hidden />
+            Account
           </Link>
         </div>
       </aside>
