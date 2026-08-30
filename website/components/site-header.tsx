@@ -5,11 +5,12 @@ import { usePathname, useRouter } from "next/navigation"
 
 import { useLogout, useSessionUser } from "@/features/auth/hooks"
 import { isAdminLevel } from "@/lib/admin-level"
+import { SkinSwitcher } from "@/components/skin-switcher"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navClass =
-  "text-xs tracking-[0.14em] uppercase text-[#aaa] transition-colors hover:text-gold-dim no-underline"
+  "text-xs tracking-[0.14em] uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline"
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -22,10 +23,10 @@ export function SiteHeader() {
   const playLabel = session ? "Account" : "Play now"
 
   return (
-    <header className="border-b border-[#2a2a2a] bg-[#141414]">
+    <header className="border-b border-chrome-border bg-chrome">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="group no-underline">
-          <p className="font-heading text-lg tracking-[0.2em] text-[#e8ecf4] uppercase">
+          <p className="font-heading text-lg tracking-[0.2em] text-accent-foreground uppercase">
             Imagine{" "}
             <span className="text-gold transition-colors group-hover:text-gold-hot">
               Private
@@ -98,7 +99,7 @@ export function SiteHeader() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="uppercase tracking-wider text-[#aaa]"
+                className="uppercase tracking-wider text-nav-muted"
                 disabled={logoutMutation.isPending}
                 onClick={() => {
                   logoutMutation.mutate(undefined, {
@@ -131,6 +132,7 @@ export function SiteHeader() {
               </Link>
             </>
           )}
+          <SkinSwitcher className="ml-1" />
         </nav>
       </div>
     </header>

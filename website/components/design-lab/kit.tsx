@@ -6,7 +6,7 @@ export const DESIGN_VARIANTS = [
   {
     href: "/test1",
     id: "1",
-    name: "Stage (current)",
+    name: "Stage",
     blurb: "Gold/slate centered stage — closest to live site",
   },
   {
@@ -24,7 +24,7 @@ export const DESIGN_VARIANTS = [
   {
     href: "/test4",
     id: "4",
-    name: "Banner private-server",
+    name: "Banner private-server (Current)",
     blurb: "Full-bleed banner hero, ChromieCraft-ish polish",
   },
   {
@@ -117,11 +117,11 @@ export function StubButton({
   title?: string
 }) {
   const styles = {
-    primary:
-      "border-[#cc9d00] bg-[#d3b800] text-[#0a0c10] hover:bg-[#f0d24a]",
+    primary: "border-[#cc9d00] bg-[#d3b800] text-[#0a0c10] hover:bg-[#f0d24a]",
     outline:
       "border-[#334155] bg-transparent text-[#ced3e0] hover:border-[#cc9d00]",
-    ghost: "border-transparent bg-transparent text-[#8b93a7] hover:text-[#d3b800]",
+    ghost:
+      "border-transparent bg-transparent text-[#8b93a7] hover:text-[#d3b800]",
     danger: "border-[#911] bg-[#3a1010] text-[#ffc9c9] hover:border-[#e05555]",
   }[variant]
 
@@ -130,7 +130,7 @@ export function StubButton({
       type="button"
       title={title}
       className={cn(
-        "inline-flex cursor-default items-center justify-center border px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+        "inline-flex cursor-default items-center justify-center border px-3 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-colors",
         styles,
         className
       )}

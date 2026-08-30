@@ -62,7 +62,7 @@ export function AdminShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-border bg-[#141414] px-4 py-2.5">
+        <header className="flex items-center justify-between gap-3 border-b border-border bg-chrome px-4 py-2.5">
           <h1 className="text-sm font-semibold tracking-[0.08em] text-foreground uppercase">
             {title}
           </h1>

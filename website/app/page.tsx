@@ -14,11 +14,8 @@ export default async function HomePage() {
   return (
     <>
       <section
-        className="relative flex min-h-[22rem] items-end border-b border-[#2a2a2a] sm:min-h-[28rem]"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 30%, #0e0e0e 100%), radial-gradient(ellipse at 60% 30%, #2a3a55 0%, transparent 50%), linear-gradient(135deg, #1a1520 0%, #0e0e0e 45%, #162032 100%)",
-        }}
+        className="relative flex min-h-[22rem] items-end border-b border-chrome-border sm:min-h-[28rem]"
+        style={{ background: "var(--hero-bg)" }}
       >
         <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
           <p className="text-[0.7rem] tracking-[0.4em] text-gold uppercase">
@@ -27,7 +24,7 @@ export default async function HomePage() {
           <h1 className="mt-3 max-w-xl font-heading text-4xl leading-tight tracking-[0.08em] text-white uppercase sm:text-5xl">
             Return to Tokyo
           </h1>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-[#b0b6c4] sm:text-base">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-hero-lead sm:text-base">
             Account portal, updater, and status for a Shin Megami Tensei:
             IMAGINE private server — built for players who still remember the
             COMP.
@@ -68,7 +65,7 @@ export default async function HomePage() {
                 href="/login"
                 className={cn(
                   buttonVariants({ size: "lg", variant: "ghost" }),
-                  "uppercase tracking-[0.14em] text-[#aaa]"
+                  "uppercase tracking-[0.14em] text-nav-muted"
                 )}
               >
                 Sign in
@@ -78,7 +75,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-px border-b border-[#2a2a2a] bg-[#2a2a2a] sm:grid-cols-3">
+      <section className="mx-auto grid max-w-5xl gap-px border-b border-chrome-border bg-panel-rule sm:grid-cols-3">
         {(
           [
             {
@@ -101,7 +98,7 @@ export default async function HomePage() {
             },
           ] as const
         ).map((f) => (
-          <div key={f.t} className="bg-[#141414] px-5 py-6">
+          <div key={f.t} className="bg-panel px-5 py-6">
             <h2 className="font-heading text-sm tracking-[0.2em] text-gold uppercase">
               {f.t}
             </h2>
@@ -119,7 +116,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-5xl px-4 py-10">
-        <div className="flex items-end justify-between gap-4 border-b border-[#2a2a2a] pb-3">
+        <div className="flex items-end justify-between gap-4 border-b border-chrome-border pb-3">
           <h2 className="font-heading text-xl tracking-[0.15em] uppercase">
             Latest news
           </h2>
@@ -136,7 +133,7 @@ export default async function HomePage() {
               key={post.id}
               className="flex flex-wrap items-baseline gap-3 text-sm"
             >
-              <span className="font-mono text-xs text-[#666]">{post.date}</span>
+              <span className="font-mono text-xs text-faint">{post.date}</span>
               <Link
                 href={`/news/${post.id}`}
                 className="text-foreground hover:text-gold-dim"

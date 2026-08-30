@@ -45,7 +45,7 @@ export default function NotFound() {
           href="/news"
           className={cn(
             buttonVariants({ size: "lg", variant: "ghost" }),
-            "uppercase tracking-[0.14em] text-[#aaa]"
+            "uppercase tracking-[0.14em] text-nav-muted"
           )}
         >
           News

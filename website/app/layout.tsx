@@ -48,7 +48,7 @@ export default async function RootLayout({
       className={cn("dark", heading.variable, body.variable, mono.variable)}
       suppressHydrationWarning
     >
-      <body className="min-h-svh bg-[#0e0e0e] text-foreground antialiased">
+      <body className="min-h-svh bg-background text-foreground antialiased">
         <Providers initialSession={initialSession}>
           <div className="flex min-h-svh flex-col">
             <SiteHeader />

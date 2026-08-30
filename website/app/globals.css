@@ -5,61 +5,15 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  Gold / slate private-server theme.
-  Dark-only. ~80% NewOrder / forum era, ~20% readable modern.
+  Site skins (same layout, different token packs) — from /test1–/test5:
+  stage | neworder | forum | banner (default) | comp
 */
 :root {
-  /* Near-black ground */
-  --background: #07090e;
-  --foreground: #ced3e0;
-
-  /* Slate panels */
-  --card: #1e293e;
-  --card-foreground: #ced3e0;
-  --popover: #162032;
-  --popover-foreground: #ced3e0;
-
-  /* Gold accent */
-  --primary: #d3b800;
-  --primary-foreground: #0a0c10;
-
-  --secondary: #162032;
-  --secondary-foreground: #ced3e0;
-
-  --muted: #141c2b;
-  --muted-foreground: #8b93a7;
-
-  --accent: #243147;
-  --accent-foreground: #e8ecf4;
-
-  /* Bright enough for body text on dark slate; deep red kept for borders via mix */
-  --destructive: #ff9b9b;
-  --destructive-foreground: #fff5f5;
-
-  --border: #334155;
-  --input: #141c2b;
-  --ring: #cc9d00;
-
-  --chart-1: #d3b800;
-  --chart-2: #ced3e0;
-  --chart-3: #5472d2;
-  --chart-4: #8b93a7;
-  --chart-5: #911;
-
   --radius: 0.05rem;
-
-  --sidebar: #121a28;
-  --sidebar-foreground: #ced3e0;
-  --sidebar-primary: #d3b800;
-  --sidebar-primary-foreground: #0a0c10;
-  --sidebar-accent: #1e293e;
-  --sidebar-accent-foreground: #e8ecf4;
-  --sidebar-border: #334155;
-  --sidebar-ring: #cc9d00;
-
   --font-sans: var(--font-body), "Verdana", "Geneva", sans-serif;
   --font-serif: var(--font-heading), "Times New Roman", serif;
   --font-mono: var(--font-mono-face), "Courier New", Courier, monospace;
+  --skin-font: var(--font-sans);
 
   --shadow-color: #000000;
   --shadow-opacity: 0.45;
@@ -80,18 +34,70 @@
   --shadow-xl: 0 12px 28px 0 hsl(0 0% 0% / 0.65);
   --shadow-2xl: 0 16px 40px 0 hsl(0 0% 0% / 0.75);
 
-  /* Brand tokens beyond shadcn */
+  --destructive: #ff9b9b;
+  --destructive-foreground: #fff5f5;
+
+  /* Default = banner (test4) — live chrome */
+  --background: #0e0e0e;
+  --foreground: #ced3e0;
+  --card: #141414;
+  --card-foreground: #ced3e0;
+  --popover: #1a1a1a;
+  --popover-foreground: #ced3e0;
+  --primary: #d3b800;
+  --primary-foreground: #0a0c10;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ced3e0;
+  --muted: #141414;
+  --muted-foreground: #8b93a7;
+  --accent: #1a1a1a;
+  --accent-foreground: #e8ecf4;
+  --border: #2a2a2a;
+  --input: #141414;
+  --ring: #cc9d00;
+  --chart-1: #d3b800;
+  --chart-2: #ced3e0;
+  --chart-3: #5472d2;
+  --chart-4: #8b93a7;
+  --chart-5: #911;
+  --sidebar: #141414;
+  --sidebar-foreground: #ced3e0;
+  --sidebar-primary: #d3b800;
+  --sidebar-primary-foreground: #0a0c10;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #e8ecf4;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #cc9d00;
   --gold: #d3b800;
   --gold-dim: #cc9d00;
   --gold-hot: #f0d24a;
-  --slate-panel: #1e293e;
-  --slate-deep: #141c2b;
+  --slate-panel: #141414;
+  --slate-deep: #0e0e0e;
   --link: #ced3e0;
   --link-hover: #cc9d00;
+  --chrome: #141414;
+  --chrome-border: #2a2a2a;
+  --nav-muted: #aaaaaa;
+  --faint: #666666;
+  --footer-muted: #555555;
+  --hero-lead: #b0b6c4;
+  --panel: #141414;
+  --panel-rule: #2a2a2a;
+  --hero-bg:
+    linear-gradient(180deg, transparent 30%, #0e0e0e 100%),
+    radial-gradient(ellipse at 60% 30%, #2a3a55 0%, transparent 50%),
+    linear-gradient(135deg, #1a1520 0%, #0e0e0e 45%, #162032 100%);
+  --atmosphere-bg:
+    radial-gradient(ellipse 90% 55% at 50% -10%, #1a1a1a 0%, transparent 58%),
+    linear-gradient(180deg, #121212 0%, #0e0e0e 45%, #0a0a0a 100%);
+  --panel-sheen: color-mix(in srgb, #2a3a55 40%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #2a3a55 0%, transparent 65%),
+    linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 55%, #0a0a0a 100%);
 }
 
-/* Keep .dark mapped to the same palette so class-based dark stays consistent */
-.dark {
+/* test1 — Stage */
+[data-skin="stage"] {
   --background: #07090e;
   --foreground: #ced3e0;
   --card: #1e293e;
@@ -106,12 +112,10 @@
   --muted-foreground: #8b93a7;
   --accent: #243147;
   --accent-foreground: #e8ecf4;
-  /* Bright enough for body text on dark slate; deep red kept for borders via mix */
-  --destructive: #ff9b9b;
-  --destructive-foreground: #fff5f5;
   --border: #334155;
   --input: #141c2b;
   --ring: #cc9d00;
+  --chart-1: #d3b800;
   --sidebar: #121a28;
   --sidebar-foreground: #ced3e0;
   --sidebar-primary: #d3b800;
@@ -120,6 +124,304 @@
   --sidebar-accent-foreground: #e8ecf4;
   --sidebar-border: #334155;
   --sidebar-ring: #cc9d00;
+  --gold: #d3b800;
+  --gold-dim: #cc9d00;
+  --gold-hot: #f0d24a;
+  --slate-panel: #1e293e;
+  --slate-deep: #141c2b;
+  --link: #ced3e0;
+  --link-hover: #cc9d00;
+  --chrome: #121a28;
+  --chrome-border: #334155;
+  --nav-muted: #8b93a7;
+  --faint: #6b7388;
+  --footer-muted: #546074;
+  --hero-lead: #8b93a7;
+  --panel: #1e293e;
+  --panel-rule: #334155;
+  --skin-font: var(--font-sans);
+  --hero-bg:
+    radial-gradient(ellipse 90% 55% at 50% -10%, #1e293e 0%, transparent 58%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, #162032 0%, transparent 55%),
+    linear-gradient(180deg, #0a0e16 0%, #07090e 40%, #05070b 100%);
+  --atmosphere-bg:
+    radial-gradient(ellipse 90% 55% at 50% -10%, #1e293e 0%, transparent 58%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, #162032 0%, transparent 55%),
+    linear-gradient(180deg, #0a0e16 0%, #07090e 40%, #05070b 100%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgb(0 0 0 / 0.12) 2px,
+      rgb(0 0 0 / 0.12) 3px
+    );
+  --panel-sheen: color-mix(in srgb, #243147 55%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #243147 0%, transparent 65%),
+    linear-gradient(180deg, #121826 0%, #0a0e16 55%, #07090e 100%);
+}
+
+/* test2 — NewOrder frame */
+[data-skin="neworder"] {
+  --background: #000000;
+  --foreground: #ced3e0;
+  --card: #1e293e;
+  --card-foreground: #ced3e0;
+  --popover: #0d1524;
+  --popover-foreground: #ced3e0;
+  --primary: #d3b800;
+  --primary-foreground: #0a0c10;
+  --secondary: #0a101c;
+  --secondary-foreground: #ced3e0;
+  --muted: #0a101c;
+  --muted-foreground: #8b93a7;
+  --accent: #1e293e;
+  --accent-foreground: #e8ecf4;
+  --border: #1e293e;
+  --input: #0a101c;
+  --ring: #cc9d00;
+  --chart-1: #d3b800;
+  --sidebar: #0a101c;
+  --sidebar-foreground: #ced3e0;
+  --sidebar-primary: #d3b800;
+  --sidebar-primary-foreground: #0a0c10;
+  --sidebar-accent: #1e293e;
+  --sidebar-accent-foreground: #e8ecf4;
+  --sidebar-border: #1e293e;
+  --sidebar-ring: #cc9d00;
+  --gold: #d3b800;
+  --gold-dim: #cc9d00;
+  --gold-hot: #f0d24a;
+  --slate-panel: #1e293e;
+  --slate-deep: #0a101c;
+  --link: #ced3e0;
+  --link-hover: #d3b800;
+  --chrome: #0d1524;
+  --chrome-border: #1e293e;
+  --nav-muted: #8b93a7;
+  --faint: #666666;
+  --footer-muted: #555555;
+  --hero-lead: #8b93a7;
+  --panel: #1e293e;
+  --panel-rule: #1e293e;
+  --skin-font: var(--font-sans);
+  --hero-bg:
+    linear-gradient(180deg, #1a2030 0%, #000 55%),
+    radial-gradient(ellipse at 30% 40%, #3a4a6a 0%, transparent 55%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgb(255 255 255 / 0.015) 3px,
+      rgb(255 255 255 / 0.015) 4px
+    );
+  --atmosphere-bg:
+    linear-gradient(180deg, #1a2030 0%, #000 120px),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgb(255 255 255 / 0.015) 3px,
+      rgb(255 255 255 / 0.015) 4px
+    );
+  --panel-sheen: color-mix(in srgb, #2a3a55 55%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #2a3a55 0%, transparent 65%),
+    linear-gradient(180deg, #0d1524 0%, #000 100%);
+}
+
+/* test3 — Forum denser */
+[data-skin="forum"] {
+  --background: #0d0d0d;
+  --foreground: #ced3e0;
+  --card: #121212;
+  --card-foreground: #ced3e0;
+  --popover: #1a1a1a;
+  --popover-foreground: #ced3e0;
+  --primary: #6dc256;
+  --primary-foreground: #061008;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ced3e0;
+  --muted: #141414;
+  --muted-foreground: #888888;
+  --accent: #1a1a1a;
+  --accent-foreground: #e8ecf4;
+  --border: #222222;
+  --input: #141414;
+  --ring: #6dc256;
+  --chart-1: #6dc256;
+  --chart-2: #d2e5ff;
+  --chart-3: #9ae89a;
+  --chart-4: #666666;
+  --chart-5: #911;
+  --sidebar: #0c0c0c;
+  --sidebar-foreground: #ced3e0;
+  --sidebar-primary: #6dc256;
+  --sidebar-primary-foreground: #061008;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #e8ecf4;
+  --sidebar-border: #222222;
+  --sidebar-ring: #6dc256;
+  --gold: #6dc256;
+  --gold-dim: #3d5c3a;
+  --gold-hot: #9ae89a;
+  --slate-panel: #121212;
+  --slate-deep: #0c0c0c;
+  --link: #d2e5ff;
+  --link-hover: #6dc256;
+  --chrome: #0c0c0c;
+  --chrome-border: #222222;
+  --nav-muted: #aaaaaa;
+  --faint: #666666;
+  --footer-muted: #555555;
+  --hero-lead: #8b93a7;
+  --panel: #141414;
+  --panel-rule: #222222;
+  --skin-font: var(--font-sans);
+  --hero-bg:
+    linear-gradient(180deg, transparent 40%, #0d0d0d 100%),
+    radial-gradient(ellipse at 40% 20%, #1b5b0a33 0%, transparent 55%),
+    linear-gradient(160deg, #121212 0%, #0d0d0d 50%, #0a120a 100%);
+  --atmosphere-bg: linear-gradient(180deg, #0c0c0c 0%, #0d0d0d 100%);
+  --panel-sheen: color-mix(in srgb, #1b5b0a 25%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #1b5b0a44 0%, transparent 65%),
+    linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
+}
+
+/* test4 — Banner (explicit; matches :root) */
+[data-skin="banner"] {
+  --background: #0e0e0e;
+  --foreground: #ced3e0;
+  --card: #141414;
+  --card-foreground: #ced3e0;
+  --popover: #1a1a1a;
+  --popover-foreground: #ced3e0;
+  --primary: #d3b800;
+  --primary-foreground: #0a0c10;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ced3e0;
+  --muted: #141414;
+  --muted-foreground: #8b93a7;
+  --accent: #1a1a1a;
+  --accent-foreground: #e8ecf4;
+  --border: #2a2a2a;
+  --input: #141414;
+  --ring: #cc9d00;
+  --chart-1: #d3b800;
+  --sidebar: #141414;
+  --sidebar-foreground: #ced3e0;
+  --sidebar-primary: #d3b800;
+  --sidebar-primary-foreground: #0a0c10;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #e8ecf4;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #cc9d00;
+  --gold: #d3b800;
+  --gold-dim: #cc9d00;
+  --gold-hot: #f0d24a;
+  --slate-panel: #141414;
+  --slate-deep: #0e0e0e;
+  --link: #ced3e0;
+  --link-hover: #cc9d00;
+  --chrome: #141414;
+  --chrome-border: #2a2a2a;
+  --nav-muted: #aaaaaa;
+  --faint: #666666;
+  --footer-muted: #555555;
+  --hero-lead: #b0b6c4;
+  --panel: #141414;
+  --panel-rule: #2a2a2a;
+  --skin-font: var(--font-sans);
+  --hero-bg:
+    linear-gradient(180deg, transparent 30%, #0e0e0e 100%),
+    radial-gradient(ellipse at 60% 30%, #2a3a55 0%, transparent 50%),
+    linear-gradient(135deg, #1a1520 0%, #0e0e0e 45%, #162032 100%);
+  --atmosphere-bg:
+    radial-gradient(ellipse 90% 55% at 50% -10%, #1a1a1a 0%, transparent 58%),
+    linear-gradient(180deg, #121212 0%, #0e0e0e 45%, #0a0a0a 100%);
+  --panel-sheen: color-mix(in srgb, #2a3a55 40%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #2a3a55 0%, transparent 65%),
+    linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 55%, #0a0a0a 100%);
+}
+
+/* test5 — COMP terminal */
+[data-skin="comp"] {
+  --background: #020403;
+  --foreground: #8fbf8c;
+  --card: #061008;
+  --card-foreground: #9ae89a;
+  --popover: #061008;
+  --popover-foreground: #9ae89a;
+  --primary: #6dc256;
+  --primary-foreground: #020403;
+  --secondary: #061008;
+  --secondary-foreground: #6a9a68;
+  --muted: #041006;
+  --muted-foreground: #3d5c3a;
+  --accent: #0a180c;
+  --accent-foreground: #9ae89a;
+  --border: #1f3d1c;
+  --input: #041006;
+  --ring: #6dc256;
+  --chart-1: #6dc256;
+  --chart-2: #9ae89a;
+  --chart-3: #3d5c3a;
+  --chart-4: #6a9a68;
+  --chart-5: #911;
+  --sidebar: #061008;
+  --sidebar-foreground: #8fbf8c;
+  --sidebar-primary: #6dc256;
+  --sidebar-primary-foreground: #020403;
+  --sidebar-accent: #0a180c;
+  --sidebar-accent-foreground: #9ae89a;
+  --sidebar-border: #1f3d1c;
+  --sidebar-ring: #6dc256;
+  --gold: #6dc256;
+  --gold-dim: #3d5c3a;
+  --gold-hot: #9ae89a;
+  --slate-panel: #061008;
+  --slate-deep: #020403;
+  --link: #8fbf8c;
+  --link-hover: #9ae89a;
+  --chrome: #061008;
+  --chrome-border: #1f3d1c;
+  --nav-muted: #3d5c3a;
+  --faint: #3d5c3a;
+  --footer-muted: #2a4a28;
+  --hero-lead: #6a9a68;
+  --panel: #061008;
+  --panel-rule: #1f3d1c;
+  --skin-font: var(--font-mono);
+  --hero-bg:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgb(0 0 0 / 0.25) 2px,
+      rgb(0 0 0 / 0.25) 3px
+    ),
+    radial-gradient(ellipse at 50% 30%, #0a180c 0%, transparent 55%),
+    linear-gradient(180deg, #041006 0%, #020403 100%);
+  --atmosphere-bg:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgb(0 0 0 / 0.25) 2px,
+      rgb(0 0 0 / 0.25) 3px
+    ),
+    linear-gradient(180deg, #041006 0%, #020403 100%);
+  --panel-sheen: color-mix(in srgb, #1a3a18 45%, transparent);
+  --armory-hero-bg:
+    radial-gradient(ellipse 70% 55% at 50% 40%, #0a180c 0%, transparent 65%),
+    linear-gradient(180deg, #061008 0%, #020403 100%);
+}
+
+/* Keep .dark present for shadcn; skins own the palette via data-skin */
+.dark {
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -160,6 +462,14 @@
   --color-gold: var(--gold);
   --color-gold-dim: var(--gold-dim);
   --color-gold-hot: var(--gold-hot);
+  --color-chrome: var(--chrome);
+  --color-chrome-border: var(--chrome-border);
+  --color-nav-muted: var(--nav-muted);
+  --color-faint: var(--faint);
+  --color-footer-muted: var(--footer-muted);
+  --color-hero-lead: var(--hero-lead);
+  --color-panel: var(--panel);
+  --color-panel-rule: var(--panel-rule);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -205,7 +515,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-sans);
+    font-family: var(--skin-font);
     letter-spacing: var(--tracking-normal);
   }
 
@@ -232,22 +542,7 @@
 @layer components {
   .site-atmosphere {
     background-color: var(--background);
-    background-image:
-      radial-gradient(ellipse 90% 55% at 50% -10%, #1e293e 0%, transparent 58%),
-      radial-gradient(ellipse 50% 40% at 80% 90%, #162032 0%, transparent 55%),
-      linear-gradient(
-        180deg,
-        #0a0e16 0%,
-        #07090e 40%,
-        #05070b 100%
-      ),
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgb(0 0 0 / 0.12) 2px,
-        rgb(0 0 0 / 0.12) 3px
-      );
+    background-image: var(--atmosphere-bg);
   }
 
   .site-stage {
@@ -258,7 +553,7 @@
     @apply border border-border bg-card shadow-md;
     background-image: linear-gradient(
       180deg,
-      color-mix(in srgb, #243147 55%, transparent) 0%,
+      var(--panel-sheen) 0%,
       transparent 28%
     );
   }
@@ -277,9 +572,7 @@
 
   /* Phase 16E — portrait (Path 1 capture) or CSS 3D name stub */
   .armory-hero {
-    background:
-      radial-gradient(ellipse 70% 55% at 50% 40%, #243147 0%, transparent 65%),
-      linear-gradient(180deg, #121826 0%, #0a0e16 55%, #07090e 100%);
+    background: var(--armory-hero-bg);
     perspective: 900px;
   }
 
