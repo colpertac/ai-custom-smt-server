@@ -8,6 +8,9 @@ import {
   decodeEquippedItemUids,
   isValidCharacterName,
   loadArmoryProfile,
+  listArmoryCharacters,
+  scoreArmoryNameMatch,
+  searchArmoryCharacters,
   uuidBytesToString,
 } from "@/lib/armory"
 import { resetPortraitQueueForTests } from "@/lib/portrait-queue"
@@ -49,6 +52,92 @@ describe("isValidCharacterName", () => {
     expect(isValidCharacterName("a".repeat(33))).toBe(false)
     expect(isValidCharacterName("../etc")).toBe(false)
     expect(isValidCharacterName("a/b")).toBe(false)
+  })
+})
+
+describe("scoreArmoryNameMatch", () => {
+  it("ranks exact and prefix matches above substring", () => {
+    expect(scoreArmoryNameMatch("cat", "cat")).toBeGreaterThan(
+      scoreArmoryNameMatch("catgirl", "cat")
+    )
+    expect(scoreArmoryNameMatch("catgirl", "cat")).toBeGreaterThan(
+      scoreArmoryNameMatch("locate", "cat")
+    )
+  })
+
+  it("matches subsequence characters for fuzzy fallback", () => {
+    expect(scoreArmoryNameMatch("locate", "ct")).toBeGreaterThan(0)
+    expect(scoreArmoryNameMatch("xyz", "cat")).toBe(0)
+  })
+})
+
+describe("searchArmoryCharacters", () => {
+  let dataDir: string
+
+  beforeEach(() => {
+    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smt-armory-search-"))
+    process.env.WEBSITE_DATA_DIR = dataDir
+    resetPortraitQueueForTests()
+  })
+
+  afterEach(() => {
+    resetPortraitQueueForTests()
+    fs.rmSync(dataDir, { recursive: true, force: true })
+    delete process.env.WEBSITE_DATA_DIR
+  })
+
+  it("returns null for invalid query fragments", () => {
+    expect(searchArmoryCharacters("../etc")).toBeNull()
+  })
+
+  it("finds substring matches with pagination", () => {
+    if (!fs.existsSync(getWorldDbPath())) return
+    const all = searchArmoryCharacters("a", { limit: 1000, offset: 0 })
+    expect(all).not.toBeNull()
+    if ((all?.total ?? 0) === 0) return
+
+    const page0 = searchArmoryCharacters("a", { limit: 2, offset: 0 })
+    const page1 = searchArmoryCharacters("a", { limit: 2, offset: 2 })
+    expect(page0!.items.length).toBeLessThanOrEqual(2)
+    expect(page0!.total).toBe(all!.total)
+    if (page0!.total > 2) {
+      expect(page1!.items[0]?.name).not.toBe(page0!.items[0]?.name)
+    }
+    expect(
+      page0!.items.every((hit) => hit.name.toLowerCase().includes("a"))
+    ).toBe(true)
+  })
+})
+
+describe("listArmoryCharacters", () => {
+  let dataDir: string
+
+  beforeEach(() => {
+    dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smt-armory-list-"))
+    process.env.WEBSITE_DATA_DIR = dataDir
+    resetPortraitQueueForTests()
+  })
+
+  afterEach(() => {
+    resetPortraitQueueForTests()
+    fs.rmSync(dataDir, { recursive: true, force: true })
+    delete process.env.WEBSITE_DATA_DIR
+  })
+
+  it("lists characters alphabetically with pagination", () => {
+    if (!fs.existsSync(getWorldDbPath())) return
+    const all = listArmoryCharacters({ limit: 1000, offset: 0 })
+    expect(all.total).toBeGreaterThan(0)
+
+    const page0 = listArmoryCharacters({ limit: 2, offset: 0 })
+    const page1 = listArmoryCharacters({ limit: 2, offset: 2 })
+    expect(page0.items.length).toBeLessThanOrEqual(2)
+    expect(page0.total).toBe(all.total)
+    if (all.total > 2) {
+      expect(page1.items[0]?.name).not.toBe(page0.items[0]?.name)
+    }
+    const names = page0.items.map((hit) => hit.name)
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" })))
   })
 })
 

@@ -175,6 +175,206 @@ export function isValidCharacterName(name: string): boolean {
   return /^[\p{L}\p{N}_' -]+$/u.test(name)
 }
 
+export const ARMORY_SEARCH_PAGE_SIZE = 25
+
+export type ArmoryCharacterHit = {
+  name: string
+  level: number | null
+  gender: number
+  clanName: string | null
+}
+
+export type ArmorySearchResult = {
+  query: string
+  total: number
+  items: ArmoryCharacterHit[]
+  offset: number
+  limit: number
+}
+
+/** Higher = better match. Zero means no match. */
+export function scoreArmoryNameMatch(name: string, query: string): number {
+  const n = name.toLowerCase()
+  const q = query.toLowerCase()
+  if (!q) return 0
+  if (n === q) return 1000
+  if (n.startsWith(q)) return 800 - Math.min(n.length - q.length, 99)
+  const idx = n.indexOf(q)
+  if (idx >= 0) return 600 - Math.min(idx, 99)
+
+  let qi = 0
+  let gapPenalty = 0
+  for (let ni = 0; ni < n.length && qi < q.length; ni++) {
+    if (n[ni] === q[qi]) {
+      qi++
+    } else if (qi > 0) {
+      gapPenalty++
+    }
+  }
+  if (qi !== q.length) return 0
+  return Math.max(1, 400 - gapPenalty * 8)
+}
+
+type CharacterSearchRow = {
+  Name: string
+  Level: number | null
+  Gender: number
+  ClanName: string | null
+}
+
+const CHARACTER_SEARCH_SELECT = `SELECT
+  c.Name,
+  c.Gender,
+  e.Level,
+  cl.Name AS ClanName
+FROM Character c
+LEFT JOIN EntityStats e ON e.UID = c.CoreStats
+LEFT JOIN Clan cl ON cl.UID = c.Clan AND c.Clan != ?
+WHERE`
+
+function mapSearchRow(row: CharacterSearchRow): ArmoryCharacterHit {
+  return {
+    name: row.Name,
+    level: row.Level,
+    gender: row.Gender,
+    clanName: row.ClanName,
+  }
+}
+
+function searchArmoryCharactersFuzzy(
+  db: ReturnType<typeof getWorldDb>,
+  query: string,
+  limit: number,
+  offset: number
+): ArmorySearchResult {
+  const rows = db
+    .prepare(
+      `${CHARACTER_SEARCH_SELECT} 1=1
+       ORDER BY c.Name COLLATE NOCASE ASC`
+    )
+    .all(NULL_UUID) as CharacterSearchRow[]
+
+  const ranked = rows
+    .map((row) => ({
+      row,
+      score: scoreArmoryNameMatch(row.Name, query),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        a.row.Name.localeCompare(b.row.Name, undefined, { sensitivity: "base" })
+    )
+
+  const total = ranked.length
+  const items = ranked
+    .slice(offset, offset + limit)
+    .map((entry) => mapSearchRow(entry.row))
+
+  return { query, total, items, offset, limit }
+}
+
+/**
+ * Fuzzy public character search (substring first, then subsequence fallback).
+ * Returns null when the query is not a valid character name fragment.
+ */
+export function searchArmoryCharacters(
+  rawQuery: string,
+  options: { limit?: number; offset?: number } = {}
+): ArmorySearchResult | null {
+  const query = rawQuery.trim()
+  if (!isValidCharacterName(query)) return null
+
+  const limit = Math.min(
+    Math.max(1, Math.floor(options.limit ?? ARMORY_SEARCH_PAGE_SIZE)),
+    100
+  )
+  const offset = Math.max(0, Math.floor(options.offset ?? 0))
+
+  const db = getWorldDb()
+  const likePattern = `%${query}%`
+  const prefixPattern = `${query}%`
+
+  const substringTotal = db
+    .prepare(
+      `SELECT COUNT(*) AS total
+       FROM Character
+       WHERE Name LIKE ? COLLATE NOCASE`
+    )
+    .get(likePattern) as { total: number }
+
+  if (substringTotal.total > 0) {
+    const rows = db
+      .prepare(
+        `${CHARACTER_SEARCH_SELECT} c.Name LIKE ? COLLATE NOCASE
+         ORDER BY
+           CASE
+             WHEN lower(c.Name) = lower(?) THEN 0
+             WHEN lower(c.Name) LIKE lower(?) THEN 1
+             ELSE 2
+           END,
+           lower(c.Name) ASC
+         LIMIT ? OFFSET ?`
+      )
+      .all(
+        NULL_UUID,
+        likePattern,
+        query,
+        prefixPattern,
+        limit,
+        offset
+      ) as CharacterSearchRow[]
+
+    return {
+      query,
+      total: substringTotal.total,
+      items: rows.map(mapSearchRow),
+      offset,
+      limit,
+    }
+  }
+
+  return searchArmoryCharactersFuzzy(db, query, limit, offset)
+}
+
+export type ArmoryCharacterListResult = {
+  total: number
+  items: ArmoryCharacterHit[]
+  offset: number
+  limit: number
+}
+
+/** Paginated alphabetical list of all public characters. */
+export function listArmoryCharacters(
+  options: { limit?: number; offset?: number } = {}
+): ArmoryCharacterListResult {
+  const limit = Math.min(
+    Math.max(1, Math.floor(options.limit ?? ARMORY_SEARCH_PAGE_SIZE)),
+    100
+  )
+  const offset = Math.max(0, Math.floor(options.offset ?? 0))
+
+  const db = getWorldDb()
+  const totalRow = db
+    .prepare(`SELECT COUNT(*) AS total FROM Character`)
+    .get() as { total: number }
+
+  const rows = db
+    .prepare(
+      `${CHARACTER_SEARCH_SELECT} 1=1
+       ORDER BY c.Name COLLATE NOCASE ASC
+       LIMIT ? OFFSET ?`
+    )
+    .all(NULL_UUID, limit, offset) as CharacterSearchRow[]
+
+  return {
+    total: totalRow.total,
+    items: rows.map(mapSearchRow),
+    offset,
+    limit,
+  }
+}
+
 function decodeU16Array(
   blob: Uint8Array | Buffer | null | undefined,
   count: number

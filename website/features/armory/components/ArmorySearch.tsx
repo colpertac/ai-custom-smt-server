@@ -24,7 +24,7 @@ export function ArmorySearch({
         e.preventDefault()
         const q = name.trim()
         if (!q) return
-        router.push(`/armory/${encodeURIComponent(q)}`)
+        router.push(`/armory/search?q=${encodeURIComponent(q)}`)
       }}
     >
       <Field className="min-w-[14rem] flex-1">
@@ -33,7 +33,7 @@ export function ArmorySearch({
           id="armory-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Exact name…"
+          placeholder="Name or partial name…"
           maxLength={32}
           autoComplete="off"
           autoFocus={autoFocus}

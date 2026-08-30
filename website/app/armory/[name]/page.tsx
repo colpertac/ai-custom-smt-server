@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import { ArmoryProfileView } from "@/features/armory/components/ArmoryProfileView"
 import { ArmorySearch } from "@/features/armory/components/ArmorySearch"
@@ -38,7 +38,9 @@ export default async function ArmoryCharacterPage({ params }: Props) {
     }
   }
 
-  if (!dbError && !profile) notFound()
+  if (!dbError && !profile) {
+    redirect(`/armory/search?q=${encodeURIComponent(name)}`)
+  }
 
   return (
     <section className="site-atmosphere mx-auto max-w-5xl px-4 py-8">
