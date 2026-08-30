@@ -64,6 +64,25 @@ export default async function AdminPage() {
         </p>
       </section>
 
+      <section className="mt-12">
+        <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
+          Account import
+        </h2>
+        <div className="gold-rule mt-2 max-w-[12rem]" />
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+          Upload a vanilla COMP account export XML through the lobby import
+          API (admin-gated).
+        </p>
+        <p className="mt-3 text-sm">
+          <Link
+            href="/admin/import"
+            className="underline underline-offset-2 hover:text-gold-dim"
+          >
+            Open account import
+          </Link>
+        </p>
+      </section>
+
       <p className="mt-8 text-sm">
         <Link
           href="/account"
