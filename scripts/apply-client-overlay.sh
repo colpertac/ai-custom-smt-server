@@ -28,4 +28,6 @@ rsync -a --checksum "${OVERLAY}/BinaryData/" "${CLIENT_DIR}/BinaryData/"
 
 echo "applied overlay -> ${CLIENT_DIR}"
 echo
-echo "Phase 2 check: open command help for Sit; text should contain [AI P2]."
+echo "Checks:"
+echo "  Phase 2: Sit help text may contain [AI P2] if that Client bin is present."
+echo "  Phase 3: inventory item 900001 should read 'AI Test Token' (needs Shield overlay)."

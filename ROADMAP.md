@@ -57,17 +57,20 @@ See [docs/phase2.md](docs/phase2.md) and
 
 Start by reusing an existing icon and model.
 
-- [ ] Reserve an item ID in `docs/ids.md`.
-- [ ] Add the mechanical `ItemData` record.
-- [ ] Add matching client display/name/description records such as
+- [x] Reserve an item ID in `docs/ids.md`.
+- [x] Add the mechanical `ItemData` record.
+- [x] Add matching client display/name/description records such as
   `CItemData`.
-- [ ] Update any required icon/model/supporting tables.
-- [ ] Install matching Shield data in the server datastore.
-- [ ] Put the item in a test shop or drop set.
-- [ ] Verify inventory, stacking, trade, storage, relog, and deletion.
+- [x] Update any required icon/model/supporting tables.
+- [x] Install matching Shield data in the server datastore.
+- [x] Put the item in a test shop or drop set.
+- [x] Verify inventory, stacking, trade, storage, relog, and deletion.
 
 **Done when:** The item has the intended name and behavior, survives relogging,
 and creates no server-data validation errors.
+
+See [docs/phase3.md](docs/phase3.md). In-game confirmation of loot/name/stack
+is the remaining player-side smoke check.
 
 ## Phase 4 — Add one custom demon
 

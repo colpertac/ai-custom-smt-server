@@ -72,6 +72,29 @@ Or use the scripts:
 
 Identity round-trips should be byte-identical before you trust edits.
 
+Use regular files, not pipes, for large tables such as `ItemData` /
+`CItemData`.
+
+### Custom items (Phase 3)
+
+Minimum pair:
+
+| Table | `comp_bdpatch` type | Role |
+| --- | --- | --- |
+| `Shield/ItemData.sbin` | `item` | Mechanics (`common.id`) |
+| `Shield/CItemData.sbin` | `citem` | Name/desc/icon/model (`baseData.ID`) |
+
+Rebuild the **full** table after appending a cloned record. A one-record
+`.sbin` would replace the entire stock table.
+
+Server install must be loose files under
+`/var/lib/comp_hack/datastore/BinaryData/Shield/` — package ZIPs cannot
+override existing loose Shield BinaryData. Use
+`scripts/install-phase3-shield.sh` after `scripts/build-client-overlay.sh`.
+
+Match keys: `ItemData.common.id == CItemData.baseData.ID`. Do not use
+`ItemData.basic.baseID` as the primary ID.
+
 ## Safe testing
 
 Prefer a disposable client copy (hardlink clone is fine):

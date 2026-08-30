@@ -15,7 +15,7 @@ empty global test map `90102`:
 - Zone partial ID: `900001`
 - Drop set ID: `900001`
 - Enemy: existing demon type `187`, level 5
-- Drop: guaranteed Macca Note (`699`)
+- Drop: guaranteed Macca Note (`699`); Phase 3 also adds AI Test Token (`900001`)
 
 Source of truth:
 

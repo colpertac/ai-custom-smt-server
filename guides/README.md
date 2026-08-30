@@ -6,7 +6,7 @@ server.
 ## Walkthroughs
 
 - [Custom encounter on an existing zone](custom-zone.md)
-- [Client BinaryData round-trip](client-binarydata.md)
+- [Client BinaryData round-trip](client-binarydata.md) (includes Phase 3 item tables)
 
 ## XML syntax
 

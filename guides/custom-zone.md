@@ -1,7 +1,8 @@
 # Adding a Custom Encounter to an Existing Zone
 
 This walkthrough recreates Phase 1: one enemy on empty map `90102` with a
-guaranteed Macca Note drop, delivered as a removable package.
+guaranteed Macca Note drop (plus Phase 3 AI Test Token), delivered as a
+removable package.
 
 Use the syntax references when you want to understand or discover additional
 members:
@@ -22,11 +23,13 @@ DynamicMap 90102
 
 Spawn 900001
   └─ DropSet 900001
-       └─ one Macca Note (ItemType 699), Rate 100
+       ├─ one Macca Note (ItemType 699), Rate 100
+       └─ one AI Test Token (ItemType 900001), Rate 100
 ```
 
-No C++ rebuild is required because zones, spawns, and drops are runtime data.
-No client patch is required because the map, demon, and item already exist.
+No C++ rebuild is required for the zone/drop XML. The custom item needs
+synchronized Shield `ItemData`/`CItemData` (see [phase3.md](../docs/phase3.md)).
+The map and enemy already exist in the stock client.
 
 ## Project files
 
@@ -211,13 +214,22 @@ server-content/data/dropset/ai_custom_phase1.xml
                     <member name="Rate">100</member>
                 </object>
             </element>
+            <element>
+                <object>
+                    <member name="ItemType">900001</member>
+                    <member name="MinStack">1</member>
+                    <member name="MaxStack">1</member>
+                    <member name="Rate">100</member>
+                </object>
+            </element>
         </member>
     </object>
 </objects>
 ```
 
-Spawn `900001` references this DropSet. Item `699` is an existing Macca Note,
-so both client and server already understand it.
+Spawn `900001` references this DropSet. Item `699` is an existing Macca Note
+(stock client/server). Item `900001` is the Phase 3 custom token and needs the
+Shield BinaryData overlay documented in [phase3.md](../docs/phase3.md).
 
 ## Step 7: record IDs
 
@@ -290,7 +302,7 @@ In game:
 Expected:
 
 1. one enemy appears near the starting position;
-2. killing it drops one Macca Note;
+2. killing it drops one Macca Note and one AI Test Token;
 3. it returns after roughly 15 seconds.
 
 ## Modify or remove
