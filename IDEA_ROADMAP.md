@@ -579,6 +579,18 @@ behavior and no LLM dependency.
 - [ ] Oracle deployment and security tutorial after Phase 15.
 - [ ] Server customization overview after Phases 11–13.
 - [ ] Keep written guides as the source of truth; videos demonstrate them.
+- [x] Local install scripts (`deploy/install.sh`, `deploy/install.ps1`) +
+  YouTube shot list ([docs/youtube-1.0-setup.md](docs/youtube-1.0-setup.md)).
+  **Near-term:** distribute a **zip of `deploy/` + `ops/`** (and seed) for
+  offline/manual install — unpack then `./install.sh --ip …`.
+- [x] First web login with default `admin` / `admin123` shows a password-change
+  modal (Portainer-style) with **Skip — keep admin123** for labs/guides.
+- [ ] **Later — curl one-liner via GitHub Release (uv-style):** publish a
+  versioned release asset (same zip), host a small `install.sh` at a stable
+  URL that downloads that asset (or uses cwd if already present), then
+  bootstraps compose. Optional second mirror (own domain / object storage)
+  so install does not depend on GitHub alone on demo day. Not required for
+  the first YouTube 1.0 cut.
 
 **Done when:** A viewer can follow each tutorial from a clean baseline without
 depending on undocumented local files.
