@@ -1,4 +1,5 @@
 import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
+import { api } from "@/lib/kyClient"
 import { fetcher } from "@/lib/fetcher"
 import type {
   ReportRewardDungeonFile,
@@ -51,4 +52,40 @@ export const setAllReportRewardsEnabled = async (enabled: boolean) => {
   )
   notifyLaneAPendingChanged()
   return result
+}
+
+/** Zip of CEventMessageData2 + INSTALL.txt for custom NPC package dialog labels. */
+export async function downloadCustomNpcClientPatch(
+  global: ReportRewardGlobalFile
+): Promise<void> {
+  const response = await api("admin/report-rewards/client-overlay", {
+    method: "POST",
+    json: global,
+  })
+  if (!response.ok) {
+    let message = `HTTP ${response.status}`
+    try {
+      const errorData = (await response.json()) as { message?: string }
+      if (errorData.message) message = errorData.message
+    } catch {
+      /* keep default */
+    }
+    throw new Error(message)
+  }
+  const blob = await response.blob()
+  const disposition = response.headers.get("Content-Disposition") ?? ""
+  const match = /filename="([^"]+)"/.exec(disposition)
+  const filename = match?.[1] ?? "smt-custom-npc-dialog.zip"
+  const url = URL.createObjectURL(blob)
+  try {
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    a.rel = "noopener"
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  } finally {
+    URL.revokeObjectURL(url)
+  }
 }

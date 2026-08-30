@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, Fragment } from "react"
 import { useSearchParams } from "next/navigation"
-import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react"
+import { ChevronDown, ChevronRight, Download, Plus, Trash2 } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
 import { useConfirm } from "@/components/confirm-dialog"
@@ -14,7 +14,7 @@ import {
   groupDungeonLootByFamily,
   variantDisplayLabel,
 } from "@/features/admin-dungeon-loot/groupDungeonLoot"
-import { fetchReportRewardDungeon } from "@/features/admin-report-rewards/api"
+import { fetchReportRewardDungeon, downloadCustomNpcClientPatch } from "@/features/admin-report-rewards/api"
 import {
   usePatchReportRewardDungeonList,
   useReportRewardDungeons,
@@ -23,6 +23,7 @@ import {
   useSaveReportRewardGlobal,
   useSetAllReportRewardsEnabled,
 } from "@/features/admin-report-rewards/hooks"
+import { CEVENT_OVERLAY_REL } from "@/lib/report-reward-client-overlay-paths"
 import {
   STOCK_REPORT_COST_MESSAGE_IDS,
   linearTradeTiers,
@@ -77,6 +78,8 @@ export function DungeonLootPanel() {
   const [error, setError] = useState<string | null>(null)
   const [saveOk, setSaveOk] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [clientPatchDownloading, setClientPatchDownloading] = useState(false)
+  const [clientPatchError, setClientPatchError] = useState<string | null>(null)
 
   const draftRef = useRef(draft)
   draftRef.current = draft
@@ -231,6 +234,27 @@ export function DungeonLootPanel() {
     [dungeonsQuery.data]
   )
 
+  const customNpcPackages = useMemo(() => {
+    const g = globalDraft?.global
+    if (!g) return []
+    return tradeTiersMissingStockLabels(g.itemsPerCp, g.cpPackages)
+  }, [globalDraft])
+
+  const handleDownloadClientPatch = useCallback(async () => {
+    if (!globalDraft) return
+    setClientPatchError(null)
+    setClientPatchDownloading(true)
+    try {
+      await downloadCustomNpcClientPatch(globalDraft)
+    } catch (e) {
+      setClientPatchError(
+        e instanceof Error ? e.message : "Client patch download failed"
+      )
+    } finally {
+      setClientPatchDownloading(false)
+    }
+  }, [globalDraft])
+
   if (globalQuery.isLoading || dungeonsQuery.isLoading) {
     return <p className="text-sm text-muted-foreground">Loading dungeon loot…</p>
   }
@@ -346,15 +370,42 @@ export function DungeonLootPanel() {
                 )
               })}
             </ul>
-            {tradeTiersMissingStockLabels(g.itemsPerCp, g.cpPackages).length >
-            0 ? (
-              <p className="mt-1 text-[0.65rem] text-muted-foreground">
-                Non-stock item costs ({" "}
-                {Object.keys(STOCK_REPORT_COST_MESSAGE_IDS).join("/")} are
-                stock) auto-allocate CEventMessage IDs. Publish patches the
-                client overlay — players must run ImagineUpdate. Requires{" "}
-                <span className="font-mono">comp_bdpatch</span> in ops-tools.
-              </p>
+            {customNpcPackages.length > 0 ? (
+              <div className="mt-2 space-y-2 rounded-md border border-cyan-900/40 bg-cyan-950/20 p-2.5">
+                <p className="text-[0.65rem] text-muted-foreground">
+                  Non-stock item costs (
+                  {Object.keys(STOCK_REPORT_COST_MESSAGE_IDS).join("/")} are
+                  stock) need custom client dialog strings (
+                  <span className="font-mono">CEventMessage</span>). Publish
+                  from Overview patches the server overlay, or download a zip
+                  for manual install.
+                </p>
+                <p className="text-[0.65rem] text-muted-foreground">
+                  Drop{" "}
+                  <span className="font-mono text-foreground">
+                    {CEVENT_OVERLAY_REL}
+                  </span>{" "}
+                  into your game folder (same directory as{" "}
+                  <span className="font-mono">ImagineClient.exe</span>).
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={clientPatchDownloading}
+                  onClick={() => void handleDownloadClientPatch()}
+                >
+                  <Download className="size-3.5" />
+                  {clientPatchDownloading
+                    ? "Building patch…"
+                    : "Download client dialog patch"}
+                </Button>
+                {clientPatchError ? (
+                  <p className="text-[0.65rem] text-[#ff9b9b]">
+                    {clientPatchError}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
         </div>

@@ -47,12 +47,23 @@ describe("dungeon payout generate", () => {
     expect(xml).toContain("<element>5401</element>")
     expect(xml).toContain(payout.hooks.bonusEventId)
     expect(xml).toContain('<member name="sourceContext">ALL</member>')
-    expect(xml).toContain('<member name="stopOnFailure">false</member>')
     const cpIdx = xml.indexOf("ActionUpdatePoints")
-    const lootIdx = xml.indexOf("ActionCreateLoot")
     expect(cpIdx).toBeGreaterThan(-1)
-    expect(lootIdx).toBeGreaterThan(-1)
-    expect(cpIdx).toBeLessThan(lootIdx)
+    if (payout.crateCount > 0) {
+      expect(xml).toContain('<member name="stopOnFailure">false</member>')
+      const lootIdx = xml.indexOf("ActionCreateLoot")
+      expect(lootIdx).toBeGreaterThan(-1)
+      expect(cpIdx).toBeLessThan(lootIdx)
+    } else {
+      expect(xml).not.toContain("ActionCreateLoot")
+    }
+  })
+
+  it("skips bonus crates when crateCount is zero", () => {
+    const cpOnly: DungeonPayout = { ...payout, crateCount: 0 }
+    const xml = generateBonusOnlyEventsXml(cpOnly)
+    expect(xml).toContain("ActionUpdatePoints")
+    expect(xml).not.toContain("ActionCreateLoot")
   })
 
   it("merges shared AFTER branches for a family", () => {

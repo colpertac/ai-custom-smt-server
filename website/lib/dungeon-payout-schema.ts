@@ -44,7 +44,7 @@ export const dungeonPayoutSchema = z
     bossGroupId: z.number().int().positive(),
     dropSetId: z.number().int().positive(),
     spotId: z.number().int().positive(),
-    crateCount: z.number().int().min(1).max(20),
+    crateCount: z.number().int().min(0).max(20),
     cp: z.number().int().min(0).max(10000),
     crateDrops: z.array(crateDropSchema).max(64),
     clearItems: z.array(clearItemSchema).max(16),

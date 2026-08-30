@@ -87,8 +87,25 @@ ${indent}</element>`
 }
 
 function bonusActionsXml(payout: DungeonPayout, indent: string): string {
-  const spots = spotElements(payout.crateCount, payout.spotId, `${indent}                `)
   const clear = clearItemActions(payout.clearItems, indent)
+  const loot =
+    payout.crateCount > 0
+      ? `${indent}<element>
+${indent}    <object name="ActionCreateLoot">
+${indent}        <member name="sourceContext">SOURCE</member>
+${indent}        <member name="location">ZONE</member>
+${indent}        <member name="stopOnFailure">false</member>
+${indent}        <member name="isBossBox">true</member>
+${indent}        <member name="bossGroupID">${payout.bossGroupId}</member>
+${indent}        <member name="dropSetIDs">
+${indent}            <element>${payout.dropSetId}</element>
+${indent}        </member>
+${indent}        <member name="locations">
+${spotElements(payout.crateCount, payout.spotId, `${indent}                `)}
+${indent}        </member>
+${indent}    </object>
+${indent}</element>`
+      : ""
   // Dedup flag first; CP before loot (stock defeat chains often fire with no
   // player client — PARTY CP would be skipped). CreateLoot must not abort CP.
   return `${indent}<element>
@@ -109,22 +126,7 @@ ${indent}        <member name="location">INSTANCE</member>
 ${indent}        <member name="pointType">CP</member>
 ${indent}        <member name="value">${payout.cp}</member>
 ${indent}    </object>
-${indent}</element>
-${indent}<element>
-${indent}    <object name="ActionCreateLoot">
-${indent}        <member name="sourceContext">SOURCE</member>
-${indent}        <member name="location">ZONE</member>
-${indent}        <member name="stopOnFailure">false</member>
-${indent}        <member name="isBossBox">true</member>
-${indent}        <member name="bossGroupID">${payout.bossGroupId}</member>
-${indent}        <member name="dropSetIDs">
-${indent}            <element>${payout.dropSetId}</element>
-${indent}        </member>
-${indent}        <member name="locations">
-${spots}
-${indent}        </member>
-${indent}    </object>
-${indent}</element>${clear}`
+${indent}</element>${loot}${clear}`
 }
 
 function payoutInstanceIds(payout: DungeonPayout): number[] {
