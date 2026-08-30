@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 import {
   deleteAdminAccount,
+  fetchAdminAccountCharacters,
   fetchAdminAccounts,
   updateAdminAccount,
 } from "@/features/admin/api"
@@ -13,6 +14,14 @@ export function useAdminAccounts() {
   return useQuery({
     queryKey: ["admin", "accounts"],
     queryFn: fetchAdminAccounts,
+  })
+}
+
+export function useAdminAccountCharacters(username: string | null) {
+  return useQuery({
+    queryKey: ["admin", "accounts", username, "characters"],
+    queryFn: () => fetchAdminAccountCharacters(username!),
+    enabled: Boolean(username),
   })
 }
 

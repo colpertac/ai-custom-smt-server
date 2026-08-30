@@ -1,10 +1,13 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
+import { Mars, Venus, VenusAndMars } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import type { AdminAccount } from "@/features/admin/api"
 import {
+  useAdminAccountCharacters,
   useAdminAccounts,
   useDeleteAdminAccount,
   useUpdateAdminAccount,
@@ -98,6 +101,7 @@ export function AdminAccountsPanel() {
                   <th className="px-2 py-2 font-medium">User</th>
                   <th className="px-2 py-2 font-medium">Lvl</th>
                   <th className="px-2 py-2 font-medium">CP</th>
+                  <th className="px-2 py-2 font-medium">Chars</th>
                   <th className="px-2 py-2 font-medium">On</th>
                 </tr>
               </thead>
@@ -113,6 +117,7 @@ export function AdminAccountsPanel() {
                     <td className="px-2 py-2 font-medium">{a.username}</td>
                     <td className="px-2 py-2">{a.userLevel ?? 0}</td>
                     <td className="px-2 py-2">{a.cp ?? 0}</td>
+                    <td className="px-2 py-2">{a.characterCount ?? 0}</td>
                     <td className="px-2 py-2">
                       {a.enabled === false ? "no" : "yes"}
                     </td>
@@ -204,6 +209,7 @@ function AccountEditForm({
   return (
     <form onSubmit={form.handleSubmit(submit)} className="flex flex-col gap-4">
       {error ? <FormAlert>{error}</FormAlert> : null}
+      <AccountCharactersList username={account.username} />
       <FieldGroup>
         <Field>
           <FieldLabel>Email (blank = none)</FieldLabel>
@@ -257,5 +263,113 @@ function AccountEditForm({
         </Button>
       </div>
     </form>
+  )
+}
+
+function GenderIcon({ gender }: { gender: number }) {
+  if (gender === 0) {
+    return (
+      <span
+        className="inline-flex text-sky-400"
+        title="Male"
+        aria-label="Male"
+      >
+        <Mars className="size-3.5" aria-hidden strokeWidth={2.25} />
+      </span>
+    )
+  }
+  if (gender === 1) {
+    return (
+      <span
+        className="inline-flex text-fuchsia-400"
+        title="Female"
+        aria-label="Female"
+      >
+        <Venus className="size-3.5" aria-hidden strokeWidth={2.25} />
+      </span>
+    )
+  }
+  return (
+    <span
+      className="inline-flex text-gold-dim"
+      title={`Gender ${gender}`}
+      aria-label={`Gender ${gender}`}
+    >
+      <VenusAndMars className="size-3.5" aria-hidden strokeWidth={2.25} />
+    </span>
+  )
+}
+
+function formatLastLogin(ts: number): string {
+  if (!ts) return "—"
+  // COMP stores unix seconds
+  const d = new Date(ts * 1000)
+  if (Number.isNaN(d.getTime())) return "—"
+  return d.toISOString().slice(0, 10)
+}
+
+function AccountCharactersList({ username }: { username: string }) {
+  const { data, isLoading, isError, error } = useAdminAccountCharacters(username)
+  const characters = data?.characters ?? []
+
+  return (
+    <div className="border border-border bg-muted/30 p-3">
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="font-heading text-sm tracking-[0.14em] text-gold uppercase">
+          Characters
+        </h3>
+        <span className="text-[0.7rem] text-muted-foreground">
+          {isLoading
+            ? "Loading…"
+            : `${characters.length} in world DB`}
+        </span>
+      </div>
+      {isError ? (
+        <p className="mt-2 text-xs text-[#ff9b9b]">
+          {error instanceof Error ? error.message : "Failed to load characters"}
+        </p>
+      ) : null}
+      {!isLoading && !isError && characters.length === 0 ? (
+        <p className="mt-2 text-xs text-muted-foreground">No characters.</p>
+      ) : null}
+      {characters.length > 0 ? (
+        <div className="mt-2 overflow-auto border border-border">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-muted/80 text-muted-foreground">
+              <tr>
+                <th className="px-2 py-1.5 font-medium">Name</th>
+                <th className="px-2 py-1.5 font-medium">Lv</th>
+                <th className="px-2 py-1.5 font-medium">G</th>
+                <th className="px-2 py-1.5 font-medium">Last</th>
+              </tr>
+            </thead>
+            <tbody>
+              {characters.map((c) => (
+                <tr
+                  key={c.name}
+                  className="border-t border-border hover:bg-muted/40"
+                >
+                  <td className="px-2 py-1.5">
+                    <Link
+                      href={`/armory/${encodeURIComponent(c.name)}`}
+                      className="font-medium text-gold-dim underline-offset-2 hover:text-gold-hot hover:underline"
+                    >
+                      {c.name}
+                    </Link>
+                  </td>
+                  <td className="px-2 py-1.5">{c.level}</td>
+                  <td className="px-2 py-1.5">
+                    <GenderIcon gender={c.gender} />
+                  </td>
+                  <td className="px-2 py-1.5 text-muted-foreground">
+                    {formatLastLogin(c.lastLogin)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+    </div>
   )
 }

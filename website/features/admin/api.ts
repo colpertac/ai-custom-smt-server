@@ -22,3 +22,15 @@ export const deleteAdminAccount = (username: string) =>
     `admin/accounts/${encodeURIComponent(username)}`,
     { method: "DELETE" }
   )
+
+export type AdminCharacterSummary = {
+  name: string
+  level: number
+  gender: number
+  lastLogin: number
+}
+
+export const fetchAdminAccountCharacters = (username: string) =>
+  fetcher<{ username: string; characters: AdminCharacterSummary[] }>(
+    `admin/accounts/${encodeURIComponent(username)}/characters`
+  )
