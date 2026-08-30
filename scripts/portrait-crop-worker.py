@@ -24,6 +24,10 @@ from pathlib import Path
 
 from PIL import Image
 
+# Line-buffer so `watch` logs show up under redirected terminals.
+sys.stdout.reconfigure(line_buffering=True)
+sys.stderr.reconfigure(line_buffering=True)
+
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INBOX = Path("/home/cat/repos/smt/va_screenshots")
 DEFAULT_OUT = ROOT / "work" / "portrait-crops"
