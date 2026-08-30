@@ -286,3 +286,76 @@ print(
     f"equipSets={len(equipment_sets)} enchantSets={len(enchant_sets)}"
 )
 PY
+
+echo "Export mod slots, compendium, item subcategories…"
+"$BIN/comp_decrypt" "$SBIN/ModifiedEffectData.sbin" "$WORKDIR/mod.plain.bin"
+"$BIN/comp_bdpatch" flatten modeffect "$WORKDIR/mod.plain.bin" "$WORKDIR/mod.tsv"
+"$BIN/comp_decrypt" "$SBIN/ModificationExtEffectData.sbin" "$WORKDIR/modext.plain.bin"
+"$BIN/comp_bdpatch" flatten modexteffect "$WORKDIR/modext.plain.bin" "$WORKDIR/modext.tsv"
+"$BIN/comp_decrypt" "$SBIN/DevilBookData.sbin" "$WORKDIR/db.plain.bin"
+"$BIN/comp_bdpatch" flatten devilbook "$WORKDIR/db.plain.bin" "$WORKDIR/db.tsv"
+"$BIN/comp_decrypt" "$SBIN/ItemData.sbin" "$WORKDIR/item.plain.bin"
+"$BIN/comp_bdpatch" flatten item "$WORKDIR/item.plain.bin" "$WORKDIR/item.tsv"
+
+python3 - "$WORKDIR" "$OUT_DIR" "$ROOT/../comp_hack/runtime/config/constants.xml" <<'PY2'
+import csv, json, re, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+workdir, out_dir, constants_xml = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
+
+weapon = {}
+with (workdir / "mod.tsv").open(newline="", encoding="utf-8", errors="replace") as f:
+    for row in csv.DictReader(f, delimiter="\t"):
+        rid = (row.get("ID") or "").strip()
+        tok = (row.get("tokusei") or "").strip()
+        if rid.isdigit() and tok.isdigit() and int(tok) > 0:
+            weapon[rid] = int(tok)
+
+armor = {}
+with (workdir / "modext.tsv").open(newline="", encoding="utf-8", errors="replace") as f:
+    for row in csv.DictReader(f, delimiter="\t"):
+        g = (row.get("groupID") or "").strip()
+        s = (row.get("slot") or "").strip()
+        sub = (row.get("subID") or "").strip()
+        tok = (row.get("tokusei") or "").strip()
+        if g.isdigit() and s.isdigit() and sub.isdigit() and tok.isdigit() and int(tok) > 0:
+            armor.setdefault(g, {}).setdefault(s, {})[sub] = int(tok)
+
+shifts = {}
+with (workdir / "db.tsv").open(newline="", encoding="utf-8", errors="replace") as f:
+    for row in csv.DictReader(f, delimiter="\t"):
+        shift = (row.get("shiftValue") or "").strip()
+        entry = (row.get("entryID") or "").strip()
+        gid = (row.get("groupID") or "").strip()
+        if shift.isdigit() and entry.isdigit():
+            shifts[shift] = {"entryId": int(entry), "groupId": int(gid) if gid.isdigit() else 0}
+
+item_groups = {}
+with (workdir / "item.tsv").open(newline="", encoding="utf-8", errors="replace") as f:
+    for row in csv.DictReader(f, delimiter="\t"):
+        iid = (row.get("id") or "").strip()
+        sub = (row.get("subCategory") or "").strip()
+        if iid.isdigit() and sub.isdigit():
+            item_groups[iid] = int(sub)
+
+summoner_bonus = {}
+if constants_xml.is_file():
+    text = constants_xml.read_text(encoding="utf-8", errors="replace")
+    block = re.search(r'<constant name="DEMON_BOOK_SUMMONER_BONUS">(.*?)</constant>', text, re.S)
+    if block:
+        for pair in re.finditer(r'<pair>\s*<key>(\d+)</key>\s*<value>([^<]+)</value>\s*</pair>', block.group(1), re.S):
+            toks = [int(x.strip()) for x in pair.group(2).split(',') if x.strip().isdigit()]
+            summoner_bonus[pair.group(1)] = toks
+
+generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+for name, payload in [
+    ("mod-effects.json", {"generatedAt": generated, "weapon": weapon, "armor": armor}),
+    ("devilbook-shifts.json", {"generatedAt": generated, "shifts": shifts}),
+    ("compendium-bonuses.json", {"generatedAt": generated, "summoner": summoner_bonus}),
+    ("item-subcategories.json", {"generatedAt": generated, "items": item_groups}),
+]:
+    path = out_dir / name
+    path.write_text(json.dumps(payload, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(f"Wrote {path}")
+PY2

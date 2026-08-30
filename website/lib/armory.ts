@@ -128,6 +128,23 @@ export type ArmoryActiveDemon = {
   level: number | null
 }
 
+/** Live channel: stacked combat bonuses from gear/tokusei (not crit-rate formulas). */
+export type ArmoryCombatBonuses = {
+  critical: number
+  finalCritChance: number
+  lbChance: number
+  lbDamage: number
+  lbCap: number
+  techAttackRate: number
+  techAttackPower: number
+  pursuitRate: number
+  pursuitPower: number
+  /** Cast-time multiplier (100 = normal; lower = faster). Includes INT/SPD. */
+  incant: number
+  /** Cooldown multiplier (100 = normal; lower = faster). Includes VIT/SPD. */
+  cooldown: number
+}
+
 /** Public armory profile — never includes Account / friends / bags. */
 export type ArmoryProfile = {
   name: string
@@ -146,6 +163,15 @@ export type ArmoryProfile = {
   /** Content hash of appearance + VA + weapon + partner; cache key for PNG. */
   portraitFingerprint: string
   portraitStatus: "ready" | "queued" | "missing"
+  /** Live channel stats when online; otherwise offline estimate. */
+  statsSource?: "live" | "estimate"
+  statsFetchedAt?: string
+  statsOnline?: boolean
+  statsDigitalized?: boolean
+  /** Live channel only: partner demon is out (stats include summon sync). */
+  demonSummoned?: boolean
+  /** Live channel only: gear/tokusei combat bonus totals. */
+  combatBonuses?: ArmoryCombatBonuses | null
 }
 
 const NULL_UUID = "00000000-0000-0000-0000-000000000000"
@@ -389,6 +415,7 @@ function decodeU16Array(
 
 type CharacterRow = {
   UID: string
+  Account: string
   Name: string
   Gender: number
   SkinType: number
@@ -484,7 +511,7 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
   const row = db
     .prepare(
       `SELECT
-         c.UID, c.Name, c.Gender, c.SkinType, c.HairType, c.FaceType, c.EyeType,
+         c.UID, c.Account, c.Name, c.Gender, c.SkinType, c.HairType, c.FaceType, c.EyeType,
          c.HairColor, c.LeftEyeColor, c.RightEyeColor, c.LNC, c.CurrentTitle,
          c.Clan, c.ActiveDemon, c.EquippedItems, c.EquippedVA, c.LearnedSkills,
          e.Level, e.XP, e.HP, e.MP, e.MaxHP, e.MaxMP,
@@ -533,7 +560,9 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
       soul: it?.Soul ?? 0,
       basicEffect: it?.BasicEffect ?? 0,
       specialEffect: it?.SpecialEffect ?? 0,
-      modSlots: decodeU16Array(it?.ModSlots ?? null, 5).filter((v) => v !== 0),
+      modSlots: decodeU16Array(it?.ModSlots ?? null, 5).filter(
+        (v) => v !== 0 && v !== 0x00ff
+      ),
     }
   })
 
@@ -571,6 +600,22 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
 
   const learnedSkills = decodeLearnedSkillIds(row.LearnedSkills)
   const baseStats = statsFromRow(row)
+
+  let digitalizeDemonStats: ArmoryStats | null = null
+  // Digitalize is session-only; live channel stats cover it when transformed.
+
+  const progressRow = db
+    .prepare(`SELECT Valuables FROM CharacterProgress WHERE Character = ?`)
+    .get(row.UID) as { Valuables: Uint8Array | Buffer | null } | undefined
+
+  let devilBook: Uint8Array | Buffer | null = null
+  if (row.Account && row.Account !== NULL_UUID) {
+    const bookRow = db
+      .prepare(`SELECT DevilBook FROM AccountWorldData WHERE Account = ?`)
+      .get(row.Account) as { DevilBook: Uint8Array | Buffer | null } | undefined
+    devilBook = bookRow?.DevilBook ?? null
+  }
+
   const computedStats =
     baseStats != null
       ? computeArmoryTotalStats({
@@ -580,6 +625,9 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
           expertisePoints,
           fuseBySlot,
           lnc: row.LNC,
+          digitalizeDemonStats,
+          devilBook,
+          valuables: progressRow?.Valuables ?? null,
         })
       : null
 
@@ -694,6 +742,7 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
     portraitUrl: portrait.url,
     portraitFingerprint: portrait.fingerprint,
     portraitStatus,
+    statsSource: "estimate",
   }
 }
 

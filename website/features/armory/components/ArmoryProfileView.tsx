@@ -4,6 +4,8 @@ import Link from "next/link"
 import { ArmoryEquipSlot } from "@/features/armory/components/ArmoryEquipSlot"
 import { ArmoryHero } from "@/features/armory/components/ArmoryHero"
 import { ArmoryLncGauge } from "@/features/armory/components/ArmoryLncGauge"
+import { CombatBonusesStrip } from "@/features/armory/components/CombatBonusesStrip"
+import { DemonBoostIndicator } from "@/features/armory/components/DemonBoostIndicator"
 import type {
   ArmoryEquipmentSlot,
   ArmoryExpertise,
@@ -108,9 +110,11 @@ function StatValue({
 function StatStrip({
   stats,
   computed,
+  profile,
 }: {
   stats: ArmoryStats
   computed: ArmoryComputedStats | null
+  profile: ArmoryProfile
 }) {
   const primary = [
     ["STR", "str"],
@@ -134,22 +138,39 @@ function StatStrip({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs">
-        <span className="font-medium text-[#4ade80]">
-          HP {(total?.hp ?? stats.hp)}/{(total?.maxHp ?? stats.maxHp)}
-        </span>
-        <span className="text-muted-foreground"> · </span>
-        <span className="font-medium text-[#38bdf8]">
-          MP {(total?.mp ?? stats.mp)}/{(total?.maxMp ?? stats.maxMp)}
-        </span>
-        {stats.xp > 0 ? (
-          <span className="text-muted-foreground">{` · XP ${stats.xp}`}</span>
-        ) : null}
-      </p>
-      <p className="text-[10px] text-muted-foreground">
-        Totals include gear, Tarot/Soul (incl. LNC/LUC conditions &amp; sets),
-        equipment sets, learned passives, and switch skills (assumed on). Still
-        missing: session buffs, digitalize, compendium, and quest bonuses.
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <p className="text-xs">
+          <span className="font-medium text-[#4ade80]">
+            HP {(total?.hp ?? stats.hp)}/{(total?.maxHp ?? stats.maxHp)}
+          </span>
+          <span className="text-muted-foreground"> · </span>
+          <span className="font-medium text-[#38bdf8]">
+            MP {(total?.mp ?? stats.mp)}/{(total?.maxMp ?? stats.maxMp)}
+          </span>
+          {stats.xp > 0 ? (
+            <span className="text-muted-foreground">{` · XP ${stats.xp}`}</span>
+          ) : null}
+        </p>
+        <DemonBoostIndicator summoned={profile.demonSummoned} />
+      </div>
+      <p className="text-[10px] leading-relaxed text-muted-foreground">
+        {profile.statsSource === "live" ? (
+          <>
+            Stats from the live channel server
+            {profile.statsDigitalized ? " (digitalized)" : ""}. Snapshot at{" "}
+            {profile.statsFetchedAt
+              ? new Date(profile.statsFetchedAt).toLocaleString()
+              : "now"}
+            ; may be stale if gear, buffs, or digitalize changed since then.
+          </>
+        ) : (
+          <>
+            Offline estimate from DB + gear, mod slots, compendium, partner
+            digitalize (~30% while transformed), quest/title bonuses, and
+            session buffs are not included in the offline estimate. Log in on
+            channel for live stats when available.
+          </>
+        )}
       </p>
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs tracking-wide uppercase">
         {primary.map(([label, key]) => (
@@ -206,23 +227,53 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
           </p>
         ) : null}
         <ArmoryLncGauge lnc={profile.lnc} className="mt-3" />
-        {profile.activeDemon ? (
+        {profile.activeDemon && profile.demonSummoned ? (
           <p className="mt-2 text-sm">
-            Active demon:{" "}
-            <Link
-              href={`/armory/demon/${encodeURIComponent(profile.activeDemon.id)}`}
-              className="text-gold-dim hover:text-gold-hot"
-            >
-              {profile.activeDemon.name}
-              {profile.activeDemon.level != null
-                ? ` (Lv ${profile.activeDemon.level})`
-                : ""}
-            </Link>
+            Summoned partner:{" "}
+            {profile.activeDemon.id ? (
+              <Link
+                href={`/armory/demon/${encodeURIComponent(profile.activeDemon.id)}`}
+                className="text-gold-dim hover:text-gold-hot"
+              >
+                {profile.activeDemon.name}
+                {profile.activeDemon.level != null
+                  ? ` (Lv ${profile.activeDemon.level})`
+                  : ""}
+              </Link>
+            ) : (
+              <span className="text-gold-dim">
+                {profile.activeDemon.name}
+                {profile.activeDemon.level != null
+                  ? ` (Lv ${profile.activeDemon.level})`
+                  : ""}
+              </span>
+            )}
+          </p>
+        ) : profile.statsSource === "live" ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Partner demon not summoned — stats shown without summon bonuses.
+          </p>
+        ) : profile.activeDemon ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Partner assigned in COMP (
+            {profile.activeDemon.name}
+            {profile.activeDemon.level != null
+              ? ` Lv ${profile.activeDemon.level}`
+              : ""}
+            ); summon state unknown offline.
           </p>
         ) : null}
         {profile.stats ? (
-          <div className="mt-3">
-            <StatStrip stats={profile.stats} computed={profile.computedStats} />
+          <div className="mt-3 space-y-3">
+            <StatStrip
+              stats={profile.stats}
+              computed={profile.computedStats}
+              profile={profile}
+            />
+            <CombatBonusesStrip
+              bonuses={profile.combatBonuses ?? null}
+              live={profile.statsSource === "live"}
+            />
           </div>
         ) : null}
       </header>

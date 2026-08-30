@@ -6,6 +6,10 @@ import { ArmoryProfileView } from "@/features/armory/components/ArmoryProfileVie
 import { ArmorySearch } from "@/features/armory/components/ArmorySearch"
 import { ArmoryTabs } from "@/features/armory/components/ArmoryTabs"
 import {
+  fetchLiveArmoryStats,
+  mergeLiveArmoryProfile,
+} from "@/lib/armory-live"
+import {
   isValidCharacterName,
   loadArmoryProfile,
   WorldDbMissingError,
@@ -40,6 +44,12 @@ export default async function ArmoryCharacterPage({ params }: Props) {
 
   if (!dbError && !profile) {
     redirect(`/armory/search?q=${encodeURIComponent(name)}`)
+  }
+
+  const fetchedAt = new Date().toISOString()
+  if (profile) {
+    const live = await fetchLiveArmoryStats(name)
+    profile = mergeLiveArmoryProfile(profile, live, fetchedAt)
   }
 
   return (

@@ -1,3 +1,7 @@
+import modEffectsPayload from "@/content/armory/mod-effects.json"
+import itemSubcategoriesPayload from "@/content/armory/item-subcategories.json"
+import compendiumBonusesPayload from "@/content/armory/compendium-bonuses.json"
+import devilbookShiftsPayload from "@/content/armory/devilbook-shifts.json"
 import enchantSetsPayload from "@/content/armory/enchant-sets.json"
 import equipmentSetsPayload from "@/content/armory/equipment-sets.json"
 import passiveSkillsPayload from "@/content/armory/passive-skills.json"
@@ -77,6 +81,36 @@ const enchantSets = (
     >
   }
 ).sets
+
+const MOD_SLOT_NULL_EFFECT = 0x00ff
+
+const modEffects = (
+  modEffectsPayload as {
+    weapon: Record<string, number>
+    armor: Record<string, Record<string, Record<string, number>>>
+  }
+)
+
+const itemSubcategories = (
+  itemSubcategoriesPayload as { items: Record<string, number> }
+).items
+
+const compendiumBonuses = (
+  compendiumBonusesPayload as { summoner: Record<string, number[]> }
+).summoner
+
+const devilbookShifts = (
+  devilbookShiftsPayload as {
+    shifts: Record<string, { entryId: number; groupId: number }>
+  }
+).shifts
+
+/** Valuable IDs from server constants (Devil Book v1/v2). */
+const VALUABLE_DEVIL_BOOK_V1 = 250
+const VALUABLE_DEVIL_BOOK_V2 = 251
+
+/** Default non-Mitama digitalize stat rate (%). */
+export const DEFAULT_DIGITALIZE_STAT_RATE = 30
 
 const BASE_STAT_IDS = new Set([
   "STR",
@@ -375,6 +409,106 @@ function collectEnchantSetBonuses(effectIds: ReadonlySet<number>): {
   return { tokuseiIds, conditions }
 }
 
+function isUsableModEffect(effectId: number): boolean {
+  return effectId !== 0 && effectId !== MOD_SLOT_NULL_EFFECT
+}
+
+function collectModSlotTokusei(equipment: ArmoryEquipmentSlot[]): number[] {
+  const tokuseiIds: number[] = []
+  for (const slot of equipment) {
+    if (slot.itemType == null || slot.modSlots.length === 0) continue
+    const isWeapon = slot.slot === "weapon"
+    const groupId = itemSubcategories[String(slot.itemType)]
+    for (const effectId of slot.modSlots) {
+      if (!isUsableModEffect(effectId)) continue
+      let tokuseiId = 0
+      if (isWeapon) {
+        tokuseiId = modEffects.weapon[String(effectId)] ?? 0
+      } else if (groupId != null) {
+        tokuseiId =
+          modEffects.armor[String(groupId)]?.[String(slot.index)]?.[
+            String(effectId)
+          ] ?? 0
+      }
+      if (tokuseiId > 0) tokuseiIds.push(tokuseiId)
+    }
+  }
+  return tokuseiIds
+}
+
+function hasValuable(valuables: Uint8Array | Buffer | null, id: number): boolean {
+  if (!valuables || id < 0) return false
+  const buf = Buffer.isBuffer(valuables) ? valuables : Buffer.from(valuables)
+  const byteIndex = Math.floor(id / 8)
+  const bit = id % 8
+  if (byteIndex >= buf.length) return false
+  return (buf[byteIndex]! & (1 << bit)) !== 0
+}
+
+/** Count distinct compendium entries from AccountWorldData.DevilBook blob. */
+export function countCompendiumEntries(
+  devilBook: Uint8Array | Buffer | null | undefined
+): number {
+  if (!devilBook) return 0
+  const buf = Buffer.isBuffer(devilBook) ? devilBook : Buffer.from(devilBook)
+  const shiftValues = new Set<number>()
+  for (let i = 0; i < buf.length; i++) {
+    const val = buf[i]!
+    for (let k = 0; k < 8; k++) {
+      if ((val & (1 << k)) !== 0) shiftValues.add(i * 8 + k)
+    }
+  }
+  const entries = new Set<number>()
+  for (const shift of shiftValues) {
+    const row = devilbookShifts[String(shift)]
+    if (row && row.groupId > 0) entries.add(row.entryId)
+  }
+  return entries.size
+}
+
+export function collectCompendiumTokusei(
+  devilBook: Uint8Array | Buffer | null | undefined,
+  valuables: Uint8Array | Buffer | null | undefined
+): number[] {
+  if (!hasValuable(valuables ?? null, VALUABLE_DEVIL_BOOK_V1)) return []
+  if (!hasValuable(valuables ?? null, VALUABLE_DEVIL_BOOK_V2)) return []
+  const count = countCompendiumEntries(devilBook ?? null)
+  if (count <= 0) return []
+  const tokuseiIds: number[] = []
+  for (const [threshold, ids] of Object.entries(compendiumBonuses)) {
+    if (count >= Number(threshold)) tokuseiIds.push(...ids)
+  }
+  return tokuseiIds
+}
+
+function applyDigitalizeToMap(
+  stats: StatMap,
+  demonStats: ArmoryStats,
+  statRate: number
+): void {
+  const scale = statRate / 100
+  const pairs: [string, number][] = [
+    ["STR", demonStats.str],
+    ["MAGIC", demonStats.magic],
+    ["VIT", demonStats.vit],
+    ["INT", demonStats.intel],
+    ["SPEED", demonStats.speed],
+    ["LUCK", demonStats.luck],
+    ["CLSR", demonStats.clsr],
+    ["LNGR", demonStats.lngr],
+    ["SPELL", demonStats.spell],
+    ["SUPPORT", demonStats.support],
+    ["PDEF", demonStats.pdef],
+    ["MDEF", demonStats.mdef],
+    ["HP_MAX", demonStats.maxHp],
+    ["MP_MAX", demonStats.maxMp],
+  ]
+  for (const [id, value] of pairs) {
+    const bonus = Math.trunc(value * scale)
+    if (bonus !== 0) stats.set(id, (stats.get(id) ?? 0) + bonus)
+  }
+}
+
 function collectAdjustments(input: {
   equipment: ArmoryEquipmentSlot[]
   learnedSkills: readonly number[]
@@ -382,6 +516,7 @@ function collectAdjustments(input: {
   level: number
   lnc: number
   expertisePoints: ReadonlyMap<number, number>
+  extraTokuseiIds?: readonly number[]
 }): { adjustments: StatAdjustment[]; deferred: EnchantCondition[] } {
   const out: StatAdjustment[] = []
   const deferred: EnchantCondition[] = []
@@ -389,6 +524,14 @@ function collectAdjustments(input: {
     level: input.level,
     lnc: input.lnc,
     expertisePoints: input.expertisePoints,
+  }
+
+  for (const tokId of input.extraTokuseiIds ?? []) {
+    addTokuseiAdjustments(out, tokId)
+  }
+
+  for (const tokId of collectModSlotTokusei(input.equipment)) {
+    addTokuseiAdjustments(out, tokId)
   }
 
   for (const slot of input.equipment) {
@@ -653,10 +796,19 @@ export function computeArmoryTotalStats(input: {
   expertisePoints: ReadonlyMap<number, number>
   fuseBySlot: ReadonlyMap<string, number[]>
   lnc?: number
+  /** Partner demon stats for offline digitalize estimate (not session-accurate). */
+  digitalizeDemonStats?: ArmoryStats | null
+  digitalizeStatRate?: number
+  devilBook?: Uint8Array | Buffer | null
+  valuables?: Uint8Array | Buffer | null
 }): ArmoryComputedStats {
   const disabledSkills = computeDisabledExpertiseSkills(
     input.learnedSkills,
     input.expertisePoints
+  )
+  const compendiumTokusei = collectCompendiumTokusei(
+    input.devilBook ?? null,
+    input.valuables ?? null
   )
   const ctx = {
     level: input.base.level,
@@ -667,10 +819,18 @@ export function computeArmoryTotalStats(input: {
     equipment: input.equipment,
     learnedSkills: input.learnedSkills,
     disabledSkills,
+    extraTokuseiIds: compendiumTokusei,
     ...ctx,
   })
 
   const working = statMapFromBase(input.base)
+  if (input.digitalizeDemonStats) {
+    applyDigitalizeToMap(
+      working,
+      input.digitalizeDemonStats,
+      input.digitalizeStatRate ?? DEFAULT_DIGITALIZE_STAT_RATE
+    )
+  }
   adjustStats(working, adjustments, true)
 
   const statConditionalPass = deferredToAdjustments(deferred, working)

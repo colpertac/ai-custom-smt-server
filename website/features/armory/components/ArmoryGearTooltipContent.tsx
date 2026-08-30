@@ -11,13 +11,15 @@ function TooltipSection({
   tag,
   lines,
   stats,
-  source,
+  sourceId,
+  sourceName,
 }: {
   title: string
   tag: string
   lines?: string[]
   stats?: { id: string; type: number; label: string; value: number }[]
-  source?: string | null
+  sourceId?: number | null
+  sourceName?: string | null
 }) {
   const hasLines = lines != null && lines.length > 0
   const hasStats = stats != null && stats.length > 0
@@ -31,8 +33,16 @@ function TooltipSection({
         </p>
         <span className="font-mono text-[9px] text-[#8b93a8]">{tag}</span>
       </div>
-      {source ? (
-        <p className="mt-1 text-[10px] text-[#8b93a8]">From: {source}</p>
+      {sourceId != null && sourceName ? (
+        <p className="mt-1 text-[10px] text-[#8b93a8]">
+          From:{" "}
+          <Link
+            href={`/wiki/items/${sourceId}`}
+            className="text-[#c9a227] no-underline hover:text-[#f0d060]"
+          >
+            {sourceName} (#{sourceId})
+          </Link>
+        </p>
       ) : null}
       {hasStats ? (
         <ul className="mt-1.5 space-y-0.5 text-xs text-[#7dcea0]">
@@ -71,7 +81,12 @@ function FusionTooltipSection({
         {title}
       </p>
       <p className="mt-1 text-xs font-medium text-[#e8ecf4]">
-        {fusion.sourceName}
+        <Link
+          href={`/wiki/items/${fusion.sourceItemId}`}
+          className="text-[#c9a227] no-underline hover:text-[#f0d060]"
+        >
+          {fusion.sourceName} (#{fusion.sourceItemId})
+        </Link>
       </p>
       {hasEffectName ? (
         <p className="mt-0.5 text-[10px] text-[#8b93a8]">{fusion.effectName}</p>
@@ -97,13 +112,13 @@ export function ArmoryGearTooltipContent({
     enchants.push(`Mods ${features.modSlots.join("/")}`)
   }
 
-  const basicSource =
+  const basicSourceId =
     features.basicSourceId !== features.itemType && features.basicSourceName
-      ? `${features.basicSourceName} (#${features.basicSourceId})`
+      ? features.basicSourceId
       : null
-  const specialSource =
+  const specialSourceId =
     features.specialSourceId !== features.itemType && features.specialSourceName
-      ? `${features.specialSourceName} (#${features.specialSourceId})`
+      ? features.specialSourceId
       : null
 
   return (
@@ -129,13 +144,15 @@ export function ArmoryGearTooltipContent({
         title="Basic features"
         tag="S2"
         stats={features.basicFeatures}
-        source={basicSource}
+        sourceId={basicSourceId}
+        sourceName={features.basicSourceName}
       />
       <TooltipSection
         title="Characteristics"
         tag="S3"
         stats={features.characteristics}
-        source={specialSource}
+        sourceId={specialSourceId}
+        sourceName={features.specialSourceName}
       />
       <TooltipSection title="Set bonus" tag="S1" lines={features.setBonus} />
 
