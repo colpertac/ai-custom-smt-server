@@ -27,6 +27,19 @@ Remove the feature by deleting:
 
 then restart the channel server. Stock `zone-90102.xml` stays empty.
 
+## Phase 5 package
+
+Contents installed by `../scripts/package-phase5.sh`:
+
+| Path in ZIP | Purpose |
+|---|---|
+| `zones/partial/ai_custom_phase5.xml` | AI Test Demon on DynamicMap `5201001` (Home III Service Entrance) |
+| `data/zoneinstance/ai_custom_phase5.xml` | Instance def `900001` (clone of stock 5201) |
+| `data/zoneinstancevariant/ai_custom_phase5.xml` | NORMAL variant `900001` |
+
+Requires zoneinstance directory split and Shield `DevilData` overlay. Test:
+`@instance 900001`. Phase 1 `@zone 90102` is unaffected.
+
 ## Why a partial instead of replacing the zone file?
 
 Loose datastore files beat package ZIPs. Replacing `zones/zone-90102.xml` only
