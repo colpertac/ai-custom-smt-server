@@ -4,6 +4,7 @@ import { StatusPanel } from "@/features/status/components/StatusPanel"
 
 export const metadata: Metadata = {
   title: "Status",
+  description: "See whether SMT game servers are online or if connection trouble is likely on your side.",
 }
 
 export default function StatusPage() {
@@ -13,9 +14,9 @@ export default function StatusPage() {
         Server status
       </h1>
       <div className="gold-rule mt-3 max-w-xs" />
-      <p className="mt-4 text-sm text-muted-foreground">
-        Live probes from the website BFF. World stays internal and is not
-        listed.
+      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+        Quick check before you blame your internet: are the game servers up, or
+        is it just your connection or client?
       </p>
       <StatusPanel />
     </section>

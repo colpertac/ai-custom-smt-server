@@ -52,16 +52,46 @@ export function getUpdaterProbeUrl(): string | undefined {
   return getPublicUpdaterUrl()
 }
 
+function compApiHostname(): string | null {
+  try {
+    return new URL(getCompApiUrl()).hostname || null
+  } catch {
+    return null
+  }
+}
+
+/** True when lobby HTTP API targets loopback (native dev), not compose service names. */
+function isLocalCompApiHost(): boolean {
+  const host = compApiHostname()
+  return host === "127.0.0.1" || host === "localhost" || host === "::1"
+}
+
+/** Host for game TCP probes when LOBBY_/CHANNEL_ probe env vars are unset. */
+export function getGameProbeHost(): string {
+  const lobbyCustom = process.env.LOBBY_PROBE_HOST?.trim()
+  if (lobbyCustom) return lobbyCustom
+  if (isLocalCompApiHost()) return "127.0.0.1"
+  return compApiHostname() || "lobby"
+}
+
 export function getLobbyProbeHost(): string {
-  return process.env.LOBBY_PROBE_HOST?.trim() || "lobby"
+  return process.env.LOBBY_PROBE_HOST?.trim() || getGameProbeHost()
 }
 
 export function getChannelProbeHost(): string {
-  return process.env.CHANNEL_PROBE_HOST?.trim() || "channel"
+  return process.env.CHANNEL_PROBE_HOST?.trim() || getGameProbeHost()
+}
+
+export function getWorldProbeHost(): string {
+  return process.env.WORLD_PROBE_HOST?.trim() || getGameProbeHost()
 }
 
 export function getLobbyProbePort(): number {
   return Number(process.env.LOBBY_PROBE_PORT ?? 10666) || 10666
+}
+
+export function getWorldProbePort(): number {
+  return Number(process.env.WORLD_PROBE_PORT ?? 18666) || 18666
 }
 
 export function getChannelProbePort(): number {
