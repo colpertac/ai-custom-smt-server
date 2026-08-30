@@ -299,9 +299,10 @@ Worker should script `@pos` + brief backstep, not LockMovement-at-spawn.
 
 - [ ] Same client (mannequin). After `@pos 50000 50000`: optional 1 step
       forward (demon faces with you), then **S ~2s** (you face camera).
-- [ ] Fixed window size. Manual screenshot first; then script that
-      sequence + crop.
-- [ ] Prove: `@va` → PNG looks like in-game. Border shrink-wraps the crop.
+- [ ] Fixed window size. Manual screenshot first; then
+      `scripts/portrait-crop-worker.py watch` (drop OS PNG → trial crops).
+- [x] Prove: `@va` / `@copylook` → PNG looks like in-game. Border
+      shrink-wraps the crop.
 
 ### 3. Fingerprint + files (website)
 
@@ -338,8 +339,10 @@ volume. Phase 16 already deferred Redis for rate limits; same rule here.
       (`lib/portrait-queue.ts`). Armory returns `portraitStatus: "queued"`.
       `npm run portrait-queue -- claim` prints mannequin `@va` lines.
       Complete only after `portraits/{fingerprint}.png` exists.
-- [ ] Worker loop: claim job → dress mannequin (`@va` RPC) → wait N ms →
-      screenshot → write WebP → `ready`.
+- [ ] Worker loop: claim job → dress mannequin → framing → screenshot.
+      Crop helper: `python3 scripts/portrait-crop-worker.py watch`
+      (inbox `~/repos/smt/va_screenshots`, outs `work/portrait-crops/`).
+      Ingest: `npm run portrait-queue -- ingest <candidate.png> <fp>`.
 - [x] No Redis yet. One job at a time (15 min claim timeout).
 
 ### 5. Explicitly later
