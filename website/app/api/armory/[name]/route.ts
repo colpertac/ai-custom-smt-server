@@ -14,6 +14,9 @@ import {
 
 type Params = { params: Promise<{ name: string }> }
 
+/** Portrait miss must enqueue on every request (no stale “ready”). */
+export const dynamic = "force-dynamic"
+
 export async function GET(_request: Request, { params }: Params) {
   const h = await headers()
   const limited = rateLimit(

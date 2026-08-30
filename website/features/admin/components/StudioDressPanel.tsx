@@ -18,6 +18,16 @@ type Health = {
   error?: string
 }
 
+type PreviewSlot = {
+  mannequin: string
+  iso: string | null
+  bust: number
+  pending: boolean
+  error: string | null
+}
+
+const PREVIEW_ROLES = ["vam1", "vaf1"] as const
+
 export function StudioDressPanel() {
   const [mannequin, setMannequin] = useState("vam1")
   const [source, setSource] = useState("")
@@ -28,6 +38,14 @@ export function StudioDressPanel() {
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ok, setOk] = useState<string | null>(null)
+  const [previews, setPreviews] = useState<Record<string, PreviewSlot>>(() =>
+    Object.fromEntries(
+      PREVIEW_ROLES.map((m) => [
+        m,
+        { mannequin: m, iso: null, bust: 0, pending: false, error: null },
+      ])
+    )
+  )
 
   const refreshHealth = useCallback(async () => {
     setRefreshing(true)
@@ -53,9 +71,92 @@ export function StudioDressPanel() {
     }
   }, [])
 
+  const refreshPreviewMeta = useCallback(async () => {
+    try {
+      const response = await api("admin/studio/preview")
+      const json = (await response.json()) as {
+        success?: boolean
+        data?: {
+          previews?: Array<{
+            mannequin: string
+            iso: string | null
+            hasImage?: boolean
+          }>
+        }
+      }
+      if (!response.ok || !json.success || !json.data?.previews) return
+      setPreviews((prev) => {
+        const next = { ...prev }
+        for (const row of json.data!.previews!) {
+          const cur = next[row.mannequin]
+          if (!cur) continue
+          next[row.mannequin] = {
+            ...cur,
+            iso: row.iso,
+            bust: row.hasImage ? cur.bust || Date.now() : cur.bust,
+          }
+        }
+        return next
+      })
+    } catch {
+      /* ignore — previews optional */
+    }
+  }, [])
+
   useEffect(() => {
     void refreshHealth()
-  }, [refreshHealth])
+    void refreshPreviewMeta()
+  }, [refreshHealth, refreshPreviewMeta])
+
+  async function capturePreview(role: string) {
+    setPreviews((prev) => ({
+      ...prev,
+      [role]: { ...prev[role], pending: true, error: null },
+    }))
+    try {
+      const response = await api("admin/studio/preview", {
+        method: "POST",
+        json: { mannequin: role },
+        timeout: 60000,
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: { iso?: string; mannequin?: string }
+      }
+      if (!response.ok || !json.success) {
+        setPreviews((prev) => ({
+          ...prev,
+          [role]: {
+            ...prev[role],
+            pending: false,
+            error: json.message || `HTTP ${response.status}`,
+          },
+        }))
+        return
+      }
+      setPreviews((prev) => ({
+        ...prev,
+        [role]: {
+          ...prev[role],
+          pending: false,
+          error: null,
+          iso: json.data?.iso ?? new Date().toISOString(),
+          bust: Date.now(),
+        },
+      }))
+      void refreshHealth()
+    } catch (err) {
+      setPreviews((prev) => ({
+        ...prev,
+        [role]: {
+          ...prev[role],
+          pending: false,
+          error: err instanceof Error ? err.message : "Preview failed",
+        },
+      }))
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -99,7 +200,7 @@ export function StudioDressPanel() {
   }
 
   return (
-    <div className="mt-6 max-w-lg space-y-4">
+    <div className="mt-6 max-w-3xl space-y-4">
       <div className="border-2 border-border bg-card/60 p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium">Mannequin status</p>
@@ -138,8 +239,61 @@ export function StudioDressPanel() {
         )}
       </div>
 
+      <div className="border-2 border-border bg-card/60 p-4">
+        <p className="text-sm font-medium">Remote preview</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Grabs the mannequin Wine window (studio crop). Website must run on
+          the studio host. ~8s cooldown per mannequin.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {PREVIEW_ROLES.map((role) => {
+            const slot = previews[role]
+            const src =
+              slot.bust > 0
+                ? `/api/admin/studio/preview/${role}?t=${slot.bust}`
+                : null
+            return (
+              <div key={role} className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium">{role}</span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={slot.pending}
+                    onClick={() => void capturePreview(role)}
+                  >
+                    {slot.pending ? "Capturing…" : "Snap"}
+                  </Button>
+                </div>
+                {slot.iso && (
+                  <p className="text-xs text-muted-foreground">{slot.iso}</p>
+                )}
+                {slot.error && (
+                  <FormAlert variant="error">{slot.error}</FormAlert>
+                )}
+                <div className="border border-border bg-black/40 min-h-40 flex items-center justify-center overflow-hidden">
+                  {src ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={src}
+                      alt={`${role} studio preview`}
+                      className="max-h-72 w-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-xs text-muted-foreground px-2 py-8">
+                      No shot yet
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
       <form
-        className="space-y-4 border-2 border-border bg-card/60 p-4"
+        className="max-w-lg space-y-4 border-2 border-border bg-card/60 p-4"
         onSubmit={(e) => void onSubmit(e)}
       >
         <Field>

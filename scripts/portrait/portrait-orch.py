@@ -188,6 +188,9 @@ def cmd_up(args: argparse.Namespace) -> None:
     if args.skip_login:
         print("skip login (--skip-login)")
     else:
+        # Repair blank char names in world DB before char-select (offline OK).
+        for role in roles:
+            run_worker("ensure-name", role)
         for role in roles:
             run_login(role, mapped[role])
             time.sleep(AFTER_LOGIN_SEC)

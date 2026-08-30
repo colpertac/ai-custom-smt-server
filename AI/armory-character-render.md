@@ -23,7 +23,9 @@ Pipeline core (done):
 - [x] Studio dress/pose API + admin UI (`vam1` / `vaf1`)
 - [x] Fingerprint + sqlite queue + ingest → `portraits/{hash}.png`
 - [x] Worker: dress → camera init (once) → S → screenshot → crop → ingest
-- [x] Nameplate hide for shot (no crop-out); restore without blanking DB name
+- [x] Nameplate hide for shot (blank name+title via CHARACTER_DATA; RAM
+      restored so DB never keeps blank). Per-job hold S re-faces after
+      that packet snaps spawn rotation.
 - [x] Login helper: keys + measured Start Game click (`portrait-login.py`)
 
 Still MVP:
@@ -47,6 +49,8 @@ Still MVP:
 
 ### Post-MVP
 
+- [ ] Admin remote kill/restart (Wine client / worker / orch) once processes
+      are systemd-unit shaped — not from website until then
 - [ ] Auto-relogin when health goes false (launch + login + reset-camera)
 - [ ] Female path soak + always-on `vaf1` beside `vam1`
 - [ ] Queue polish (Redis/BullMQ only if multi-worker / multi-host needs it)
@@ -290,10 +294,11 @@ don’t fire, then use **S (back)** so the default behind-camera is a
 front-facing shot — no right-click orbit.
 
 ```
-@zone <id>          # 10105 black void is nice; not required
-@pos 50000 50000    # vam1 (male); vaf1 uses -50000 -50000 so they don't stack
-# dismiss partner if summoned — portraits are character-only
+# one-time (init-camera / orch up) — sticky until mannequin relog:
+@zone 10105
+@pos 50000 50000    # vam1; vaf1 uses -50000 -50000 so they don't stack
 # hold S ~2s        # face the camera (character centered in frame)
+# per job: @copylook only (pose:false) — facing stays after hot-swap
 ```
 
 **No demon in the shot.** Partner models are not customizable and need a
@@ -306,8 +311,8 @@ trial around the PC). HUD-heavy / off-center crops are worse for the
 armory slot.
 
 `10105` spawn still has spots **40000 → 10104**, **40001 → 10101** — that
-is why a step at default spawn dumps you. `@pos 50000 50000` avoids them.
-Worker should script `@pos` + brief backstep, not LockMovement-at-spawn.
+is why a step at default spawn dumps you. `init-camera` parks via
+`POST /studio/pose` (`@pos` offsets); queue jobs only `@copylook`.
 
 - [x] Dedicated mannequin **accounts** (not chars on `catm`): `vam1`
       (male) and `vaf1` (female). One session per account — both can stay
@@ -446,17 +451,20 @@ Rejected / later:
   replaces the temp-rename idea.
 
 Env knobs: `PORTRAIT_CAM_HOME_SEC`, `PORTRAIT_CAM_PGUP_SEC`,
-`PORTRAIT_SKIP_CAM_INIT=1` (or `--skip-cam-init`). State file
-`work/portrait-captures/camera-ready.json` remembers which mannequins
-already got Home/PageUp across separate `once` processes. After relog:
-`npm run portrait-worker -- reset-camera` then `init-camera vam1` (or
-`once`). Manual force: `init-camera vam1`.
+`PORTRAIT_HOLD_S_SEC`, `PORTRAIT_SKIP_INIT_POSE=1` / `--skip-pose`.
+State file `work/portrait-captures/camera-ready.json` remembers which
+mannequins already got pose+Home/PageUp+S. After relog:
+`npm run portrait-worker -- reset-camera` then `init-camera vam1`.
+Jobs never re-pose or hold S (optional legacy `--hold-s`).
 
 **Headless later:** still the Imagine client under Xvfb/virtual display
 (or a Present hook). Not a standalone renderer library.
 
 - [x] Channel `DressStudioMannequin` + `POST /studio/dress` /
       `GET /studio/health` (token required).
+- [x] `POST /studio/ensure-name` — repair blank vam/vaf char Name (online or
+      offline DB); orch + `init-camera` call it.
+- [x] Admin `/admin/studio` remote preview snaps (worker `preview` + BFF).
 - [x] Nameplate hide/restore (`plate:false` + `POST /studio/nameplate`);
       worker uses hide for shots, restores in `finally`.
 - [x] `scripts/portrait/portrait-worker.py` once/loop (curl + wmctrl + import +

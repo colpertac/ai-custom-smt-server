@@ -127,3 +127,28 @@ export async function dressStudioMannequin(input: {
     error: typeof json.error === "string" ? json.error : undefined,
   }
 }
+
+export async function ensureStudioMannequinName(mannequin: string): Promise<{
+  ok: boolean
+  mannequin?: string
+  name?: string
+  repaired?: boolean
+  error?: string
+}> {
+  const name = mannequin.trim()
+  if (!name) {
+    return { ok: false, error: "mannequin is required" }
+  }
+  const { json } = await studioFetch("/studio/ensure-name", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mannequin: name }),
+  })
+  return {
+    ok: Boolean(json.ok),
+    mannequin: typeof json.mannequin === "string" ? json.mannequin : name,
+    name: typeof json.name === "string" ? json.name : undefined,
+    repaired: typeof json.repaired === "boolean" ? json.repaired : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+  }
+}

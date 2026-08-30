@@ -423,7 +423,11 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
     try {
       enqueuePortraitJob(row.Name, portraitInput)
       portraitStatus = "queued"
-    } catch {
+    } catch (err) {
+      console.error(
+        `[armory] enqueue portrait failed for ${row.Name}:`,
+        err instanceof Error ? err.message : err
+      )
       portraitStatus = "missing"
     }
   }

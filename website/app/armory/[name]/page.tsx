@@ -11,6 +11,9 @@ import {
   WorldDbMissingError,
 } from "@/lib/armory"
 
+/** Always re-run profile load so portrait miss → enqueue (no stale RSC ready). */
+export const dynamic = "force-dynamic"
+
 type Props = { params: Promise<{ name: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

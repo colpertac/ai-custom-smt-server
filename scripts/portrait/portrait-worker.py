@@ -1,31 +1,27 @@
 #!/usr/bin/env python3
 """Path 1 portrait automation worker (approach B).
 
-Claims a pending portrait job, asks channel to dress the online mannequin
-via loopback HTTP, frames with S, screenshots the Imagine window, crops,
-and ingests.
+Claims a pending portrait job, dresses the online mannequin (look only),
+holds S to face camera, screenshots, crops, and ingests.
 
-Camera zoom/pitch is sticky until mannequin relog. Home + PageUp run
-once per mannequin and are remembered in work/portrait-captures/camera-ready.json
-across separate `once` process runs. After relog: reset-camera, then
-init-camera (or once).
+One-time framing is `init-camera` (ensure-name + pose + Home/PageUp + hold S).
+Jobs still hold S briefly — dress/title packets can leave facing wrong, and
+soft nameplate hide leaves the short char name visible otherwise.
+Jobs do **not** re-pose (@zone/@pos) — character-only hot-swap.
+
+Camera zoom/pitch/facing are sticky until mannequin relog. After relog:
+  reset-camera → init-camera (or portrait-orch up).
 
 Prereqs:
   - channel Studio API on 127.0.0.1 (StudioHttpPort / StudioToken)
   - mannequin account logged in (vam1 male / vaf1 female — separate accounts)
   - website queue tools (npm run portrait-queue / portrait-fingerprint)
-  - xdotool (for S + camera keys on Xwayland)
+  - xdotool (for init-camera keys)
 
 Examples:
+  python3 scripts/portrait/portrait-worker.py init-camera vam1
   python3 scripts/portrait/portrait-worker.py once
   python3 scripts/portrait/portrait-worker.py loop --interval 10
-  python3 scripts/portrait/portrait-worker.py init-camera vam1
-  python3 scripts/portrait/portrait-worker.py dress vam1 catm
-  python3 scripts/portrait/portrait-worker.py dress vam1 catm --hide-plate
-  python3 scripts/portrait/portrait-worker.py nameplate vam1 show
-  python3 scripts/portrait/portrait-worker.py health
-  # login helper (creds via env — see portrait-login.py):
-  PORTRAIT_VAM1_PASS='…' python3 scripts/portrait/portrait-login.py vam1
 """
 
 from __future__ import annotations
@@ -52,10 +48,16 @@ WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
 CROP_PRESET = os.environ.get("PORTRAIT_CROP_PRESET", "studio")
 MANNEQUIN_M = os.environ.get("PORTRAIT_MANNEQUIN_M", "vam1")
 MANNEQUIN_F = os.environ.get("PORTRAIT_MANNEQUIN_F", "vaf1")
-SETTLE_SEC = float(os.environ.get("PORTRAIT_SETTLE_SEC", "1.5"))
+SETTLE_SEC = float(os.environ.get("PORTRAIT_SETTLE_SEC", "0.8"))
 HOLD_S_SEC = float(os.environ.get("PORTRAIT_HOLD_S_SEC", "2.0"))
-# Wait after releasing S so walk/turn animation finishes before capture.
+# Wait after releasing S so walk/turn animation finishes (init-camera only).
 AFTER_S_SEC = float(os.environ.get("PORTRAIT_AFTER_S_SEC", "1.0"))
+# Skip studio pose during init-camera (already parked).
+SKIP_INIT_POSE = os.environ.get("PORTRAIT_SKIP_INIT_POSE", "").strip() in (
+    "1",
+    "true",
+    "yes",
+)
 # Camera zoom/pitch is sticky until relog. Persist across `once` runs
 # (each npm invocation is a new process). See docs § Camera.
 CAM_HOME_SEC = float(os.environ.get("PORTRAIT_CAM_HOME_SEC", "1.1"))
@@ -252,21 +254,46 @@ def hold_s(seconds: float, wid: str | None = None) -> None:
     hold_key("s", seconds, wid)
 
 
+def studio_pose(mannequin: str) -> None:
+    data = curl_json("POST", "/studio/pose", {"mannequin": mannequin})
+    if not data.get("ok"):
+        die(f"studio pose failed: {data.get('error', data)}")
+    print(f"posed {mannequin} in studio void")
+
+
+def studio_ensure_name(mannequin: str) -> None:
+    """Repair blank mannequin char name (vam1→vam, vaf1→vaf) via studio API."""
+    data = curl_json("POST", "/studio/ensure-name", {"mannequin": mannequin})
+    if not data.get("ok"):
+        die(f"studio ensure-name failed: {data.get('error', data)}")
+    name = data.get("name", "?")
+    if data.get("repaired"):
+        print(f"ensure-name {mannequin}: repaired → {name!r}")
+    else:
+        print(f"ensure-name {mannequin}: ok ({name!r})")
+
+
 def init_camera(
     mannequin: str, wid: str | None = None, *, force: bool = False
 ) -> None:
-    """One-time zoom + pitch for this mannequin window (sticky until relog).
+    """Name check + (once) studio park + zoom/pitch + face camera.
 
-    Home → PageUp (xdotool Prior). Skipped if mannequin is already in
-    camera-ready.json unless force=True. Each `once` is a new process —
-    state must be on disk, not only in memory.
+    ensure-name always runs. pose → Home → PageUp → hold S is skipped if
+    mannequin is already in camera-ready.json unless force=True.
     """
+    studio_ensure_name(mannequin)
+
     if SKIP_CAM_INIT and not force:
         return
     ready = load_camera_ready()
     if not force and mannequin in ready:
-        print(f"camera init {mannequin}: skip (already in {CAMERA_STATE_PATH.name})")
+        print(f"camera init {mannequin}: skip keys (already in {CAMERA_STATE_PATH.name})")
         return
+
+    if not SKIP_INIT_POSE:
+        studio_pose(mannequin)
+        time.sleep(0.5)
+
     if wid is None:
         wid = resolve_window(mannequin)
     focus_window(wid)
@@ -275,21 +302,26 @@ def init_camera(
         time.sleep(CAM_FOCUS_SEC)
     print(
         f"camera init {mannequin}: Home {CAM_HOME_SEC}s, "
-        f"PageUp {CAM_PGUP_SEC}s"
+        f"PageUp {CAM_PGUP_SEC}s, S {HOLD_S_SEC}s"
     )
     hold_key("Home", CAM_HOME_SEC, wid)
     time.sleep(0.15)
     hold_key("Prior", CAM_PGUP_SEC, wid)
     time.sleep(0.3)
+    hold_s(HOLD_S_SEC, wid)
+    time.sleep(AFTER_S_SEC)
     mark_camera_ready(mannequin)
     print(f"camera init {mannequin}: marked ready in {CAMERA_STATE_PATH}")
 
 
 def cmd_init_camera(args: argparse.Namespace) -> None:
+    global SKIP_INIT_POSE
+    if getattr(args, "skip_pose", False):
+        SKIP_INIT_POSE = True
     mannequin = args.mannequin
     wid = resolve_window(mannequin)
     init_camera(mannequin, wid, force=True)
-    print(f"camera ready for {mannequin} (wid={wid})")
+    print(f"framing ready for {mannequin} (wid={wid})")
 
 
 def cmd_reset_camera(args: argparse.Namespace) -> None:
@@ -302,7 +334,7 @@ def cmd_reset_camera(args: argparse.Namespace) -> None:
         print(f"cleared {CAMERA_STATE_PATH}")
     print(
         "Relog the mannequin (or fix camera by hand), then run "
-        "init-camera or once to frame again."
+        "init-camera again."
     )
 
 def screenshot_window(wid: str, dest: Path) -> None:
@@ -399,6 +431,55 @@ def cmd_health(_: argparse.Namespace) -> None:
     print(json.dumps(data, indent=2))
 
 
+def cmd_ensure_name(args: argparse.Namespace) -> None:
+    studio_ensure_name(args.mannequin)
+
+
+def cmd_preview(args: argparse.Namespace) -> None:
+    """Screenshot mannequin window for admin remote check (crop optional)."""
+    mannequin = args.mannequin.strip().lower()
+    allowed = {
+        MANNEQUIN_M.lower(),
+        MANNEQUIN_F.lower(),
+        "vam1",
+        "vaf1",
+        "vam",
+        "vaf",
+    }
+    if mannequin not in allowed:
+        die(f"preview mannequin must be one of {sorted(allowed)}")
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    wid = resolve_window(mannequin)
+    focus_window(wid)
+    time.sleep(0.25)
+
+    raw = out_dir / f"preview-{mannequin}-raw.png"
+    shot = out_dir / f"preview-{mannequin}.png"
+    screenshot_window(wid, raw)
+    if args.raw:
+        shutil.copy2(raw, shot)
+        print(f"preview raw {shot}")
+    else:
+        cropped = crop_one(raw, out_dir, CROP_PRESET)
+        # crop_one names {stem}__{preset}.png — copy to stable preview path
+        shutil.copy2(cropped, shot)
+        print(f"preview crop {shot}  (from {cropped.name})")
+
+    meta = {
+        "mannequin": mannequin,
+        "ts": time.time(),
+        "iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "raw": str(raw),
+        "path": str(shot),
+        "wid": wid,
+    }
+    meta_path = out_dir / f"preview-{mannequin}.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(meta))
+
+
 def cmd_dress(args: argparse.Namespace) -> None:
     body = {
         "mannequin": args.mannequin,
@@ -440,8 +521,9 @@ def cmd_nameplate(args: argparse.Namespace) -> None:
 
 
 def process_job(
-    job: dict, out_dir: Path, skip_keys: bool, skip_cam_init: bool
+    job: dict, out_dir: Path, *, hold_s_each_job: bool = True
 ) -> None:
+    """Dress look → hold S (face cam) → settle → shot → ingest."""
     fp = job["fingerprint"]
     name = job["characterName"]
     mannequin = job["mannequin"]
@@ -455,7 +537,7 @@ def process_job(
             {
                 "mannequin": mannequin,
                 "source": name,
-                "pose": True,
+                "pose": False,
                 "plate": False,
             },
         )
@@ -475,13 +557,12 @@ def process_job(
         time.sleep(SETTLE_SEC)
         wid = resolve_window(mannequin)
         focus_window(wid)
-        if not skip_cam_init and not SKIP_CAM_INIT:
-            init_camera(mannequin, wid)
-        if not skip_keys:
+        if hold_s_each_job:
+            print(f"hold S {HOLD_S_SEC}s (face camera)")
             hold_s(HOLD_S_SEC, wid)
             time.sleep(AFTER_S_SEC)
         else:
-            time.sleep(0.3)
+            time.sleep(0.2)
 
         raw = out_dir / f"{fp}_raw.png"
         screenshot_window(wid, raw)
@@ -504,26 +585,24 @@ def cmd_once(args: argparse.Namespace) -> None:
     if not job:
         print("Queue empty.")
         return
-    process_job(job, Path(args.out), args.skip_keys, args.skip_cam_init)
+    process_job(
+        job, Path(args.out), hold_s_each_job=not args.skip_keys
+    )
 
 
 def cmd_loop(args: argparse.Namespace) -> None:
     out = Path(args.out)
-    cam = (
-        "off"
-        if args.skip_cam_init or SKIP_CAM_INIT
-        else "once/mannequin"
-    )
+    hold = not args.skip_keys
     print(
         f"loop studio={STUDIO_URL} crop={CROP_PRESET} "
         f"m={MANNEQUIN_M}/f={MANNEQUIN_F} interval={args.interval}s "
-        f"cam_init={cam}"
+        f"job=dress+{'S' if hold else 'no-S'} (no re-pose)"
     )
     while True:
         job = claim_job()
         if job:
             try:
-                process_job(job, out, args.skip_keys, args.skip_cam_init)
+                process_job(job, out, hold_s_each_job=hold)
             except SystemExit:
                 raise
             except Exception as e:
@@ -544,6 +623,26 @@ def main() -> None:
 
     p_h = sub.add_parser("health", help="GET /studio/health")
     p_h.set_defaults(func=cmd_health)
+
+    p_en = sub.add_parser(
+        "ensure-name",
+        help="POST /studio/ensure-name (repair blank vam/vaf char name)",
+    )
+    p_en.add_argument("mannequin", nargs="?", default=MANNEQUIN_M)
+    p_en.set_defaults(func=cmd_ensure_name)
+
+    p_pv = sub.add_parser(
+        "preview",
+        help="Screenshot mannequin for admin remote check",
+    )
+    p_pv.add_argument("mannequin", nargs="?", default=MANNEQUIN_M)
+    p_pv.add_argument("--out", default=str(DEFAULT_OUT))
+    p_pv.add_argument(
+        "--raw",
+        action="store_true",
+        help="Skip studio crop (full window)",
+    )
+    p_pv.set_defaults(func=cmd_preview)
 
     p_d = sub.add_parser("dress", help="POST /studio/dress (manual)")
     p_d.add_argument("mannequin")
@@ -570,9 +669,14 @@ def main() -> None:
 
     p_c = sub.add_parser(
         "init-camera",
-        help="Force Home+PageUp and mark mannequin camera-ready on disk",
+        help="Ensure-name + pose + Home/PageUp + hold S; mark framing ready",
     )
     p_c.add_argument("mannequin", nargs="?", default=MANNEQUIN_M)
+    p_c.add_argument(
+        "--skip-pose",
+        action="store_true",
+        help="Skip POST /studio/pose (already in void)",
+    )
     p_c.set_defaults(func=cmd_init_camera)
 
     p_r = sub.add_parser(
@@ -587,28 +691,27 @@ def main() -> None:
     )
     p_r.set_defaults(func=cmd_reset_camera)
 
-    cam = argparse.ArgumentParser(add_help=False)
-    cam.add_argument(
-        "--skip-cam-init",
-        action="store_true",
-        help="Skip Home/PageUp (already framed, or PORTRAIT_SKIP_CAM_INIT=1)",
-    )
-
     p_o = sub.add_parser(
-        "once", parents=[cam], help="Claim one job and capture"
+        "once", help="Claim one job: dress look → hold S → shot → ingest"
     )
     p_o.add_argument("--out", default=str(DEFAULT_OUT))
     p_o.add_argument(
         "--skip-keys",
         action="store_true",
-        help="Do not hold S (already facing camera)",
+        help="Skip per-job hold S (already facing camera)",
     )
     p_o.set_defaults(func=cmd_once)
 
-    p_l = sub.add_parser("loop", parents=[cam], help="Poll the queue forever")
+    p_l = sub.add_parser(
+        "loop", help="Poll queue: dress look → hold S → shot → ingest"
+    )
     p_l.add_argument("--out", default=str(DEFAULT_OUT))
     p_l.add_argument("--interval", type=float, default=10.0)
-    p_l.add_argument("--skip-keys", action="store_true")
+    p_l.add_argument(
+        "--skip-keys",
+        action="store_true",
+        help="Skip per-job hold S (already facing camera)",
+    )
     p_l.set_defaults(func=cmd_loop)
 
     args = ap.parse_args()

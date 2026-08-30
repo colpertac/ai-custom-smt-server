@@ -40,10 +40,9 @@ function dbPath(): string {
 
 let db: DatabaseSync | null = null
 
-function getDb(): DatabaseSync {
-  if (db) return db
-  db = new DatabaseSync(dbPath())
-  db.exec(`
+function openPortraitDb(): DatabaseSync {
+  const database = new DatabaseSync(dbPath())
+  database.exec(`
     CREATE TABLE IF NOT EXISTS portrait_jobs (
       fingerprint TEXT PRIMARY KEY,
       character_name TEXT NOT NULL,
@@ -57,7 +56,42 @@ function getDb(): DatabaseSync {
     CREATE INDEX IF NOT EXISTS idx_portrait_jobs_status_created
       ON portrait_jobs(status, created_at);
   `)
+  return database
+}
+
+function getDb(): DatabaseSync {
+  if (db) return db
+  db = openPortraitDb()
   return db
+}
+
+/** Drop cached handle (e.g. after clear unlinked the file while Next still ran). */
+export function reopenPortraitDb(): void {
+  if (db) {
+    try {
+      db.close()
+    } catch {
+      /* already closed / deleted inode */
+    }
+    db = null
+  }
+  db = openPortraitDb()
+}
+
+function isReadonlyDbError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err)
+  return /readonly database/i.test(msg)
+}
+
+/** Run a write; if the handle is stale (deleted inode), reopen once and retry. */
+function withPortraitDbWrite<T>(fn: (database: DatabaseSync) => T): T {
+  try {
+    return fn(getDb())
+  } catch (err) {
+    if (!isReadonlyDbError(err)) throw err
+    reopenPortraitDb()
+    return fn(getDb())
+  }
 }
 
 type JobRow = {
@@ -112,98 +146,104 @@ export function enqueuePortraitJob(
 ): { fingerprint: string; status: PortraitJobStatus } {
   const payload = buildPortraitJobPayload(characterName, input)
   const json = JSON.stringify(payload)
-  const database = getDb()
-  database
-    .prepare(
-      `INSERT INTO portrait_jobs (
-         fingerprint, character_name, payload_json, status,
-         claimed_at, error, created_at, updated_at
-       ) VALUES (?, ?, ?, 'pending', NULL, NULL, ?, ?)
-       ON CONFLICT(fingerprint) DO UPDATE SET
-         character_name = excluded.character_name,
-         payload_json = excluded.payload_json,
-         updated_at = excluded.updated_at,
-         status = CASE
-           WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.status
-           ELSE 'pending'
-         END,
-         claimed_at = CASE
-           WHEN portrait_jobs.status = 'claimed' THEN portrait_jobs.claimed_at
-           ELSE NULL
-         END,
-         error = CASE
-           WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.error
-           ELSE NULL
-         END`
-    )
-    .run(payload.fingerprint, characterName, json, now, now)
+  return withPortraitDbWrite((database) => {
+    database
+      .prepare(
+        `INSERT INTO portrait_jobs (
+           fingerprint, character_name, payload_json, status,
+           claimed_at, error, created_at, updated_at
+         ) VALUES (?, ?, ?, 'pending', NULL, NULL, ?, ?)
+         ON CONFLICT(fingerprint) DO UPDATE SET
+           character_name = excluded.character_name,
+           payload_json = excluded.payload_json,
+           updated_at = excluded.updated_at,
+           status = CASE
+             WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.status
+             ELSE 'pending'
+           END,
+           claimed_at = CASE
+             WHEN portrait_jobs.status = 'claimed' THEN portrait_jobs.claimed_at
+             ELSE NULL
+           END,
+           error = CASE
+             WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.error
+             ELSE NULL
+           END`
+      )
+      .run(payload.fingerprint, characterName, json, now, now)
 
-  const row = database
-    .prepare(`SELECT status FROM portrait_jobs WHERE fingerprint = ?`)
-    .get(payload.fingerprint) as { status: PortraitJobStatus }
+    const row = database
+      .prepare(`SELECT status FROM portrait_jobs WHERE fingerprint = ?`)
+      .get(payload.fingerprint) as { status: PortraitJobStatus }
 
-  return { fingerprint: payload.fingerprint, status: row.status }
+    return { fingerprint: payload.fingerprint, status: row.status }
+  })
 }
 
 /** One job at a time. Returns the in-flight claim, or the oldest pending. */
 export function claimPortraitJob(now = Date.now()): PortraitJob | null {
-  const database = getDb()
-  const staleBefore = now - PORTRAIT_CLAIM_TIMEOUT_MS
+  return withPortraitDbWrite((database) => {
+    const staleBefore = now - PORTRAIT_CLAIM_TIMEOUT_MS
 
-  database.exec("BEGIN IMMEDIATE")
-  try {
-    database
-      .prepare(
-        `UPDATE portrait_jobs
-         SET status = 'pending', claimed_at = NULL, updated_at = ?
-         WHERE status = 'claimed' AND (claimed_at IS NULL OR claimed_at <= ?)`
-      )
-      .run(now, staleBefore)
+    database.exec("BEGIN IMMEDIATE")
+    try {
+      database
+        .prepare(
+          `UPDATE portrait_jobs
+           SET status = 'pending', claimed_at = NULL, updated_at = ?
+           WHERE status = 'claimed' AND (claimed_at IS NULL OR claimed_at <= ?)`
+        )
+        .run(now, staleBefore)
 
-    const inflight = database
-      .prepare(
-        `SELECT * FROM portrait_jobs
-         WHERE status = 'claimed'
-         ORDER BY claimed_at ASC
-         LIMIT 1`
-      )
-      .get() as JobRow | undefined
-    if (inflight) {
+      const inflight = database
+        .prepare(
+          `SELECT * FROM portrait_jobs
+           WHERE status = 'claimed'
+           ORDER BY claimed_at ASC
+           LIMIT 1`
+        )
+        .get() as JobRow | undefined
+      if (inflight) {
+        database.exec("COMMIT")
+        return rowToJob(inflight)
+      }
+
+      const next = database
+        .prepare(
+          `SELECT * FROM portrait_jobs
+           WHERE status = 'pending'
+           ORDER BY created_at ASC
+           LIMIT 1`
+        )
+        .get() as JobRow | undefined
+      if (!next) {
+        database.exec("COMMIT")
+        return null
+      }
+
+      database
+        .prepare(
+          `UPDATE portrait_jobs
+           SET status = 'claimed', claimed_at = ?, updated_at = ?
+           WHERE fingerprint = ?`
+        )
+        .run(now, now, next.fingerprint)
       database.exec("COMMIT")
-      return rowToJob(inflight)
+      return rowToJob({
+        ...next,
+        status: "claimed",
+        claimed_at: now,
+        updated_at: now,
+      })
+    } catch (error) {
+      try {
+        database.exec("ROLLBACK")
+      } catch {
+        /* ignore */
+      }
+      throw error
     }
-
-    const next = database
-      .prepare(
-        `SELECT * FROM portrait_jobs
-         WHERE status = 'pending'
-         ORDER BY created_at ASC
-         LIMIT 1`
-      )
-      .get() as JobRow | undefined
-    if (!next) {
-      database.exec("COMMIT")
-      return null
-    }
-
-    database
-      .prepare(
-        `UPDATE portrait_jobs
-         SET status = 'claimed', claimed_at = ?, updated_at = ?
-         WHERE fingerprint = ?`
-      )
-      .run(now, now, next.fingerprint)
-    database.exec("COMMIT")
-    return rowToJob({
-      ...next,
-      status: "claimed",
-      claimed_at: now,
-      updated_at: now,
-    })
-  } catch (error) {
-    database.exec("ROLLBACK")
-    throw error
-  }
+  })
 }
 
 function hashedPortraitExists(fingerprint: string): boolean {
@@ -240,21 +280,22 @@ function setJobStatus(
   error: string | null,
   now: number
 ): PortraitJob {
-  const database = getDb()
-  const result = database
-    .prepare(
-      `UPDATE portrait_jobs
-       SET status = ?, error = ?, claimed_at = NULL, updated_at = ?
-       WHERE fingerprint = ?`
-    )
-    .run(status, error, now, fingerprint)
-  if (result.changes === 0) {
-    throw new Error(`Unknown portrait job ${fingerprint}`)
-  }
-  const row = database
-    .prepare(`SELECT * FROM portrait_jobs WHERE fingerprint = ?`)
-    .get(fingerprint) as JobRow
-  return rowToJob(row)
+  return withPortraitDbWrite((database) => {
+    const result = database
+      .prepare(
+        `UPDATE portrait_jobs
+         SET status = ?, error = ?, claimed_at = NULL, updated_at = ?
+         WHERE fingerprint = ?`
+      )
+      .run(status, error, now, fingerprint)
+    if (result.changes === 0) {
+      throw new Error(`Unknown portrait job ${fingerprint}`)
+    }
+    const row = database
+      .prepare(`SELECT * FROM portrait_jobs WHERE fingerprint = ?`)
+      .get(fingerprint) as JobRow
+    return rowToJob(row)
+  })
 }
 
 export function getPortraitJob(fingerprint: string): PortraitJob | null {
@@ -284,15 +325,12 @@ export function listPortraitJobs(status?: PortraitJobStatus): PortraitJob[] {
 export function gmDressCommands(payload: PortraitJobPayload): string[] {
   const lines = [
     `# ${payload.characterName}  ${payload.fingerprint}`,
-    `# do not dress live cat/catm — mannequin only (vam/vaf accounts)`,
-    `# preferred: curl studio API / npm run portrait-worker -- once`,
+    `# do not dress live cat/catm — mannequin only (vam1/vaf1)`,
+    `# preferred: npm run portrait-worker -- once (look-only; no @zone/@pos)`,
+    `# framing (pose + Home/PageUp + hold S) is init-camera / orch up`,
     `@copylook ${payload.characterName}`,
     `@dummyweapon`,
-    `@zone 10105`,
-    `# vam: @pos 50000 50000 — vaf: @pos -50000 -50000`,
-    `@pos 50000 50000`,
     `# dismiss partner if summoned — portraits are character-only`,
-    `# hold S ~2s so the character faces the camera (centered)`,
   ]
   return lines
 }
@@ -323,13 +361,15 @@ export function ingestPortraitFile(
   }
 }
 
+/**
+ * Reopen DB at the current path and empty the queue table.
+ * Prefer DELETE over unlinking the file — Next.js may still hold an open
+ * handle; deleting the inode makes writes fail with "readonly database"
+ * until the server restarts.
+ */
 export function resetPortraitQueueForTests(): void {
-  if (db) {
-    db.close()
-    db = null
-  }
-  const file = dbPath()
-  if (fs.existsSync(file)) fs.unlinkSync(file)
+  reopenPortraitDb()
+  getDb().exec("DELETE FROM portrait_jobs")
 }
 
 /**
