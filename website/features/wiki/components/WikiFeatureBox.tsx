@@ -8,7 +8,6 @@ export function WikiFeatureBox({
   hint,
   stats,
   lines,
-  empty,
   className,
 }: {
   title: string
@@ -16,11 +15,11 @@ export function WikiFeatureBox({
   hint?: string
   stats?: WikiItemStat[]
   lines?: string[]
-  empty: string
   className?: string
 }) {
   const hasStats = stats != null && stats.length > 0
   const hasLines = lines != null && lines.length > 0
+  if (!hasStats && !hasLines) return null
 
   return (
     <section
@@ -41,9 +40,7 @@ export function WikiFeatureBox({
         <p className="mt-2 text-xs text-muted-foreground">{hint}</p>
       ) : null}
 
-      {!hasStats && !hasLines ? (
-        <p className="mt-3 text-sm text-muted-foreground">{empty}</p>
-      ) : hasStats ? (
+      {hasStats ? (
         <ul className="mt-3 space-y-2">
           {stats!.map((stat) => (
             <li

@@ -103,21 +103,18 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
                 tag="S1"
                 hint="Appearance / set bonus — what this item contributes when fused onto another piece."
                 lines={setBonus}
-                empty="No set bonus defined for this base item."
               />
               <WikiFeatureBox
                 title="Basic features"
                 tag="S2"
                 hint="Core combat stats from this item's BinaryData row."
                 stats={basicFeatures}
-                empty="No basic feature stats — typical for consumables and non-equip items."
               />
               <WikiFeatureBox
                 title="Characteristics"
                 tag="S3"
                 hint="Rate bonuses, cooldown tweaks, and other trait-style modifiers."
                 stats={characteristics}
-                empty="No characteristics on this base item."
               />
               {tarotFusion ? (
                 <WikiFusionBox
