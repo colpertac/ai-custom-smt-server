@@ -2,6 +2,9 @@
 
 Completed 2026-07-18.
 
+For a step-by-step explanation of every XML object and the package workflow,
+see [custom-zone-guide.md](custom-zone-guide.md).
+
 ## What was added
 
 A removable datastore package that auto-applies one enemy encounter onto the

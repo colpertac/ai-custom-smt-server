@@ -24,7 +24,8 @@ findings (zone packages, compression IDs, tool gaps).
 The frozen Phase 0 state and recovery procedure are in
 [docs/baseline.md](docs/baseline.md). New custom identifiers must be recorded
 in [docs/ids.md](docs/ids.md). Phase 1 encounter package notes are in
-[docs/phase1.md](docs/phase1.md).
+[docs/phase1.md](docs/phase1.md), with a full walkthrough in
+[docs/custom-zone-guide.md](docs/custom-zone-guide.md).
 
 ## Intended layout
 
