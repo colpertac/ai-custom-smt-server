@@ -36,7 +36,7 @@ Binaries: `/home/cat/repos/smt/comp_hack/build-current/bin/`.
 3. Diff / translate remaining JP rows; keep glossary updated
 4. `comp_bdpatch save` → overlay → disposable client QA
 
-See [docs/phase8.md](../docs/phase8.md) and
+See [AI/phases/phase8.md](../AI/phases/phase8.md) and
 [guides/translation.md](../guides/translation.md).
 
 Backlog and proposed terminology agent: [todo.md](todo.md).

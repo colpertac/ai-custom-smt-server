@@ -19,30 +19,30 @@ This directory is intentionally separate from:
 - A reproducible client updater overlay
 
 See [ROADMAP.md](ROADMAP.md) for the recommended order and acceptance checks.
-See [docs/research-notes.md](docs/research-notes.md) for concrete early
+See [AI/phases/research-notes.md](AI/phases/research-notes.md) for concrete early
 findings (zone packages, compression IDs, tool gaps).
 The frozen Phase 0 state and recovery procedure are in
-[docs/baseline.md](docs/baseline.md). New custom identifiers must be recorded
+[AI/phases/baseline.md](AI/phases/baseline.md). New custom identifiers must be recorded
 in [docs/ids.md](docs/ids.md). Phase 1 encounter package notes are in
-[docs/phase1.md](docs/phase1.md). Practical walkthroughs and XML syntax
+[AI/phases/phase1.md](AI/phases/phase1.md). Practical walkthroughs and XML syntax
 references are indexed under [guides/](guides/README.md).
-Phase 7 website notes: [docs/phase7.md](docs/phase7.md),
+Phase 7 website notes: [AI/phases/phase7.md](AI/phases/phase7.md),
 [docs/lobby-api.md](docs/lobby-api.md), app in [`website/`](website/).
 
 ## Intended layout
 
-Directories should be added as each milestone begins instead of copying the
-entire server or client now:
-
 ```text
 ai_custom_smt_server/
-├── docs/                 # Research notes, IDs, formats, decisions
-├── guides/               # Practical walkthroughs and XML syntax references
-├── server-content/       # Our zones, events, scripts, shops, and packages
-├── server-patches/       # Patches applied to a COMP_hack fork
-├── client-overlay/       # Only files that replace/add client files
-├── translation/          # Human-editable translation source and tooling
-└── website/              # Modern website source (Phase 7)
+├── ROADMAP.md / IDEA_ROADMAP.md  # human primary reading
+├── AI/                 # agent context (ideas, armory, phase notes)
+├── docs/               # ops docs (IDs, deploy, lobby API, backups)
+├── guides/             # practical walkthroughs / XML syntax
+├── scripts/            # helpers; portrait tools in scripts/portrait/
+├── server-content/     # zones, events, scripts, shops, packages
+├── client-overlay/     # client file replacements
+├── translation/        # translation source and tooling
+├── website/            # Next.js site + portrait queue CLIs
+└── work/               # local captures / scratch
 ```
 
 ## Ground rules

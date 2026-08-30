@@ -27,4 +27,4 @@ echo
 echo "built: ${IMAGE}"
 echo "next:  stop bare-metal servers, then:"
 echo "  cd ${DEPLOY_DIR} && docker compose up -d"
-echo "docs:  ${ROOT_DIR}/docs/phase14.md"
+echo "docs:  ${ROOT_DIR}/AI/phases/phase14.md"

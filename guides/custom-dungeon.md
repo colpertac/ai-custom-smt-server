@@ -6,7 +6,7 @@ This walkthrough covers Phase 5: a private instance cloned from stock
 
 See also:
 
-- [Phase 5 notes](../docs/phase5.md)
+- [Phase 5 notes](../AI/phases/phase5.md)
 - [Custom encounter on an existing zone](custom-zone.md) (Phase 1 global test)
 - [ServerZone syntax](syntax/server-zone.md)
 

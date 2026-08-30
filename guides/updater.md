@@ -108,4 +108,4 @@ the client; only hashes that differ trigger downloads.
 - COMP guide: `/home/cat/repos/smt/comp_hack/docs/guide/chapters/setup.rst`
   (Client Updater with Nginx)
 - Manual overlay: `scripts/apply-client-overlay.sh`
-- Phase notes: [docs/phase9.md](../docs/phase9.md)
+- Phase notes: [AI/phases/phase9.md](../AI/phases/phase9.md)

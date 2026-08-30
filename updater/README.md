@@ -1,7 +1,7 @@
 # Client updater (Phase 9)
 
 HTTP overlay-first update server for distributing custom client files. See
-[docs/phase9.md](../docs/phase9.md) and [guides/updater.md](../guides/updater.md).
+[AI/phases/phase9.md](../AI/phases/phase9.md) and [guides/updater.md](../guides/updater.md).
 
 Layout (generated paths are gitignored):
 

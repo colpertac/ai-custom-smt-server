@@ -28,7 +28,7 @@ Spawn 900001
 ```
 
 No C++ rebuild is required for the zone/drop XML. The custom item needs
-synchronized Shield `ItemData`/`CItemData` (see [phase3.md](../docs/phase3.md)).
+synchronized Shield `ItemData`/`CItemData` (see [phase3.md](../AI/phases/phase3.md)).
 The map and enemy already exist in the stock client.
 
 ## Project files
@@ -235,7 +235,7 @@ server-content/data/dropset/ai_custom_phase1.xml
 
 Spawn `900001` references this DropSet. Item `699` is an existing Macca Note
 (stock client/server). Item `900001` is the Phase 3 custom token and needs the
-Shield BinaryData overlay documented in [phase3.md](../docs/phase3.md).
+Shield BinaryData overlay documented in [phase3.md](../AI/phases/phase3.md).
 
 ## Step 7: record IDs
 

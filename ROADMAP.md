@@ -4,7 +4,7 @@ The order below is based on dependencies and risk, not just feature
 desirability. Each phase should leave a small, testable result.
 
 Post-phase / wishlist backlog (Battle.net launcher, Docker, wiki, true custom
-assets, AI bots, etc.): [ideas.md](ideas.md).
+assets, AI bots, etc.): [ideas.md](AI/ideas.md).
 
 The ordered roadmap for new work after Phase 10 is
 [IDEA_ROADMAP.md](IDEA_ROADMAP.md). Keep this file as the Phase 0–10 MVP
@@ -38,7 +38,7 @@ behavior without changing client BinaryData.
 **Done when:** The custom encounter appears in-game and can be removed by
 removing one package.
 
-See [docs/phase1.md](docs/phase1.md) for install/test/remove details.
+See [AI/phases/phase1.md](AI/phases/phase1.md) for install/test/remove details.
 
 ## Phase 2 — Build the BinaryData round-trip workflow
 
@@ -55,7 +55,7 @@ restored before creating custom records.
 **Done when:** A small text change is visible in-game and rebuilding it is
 repeatable from human-editable source.
 
-See [docs/phase2.md](docs/phase2.md) and
+See [AI/phases/phase2.md](AI/phases/phase2.md) and
 [guides/binarydata/round-trip.md](guides/binarydata/round-trip.md).
 
 ## Phase 3 — Add one custom item
@@ -76,7 +76,7 @@ Start by reusing an existing icon and model.
 **Done when:** The item has the intended name and behavior, survives relogging,
 and creates no server-data validation errors.
 
-See [docs/phase3.md](docs/phase3.md) and
+See [AI/phases/phase3.md](AI/phases/phase3.md) and
 [guides/binarydata/custom-item.md](guides/binarydata/custom-item.md).
 
 ## Phase 4 — Add one custom demon
@@ -96,7 +96,7 @@ come later.
 **Done when:** The demon works through its full lifecycle without a new server
 mechanic.
 
-See [docs/phase4.md](docs/phase4.md) and
+See [AI/phases/phase4.md](AI/phases/phase4.md) and
 [guides/binarydata/custom-demon.md](guides/binarydata/custom-demon.md).
 
 Base spawn/name POC is installed; remaining checkboxes are the in-game
@@ -121,7 +121,7 @@ testing.
 Minimal POC installed: `@instance 900001` on stock Home III Service Entrance
 (`520101`/`5201001`, same map as `@instance 5201`), AI Test Demon partial,
 defeat → lobby `20102`. Real Suginami Tunnels is stock `5401+` (optional
-retarget). See [docs/phase5.md](docs/phase5.md) and
+retarget). See [AI/phases/phase5.md](AI/phases/phase5.md) and
 [guides/custom-dungeon.md](guides/custom-dungeon.md).
 
 Party NPC entry, fail/reconnect hardening, and richer rewards remain open.
@@ -152,7 +152,7 @@ This is the first intentional server C++ feature.
 
 Minimal POC installed: `CurrencyCompressor` from `/data/compressors`,
 `AutoCompressCurrency=true`, custom Golden Apple `900002`/`900003` + skill
-`900001`. See [docs/phase6.md](docs/phase6.md) and
+`900001`. See [AI/phases/phase6.md](AI/phases/phase6.md) and
 [guides/resource-compressors.md](guides/resource-compressors.md).
 
 **Done when:** Additional compressors can be added through config/data without
@@ -193,7 +193,7 @@ Browser -> HTTPS reverse proxy -> modern web app
 ```
 
 App path: [`website/`](website/) (Next.js + shadcn). See
-[docs/phase7.md](docs/phase7.md) and [docs/lobby-api.md](docs/lobby-api.md).
+[AI/phases/phase7.md](AI/phases/phase7.md) and [docs/lobby-api.md](docs/lobby-api.md).
 
 ### MVP (done)
 
@@ -219,7 +219,7 @@ Not a new phase — hardening and portal features on top of the working site.
 - [ ] Add server status/news/download pages separately from account auth.
 - [ ] Decide later whether to retain the C++ API or build a narrow gateway.
 - [ ] Character CRUD / friends / clan chat (need new COMP HTTP APIs).
-  See also [ideas.md](ideas.md) (Battle.net–style launcher / friend presence).
+  See also [ideas.md](AI/ideas.md) (Battle.net–style launcher / friend presence).
 
 
 ## Phase 8 — Build the translation pipeline
@@ -231,7 +231,7 @@ encoding, line-length constraints, reinsertion, and in-game QA remain
 substantial. “Full translation” should be treated as an ongoing data project.
 
 Workspace: [`translation/`](translation/). Notes:
-[docs/phase8.md](docs/phase8.md), [guides/translation.md](guides/translation.md).
+[AI/phases/phase8.md](AI/phases/phase8.md), [guides/translation.md](guides/translation.md).
 
 ### MVP (in progress)
 
@@ -279,7 +279,7 @@ not an unverifiable percentage.
 - [x] Scripts: seed base hashlist, sync `client-overlay/`, `comp_rehash`, local HTTP serve.
 - [x] `comp_rehash` built in COMP checkout.
 - [x] Smoke-test incremental update on disposable client (Wine + Phase 8 overlay).
-- [x] Document disposable-client QA / Settings pitfalls in [docs/phase9.md](docs/phase9.md)
+- [x] Document disposable-client QA / Settings pitfalls in [AI/phases/phase9.md](AI/phases/phase9.md)
   and [guides/updater.md](guides/updater.md).
 
 **MVP done:** Overlay rebuilds with `build-updater-overlay.sh`, local HTTP serve,
@@ -317,7 +317,7 @@ source is not present in this COMP_hack checkout (private GitLab
 
 For invulnerability, implement a **server-authoritative** GM/developer mode
 first. Changing only the displayed client HP is not real infinite health if the
-server owns combat state. Notes: [docs/phase10.md](docs/phase10.md).
+server owns combat state. Notes: [AI/phases/phase10.md](AI/phases/phase10.md).
 
 ### MVP (server-side — started 2026-07-20)
 
@@ -355,5 +355,5 @@ These provide one server-content win, one client-data win, and one familiar
 web-development win before tackling the harder C++ and reverse-engineering
 work.
 
-Concrete early findings are collected in [docs/research-notes.md](docs/research-notes.md).
+Concrete early findings are collected in [AI/phases/research-notes.md](AI/phases/research-notes.md).
 

@@ -3,7 +3,7 @@
 This is the active roadmap for work after the original Phase 0–10 MVP.
 
 - [ROADMAP.md](ROADMAP.md) remains the historical record of the MVP.
-- [ideas.md](ideas.md) remains the detailed idea catalog.
+- [ideas.md](AI/ideas.md) remains the detailed idea catalog.
 - This file answers: **what should we build next, and in what order?**
 
 Do not start every track at once. Keep one primary milestone active; translation
@@ -36,7 +36,7 @@ success or failure.
 - [x] Ensure those common commands explain malformed input; existing
   `HaveUserLevel` reports the required and current levels.
 - [x] Document common commands and examples in
-  [docs/phase11.md](docs/phase11.md).
+  [AI/phases/phase11.md](AI/phases/phase11.md).
 
 **MVP done when:** A GM can discover command syntax in-game and determine
 whether a common command worked without checking logs or guessing.
@@ -51,7 +51,7 @@ command can be added incrementally.
 **Goal:** Move selected hardcoded server behavior into `WorldSharedConfig`
 without weakening server authority.
 
-**Status:** Closed 2026-07-22 — see [docs/phase12.md](docs/phase12.md).
+**Status:** Closed 2026-07-22 — see [AI/phases/phase12.md](AI/phases/phase12.md).
 
 Initial candidates:
 
@@ -109,7 +109,7 @@ phases.
 
 **Goal:** Make dungeon completion rewarding using server-controlled data.
 
-**Status:** Closed 2026-07-22 (see [docs/phase13.md](docs/phase13.md)).
+**Status:** Closed 2026-07-22 (see [AI/phases/phase13.md](AI/phases/phase13.md)).
 Dungeon clear rewards + CP on bronze Suginami shipped. Deferred: apple
 compress UX, payout webUI schema, logout prepare text (client patch).
 
@@ -141,7 +141,7 @@ payout per eligible completion. *(Met for bronze Suginami; logout text deferred.
 
 **Status:** Closed 2026-07-23 — Proxmox Ubuntu smoke passed (Hub images,
 website/updater, overlay-only updater, login + play). See
-[docs/phase14.md](docs/phase14.md), [docs/proxmox-smoke.md](docs/proxmox-smoke.md),
+[AI/phases/phase14.md](AI/phases/phase14.md), [docs/proxmox-smoke.md](docs/proxmox-smoke.md),
 [guides/client-host-config.md](guides/client-host-config.md).
 
 - [x] Choose supported CPU architecture (`amd64` first).
@@ -206,7 +206,7 @@ Build in this order:
 
 ### 16A — Production hardening
 
-**Status:** Started 2026-07-25 — see [docs/phase16.md](docs/phase16.md).
+**Status:** Started 2026-07-25 — see [AI/phases/phase16.md](AI/phases/phase16.md).
 
 - [x] Secure cookies (`COOKIE_SECURE` / HTTPS-aware; not forced on plain HTTP)
 - [x] Auth validation (Zod) + rate limits + same-origin checks on mutations
@@ -267,7 +267,7 @@ Build in this order:
   **Pinned with portrait render** — same appearance fingerprint / async
   worker story (see below); do not block armory MVP on either.
 - [ ] **Portrait render (WoW-style cache)** — preferred path documented in
-  [docs/armory-character-render.md](docs/armory-character-render.md):
+  [AI/armory-character-render.md](AI/armory-character-render.md):
   (1) drive real Imagine client → screenshot → cache by fingerprint;
   (2) light client hook if automation fails; (3) full headless RE only
   last resort. **Ditch** Blender / NifSkope / website NIF assembly (PoC
@@ -331,7 +331,7 @@ site without a GM, and CP balance updates correctly.
 
 Natural-language Q&A tab on the website (“how do I unlock digitalization?”),
 grounded on scraped wiki + private markdown notes. Storage choice (MD tree vs
-Chroma vs hybrid) deferred — see [ideas.md](ideas.md) **D6**.
+Chroma vs hybrid) deferred — see [ideas.md](AI/ideas.md) **D6**.
 
 - [ ] Knowledge corpus layout + wiki scrape pipeline.
 - [ ] Help / Ask website tab with cited answers.
@@ -433,7 +433,7 @@ depending on undocumented local files.
 
 - Phase 9 full clean-install updater mirror and interruption/rollback tests.
 - Phase 10 `comp_client.dll` source recovery or reverse engineering.
-- Armory portrait: client screenshot cache (see docs/armory-character-render.md);
+- Armory portrait: client screenshot cache (see AI/armory-character-render.md);
   interactive in-browser 3D after that.
 - Launcher clan chat or cross-realm messaging.
 

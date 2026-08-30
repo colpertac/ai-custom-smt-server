@@ -32,7 +32,7 @@ Env:
 - `COMP_API_URL` — lobby base URL (default `http://127.0.0.1:10999`)
 - `SESSION_SECRET` — seals the httpOnly web session cookie
 - `SITE_URL` / `COOKIE_SECURE` / `PUBLIC_UPDATER_URL` — Phase 16A portal
-  (see [docs/phase16.md](../docs/phase16.md))
+  (see [AI/phases/phase16.md](../AI/phases/phase16.md))
 - `RESEND_API_KEY` / `RESEND_FROM_EMAIL` / `RESEND_FROM_NAME` — welcome + reset mail (server-only)
 - `COMP_RESET_SECRET` — same value required on the **lobby process** for forgot-password APIs
 
