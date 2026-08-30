@@ -1,0 +1,212 @@
+#Requires -Version 5.1
+<#
+.SYNOPSIS
+  SMT all-in-one bootstrap (Docker Desktop already installed).
+
+.EXAMPLE
+  .\install.ps1 -Ip 203.0.113.10
+  .\install.ps1 -Ip 203.0.113.10 -Domain play.example.com
+  .\install.ps1 -Ip 127.0.0.1 -NonInteractive
+#>
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory = $false)]
+  [string] $Ip = "",
+
+  [Parameter(Mandatory = $false)]
+  [string] $Domain = "",
+
+  [Parameter(Mandatory = $false)]
+  [string] $Dir = "",
+
+  [Parameter(Mandatory = $false)]
+  [int] $WebsitePort = 3000,
+
+  [switch] $NonInteractive
+)
+
+$ErrorActionPreference = "Stop"
+$DockerInstallUrl = "https://docs.docker.com/desktop/setup/install/windows-install/"
+
+function Die([string] $Message) {
+  Write-Error "error: $Message"
+  exit 1
+}
+
+if (-not $Ip) {
+  if ($NonInteractive) {
+    Die "-Ip is required in -NonInteractive mode"
+  }
+  $Ip = Read-Host "External IP or hostname for clients"
+}
+if (-not $Ip) {
+  Die "-Ip is required (client-facing address)"
+}
+
+$DeployDir = if ($Dir) {
+  (Resolve-Path $Dir).Path
+} else {
+  $PSScriptRoot
+}
+
+function Test-Docker {
+  if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+    Die "'docker' not found. Install Docker Desktop: $DockerInstallUrl"
+  }
+  try {
+    docker info 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "docker info failed" }
+  } catch {
+    Die "Docker daemon not running. Start Docker Desktop, then retry. $DockerInstallUrl"
+  }
+  docker compose version 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    Die "'docker compose' missing. Install/update Docker Desktop: $DockerInstallUrl"
+  }
+}
+
+Test-Docker
+
+$composeFile = Join-Path $DeployDir "docker-compose.yml"
+$envExample = Join-Path $DeployDir ".env.example"
+$opsDir = Join-Path (Split-Path $DeployDir -Parent) "ops"
+
+if (-not (Test-Path $composeFile)) { Die "docker-compose.yml not found in $DeployDir" }
+if (-not (Test-Path $envExample)) { Die ".env.example not found in $DeployDir" }
+if (-not (Test-Path $opsDir)) { Die "ops/ not found next to deploy/ (needed to build smt-ops)" }
+
+function New-SecretBase64 {
+  $bytes = New-Object byte[] 48
+  [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+  [Convert]::ToBase64String($bytes)
+}
+
+function New-SecretHex {
+  $bytes = New-Object byte[] 24
+  [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+  ($bytes | ForEach-Object { $_.ToString("x2") }) -join ""
+}
+
+$UpdaterRoot = Join-Path $DeployDir "updater"
+$DataDir = Join-Path $DeployDir "data"
+$OpsTools = Join-Path $DeployDir "ops-tools"
+$WebsiteData = Join-Path $DeployDir "website-data"
+$EnvFile = Join-Path $DeployDir ".env"
+
+New-Item -ItemType Directory -Force -Path (Join-Path $UpdaterRoot "overlay") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $UpdaterRoot "base") | Out-Null
+New-Item -ItemType Directory -Force -Path $DataDir | Out-Null
+New-Item -ItemType Directory -Force -Path $OpsTools | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\config") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\shops") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\payouts") | Out-Null
+
+$hostLabel = if ($Domain) { $Domain } else { $Ip }
+$SiteUrl = "http://${hostLabel}:${WebsitePort}"
+$PublicUpdaterUrl = "http://${hostLabel}:8765"
+
+# Docker on Windows prefers forward slashes in compose env paths
+function To-ComposePath([string] $Path) {
+  ($Path -replace '\\', '/')
+}
+
+$SessionSecret = New-SecretBase64
+$OpsToken = New-SecretHex
+$CompResetSecret = New-SecretHex
+$ResendApiKey = ""
+$ResendFromEmail = ""
+$ResendFromName = ""
+$ResendSupportEmail = ""
+if (Test-Path $EnvFile) {
+  Write-Host "Existing .env found — regenerating with new EXTERNAL_IP/URLs; rotating secrets only if placeholders."
+  $existing = Get-Content $EnvFile -Raw
+  if ($existing -match '(?m)^SESSION_SECRET=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev -and $prev -notmatch 'replace-with') { $SessionSecret = $prev }
+  }
+  if ($existing -match '(?m)^OPS_TOKEN=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev -and $prev -notmatch 'replace-with') { $OpsToken = $prev }
+  }
+  if ($existing -match '(?m)^COMP_RESET_SECRET=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $CompResetSecret = $prev }
+  }
+  if ($existing -match '(?m)^RESEND_API_KEY=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $ResendApiKey = $prev }
+  }
+  if ($existing -match '(?m)^RESEND_FROM_EMAIL=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $ResendFromEmail = $prev }
+  }
+  if ($existing -match '(?m)^RESEND_FROM_NAME=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $ResendFromName = $prev }
+  }
+  if ($existing -match '(?m)^RESEND_SUPPORT_EMAIL=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $ResendSupportEmail = $prev }
+  }
+}
+
+$envBody = @"
+# Generated by install.ps1 — $([DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mmZ"))
+EXTERNAL_IP=$Ip
+SESSION_SECRET=$SessionSecret
+OPS_TOKEN=$OpsToken
+COMP_RESET_SECRET=$CompResetSecret
+UPDATER_ROOT=$(To-ComposePath $UpdaterRoot)
+COMP_RUNTIME=$(To-ComposePath $DataDir)
+COMP_ENTRYPOINT=$(To-ComposePath (Join-Path $DeployDir "entrypoint.sh"))
+WEBSITE_DATA=$(To-ComposePath $WebsiteData)
+OPS_HOST_DEPLOY_DIR=$(To-ComposePath $DeployDir)
+WEBSITE_PORT=$WebsitePort
+SITE_URL=$SiteUrl
+PUBLIC_UPDATER_URL=$PublicUpdaterUrl
+COOKIE_SECURE=false
+OPS_URL=http://ops:14710
+COMP_IMAGE=colpertac/smt-comp:latest
+WEBSITE_IMAGE=colpertac/smt-website:latest
+"@
+if ($ResendApiKey) { $envBody += "`nRESEND_API_KEY=$ResendApiKey" }
+if ($ResendFromEmail) { $envBody += "`nRESEND_FROM_EMAIL=$ResendFromEmail" }
+if ($ResendFromName) { $envBody += "`nRESEND_FROM_NAME=$ResendFromName" }
+if ($ResendSupportEmail) { $envBody += "`nRESEND_SUPPORT_EMAIL=$ResendSupportEmail" }
+
+Set-Content -Path $EnvFile -Value $envBody -Encoding utf8
+Write-Host "Wrote $EnvFile"
+Write-Host "  EXTERNAL_IP=$Ip"
+Write-Host "  SITE_URL=$SiteUrl"
+Write-Host "  PUBLIC_UPDATER_URL=$PublicUpdaterUrl"
+Write-Host "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env — keep private)"
+
+Push-Location $DeployDir
+try {
+  Write-Host "Pulling Hub images and starting stack…"
+  # Pull published services only — ops is built from ../ops (not on Hub yet).
+  docker compose pull lobby world channel website updater 2>$null
+  docker compose up -d --build
+  if ($LASTEXITCODE -ne 0) { Die "docker compose up failed (exit $LASTEXITCODE)" }
+} finally {
+  Pop-Location
+}
+
+Write-Host ""
+Write-Host "=== SMT stack starting ==="
+Write-Host "Website:  $SiteUrl"
+Write-Host "Updater:  $PublicUpdaterUrl"
+Write-Host "Lobby:    ${Ip}:10666"
+Write-Host "Channel:  ${Ip}:14666"
+Write-Host ""
+Write-Host "Next:"
+Write-Host "  1. Open $SiteUrl — register / sign in (admin needs userLevel >= 1000)."
+Write-Host "  2. Admin → Overview — confirm ops is healthy."
+Write-Host "  3. If first boot: Admin → Game files — upload content zips, then Start."
+Write-Host "  4. Admin → Download — Client prep zip, ship client, paste MediaFire/Drive URL."
+Write-Host "  5. Allow ports 10666, 14666, 8765, $WebsitePort in Windows Firewall / router if public."
+Write-Host "  6. Optional: Admin → Email — paste Resend API key + from address for forgot-password mail."
+Write-Host "     Restart lobby once after saving (Overview → restart services if needed)."
+Write-Host ""
+Write-Host "Optional: Linux amd64 comp_rehash + comp_encrypt in $OpsTools for Lane B / Client prep."
+Write-Host "Docs: docs/youtube-1.0-setup.md"

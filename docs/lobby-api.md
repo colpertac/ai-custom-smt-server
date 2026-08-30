@@ -44,7 +44,7 @@ Passwords in the DB are stored as `SHA-512(password + salt)`.
 | `/api/account/change_display_name` | challenge | Body: `disp_name` (1–32 chars) |
 | `/api/account/change_email` | challenge | Body: `email` (empty clears to placeholder) |
 | `/api/account/client_login` | challenge | Issues game `sid1`/`sid2` (needs `client_version`) |
-| `/api/account/recovery_email` | `reset_secret` + username | Website-only. Returns `{ username, email }` (`email` blank for placeholder). Requires lobby env `COMP_RESET_SECRET`. |
+| `/api/account/recovery_email` | `reset_secret` + `username` **or** `email` | Website-only. Returns `{ username, email }` (`email` blank for placeholder). Requires lobby env `COMP_RESET_SECRET`. |
 | `/api/account/reset_password` | `reset_secret` + username | Website-only. Sets password; clears COMP API session. |
 
 Username: `^[a-z][a-z0-9]{3,31}$` (lowercased).  

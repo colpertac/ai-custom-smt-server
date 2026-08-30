@@ -1,5 +1,5 @@
-import { placeholderEmail } from "@/lib/email"
-import { getCompApiUrl } from "@/lib/env"
+import { placeholderEmail, isPlaceholderEmail } from "@/lib/email/placeholders"
+import { getCompApiUrl, getCompResetSecret } from "@/lib/env"
 import { challengeReply, passwordHash } from "@/lib/sha512"
 
 export class CompApiError extends Error {
@@ -275,28 +275,44 @@ export async function adminDeleteAccount(
 
 /**
  * Website→lobby only. Requires COMP_RESET_SECRET on both sides.
- * Returns real recovery email or "" when missing/placeholder/unknown.
+ * Lookup by username or recovery email. Returns real email or "" when
+ * missing/placeholder/unknown.
  */
-export async function fetchRecoveryEmail(
-  username: string
-): Promise<{ username: string; email: string } | null> {
-  const secret = process.env.COMP_RESET_SECRET?.trim()
+export async function fetchRecoveryEmail(input: {
+  username?: string
+  email?: string
+}): Promise<{ username: string; email: string } | null> {
+  const secret = getCompResetSecret()
   if (!secret) {
     throw new CompApiError("COMP_RESET_SECRET not configured", 500)
   }
 
+  const username = input.username?.trim().toLowerCase() || ""
+  const email = input.email?.trim().toLowerCase() || ""
+  if (!username && !email) return null
+
   try {
     const data = await postJson("/account/recovery_email", {
-      username: username.toLowerCase(),
+      ...(username ? { username } : {}),
+      ...(email ? { email } : {}),
       reset_secret: secret,
     })
     if (String(data.error ?? "") !== "Success") {
+      if (String(data.error ?? "") === "Password reset disabled") {
+        console.error(
+          "[forgot-password] lobby COMP_RESET_SECRET is unset — restart comp_lobby with the same secret as the website (Admin → Email, or website/data/comp-reset-secret)"
+        )
+      }
       return null
     }
-    return {
-      username: String(data.username ?? username).toLowerCase(),
-      email: String(data.email ?? "").trim(),
+    const resolvedUsername = String(
+      data.username ?? username
+    ).toLowerCase()
+    const resolvedEmail = String(data.email ?? "").trim()
+    if (!resolvedEmail || isPlaceholderEmail(resolvedEmail, resolvedUsername)) {
+      return { username: resolvedUsername, email: "" }
     }
+    return { username: resolvedUsername, email: resolvedEmail }
   } catch (error) {
     if (error instanceof CompApiError && (error.status === 400 || error.status === 401)) {
       return null
@@ -310,7 +326,7 @@ export async function resetAccountPassword(
   username: string,
   password: string
 ): Promise<{ error: string }> {
-  const secret = process.env.COMP_RESET_SECRET?.trim()
+  const secret = getCompResetSecret()
   if (!secret) {
     throw new CompApiError("COMP_RESET_SECRET not configured", 500)
   }

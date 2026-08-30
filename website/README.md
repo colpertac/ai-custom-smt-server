@@ -33,8 +33,8 @@ Env:
 - `SESSION_SECRET` — seals the httpOnly web session cookie
 - `SITE_URL` / `COOKIE_SECURE` / `PUBLIC_UPDATER_URL` — Phase 16A portal
   (see [AI/phases/phase16.md](../AI/phases/phase16.md))
-- `RESEND_API_KEY` / `RESEND_FROM_EMAIL` / `RESEND_FROM_NAME` — welcome + reset mail (server-only)
-- `COMP_RESET_SECRET` — same value required on the **lobby process** for forgot-password APIs
+- `RESEND_API_KEY` / `RESEND_FROM_EMAIL` / `RESEND_FROM_NAME` — welcome + reset mail (server-only); prefer **Admin → Email** in production
+- `COMP_RESET_SECRET` — lobby password-reset APIs; auto-managed via **Admin → Email** (writes `comp-reset-secret` for Docker lobby)
 
 Email layout (monno-style):
 

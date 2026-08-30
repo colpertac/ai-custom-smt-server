@@ -1,9 +1,9 @@
 # SMT COMP stack — bridge network (Oracle-ready). Data: ./data → /comp
 # Image: https://hub.docker.com/r/colpertac/smt-comp
 #
-# MVP services: lobby, world, channel, website, updater
+# MVP services: lobby, world, channel, website, updater, ops
 #
-#   cp .env.example .env   # set EXTERNAL_IP + SESSION_SECRET
+#   cp .env.example .env   # set EXTERNAL_IP + SESSION_SECRET + OPS_TOKEN + UPDATER_ROOT
 #   docker compose up -d --build
 #
 # MariaDB:
@@ -29,10 +29,14 @@ x-comp: &comp
     LOBBY_HOST: ${LOBBY_HOST:-lobby}
     WORLD_HOST: ${WORLD_HOST:-world}
     MARIADB_HOST: ${MARIADB_HOST:-mariadb}
+    # Website forgot-password APIs (lobby reads this; world/channel ignore it).
+    COMP_RESET_SECRET: ${COMP_RESET_SECRET:-}
   volumes:
     - ${COMP_RUNTIME:-./data}:/comp
     # Prefer repo entrypoint (placeholder patch) over image copy until next Hub push
     - ${COMP_ENTRYPOINT:-./entrypoint.sh}:/usr/local/bin/comp-entrypoint.sh:ro
+    # comp-reset-secret for forgot-password (Admin → Email writes here)
+    - ${WEBSITE_DATA:-./website-data}:/website-data:ro
 
 x-hc-lobby: &hc-lobby
   test: ["CMD-SHELL", "bash -c 'echo >/dev/tcp/127.0.0.1/10666'"]
@@ -116,6 +120,47 @@ services:
         condition: service_healthy
         required: false
 
+  # Phase 16I ops sidecar (Docker backend). Not published to the host —
+  # website reaches it as http://ops:14710 on the bridge network.
+  ops:
+    build:
+      context: ../ops
+      dockerfile: Dockerfile
+    image: ${OPS_IMAGE:-colpertac/smt-ops:local}
+    container_name: smt-ops
+    restart: unless-stopped
+    networks: [smt]
+    environment:
+      OPS_TOKEN: ${OPS_TOKEN:?set OPS_TOKEN in .env}
+      OPS_BIND: "0.0.0.0"
+      OPS_PORT: "14710"
+      OPS_BACKEND: docker
+      OPS_COMPOSE_DIR: /compose
+      # Host path of deploy/ — used so relative volume defaults never become /compose/...
+      OPS_HOST_DEPLOY_DIR: ${OPS_HOST_DEPLOY_DIR:-}
+      OPS_RUNTIME: /comp
+      OPS_UPDATER_ROOT: /updater
+      BIN_DIR: ${OPS_BIN_DIR:-/opt/comp-tools}
+      OPS_AUDIT: /var/log/smt-ops/audit.log
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${COMP_RUNTIME:-./data}:/comp
+      - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater
+      - ./:/compose:ro
+      - ops-audit:/var/log/smt-ops
+      # Optional: host dir with comp_rehash / comp_encrypt (Lane B + Client prep)
+      - ${OPS_TOOLS_DIR:-./ops-tools}:/opt/comp-tools:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python3 -c \"import os,urllib.request; t=os.environ.get('OPS_TOKEN',''); r=urllib.request.Request('http://127.0.0.1:14710/health',headers={'X-Ops-Token':t}); urllib.request.urlopen(r, timeout=3)\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
   # Phase 7 account site (BFF → lobby API). Hub: colpertac/smt-website
   website:
     image: ${WEBSITE_IMAGE:-colpertac/smt-website:latest}
@@ -132,11 +177,31 @@ services:
       UPDATER_PROBE_URL: ${UPDATER_PROBE_URL:-http://updater}
       LOBBY_PROBE_HOST: ${LOBBY_PROBE_HOST:-lobby}
       CHANNEL_PROBE_HOST: ${CHANNEL_PROBE_HOST:-channel}
+      OPS_URL: ${OPS_URL:-http://ops:14710}
+      OPS_TOKEN: ${OPS_TOKEN:?set OPS_TOKEN in .env}
+      # Standalone image has no repo tree — pin writable paths (nextjs uid 1001).
+      WEBSITE_DATA_DIR: /website-data
+      OPS_RUNTIME: /comp
+      COMP_CONFIG_LIVE_DIR: /comp/config
+      COMP_CONFIG_DIR: /website-data/server-content/config
+      COMP_SHOPS_DIR: /website-data/server-content/shops
+      COMP_PAYOUTS_DIR: /website-data/server-content/payouts
+      # Forgot password + welcome email (Resend). COMP_RESET_SECRET must match lobby.
+      COMP_RESET_SECRET: ${COMP_RESET_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+      RESEND_FROM_NAME: ${RESEND_FROM_NAME:-SMT}
+      RESEND_SUPPORT_EMAIL: ${RESEND_SUPPORT_EMAIL:-}
+    volumes:
+      - ${COMP_RUNTIME:-./data}:/comp:ro
+      - ${WEBSITE_DATA:-./website-data}:/website-data
     ports:
       - "${WEBSITE_PORT:-3000}:3000"
     depends_on:
       lobby:
         condition: service_healthy
+      ops:
+        condition: service_started
     healthcheck:
       test:
         [
@@ -165,3 +230,6 @@ services:
       timeout: 3s
       retries: 6
       start_period: 5s
+
+volumes:
+  ops-audit:

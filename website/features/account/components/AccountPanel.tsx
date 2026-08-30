@@ -139,7 +139,7 @@ export function AccountPanel() {
             Email
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Optional. Used if we add password recovery later.
+            Optional. Used for password reset email if you forget your password.
           </p>
           <div className="mt-4">
             <ChangeEmailForm defaultValue={details.email || ""} />

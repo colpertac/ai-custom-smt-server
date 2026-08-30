@@ -3,7 +3,11 @@ import { after } from "next/server"
 import { fetchRecoveryEmail } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
-import { forgotPasswordSchema } from "@/features/auth/schemas/forgotPassword.schema"
+import {
+  forgotPasswordSchema,
+  isForgotPasswordEmail,
+} from "@/features/auth/schemas/forgotPassword.schema"
+import { isPlaceholderEmail } from "@/lib/email/placeholders"
 import { sendResetPasswordEmail } from "@/lib/email/send-reset-password"
 import { createPasswordResetToken } from "@/lib/password-reset-store"
 
@@ -32,8 +36,16 @@ export async function POST(request: Request) {
 
   // Always return the same message (no user enumeration).
   try {
-    const recovery = await fetchRecoveryEmail(parsed.data.username)
-    if (recovery?.email) {
+    const account = parsed.data.account
+    const recovery = await fetchRecoveryEmail(
+      isForgotPasswordEmail(account)
+        ? { email: account }
+        : { username: account }
+    )
+    if (
+      recovery?.email &&
+      !isPlaceholderEmail(recovery.email, recovery.username)
+    ) {
       const { token } = createPasswordResetToken(recovery.username)
       after(() => {
         void sendResetPasswordEmail({

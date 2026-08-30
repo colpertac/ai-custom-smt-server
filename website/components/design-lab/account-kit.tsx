@@ -11,7 +11,7 @@ import {
 /** Fake account row for all account lab mockups. */
 export const STUB_ACCOUNT = {
   username: "admin",
-  email: "admin@comp_hack.github.com",
+  email: "",
   cp: 999976,
   tickets: 0,
   characters: 0,

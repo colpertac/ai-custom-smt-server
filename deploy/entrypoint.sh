@@ -4,6 +4,12 @@
 # Patched file stays next to the source so sibling constants.xml resolves.
 set -euo pipefail
 
+# Password reset secret shared with website (written by Admin → Email settings).
+if [[ -f /website-data/comp-reset-secret ]]; then
+  COMP_RESET_SECRET="$(tr -d '\n\r' < /website-data/comp-reset-secret)"
+  export COMP_RESET_SECRET
+fi
+
 mkdir -p /comp/config /comp/database /comp/datastore /comp/webroot /comp/logs
 cd /comp
 

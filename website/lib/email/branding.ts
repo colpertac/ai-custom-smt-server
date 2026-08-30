@@ -1,4 +1,10 @@
-import { getResendFrom, getSiteUrl } from "@/lib/env"
+import {
+  getEffectiveCompResetSecret,
+  getEffectivePublicSiteUrl,
+  getEffectiveResendApiKey,
+  getEffectiveResendFrom,
+  getEffectiveSupportEmail,
+} from "@/lib/email-settings-store"
 
 export type EmailBranding = {
   fromName: string
@@ -9,14 +15,14 @@ export type EmailBranding = {
 }
 
 export function getEmailBranding(): EmailBranding {
-  const from = getResendFrom()
+  const from = getEffectiveResendFrom()
   const fromEmail = from?.email || "noreply@localhost"
   const fromName = from?.name || "SMT"
   return {
     fromName,
     fromEmail,
-    supportEmail: process.env.RESEND_SUPPORT_EMAIL?.trim() || fromEmail,
-    appUrl: getSiteUrl() || "http://localhost:3500",
+    supportEmail: getEffectiveSupportEmail() || fromEmail,
+    appUrl: getEffectivePublicSiteUrl() || "http://localhost:3500",
     appName: fromName,
   }
 }

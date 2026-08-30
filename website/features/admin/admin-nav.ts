@@ -1,21 +1,43 @@
+import type { LucideIcon } from "lucide-react"
+import {
+  Coins,
+  Download,
+  FolderArchive,
+  LayoutDashboard,
+  Mail,
+  Newspaper,
+  Palette,
+  Settings,
+  Store,
+  Upload,
+  Users,
+} from "lucide-react"
+
 export type AdminNavItem = {
   href: string
   label: string
+  icon: LucideIcon
   /** Exact match for /admin; prefix match for nested routes */
   match: "exact" | "prefix"
 }
 
 export const ADMIN_NAV: AdminNavItem[] = [
-  { href: "/admin", label: "Overview", match: "exact" },
-  { href: "/admin/accounts", label: "Accounts", match: "prefix" },
-  { href: "/admin/news", label: "News", match: "prefix" },
-  { href: "/admin/download", label: "Download", match: "prefix" },
-  { href: "/admin/game-files", label: "Game files", match: "prefix" },
-  { href: "/admin/config", label: "Config", match: "prefix" },
-  { href: "/admin/shops", label: "Shops", match: "prefix" },
-  { href: "/admin/payouts", label: "Payouts", match: "prefix" },
-  { href: "/admin/studio", label: "Studio", match: "prefix" },
-  { href: "/admin/import", label: "Import", match: "prefix" },
+  { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
+  { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
+  { href: "/admin/news", label: "News", icon: Newspaper, match: "prefix" },
+  { href: "/admin/download", label: "Download", icon: Download, match: "prefix" },
+  { href: "/admin/email", label: "Email", icon: Mail, match: "prefix" },
+  {
+    href: "/admin/game-files",
+    label: "Game files",
+    icon: FolderArchive,
+    match: "prefix",
+  },
+  { href: "/admin/config", label: "Config", icon: Settings, match: "prefix" },
+  { href: "/admin/shops", label: "Shops", icon: Store, match: "prefix" },
+  { href: "/admin/payouts", label: "Payouts", icon: Coins, match: "prefix" },
+  { href: "/admin/studio", label: "Studio", icon: Palette, match: "prefix" },
+  { href: "/admin/import", label: "Import", icon: Upload, match: "prefix" },
 ]
 
 export function adminPageTitle(pathname: string): string {
@@ -23,6 +45,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
   if (pathname.startsWith("/admin/news")) return "News"
   if (pathname.startsWith("/admin/download")) return "Download"
+  if (pathname.startsWith("/admin/email")) return "Email"
   if (pathname.startsWith("/admin/game-files")) return "Game files"
   if (pathname.startsWith("/admin/config")) return "Config"
   if (pathname.startsWith("/admin/shops")) return "Shops"

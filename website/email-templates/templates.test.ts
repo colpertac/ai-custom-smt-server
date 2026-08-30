@@ -12,6 +12,8 @@ describe("email templates", () => {
     expect(html).toContain("alice")
     expect(html).toContain("http://localhost:3500/account")
     expect(html).toContain("http://localhost:3500/download")
+    expect(html).not.toContain("Questions?")
+    expect(html).not.toMatch(/©/)
   })
 
   it("reset password includes token link", () => {
@@ -22,5 +24,7 @@ describe("email templates", () => {
     })
     expect(html).toContain("token=abc")
     expect(html).toContain("1 hour")
+    expect(html).not.toContain("Questions?")
+    expect(html).not.toMatch(/©/)
   })
 })

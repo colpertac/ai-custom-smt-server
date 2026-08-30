@@ -24,8 +24,8 @@ export default async function ForgotPasswordPage() {
             Forgot password
           </CardTitle>
           <CardDescription>
-            Enter your username. If the account has a recovery email, we will
-            send a reset link.
+            Enter your username or the email on your account. If a recovery
+            email is set, we will send a reset link.
           </CardDescription>
         </CardHeader>
         <CardContent>

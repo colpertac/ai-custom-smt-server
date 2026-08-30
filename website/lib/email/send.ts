@@ -1,14 +1,17 @@
 import { Resend } from "resend"
 
+import { getEffectiveResendApiKey } from "@/lib/email-settings-store"
 import { getEmailBranding } from "@/lib/email/branding"
-import { getResendApiKey } from "@/lib/env"
 
 let client: Resend | null = null
+let cachedKey: string | null = null
 
 function getClient(): Resend | null {
-  const key = getResendApiKey()
+  const key = getEffectiveResendApiKey()
   if (!key) return null
-  if (!client) client = new Resend(key)
+  if (client && cachedKey === key) return client
+  cachedKey = key
+  client = new Resend(key)
   return client
 }
 

@@ -17,6 +17,9 @@ describe("email placeholders", () => {
     )
     expect(isPlaceholderEmail(null, "alice")).toBe(true)
     expect(isPlaceholderEmail("a@b.com", "alice")).toBe(false)
+    expect(isPlaceholderEmail("admin@comp_hack.github.com", "admin")).toBe(
+      true
+    )
   })
 
   it("displayEmail blanks placeholders for the UI", () => {

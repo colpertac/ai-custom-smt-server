@@ -1,3 +1,10 @@
+import {
+  getEffectiveCompResetSecret,
+  getEffectivePublicSiteUrl,
+  getEffectiveResendApiKey,
+  getEffectiveResendFrom,
+} from "@/lib/email-settings-store"
+
 function required(name: string): string {
   const value = process.env[name]?.trim()
   if (!value) {
@@ -19,8 +26,7 @@ export function getSessionSecret(): string {
 
 /** Public site origin for CSRF checks and download copy (optional). */
 export function getSiteUrl(): string | undefined {
-  const value = process.env.SITE_URL?.trim()
-  return value ? value.replace(/\/$/, "") : undefined
+  return getEffectivePublicSiteUrl()
 }
 
 /**
@@ -64,21 +70,16 @@ export function getChannelProbePort(): number {
 
 /** Resend — only use from server code (Route Handlers / Server Actions). */
 export function getResendApiKey(): string | undefined {
-  const value = process.env.RESEND_API_KEY?.trim()
-  return value || undefined
+  return getEffectiveResendApiKey()
 }
 
 export function getResendFrom(): { email: string; name: string } | undefined {
-  const email = process.env.RESEND_FROM_EMAIL?.trim()
-  if (!email) return undefined
-  const name = process.env.RESEND_FROM_NAME?.trim() || "SMT"
-  return { email, name }
+  return getEffectiveResendFrom()
 }
 
 /** Shared secret for website → lobby password-reset APIs (server-only). */
 export function getCompResetSecret(): string | undefined {
-  const value = process.env.COMP_RESET_SECRET?.trim()
-  return value || undefined
+  return getEffectiveCompResetSecret()
 }
 
 /** Public site origin required for email links; falls back for local dev. */

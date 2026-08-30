@@ -3,6 +3,10 @@ import { describe, expect, it } from "vitest"
 import { registerSchema } from "@/features/auth/schemas/register.schema"
 import { changePasswordSchema } from "@/features/auth/schemas/changePassword.schema"
 import { changeEmailSchema } from "@/features/auth/schemas/changeEmail.schema"
+import {
+  forgotPasswordSchema,
+  isForgotPasswordEmail,
+} from "@/features/auth/schemas/forgotPassword.schema"
 
 describe("registerSchema", () => {
   it("allows empty optional email", () => {
@@ -74,5 +78,31 @@ describe("changeEmailSchema", () => {
     expect(changeEmailSchema.parse({ email: "Hi@Ex.COM" })).toEqual({
       email: "hi@ex.com",
     })
+  })
+})
+
+describe("forgotPasswordSchema", () => {
+  it("accepts a username", () => {
+    expect(forgotPasswordSchema.parse({ account: "Player1" })).toEqual({
+      account: "player1",
+    })
+    expect(isForgotPasswordEmail("player1")).toBe(false)
+  })
+
+  it("accepts an email", () => {
+    expect(forgotPasswordSchema.parse({ account: "Hi@Ex.COM" })).toEqual({
+      account: "hi@ex.com",
+    })
+    expect(isForgotPasswordEmail("hi@ex.com")).toBe(true)
+  })
+
+  it("rejects invalid values", () => {
+    expect(forgotPasswordSchema.safeParse({ account: "" }).success).toBe(false)
+    expect(forgotPasswordSchema.safeParse({ account: "ab" }).success).toBe(
+      false
+    )
+    expect(
+      forgotPasswordSchema.safeParse({ account: "not-an-email@" }).success
+    ).toBe(false)
   })
 })

@@ -12,9 +12,6 @@ export const emailConfig = {
   get appUrl() {
     return getEmailBranding().appUrl
   },
-  get supportEmail() {
-    return getEmailBranding().supportEmail
-  },
 
   colors: {
     primary: "#d3b800",
@@ -153,9 +150,8 @@ export const getEmailHeader = (): string => `
 
 export const getEmailFooter = (): string => `
     <div class="footer-divider">
-      <p class="footer-text">© ${new Date().getFullYear()} ${emailConfig.appName}. Private server portal.</p>
       <p class="footer-text">
-        Questions? <a href="mailto:${emailConfig.supportEmail}" style="color: #f0d24a; text-decoration: none;">${emailConfig.supportEmail}</a>
+        <a href="${emailConfig.appUrl}" style="color: #f0d24a; text-decoration: none;">${emailConfig.appUrl}</a>
       </p>
     </div>
   `

@@ -21,7 +21,7 @@ export function ForgotPasswordForm() {
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: "onChange",
-    defaultValues: { username: "" },
+    defaultValues: { account: "" },
   })
 
   function onSubmit(data: ForgotPasswordInput) {
@@ -51,16 +51,17 @@ export function ForgotPasswordForm() {
       ) : null}
 
       <FieldGroup>
-        <Field data-invalid={!!errors.username || undefined}>
-          <FieldLabel htmlFor="forgot-username">Username</FieldLabel>
+        <Field data-invalid={!!errors.account || undefined}>
+          <FieldLabel htmlFor="forgot-account">Username or email</FieldLabel>
           <Input
-            id="forgot-username"
+            id="forgot-account"
             autoComplete="username"
-            aria-invalid={!!errors.username || undefined}
-            {...form.register("username")}
+            placeholder="player or you@example.com"
+            aria-invalid={!!errors.account || undefined}
+            {...form.register("account")}
           />
-          {errors.username ? (
-            <FieldMessage>{errors.username.message}</FieldMessage>
+          {errors.account ? (
+            <FieldMessage>{errors.account.message}</FieldMessage>
           ) : null}
         </Field>
       </FieldGroup>
