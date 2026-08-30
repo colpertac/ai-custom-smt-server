@@ -9,6 +9,7 @@ COMP_hack:
 - Working directory: `/home/cat/repos/smt/comp_hack`
 - Local branch: `ai-custom-server`
 - Baseline commits:
+  - `e49bf25a` — ignore generated local server runtime state
   - `a2c09ae4` — support local-only builds without Git remotes
   - `0514648e` — track Linux build helper
   - `fbd709a7` — modern Linux server baseline
