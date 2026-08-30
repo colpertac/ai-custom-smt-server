@@ -3,7 +3,8 @@
 Completed 2026-07-18.
 
 For a step-by-step explanation of every XML object and the package workflow,
-see [custom-zone-guide.md](custom-zone-guide.md).
+see [the custom-zone guide](../guides/custom-zone.md). Additional member
+references are indexed under [guides/syntax](../guides/syntax/README.md).
 
 ## What was added
 
