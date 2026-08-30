@@ -1,6 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
-import { DatabaseSync } from "node:sqlite"
+
+import { DatabaseSync } from "./node-sqlite.ts"
 
 import {
   appearanceFingerprint,
@@ -284,18 +285,39 @@ export function gmDressCommands(payload: PortraitJobPayload): string[] {
   const lines = [
     `# ${payload.characterName}  ${payload.fingerprint}`,
     `# do not dress live cat/catm — mannequin only`,
+    `@copylook ${payload.characterName}`,
+    `@dummyweapon`,
     `@zone 10105`,
     `@pos 50000 50000`,
-    `@va clear`,
+    `# tap W if demon faces away, then hold S ~2s`,
   ]
-  for (const entry of [...payload.equippedVA].sort((a, b) => a.slot - b.slot)) {
-    lines.push(`@va ${entry.slot} ${entry.itemType}`)
-  }
-  if (payload.weaponType) {
-    lines.push(`# dummy weapon Type ${payload.weaponType} in slot 13 (match VA subCategory)`)
-  }
-  lines.push(`# tap W if demon faces away, then hold S ~2s`)
   return lines
+}
+
+/** Copy a capture onto `portraits/{fingerprint}.png` and mark the job ready. */
+export function ingestPortraitFile(
+  srcPath: string,
+  fingerprint: string
+): { fingerprint: string; url: string } {
+  if (!/^[0-9a-f]{16}$/.test(fingerprint)) {
+    throw new Error(`Invalid fingerprint '${fingerprint}' (want 16 hex)`)
+  }
+  const src = path.resolve(srcPath)
+  if (!fs.existsSync(src)) {
+    throw new Error(`Capture not found: ${src}`)
+  }
+  const dir = portraitsDir()
+  fs.mkdirSync(dir, { recursive: true })
+  const dest = path.join(dir, `${fingerprint}.png`)
+  fs.copyFileSync(src, dest)
+  const job = getPortraitJob(fingerprint)
+  if (job && job.status !== "ready") {
+    completePortraitJob(fingerprint)
+  }
+  return {
+    fingerprint,
+    url: `/armory/portraits/${fingerprint}.png`,
+  }
 }
 
 export function resetPortraitQueueForTests(): void {

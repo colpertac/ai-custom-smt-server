@@ -5,6 +5,7 @@
  *   npm run portrait-queue
  *   npm run portrait-queue -- claim
  *   npm run portrait-queue -- complete <fingerprint>
+ *   npm run portrait-queue -- ingest <png> <fingerprint>
  *   npm run portrait-queue -- fail <fingerprint> <reason>
  */
 import {
@@ -12,6 +13,7 @@ import {
   completePortraitJob,
   failPortraitJob,
   gmDressCommands,
+  ingestPortraitFile,
   listPortraitJobs,
 } from "../lib/portrait-queue.ts"
 
@@ -29,8 +31,10 @@ function printJob(
   console.log("")
   console.log(gmDressCommands(job.payload).join("\n"))
   console.log("")
-  console.log(`Write public/armory/portraits/${job.fingerprint}.png then:`)
-  console.log(`  npm run portrait-queue -- complete ${job.fingerprint}`)
+  console.log(`Save the crop, then:`)
+  console.log(
+    `  npm run portrait-queue -- ingest /path/to/crop.png ${job.fingerprint}`
+  )
 }
 
 if (cmd === "list") {
@@ -56,6 +60,15 @@ if (cmd === "list") {
   }
   const job = completePortraitJob(arg)
   console.log(`ready  ${job.fingerprint}`)
+} else if (cmd === "ingest") {
+  const fingerprint = rest[0]
+  if (!arg || !fingerprint) {
+    console.error("usage: portrait-queue ingest <png> <fingerprint>")
+    process.exit(1)
+  }
+  const result = ingestPortraitFile(arg, fingerprint)
+  console.log(`ready  ${result.fingerprint}`)
+  console.log(`       ${result.url}`)
 } else if (cmd === "fail") {
   if (!arg) {
     console.error("usage: portrait-queue fail <fingerprint> <reason>")
@@ -64,6 +77,8 @@ if (cmd === "list") {
   const job = failPortraitJob(arg, rest.join(" ") || "failed")
   console.log(`failed  ${job.fingerprint}  ${job.error}`)
 } else {
-  console.error("usage: portrait-queue [list|claim|complete|fail]")
+  console.error(
+    "usage: portrait-queue [list|claim|complete|ingest|fail]"
+  )
   process.exit(1)
 }

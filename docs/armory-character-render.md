@@ -264,8 +264,12 @@ Worker should script `@pos` + brief backstep, not LockMovement-at-spawn.
 
 - [ ] Dedicated mannequin account (not `cat` / `catm`). Copy gender +
       appearance. `@zone` + `@pos 50000 50000` + S.
-- [ ] **Dummy weapon is dynamic:** VA slot 24’s item `subCategory` must
-      match the equipped slot-13 weapon. ItemData (not “any pistol”):
+- [x] **Dummy weapon:** `@dummyweapon` (alias `@dummywep`) equips a cheap
+      slot-13 item whose ItemData `subCategory` matches EquippedVA slot 24.
+      If the dummy is missing it overwrites the first unequipped inventory
+      slot (full bag is fine). `@copylook` calls it automatically.
+      `@clearinventory` scraps unequipped junk (keeps equipped COMP/gear).
+      Mapping:
 
   | subCategory | Class | cheap dummy e.g. |
   | --- | --- | --- |
@@ -282,8 +286,14 @@ Worker should script `@pos` + brief backstep, not LockMovement-at-spawn.
 
   `weaponType` CLOSE_RANGE vs LONG_RANGE is too coarse (sword vs tonfa
   both close). Match **subCategory** (or CEquipModel nif family BS/HG/RF/…).
-- [ ] Dress via `@va` (proven). Later RPC. Copy Hidden + face/hair/eyes/
-      colors (`@va` does not set those yet).
+- [x] Dress via `@va` (proven). `@copylook NAME` copies skin/hair/face/
+      eyes/colors + EquippedVA onto the live mannequin (RAM + salon/VA
+      packets). Gender is not copied; mismatch is refused. If the source
+      has **no VA**, `@copylook` falls back to `@copygear`. Title /
+      partner demon are not copied.
+- [x] `@copygear NAME` generates studio copies of real EquippedItems
+      Types and equips them (skips COMP). For flashy non-VA looks
+      (`cat3`). Can also be run alone after `@copylook`.
 
 ### 2. Capture host (this PC is fine for the first PNG)
 
@@ -334,9 +344,8 @@ volume. Phase 16 already deferred Redis for rate limits; same rule here.
 
 ### 5. Explicitly later
 
-- Appearance GM (`@hair` / skin/face/eyes/colors) if mannequin base isn’t
-  copied from the target.
-- Auto-equip dummy by VA item `subCategory` (table above).
+- Per-field appearance GM (`@hair` / skin/face/eyes/colors) — `@copylook`
+  covers the mannequin case.
 - Headless Xvfb/Wine.
 - Always-on mini PC.
 - Interactive 3D.
@@ -351,7 +360,8 @@ volume. Phase 16 already deferred Redis for rate limits; same rule here.
 1. BFF computes fingerprint when serving `/api/armory/[name]`.
 2. If `portraits/{fingerprint}.webp` exists → URL on the profile.
 3. Else insert job `pending` in `data/portraits.db`; return `portraitStatus: "queued"`.
-   Claim with `npm run portrait-queue -- claim` (prints mannequin `@va` lines).
+   Claim with `npm run portrait-queue -- claim` (prints `@copylook` / `@dummyweapon`).
+   Ingest: `npm run portrait-queue -- ingest crop.png <fingerprint>`.
 4. Worker claims job → client capture → write object + mark `ready`.
 5. UI: CSS bust placeholder until `ready` (poll or revalidate).
 
