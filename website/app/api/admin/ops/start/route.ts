@@ -4,6 +4,9 @@ import { guardApiMutation } from "@/lib/api-guard"
 import { startOpsServers } from "@/lib/ops-sidecar"
 import { requireWebSession } from "@/lib/web-session"
 
+/** Compose start waits on healthchecks — allow long-running request. */
+export const maxDuration = 300
+
 export async function POST() {
   const blocked = await guardApiMutation("admin-ops-start", 3, 60_000)
   if (blocked) return blocked

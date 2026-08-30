@@ -1,9 +1,25 @@
 # Ops sidecar (Phase 16I)
 
-Localhost control plane for admin Start/Stop/Restart and later zip ingest.
-The public Next.js app never holds the Docker socket; it proxies through here.
+Control plane for admin Start/Stop/Restart, zip ingest, Lane A–C, and
+Client-prep encrypt. The public Next.js app never holds the Docker socket; it
+proxies here with `OPS_TOKEN`.
 
-**Step 1 (now):** `GET /health` only.
+## Run modes
+
+**A) Compose (all-in-one / VPS)** — preferred for Docker Hub stacks:
+
+```bash
+# deploy/.env must set OPS_TOKEN (+ SESSION_SECRET, EXTERNAL_IP, UPDATER_ROOT)
+cd deploy && docker compose up -d --build ops website
+```
+
+- Service `ops` on the `smt` bridge; **not** published to the host.
+- Website uses `OPS_URL=http://ops:14710`.
+- `OPS_BACKEND=docker` + `/var/run/docker.sock` for restart / Lane C.
+- Optional: put `comp_rehash` / `comp_encrypt` in `deploy/ops-tools/` (or
+  `OPS_TOOLS_DIR`) for Lane B + Client prep.
+
+**B) Host process (local Next dev)**:
 
 ```bash
 export OPS_TOKEN=dev-ops-token-change-me
@@ -17,8 +33,7 @@ OPS_URL=http://127.0.0.1:14710
 OPS_TOKEN=dev-ops-token-change-me
 ```
 
-Then `pnpm run ops-sidecar` from `website/` (or the python command above) and
-open `/admin` — “Ops sidecar” should show reachable.
+Then `pnpm run ops-sidecar` from `website/` and open `/admin`.
 
 **Step 1 (skeleton):** `GET /health` — sidecar reachability.
 
@@ -41,6 +56,12 @@ lobby/world/channel as listed in the release (`POST /restart/services`).
 `comp_hack/scripts/restart-channel.sh` or docker `compose restart channel`.
 **Restart services:** `POST /restart/services` body
 `{"services":["lobby","world","channel"]}` — native `restart-service.sh`.
+**Start / stop services:** `POST /start/services` and `POST /stop/services`
+with the same body — native `start-service.sh` / `stop-service.sh`, or Docker
+`compose up -d <svc>` / `compose stop <svc>`. World/channel start still
+requires first-boot BinaryData + maps. Start/restart also enforce order:
+lobby before world, lobby+world before channel (`409 dependency` with a
+plain-language message).
 
 **Lane A publish (compat one-shot):** `POST /publish/lane-a` — validate+apply
 then restart. Prefer validate/apply from the admin UI.
@@ -79,11 +100,12 @@ content upload).
 | `OPS_TOKEN` | (required) | Header `X-Ops-Token` |
 | `OPS_URL` | `http://127.0.0.1:14710` | Website BFF only |
 | `OPS_PORT` | `14710` | Sidecar listen port |
-| `OPS_BIND` | `127.0.0.1` | Loopback only; other binds refused |
-| `OPS_BACKEND` | `native` | Reported in health; `docker` later |
+| `OPS_BIND` | `127.0.0.1` | Host mode; compose uses `0.0.0.0` (do **not** publish `:14710`) |
+| `OPS_BACKEND` | `native` | Compose sets `docker` |
 | `OPS_RUNTIME` | `comp_hack/runtime` or `deploy/data` | Datastore root |
 | `OPS_UPDATER_ROOT` / `UPDATER_ROOT` | `updater/` | Overlay dest for kind=overlay |
 | `OPS_AUDIT` | `ops/audit.log` | Append-only JSON lines |
 | `OPS_REHASH` | `comp_hack/build-current/bin/comp_rehash` | Lane B |
+| `OPS_TOOLS_DIR` | `deploy/ops-tools` | Optional mount of `comp_*` tools |
 
 Admin BFF: `GET /api/admin/ops/health` (`userLevel >= 1000`).

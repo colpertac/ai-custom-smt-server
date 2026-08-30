@@ -164,7 +164,7 @@ export function AdminOpsFirstBoot() {
     setError(null)
     setOk(null)
     try {
-      const response = await api.post("admin/ops/start")
+      const response = await api.post("admin/ops/start", { timeout: 180_000 })
       const json = (await response.json()) as {
         success?: boolean
         message?: string

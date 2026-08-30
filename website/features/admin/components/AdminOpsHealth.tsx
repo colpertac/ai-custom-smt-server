@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AdminOpsMetrics } from "@/features/admin/components/AdminOpsMetrics"
+import { AdminServiceStatus } from "@/features/admin/components/AdminServiceStatus"
 import { api } from "@/lib/kyClient"
 
 type OpsHealth = {
@@ -52,12 +53,7 @@ type OpsActionResponse = {
 }
 
 type PublishPhase =
-  | "idle"
-  | "validating"
-  | "applying"
-  | "restarting"
-  | "done"
-  | "failed"
+  "idle" | "validating" | "applying" | "restarting" | "done" | "failed"
 
 function phaseLabel(phase: PublishPhase): string | null {
   switch (phase) {
@@ -110,13 +106,13 @@ export function AdminOpsHealth() {
   const [pending, setPending] = useState(false)
   const [starting, setStarting] = useState(false)
   const [stopping, setStopping] = useState(false)
-  const [restarting, setRestarting] = useState(false)
+  const [restartingAll, setRestartingAll] = useState(false)
   const [rollingBack, setRollingBack] = useState(false)
   const [publishPhase, setPublishPhase] = useState<PublishPhase>("idle")
   const [lastReleaseId, setLastReleaseId] = useState<string | null>(null)
   const [startOpen, setStartOpen] = useState(false)
   const [stopOpen, setStopOpen] = useState(false)
-  const [restartOpen, setRestartOpen] = useState(false)
+  const [restartAllOpen, setRestartAllOpen] = useState(false)
   const [publishOpen, setPublishOpen] = useState(false)
   const [rollbackOpen, setRollbackOpen] = useState(false)
   const [laneCOpen, setLaneCOpen] = useState(false)
@@ -146,7 +142,9 @@ export function AdminOpsHealth() {
       setError(null)
     } catch (e) {
       setHealth(null)
-      setError(e instanceof Error ? e.message : "Could not reach server control")
+      setError(
+        e instanceof Error ? e.message : "Could not reach server control"
+      )
     } finally {
       setPending(false)
     }
@@ -154,7 +152,7 @@ export function AdminOpsHealth() {
 
   const runOpsAction = useCallback(
     async (
-      path: "admin/ops/start" | "admin/ops/stop" | "admin/ops/restart/channel",
+      path: "admin/ops/start" | "admin/ops/stop" | "admin/ops/restart/services",
       fallbackOk: string,
       setBusy: (v: boolean) => void,
       closeDialog: () => void
@@ -164,7 +162,7 @@ export function AdminOpsHealth() {
       setError(null)
       setOk(null)
       try {
-        const response = await api.post(path)
+        const response = await api.post(path, { timeout: 180_000 })
         const json = (await response.json()) as OpsActionResponse
         if (!response.ok || !json.success) {
           setError(json.message || `HTTP ${response.status}`)
@@ -184,7 +182,7 @@ export function AdminOpsHealth() {
   const startServers = useCallback(async () => {
     await runOpsAction(
       "admin/ops/start",
-      "Game servers started",
+      "All services started",
       setStarting,
       () => setStartOpen(false)
     )
@@ -193,18 +191,18 @@ export function AdminOpsHealth() {
   const stopServers = useCallback(async () => {
     await runOpsAction(
       "admin/ops/stop",
-      "Game servers stopped",
+      "All services stopped",
       setStopping,
       () => setStopOpen(false)
     )
   }, [runOpsAction])
 
-  const restartChannel = useCallback(async () => {
+  const restartAllServices = useCallback(async () => {
     await runOpsAction(
-      "admin/ops/restart/channel",
-      "Game channel restarted",
-      setRestarting,
-      () => setRestartOpen(false)
+      "admin/ops/restart/services",
+      "All services restarted",
+      setRestartingAll,
+      () => setRestartAllOpen(false)
     )
   }, [runOpsAction])
 
@@ -254,7 +252,7 @@ export function AdminOpsHealth() {
         setPublishPhase("failed")
         setError(
           restartJson.message ||
-            "Shops were copied but the game channel did not restart — use Restart game channel"
+            "Shops were copied but the game channel did not restart — use Restart on the Channel row under Power"
         )
         return
       }
@@ -373,7 +371,7 @@ export function AdminOpsHealth() {
     pending ||
     starting ||
     stopping ||
-    restarting ||
+    restartingAll ||
     publishing ||
     rollingBack ||
     laneCBusy
@@ -405,9 +403,7 @@ export function AdminOpsHealth() {
 
       <AdminOpsMetrics />
 
-      {error ? (
-        <FormAlert variant="error">{error}</FormAlert>
-      ) : null}
+      {error ? <FormAlert variant="error">{error}</FormAlert> : null}
       {firstBootBlocked ? (
         <FormAlert variant="warning">
           First-time setup is not finished — upload character art data
@@ -438,7 +434,10 @@ export function AdminOpsHealth() {
         <p className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
           Power
         </p>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <AdminServiceStatus
+          workingAll={starting || stopping || restartingAll}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
           <Button
             type="button"
             variant="default"
@@ -446,7 +445,7 @@ export function AdminOpsHealth() {
             disabled={busy || !controlOk || firstBootBlocked}
             onClick={() => setStartOpen(true)}
           >
-            {starting ? "Starting…" : "Start servers"}
+            {starting ? "Starting…" : "Start all services"}
           </Button>
           <Button
             type="button"
@@ -455,16 +454,16 @@ export function AdminOpsHealth() {
             disabled={busy || !controlOk}
             onClick={() => setStopOpen(true)}
           >
-            {stopping ? "Stopping…" : "Stop servers"}
+            {stopping ? "Stopping…" : "Stop all services"}
           </Button>
           <Button
             type="button"
             variant="destructive"
             size="sm"
             disabled={busy || !controlOk}
-            onClick={() => setRestartOpen(true)}
+            onClick={() => setRestartAllOpen(true)}
           >
-            {restarting ? "Restarting…" : "Restart game channel"}
+            {restartingAll ? "Restarting…" : "Restart all services"}
           </Button>
         </div>
       </div>
@@ -537,11 +536,11 @@ export function AdminOpsHealth() {
       <Dialog open={startOpen} onOpenChange={setStartOpen}>
         <DialogContent showCloseButton={!starting}>
           <DialogHeader>
-            <DialogTitle>Start game servers?</DialogTitle>
+            <DialogTitle>Start all services?</DialogTitle>
             <DialogDescription>
-              Starts login (lobby), world, and game channel in order. Servers
-              that are already running are left alone. Character art data and
-              maps must already be on disk.
+              Starts lobby, world, and channel in order. Services that are
+              already running are left alone. Character art data and maps must
+              already be on disk.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -561,7 +560,7 @@ export function AdminOpsHealth() {
               disabled={starting}
               onClick={() => void startServers()}
             >
-              {starting ? "Starting…" : "Start servers"}
+              {starting ? "Starting…" : "Start all services"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -570,10 +569,10 @@ export function AdminOpsHealth() {
       <Dialog open={stopOpen} onOpenChange={setStopOpen}>
         <DialogContent showCloseButton={!stopping}>
           <DialogHeader>
-            <DialogTitle>Stop game servers?</DialogTitle>
+            <DialogTitle>Stop all services?</DialogTitle>
             <DialogDescription>
-              Stops the game channel, world, and login server. Everyone in-game
-              will disconnect. This website keeps running.
+              Stops channel, world, and lobby. Everyone in-game will disconnect.
+              This website keeps running.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -593,7 +592,40 @@ export function AdminOpsHealth() {
               disabled={stopping}
               onClick={() => void stopServers()}
             >
-              {stopping ? "Stopping…" : "Stop servers"}
+              {stopping ? "Stopping…" : "Stop all services"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={restartAllOpen} onOpenChange={setRestartAllOpen}>
+        <DialogContent showCloseButton={!restartingAll}>
+          <DialogHeader>
+            <DialogTitle>Restart all services?</DialogTitle>
+            <DialogDescription>
+              Restarts lobby, world, and channel. Players disconnect and must
+              log back in. Prefer per-service restart when only one process
+              needs it.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={restartingAll}
+              onClick={() => setRestartAllOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              disabled={restartingAll}
+              onClick={() => void restartAllServices()}
+            >
+              {restartingAll ? "Restarting…" : "Restart all services"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -665,38 +697,6 @@ export function AdminOpsHealth() {
               onClick={() => void rollbackLaneA()}
             >
               {rollingBack ? "Undoing…" : "Undo & restart"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={restartOpen} onOpenChange={setRestartOpen}>
-        <DialogContent showCloseButton={!restarting}>
-          <DialogHeader>
-            <DialogTitle>Restart game channel?</DialogTitle>
-            <DialogDescription>
-              Everyone in the game world will disconnect and must log back in.
-              Login and world keep running; only the game channel restarts.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={restarting}
-              onClick={() => setRestartOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              disabled={restarting}
-              onClick={() => void restartChannel()}
-            >
-              {restarting ? "Restarting…" : "Restart game channel"}
             </Button>
           </DialogFooter>
         </DialogContent>

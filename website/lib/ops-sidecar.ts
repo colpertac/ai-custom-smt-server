@@ -46,6 +46,8 @@ export type OpsProcessMetric = {
   rssBytes?: number | null
   cpuPercent?: number | null
   container?: string
+  /** Docker state: running | exited | restarting | … */
+  status?: string
   error?: string
 }
 
@@ -185,18 +187,22 @@ function parseFirstBoot(raw: unknown): OpsFirstBoot | undefined {
 
 async function opsFetch(
   path: string,
-  init?: RequestInit & { actor?: string }
+  init?: RequestInit & { actor?: string; timeoutMs?: number }
 ): Promise<{ status: number; json: Record<string, unknown> }> {
   const secret = opsToken()
   if (!secret) {
     throw new Error("OPS_TOKEN is not set on the website")
   }
-  const { actor, ...rest } = init ?? {}
+  const { actor, timeoutMs, ...rest } = init ?? {}
   const url = `${opsBaseUrl()}${path}`
+  const signal =
+    rest.signal ??
+    (timeoutMs && timeoutMs > 0 ? AbortSignal.timeout(timeoutMs) : undefined)
   let res: Response
   try {
     res = await fetch(url, {
       ...rest,
+      signal,
       headers: {
         "X-Ops-Token": secret,
         Accept: "application/json",
@@ -310,6 +316,7 @@ function parseProcessMetrics(raw: unknown): OpsProcessMetric[] {
       rssBytes: typeof o.rssBytes === "number" ? o.rssBytes : null,
       cpuPercent: typeof o.cpuPercent === "number" ? o.cpuPercent : null,
       container: typeof o.container === "string" ? o.container : undefined,
+      status: typeof o.status === "string" ? o.status : undefined,
       error: typeof o.error === "string" ? o.error : undefined,
     })
   }
@@ -337,6 +344,7 @@ export async function restartOpsChannel(
   const { status, json } = await opsFetch("/restart/channel", {
     method: "POST",
     actor,
+    timeoutMs: 120_000,
   })
   if (status === 401) {
     return { ok: false, error: "unauthorized" }
@@ -475,12 +483,54 @@ export async function restartOpsServices(
   }
 }
 
+export async function startOpsServices(
+  services: string[],
+  actor?: string
+): Promise<OpsServerActionResult & { services?: string[] }> {
+  const { status, json } = await opsFetch("/start/services", {
+    method: "POST",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ services }),
+    timeoutMs: 180_000,
+  })
+  const base = mapOpsActionResult(status, json)
+  return {
+    ...base,
+    services: Array.isArray(json.services)
+      ? json.services.filter((v): v is string => typeof v === "string")
+      : undefined,
+  }
+}
+
+export async function stopOpsServices(
+  services: string[],
+  actor?: string
+): Promise<OpsServerActionResult & { services?: string[] }> {
+  const { status, json } = await opsFetch("/stop/services", {
+    method: "POST",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ services }),
+    timeoutMs: 120_000,
+  })
+  const base = mapOpsActionResult(status, json)
+  return {
+    ...base,
+    services: Array.isArray(json.services)
+      ? json.services.filter((v): v is string => typeof v === "string")
+      : undefined,
+  }
+}
+
 export async function startOpsServers(
   actor?: string
 ): Promise<OpsServerActionResult> {
   const { status, json } = await opsFetch("/start", {
     method: "POST",
     actor,
+    // Compose waits on lobby→world→channel healthchecks (often >10s).
+    timeoutMs: 180_000,
   })
   return mapOpsActionResult(status, json)
 }
@@ -491,6 +541,7 @@ export async function stopOpsServers(
   const { status, json } = await opsFetch("/stop", {
     method: "POST",
     actor,
+    timeoutMs: 120_000,
   })
   return mapOpsActionResult(status, json)
 }
@@ -679,8 +730,14 @@ export async function ingestOpsZip(
     `${opsBaseUrl()}/ingest/zip?kind=${encodeURIComponent(kind)}` +
     `&mode=${encodeURIComponent(mode)}` +
     (options?.rehash === false ? "&rehash=0" : "&rehash=1")
-  const fetchBody: BodyInit =
-    body instanceof Blob ? body : Buffer.from(body as ArrayBuffer | Uint8Array)
+  // Node/DOM typings disagree on Uint8Array vs BodyInit; Buffer is accepted at runtime.
+  const fetchBody = (
+    body instanceof Blob
+      ? body
+      : Buffer.from(
+          body instanceof Uint8Array ? body : new Uint8Array(body)
+        )
+  ) as BodyInit
   let res: Response
   try {
     res = await fetch(url, {
@@ -756,10 +813,9 @@ export async function getOpsIngestJob(
       if (!row || typeof row !== "object") return null
       const o = row as Record<string, unknown>
       if (typeof o.msg !== "string") return null
-      return {
-        at: typeof o.at === "string" ? o.at : undefined,
-        msg: o.msg,
-      }
+      const entry: { at?: string; msg: string } = { msg: o.msg }
+      if (typeof o.at === "string") entry.at = o.at
+      return entry
     })
     .filter((v): v is { at?: string; msg: string } => v != null)
   if (status === 401) {

@@ -7,7 +7,7 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
 
   OPS_TOKEN          required
   OPS_PORT           default 14710
-  OPS_BIND           default 127.0.0.1 (loopback only; other binds refused)
+  OPS_BIND           default 127.0.0.1; use 0.0.0.0 in compose (do not publish)
   OPS_BACKEND        native | docker  (restart implementation)
   OPS_COMP_SCRIPTS   native: comp_hack/scripts (default ../comp_hack/scripts)
   OPS_COMPOSE_DIR    docker: deploy/ with docker-compose.yml
@@ -15,6 +15,8 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
   OPS_REHASH         path to comp_rehash (default searches comp_hack build bins)
   OPS_ENCRYPT        path to comp_encrypt (webaccess.sdat; also BIN_DIR)
   OPS_DECRYPT        path to comp_decrypt (optional)
+
+  Compose: service `ops` on the smt network; website OPS_URL=http://ops:14710
 
   POST /tools/webaccess-encrypt  {"plaintext": "<login = http://HOST:10999/>\\n"}
     → {"ok": true, "encryptedBase64": "..."}
@@ -62,7 +64,9 @@ from zip_ingest import KINDS, MAX_UPLOAD, MODES, ingest_zip_file, save_upload_st
 REPO_ROOT = HERE.parent
 SMT_ROOT = REPO_ROOT.parent
 WEBSITE = REPO_ROOT / "website"
-ALLOWED_BIND = {"127.0.0.1", "localhost", "::1"}
+ALLOWED_BIND = {"127.0.0.1", "localhost", "::1", "0.0.0.0"}
+# 0.0.0.0 is for compose (website → ops on the bridge). Do not publish :14710
+# on the host; keep the sidecar off the public internet.
 
 
 def _load_env_file(path: Path) -> None:
@@ -226,10 +230,24 @@ def run_compose(
     if not compose_file.is_file():
         return False, "missing_compose", f"not found: {compose_file}"
     cmd = ["docker", "compose", *args]
+    # When this process runs inside the ops container, compose resolves
+    # relative bind sources like ./entrypoint.sh to /compose/entrypoint.sh.
+    # Docker Engine then looks on the *host*, creates a directory there, and
+    # bind-mount fails ("not a directory"). Prefer absolute host paths.
+    run_env = os.environ.copy()
+    host_deploy = env("OPS_HOST_DEPLOY_DIR")
+    if host_deploy:
+        host = Path(host_deploy)
+        run_env.setdefault("COMP_ENTRYPOINT", str(host / "entrypoint.sh"))
+        run_env.setdefault("COMP_RUNTIME", str(host / "data"))
+        run_env.setdefault("WEBSITE_DATA", str(host / "website-data"))
+        if not run_env.get("UPDATER_ROOT"):
+            run_env["UPDATER_ROOT"] = str(host / "updater")
     try:
         r = subprocess.run(
             cmd,
             cwd=str(deploy),
+            env=run_env,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -793,6 +811,12 @@ def _ingest_result_payload(result, runtime: Path, updater: Path) -> tuple[dict, 
         if needs_restart:
             msg += " — channel restart required to load these files"
         payload["message"] = msg
+    else:
+        payload["message"] = (
+            result.detail
+            or result.error
+            or "Zip ingest failed"
+        )
     payload.update(freshness_public(runtime))
     payload.update(first_boot_public(runtime, updater))
     return payload, status
@@ -1244,6 +1268,142 @@ def restart_service_docker(service: str) -> tuple[bool, str, str]:
     return True, "restarted", detail
 
 
+def start_service_native(service: str) -> tuple[bool, str, str]:
+    ok, code, detail = run_native_script(
+        "start-service.sh", args=[service], timeout=90
+    )
+    if not ok:
+        return False, code, detail
+    return True, "started", detail or f"{service} started"
+
+
+def start_service_docker(service: str) -> tuple[bool, str, str]:
+    # up -d creates if missing; start alone only works for existing containers.
+    ok, code, detail = run_compose(
+        ["up", "-d", service],
+        timeout=120,
+        ok_message=f"docker compose up -d {service} ok",
+    )
+    if not ok:
+        return False, code, detail
+    return True, "started", detail
+
+
+def stop_service_native(service: str) -> tuple[bool, str, str]:
+    ok, code, detail = run_native_script(
+        "stop-service.sh", args=[service], timeout=60
+    )
+    if not ok:
+        return False, code, detail
+    return True, "stopped", detail or f"{service} stopped"
+
+
+def stop_service_docker(service: str) -> tuple[bool, str, str]:
+    ok, code, detail = run_compose(
+        ["stop", service],
+        ok_message=f"docker compose stop {service} ok",
+    )
+    if not ok:
+        return False, code, detail
+    return True, "stopped", detail
+
+
+def _parse_services_body(handler: "OpsHandler") -> tuple[list[str] | None, tuple[int, bytes, str] | None]:
+    body = _read_json_body(handler)
+    raw = body.get("services")
+    if not isinstance(raw, list) or not raw:
+        return None, json_bytes(
+            {
+                "ok": False,
+                "error": "missing_services",
+                "hint": "services: [lobby,world,channel]",
+            },
+            400,
+        )
+    services = [str(s).strip().lower() for s in raw if str(s).strip()]
+    order = ["lobby", "world", "channel"]
+    services = [s for s in order if s in services]
+    if not services:
+        return None, json_bytes({"ok": False, "error": "no_valid_services"}, 400)
+    return services, None
+
+
+# Start/restart order: lobby → world → channel.
+_SERVICE_DEPS: dict[str, tuple[str, ...]] = {
+    "lobby": (),
+    "world": ("lobby",),
+    "channel": ("lobby", "world"),
+}
+
+
+def _running_service_names(backend: str) -> set[str]:
+    metrics = collect_metrics(
+        backend=backend,
+        comp_root=SMT_ROOT / "comp_hack",
+    )
+    names: set[str] = set()
+    for proc in metrics.get("processes") or []:
+        if not isinstance(proc, dict):
+            continue
+        name = proc.get("name")
+        if isinstance(name, str) and proc.get("running"):
+            names.add(name.lower())
+    return names
+
+
+def _service_deps_message(
+    services: list[str],
+    *,
+    running: set[str],
+    verb: str,
+) -> str | None:
+    """Return a friendly error if world/channel are requested without deps.
+
+    Services earlier in the same request count as soon-to-be-online (lobby →
+    world → channel batch start/restart).
+    """
+    satisfied = set(running)
+    for svc in services:
+        missing = [d for d in _SERVICE_DEPS.get(svc, ()) if d not in satisfied]
+        if missing:
+            if len(missing) == 1:
+                need = missing[0]
+                if verb == "start":
+                    return f"Start {need} first before starting {svc}."
+                return f"{need.capitalize()} must be online before restarting {svc}."
+            need = " and ".join(missing)
+            if verb == "start":
+                return f"Start {need} first before starting {svc}."
+            return f"{need} must be online before restarting {svc}."
+        satisfied.add(svc)
+    return None
+
+
+def _deps_error_response(
+    backend: str,
+    services: list[str],
+    verb: str,
+) -> tuple[int, bytes, str] | None:
+    msg = _service_deps_message(
+        services,
+        running=_running_service_names(backend),
+        verb=verb,
+    )
+    if not msg:
+        return None
+    return json_bytes(
+        {
+            "ok": False,
+            "error": "dependency",
+            "services": services,
+            "backend": backend,
+            "message": msg,
+            "detail": msg,
+        },
+        409,
+    )
+
+
 def _restart_services_for_backend(
     backend: str, services: list[str]
 ) -> tuple[bool, str, str]:
@@ -1261,24 +1421,54 @@ def _restart_services_for_backend(
     return True, "restarted", "; ".join(details)
 
 
+def _start_services_for_backend(
+    backend: str, services: list[str]
+) -> tuple[bool, str, str]:
+    details: list[str] = []
+    for svc in services:
+        if svc not in {"lobby", "world", "channel"}:
+            return False, "bad_service", f"unknown service: {svc}"
+        if backend == "docker":
+            ok, code, detail = start_service_docker(svc)
+        else:
+            ok, code, detail = start_service_native(svc)
+        if not ok:
+            return False, code, detail or f"{svc} start failed"
+        details.append(detail or f"{svc} ok")
+    return True, "started", "; ".join(details)
+
+
+def _stop_services_for_backend(
+    backend: str, services: list[str]
+) -> tuple[bool, str, str]:
+    # Stop channel → world → lobby when multiple requested.
+    order = ["channel", "world", "lobby"]
+    services = [s for s in order if s in services]
+    details: list[str] = []
+    for svc in services:
+        if backend == "docker":
+            ok, code, detail = stop_service_docker(svc)
+        else:
+            ok, code, detail = stop_service_native(svc)
+        if not ok:
+            return False, code, detail or f"{svc} stop failed"
+        details.append(detail or f"{svc} ok")
+    return True, "stopped", "; ".join(details)
+
+
 def handle_restart_services(handler: OpsHandler) -> tuple[int, bytes, str]:
     backend, err = _backend_or_400()
     if err is not None:
         return err
     assert backend is not None
-    body = _read_json_body(handler)
-    raw = body.get("services")
-    if not isinstance(raw, list) or not raw:
-        return json_bytes(
-            {"ok": False, "error": "missing_services", "hint": "services: [lobby,world,channel]"},
-            400,
-        )
-    services = [str(s).strip().lower() for s in raw if str(s).strip()]
-    # Stable order
-    order = ["lobby", "world", "channel"]
-    services = [s for s in order if s in services]
-    if not services:
-        return json_bytes({"ok": False, "error": "no_valid_services"}, 400)
+    services, bad = _parse_services_body(handler)
+    if bad is not None:
+        return bad
+    assert services is not None
+
+    dep_err = _deps_error_response(backend, services, "restart")
+    if dep_err is not None:
+        return dep_err
 
     ok, code, detail = _restart_services_for_backend(backend, services)
     if not ok:
@@ -1300,6 +1490,101 @@ def handle_restart_services(handler: OpsHandler) -> tuple[int, bytes, str]:
             "services": services,
             "backend": backend,
             "message": f"restarted {', '.join(services)}",
+            "detail": detail,
+            **freshness_public(runtime_dir()),
+        },
+        200,
+    )
+
+
+def handle_start_services(handler: OpsHandler) -> tuple[int, bytes, str]:
+    backend, err = _backend_or_400()
+    if err is not None:
+        return err
+    assert backend is not None
+    services, bad = _parse_services_body(handler)
+    if bad is not None:
+        return bad
+    assert services is not None
+
+    # World/channel need BinaryData + maps; lobby alone can start without.
+    if any(s in {"world", "channel"} for s in services):
+        boot = first_boot_status(runtime_dir(), updater_dir())
+        if boot.get("needed"):
+            missing = boot.get("missing") or []
+            missing_s = ", ".join(str(m) for m in missing) or "binarydata, maps"
+            return json_bytes(
+                {
+                    "ok": False,
+                    "error": "first_boot_incomplete",
+                    "services": services,
+                    "backend": backend,
+                    "message": "Upload BinaryData and maps before starting world/channel",
+                    "detail": f"missing required content: {missing_s}",
+                    "firstBoot": boot,
+                },
+                409,
+            )
+
+    dep_err = _deps_error_response(backend, services, "start")
+    if dep_err is not None:
+        return dep_err
+
+    ok, code, detail = _start_services_for_backend(backend, services)
+    if not ok:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": code,
+                "services": services,
+                "backend": backend,
+                "detail": detail,
+            },
+            502,
+        )
+    if "channel" in services:
+        mark_channel_restart(runtime_dir())
+    return json_bytes(
+        {
+            "ok": True,
+            "services": services,
+            "backend": backend,
+            "message": f"started {', '.join(services)}",
+            "detail": detail,
+            **freshness_public(runtime_dir()),
+        },
+        200,
+    )
+
+
+def handle_stop_services(handler: OpsHandler) -> tuple[int, bytes, str]:
+    backend, err = _backend_or_400()
+    if err is not None:
+        return err
+    assert backend is not None
+    services, bad = _parse_services_body(handler)
+    if bad is not None:
+        return bad
+    assert services is not None
+
+    ok, code, detail = _stop_services_for_backend(backend, services)
+    if not ok:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": code,
+                "services": services,
+                "backend": backend,
+                "detail": detail,
+            },
+            502,
+        )
+    return json_bytes(
+        {
+            "ok": True,
+            "services": services,
+            "backend": backend,
+            "message": f"stopped {', '.join(services)}",
             "detail": detail,
             **freshness_public(runtime_dir()),
         },
@@ -1670,6 +1955,8 @@ ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]]
     ("GET", "/ingest/job"): handle_ingest_job,
     ("POST", "/restart/channel"): handle_restart_channel,
     ("POST", "/restart/services"): handle_restart_services,
+    ("POST", "/start/services"): handle_start_services,
+    ("POST", "/stop/services"): handle_stop_services,
     ("POST", "/tools/webaccess-encrypt"): handle_tools_webaccess_encrypt,
 }
 
@@ -1769,7 +2056,8 @@ def main() -> None:
     bind = env("OPS_BIND", "127.0.0.1") or "127.0.0.1"
     if bind not in ALLOWED_BIND:
         print(
-            f"error: OPS_BIND={bind!r} refused (loopback only: 127.0.0.1)",
+            f"error: OPS_BIND={bind!r} refused "
+            f"(allowed: {', '.join(sorted(ALLOWED_BIND))})",
             file=sys.stderr,
         )
         raise SystemExit(1)
