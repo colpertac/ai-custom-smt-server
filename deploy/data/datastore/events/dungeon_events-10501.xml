@@ -1,0 +1,472 @@
+﻿<objects>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_WARN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154108</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1154109</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130201</member>
+                    <member name="value2">1</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_WARN_REPEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154110</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1154111</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130201</member>
+                    <member name="value2">1</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SP_DA</member>
+        <member name="next">D10501_REWARD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">540088</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10501_SP_DA_EACH</member>
+                    <member name="autoOnly">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10501_SP_DA_EACH_REPEAT</member>
+                    <member name="autoOnly">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10501_REWARD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10501_REWARD3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_REWARD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">10000</member>
+                    <member name="adjustable">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_REWARD2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">12500</member>
+                    <member name="adjustable">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_REWARD3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">20000</member>
+                    <member name="adjustable">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SP_DA_EACH</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154112</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1154113</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130201</element>
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130201</member>
+                    <member name="value2">1</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SP_DA_EACH_REPEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154114</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1154115</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130201</member>
+                    <member name="value2">1</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10501_BOSS_DOOR</member>
+        <member name="messageID">17</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10501_BOSS_ENTER</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_BOSS_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10501_EXIT</member>
+        <member name="messageID">23</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10501_TO_30102</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_TO_30102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SET_RANK</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>100</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>100</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10501_SET_RANK2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTY_SIZE</member>
+                                <member name="value1">2</member>
+                                <member name="compareMode">EQUAL</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10501_SET_RANK3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTY_SIZE</member>
+                                <member name="value1">3</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SET_RANK2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>100</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10501_SET_RANK3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>100</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

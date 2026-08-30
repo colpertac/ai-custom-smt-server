@@ -1,0 +1,120 @@
+<objects>
+    <!-- ＶＢ試練の間 -->
+    <object name="ServerZone">
+        <member name="ID">560103</member>
+        <member name="DynamicMapID">5601003</member>
+        <member name="Global">false</member>
+        <member name="GroupID">10101</member>
+        <member name="StartingX">-91.21</member>
+        <member name="StartingY">0.30</member>
+        <member name="StartingRotation">0.00</member>
+        <member name="NPCs">
+            <element>
+                <!-- スネークマン -->
+                <object name="ServerNPC">
+                    <member name="ID">101</member>
+                    <member name="ActorID">103</member>
+                    <member name="SpotID">20003</member>
+                    <member name="State">0</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D56_560103_NM001</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Objects"/>
+        <member name="Spawns">
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">3</member>
+                        <member name="EnemyType">1668</member>
+                        <member name="Level">35</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">1240</member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>4</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">4</member>
+                        <member name="EnemyType">1669</member>
+                        <member name="Level">40</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">1960</member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">3</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>3</key>
+                                <value>1</value>
+                            </pair>
+                            <pair>
+                                <key>4</key>
+                                <value>1</value>
+                            </pair>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D56_560103_D001</member>
+                                    <member name="sourceContext">ALL</member>
+                                    <member name="location">ZONE</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnLocationGroups">
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">3</member>
+                        <member name="GroupIDs">
+                            <element>3</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>10003</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots"/>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionSpawn">
+                                <member name="spawnLocationGroupIDs">
+                                    <element>3</element>
+                                </member>
+                                <member name="mode">ONE_TIME</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

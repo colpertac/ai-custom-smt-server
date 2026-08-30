@@ -1,0 +1,440 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_249</member>
+        <member name="next">EX20080701_249_MAIN</member>
+        <member name="messageIDs">
+            <element>250550</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080701_249_MAIN</member>
+        <member name="messageID">250551</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080701_249_TALK</member>
+                    <member name="messageID">250552</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080701_249_END</member>
+                    <member name="messageID">250554</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z20101_249</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_249_TALK</member>
+        <member name="next">EX20080701_249_MAIN</member>
+        <member name="messageIDs">
+            <element>250553</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_249_END</member>
+        <member name="messageIDs">
+            <element>250555</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_QDEMON</member>
+        <member name="next">Z20101_247_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>250601</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_QITEM</member>
+        <member name="next">Z20101_247_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>250603</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE</member>
+        <member name="next">EX20080701_247_GIVE_MAIN</member>
+        <member name="messageIDs">
+            <element>250605</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080701_247_GIVE_MAIN</member>
+        <member name="messageID">250606</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080701_247_GIVE1</member>
+                    <member name="messageID">250607</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080701_247_GIVE5</member>
+                    <member name="messageID">250608</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5335</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080701_247_GIVE10</member>
+                    <member name="messageID">250609</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5335</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z20101_247_MAIN_PR</member>
+                    <member name="messageID">250610</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20080701_247_GIVE1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE1a</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE1b</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE1c</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE1d</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE1e</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE1a</member>
+        <member name="next">EX20080701_247_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>250611</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE1b</member>
+        <member name="next">EX20080701_247_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>250612</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE1c</member>
+        <member name="next">EX20080701_247_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>250613</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE1d</member>
+        <member name="next">EX20080701_247_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>250614</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE1e</member>
+        <member name="next">EX20080701_247_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>250615</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20080701_247_GIVE5</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE5a</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE5b</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE5c</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE5d</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE5e</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE5a</member>
+        <member name="next">EX20080701_247_GIVE5_END</member>
+        <member name="messageIDs">
+            <element>250616</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE5b</member>
+        <member name="next">EX20080701_247_GIVE5_END</member>
+        <member name="messageIDs">
+            <element>250617</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE5c</member>
+        <member name="next">EX20080701_247_GIVE5_END</member>
+        <member name="messageIDs">
+            <element>250618</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE5d</member>
+        <member name="next">EX20080701_247_GIVE5_END</member>
+        <member name="messageIDs">
+            <element>250619</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE5e</member>
+        <member name="next">EX20080701_247_GIVE5_END</member>
+        <member name="messageIDs">
+            <element>250620</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20080701_247_GIVE10</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE10a</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE10b</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE10c</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE10d</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20080701_247_GIVE10e</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE10a</member>
+        <member name="next">EX20080701_247_GIVE10_END</member>
+        <member name="messageIDs">
+            <element>250621</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE10b</member>
+        <member name="next">EX20080701_247_GIVE10_END</member>
+        <member name="messageIDs">
+            <element>250622</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE10c</member>
+        <member name="next">EX20080701_247_GIVE10_END</member>
+        <member name="messageIDs">
+            <element>250623</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE10d</member>
+        <member name="next">EX20080701_247_GIVE10_END</member>
+        <member name="messageIDs">
+            <element>250624</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080701_247_GIVE10e</member>
+        <member name="next">EX20080701_247_GIVE10_END</member>
+        <member name="messageIDs">
+            <element>250625</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080701_247_GIVE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5335</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080701</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250626</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>250629</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080701_247_GIVE5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5335</key>
+                            <value>-5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080701</element>
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250627</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>250629</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080701_247_GIVE10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5335</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080701</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250628</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>250629</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

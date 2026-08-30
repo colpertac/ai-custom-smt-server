@@ -1,0 +1,544 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">Z190103_418</member>
+        <member name="next">Z190103_418_COC5</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC6_STRONG</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">906</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7201</key>
+                                        <value>50</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC6_WEAK</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">906</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC5</member>
+        <member name="messageID">700001</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC5_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="value1">906</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190103_418_COC5_00</member>
+        <member name="messageID">163800</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190103_418_COC5_02</member>
+                    <member name="messageID">163801</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z190103_418_COC5_04</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">120</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190103_418_COC5_01</member>
+                    <member name="messageID">163802</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC5_01</member>
+        <member name="messageID">700004</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC5_02</member>
+        <member name="messageID">700003</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC5_03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">906</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_COC5_03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163804</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">906</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC5_04</member>
+        <member name="next">Z190103_418_COC5_05</member>
+        <member name="messageID">700002</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC5_05</member>
+        <member name="next">Z190103_418_I720X</member>
+        <member name="messageID">700005</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC6_03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5296</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC6_WEAK</member>
+        <member name="next">Z190103_418_COC6_00</member>
+        <member name="messageID">700006</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC6_STRONG</member>
+        <member name="next">Z190103_418_COC6_00</member>
+        <member name="messageID">700007</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190103_418_COC6_00</member>
+        <member name="messageID">163803</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190103_418_COC6_02</member>
+                    <member name="messageID">163801</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190103_418_COC6_01</member>
+                    <member name="messageID">163802</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC6_01</member>
+        <member name="messageID">700009</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC6_02</member>
+        <member name="next">Z190103_418_I720X</member>
+        <member name="messageID">700008</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z190103_418_COC6_03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5296</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z190103_418_I720X</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">7201</member>
+                                <member name="value2">7204</member>
+                                <member name="compareMode">BETWEEN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z190103_418_I7204</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7201</key>
+                                        <value>20</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z190103_418_I7203</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7201</key>
+                                        <value>50</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z190103_418_I7202</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7201</key>
+                                        <value>90</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z190103_418_I7201</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7201</key>
+                                        <value>90</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_I7201</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">7201</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                    <member name="instanceID">7201</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_I7202</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">7202</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                    <member name="instanceID">7202</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_I7203</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">7203</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                    <member name="instanceID">7203</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_I7204</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">7204</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                    <member name="instanceID">7204</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z190103_418_COC6_03</member>
+        <member name="next">Z190103_418_COC6_04</member>
+        <member name="messageID">700014</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_418_COC6_04</member>
+        <member name="next">Z190103_418_I720X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="transformScriptID">transforma_clearItems</member>
+                    <member name="transformScriptParams">
+                        <element>5296</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190103_EXIT</member>
+        <member name="messageID">142051</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190103_SE001</member>
+                    <member name="messageID">142052</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">142053</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_SE001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">100827</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70101</member>
+                    <member name="spotID">50007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_BOSS_DEAD</member>
+        <member name="next">Z190103_BOSS_OVERFLOW_HIGH</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_BOSS_OVERFLOW_HIGH</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">GTE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_BOSS_ZF</member>
+        <member name="next">Z190103_BOSS_OVERFLOW_LOW</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>-20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190103_BOSS_OVERFLOW_LOW</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7201</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

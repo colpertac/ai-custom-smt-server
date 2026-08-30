@@ -1,0 +1,3817 @@
+﻿<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298</member>
+        <member name="next">Z5020X_298_PR</member>
+        <member name="messageIDs">
+            <element>150460</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_298_PR</member>
+        <member name="messageID">150478</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_TALK_1</member>
+                    <member name="messageID">150461</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_298_TALK_2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">7192</member>
+                                            <member name="scriptID">bool_random</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_INFO</member>
+                    <member name="messageID">150462</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_HP</member>
+                    <member name="messageID">150463</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_itemDepo</member>
+                    <member name="messageID">150464</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_demonDepo</member>
+                    <member name="messageID">150465</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_WARP</member>
+                    <member name="messageID">150466</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_BALLOON</member>
+                    <member name="messageID">150825</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_END</member>
+                    <member name="messageID">150467</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_TALK_1</member>
+        <member name="next">Z5020X_298_PR</member>
+        <member name="messageIDs">
+            <element>150473</element>
+            <element>150476</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_TALK_2</member>
+        <member name="next">Z5020X_298_PR</member>
+        <member name="messageIDs">
+            <element>150479</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_INFO</member>
+        <member name="next">Z5020X_298_PR</member>
+        <member name="messageIDs">
+            <element>150474</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_HP</member>
+        <member name="next">Z5020X_298_HP_PR</member>
+        <member name="messageIDs">
+            <element>150475</element>
+            <element>150481</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_WARP</member>
+        <member name="next">Z5020X_298_WARP_PR</member>
+        <member name="messageIDs">
+            <element>150468</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_BALLOON</member>
+        <member name="next">Z5020X_298_PR</member>
+        <member name="messageIDs">
+            <element>150826</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_END</member>
+        <member name="messageIDs">
+            <element>150477</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_298_HP_PR</member>
+        <member name="messageID">150481</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_HP_CONFIRM</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_298_WARP_PR</member>
+        <member name="messageID">150468</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_20101_SET</member>
+                    <member name="messageID">150469</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_50101_SET</member>
+                    <member name="messageID">150665</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_100101_SET</member>
+                    <member name="messageID">150470</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_130101_SET</member>
+                    <member name="messageID">150471</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_30102_SET</member>
+                    <member name="messageID">150656</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80103_SET</member>
+                    <member name="messageID">150657</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70103_SET</member>
+                    <member name="messageID">150658</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70104_SET</member>
+                    <member name="messageID">150659</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_90104_SET</member>
+                    <member name="messageID">150668</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80104_SET</member>
+                    <member name="messageID">150618</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_PR</member>
+                    <member name="messageID">150587</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_HP_CONFIRM</member>
+        <member name="next">Z5020X_298_HP_50201</member>
+        <member name="messageIDs">
+            <element>150482</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_HP_50202</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_20101_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>20101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_50101_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>50101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_100101_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>100101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_130101_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>130101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_30102_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>30102</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_80103_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>80103</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_70103_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>70103</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_70104_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>70104</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_90104_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>90104</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_80104_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>80104</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50201</element>
+                                    <element>50202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50203</element>
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50205</element>
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP_PR_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50207</element>
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_298_HP_50201</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50201</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_298_HP_50202</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50202</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_298_WARP_PR_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>20101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>50101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>100101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>130101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>30102</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_298_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>90104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_299_WARP_PR_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>20101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>50101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>100101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>130101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>30102</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>90104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_300_WARP_PR_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>20101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>50101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>100101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>130101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>30102</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>90104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_301_WARP_PR_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>20101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>50101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>100101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>130101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>30102</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_WARP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>90104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_WARP1</member>
+        <member name="next">Z5020X_298_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>150480</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_WARP2</member>
+        <member name="next">Z5020X_298_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>150484</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_WARP1</member>
+        <member name="next">Z5020X_299_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>150510</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_WARP2</member>
+        <member name="next">Z5020X_299_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>150514</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_WARP1</member>
+        <member name="next">Z5020X_300_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>150540</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_WARP2</member>
+        <member name="next">Z5020X_300_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>150544</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_WARP1</member>
+        <member name="next">Z5020X_301_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>150570</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_WARP2</member>
+        <member name="next">Z5020X_301_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>150574</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_298_WARP1_PR</member>
+        <member name="messageID">150480</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_298_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1500</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_298_WARP2_PR</member>
+        <member name="messageID">150484</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_298_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_298_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_299_WARP1_PR</member>
+        <member name="messageID">150510</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_299_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1500</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_299_WARP2_PR</member>
+        <member name="messageID">150514</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_299_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_300_WARP1_PR</member>
+        <member name="messageID">150540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_300_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1500</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_300_WARP2_PR</member>
+        <member name="messageID">150544</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_300_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_301_WARP1_PR</member>
+        <member name="messageID">150570</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_301_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1500</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_301_WARP2_PR</member>
+        <member name="messageID">150574</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_MI</member>
+                    <member name="messageID">150584</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_301_WARP_CONFIRM</member>
+                                <member name="queueNext">Z5020X_WARP_SPLIT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_WARP_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_MI</member>
+        <member name="messageIDs">
+            <element>150483</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_298_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>150472</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_WARP_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_20101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>20101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_50101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>50101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_100101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>100101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_130101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>130101</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_30102</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>30102</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_70103</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_70104</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>70104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_80103</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80103</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_80104</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>80104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z5020X_WARP_90104</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>90104</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_MI</member>
+        <member name="messageIDs">
+            <element>150513</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>150502</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_299_WARP_PR</member>
+        <member name="messageID">150498</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_20101_SET</member>
+                    <member name="messageID">150469</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_50101_SET</member>
+                    <member name="messageID">150665</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_100101_SET</member>
+                    <member name="messageID">150470</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_130101_SET</member>
+                    <member name="messageID">150471</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_30102_SET</member>
+                    <member name="messageID">150656</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80103_SET</member>
+                    <member name="messageID">150657</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70103_SET</member>
+                    <member name="messageID">150658</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70104_SET</member>
+                    <member name="messageID">150659</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_90104_SET</member>
+                    <member name="messageID">150668</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80104_SET</member>
+                    <member name="messageID">150618</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_PR</member>
+                    <member name="messageID">150587</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_MI</member>
+        <member name="messageIDs">
+            <element>150543</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>150532</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_300_WARP_PR</member>
+        <member name="messageID">150528</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_20101_SET</member>
+                    <member name="messageID">150469</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_50101_SET</member>
+                    <member name="messageID">150665</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_100101_SET</member>
+                    <member name="messageID">150470</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_130101_SET</member>
+                    <member name="messageID">150471</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_30102_SET</member>
+                    <member name="messageID">150656</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80103_SET</member>
+                    <member name="messageID">150657</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70103_SET</member>
+                    <member name="messageID">150658</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70104_SET</member>
+                    <member name="messageID">150659</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_90104_SET</member>
+                    <member name="messageID">150668</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80104_SET</member>
+                    <member name="messageID">150618</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_PR</member>
+                    <member name="messageID">150587</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_MI</member>
+        <member name="messageIDs">
+            <element>150573</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>150562</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_301_WARP_PR</member>
+        <member name="messageID">150558</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_20101_SET</member>
+                    <member name="messageID">150469</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_50101_SET</member>
+                    <member name="messageID">150665</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_100101_SET</member>
+                    <member name="messageID">150470</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_130101_SET</member>
+                    <member name="messageID">150471</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_30102_SET</member>
+                    <member name="messageID">150656</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80103_SET</member>
+                    <member name="messageID">150657</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70103_SET</member>
+                    <member name="messageID">150658</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_70104_SET</member>
+                    <member name="messageID">150659</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_90104_SET</member>
+                    <member name="messageID">150668</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_WARP_80104_SET</member>
+                    <member name="messageID">150618</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_PR</member>
+                    <member name="messageID">150587</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1500</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20101</member>
+                    <member name="spotID">50006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150576</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1500</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150667</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_100101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1500</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">100101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150578</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_130101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1500</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">130101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150577</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_30102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150660</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_70103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70103</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150662</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_70104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">55000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150663</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_80103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80103</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150661</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_80104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150619</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_WARP_90104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150669</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_299_PR</member>
+        <member name="messageID">150508</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_TALK_1</member>
+                    <member name="messageID">150491</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_299_TALK_2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">7192</member>
+                                            <member name="scriptID">bool_random</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_INFO</member>
+                    <member name="messageID">150492</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_HP</member>
+                    <member name="messageID">150493</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_itemDepo</member>
+                    <member name="messageID">150494</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_demonDepo</member>
+                    <member name="messageID">150495</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_WARP</member>
+                    <member name="messageID">150496</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_BALLOON</member>
+                    <member name="messageID">150825</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_END</member>
+                    <member name="messageID">150497</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_300_PR</member>
+        <member name="messageID">150538</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_TALK</member>
+                    <member name="messageID">150461</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_300_TALK_CANDLE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080601</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_INFO</member>
+                    <member name="messageID">150462</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_HP</member>
+                    <member name="messageID">150463</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_itemDepo</member>
+                    <member name="messageID">150464</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_demonDepo</member>
+                    <member name="messageID">150465</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_WARP</member>
+                    <member name="messageID">150466</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_BALLOON</member>
+                    <member name="messageID">150825</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080601</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_END</member>
+                    <member name="messageID">150467</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_301_PR</member>
+        <member name="messageID">150568</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_TALK</member>
+                    <member name="messageID">150461</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z5020X_301_TALK_CANDLE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080601</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_INFO</member>
+                    <member name="messageID">150462</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_HP</member>
+                    <member name="messageID">150463</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_itemDepo</member>
+                    <member name="messageID">150464</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_demonDepo</member>
+                    <member name="messageID">150465</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_WARP</member>
+                    <member name="messageID">150466</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_BALLOON</member>
+                    <member name="messageID">150825</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080601</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_END</member>
+                    <member name="messageID">150467</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_TALK_1</member>
+        <member name="next">Z5020X_299_PR</member>
+        <member name="messageIDs">
+            <element>150503</element>
+            <element>150506</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_TALK_2</member>
+        <member name="next">Z5020X_299_PR</member>
+        <member name="messageIDs">
+            <element>150509</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_INFO</member>
+        <member name="next">Z5020X_299_PR</member>
+        <member name="messageIDs">
+            <element>150504</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_HP</member>
+        <member name="next">Z5020X_299_HP_PR</member>
+        <member name="messageIDs">
+            <element>150505</element>
+            <element>150511</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_WARP</member>
+        <member name="next">Z5020X_299_WARP_PR</member>
+        <member name="messageIDs">
+            <element>150498</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_BALLOON</member>
+        <member name="next">Z5020X_299_PR</member>
+        <member name="messageIDs">
+            <element>150827</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_END</member>
+        <member name="messageIDs">
+            <element>150507</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_300_TALK</member>
+        <member name="next">Z5020X_300_TALK_1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_TALK_2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">1</member>
+                                <member name="value2">7192</member>
+                                <member name="scriptID">bool_random</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_TALK_CANDLE</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>250530</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_INFO</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>150534</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_HP</member>
+        <member name="next">Z5020X_300_HP_PR</member>
+        <member name="messageIDs">
+            <element>150535</element>
+            <element>150541</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_WARP</member>
+        <member name="next">Z5020X_300_WARP_PR</member>
+        <member name="messageIDs">
+            <element>150528</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_BALLOON</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>150828</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_END</member>
+        <member name="messageIDs">
+            <element>150537</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_301_TALK</member>
+        <member name="next">Z5020X_301_TALK_1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_TALK_2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">1</member>
+                                <member name="value2">7192</member>
+                                <member name="scriptID">bool_random</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_TALK_CANDLE</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>250531</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_INFO</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>150564</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_HP</member>
+        <member name="next">Z5020X_301_HP_PR</member>
+        <member name="messageIDs">
+            <element>150565</element>
+            <element>150541</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_WARP</member>
+        <member name="next">Z5020X_301_WARP_PR</member>
+        <member name="messageIDs">
+            <element>150558</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_BALLOON</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>150829</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_END</member>
+        <member name="messageIDs">
+            <element>150567</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_299_HP_PR</member>
+        <member name="messageID">150511</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_HP_CONFIRM</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_299_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_TALK_1</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>150533</element>
+            <element>150536</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_TALK_2</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>150539</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_300_HP_PR</member>
+        <member name="messageID">150541</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_HP_CONFIRM</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_300_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_TALK_1</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>150563</element>
+            <element>150566</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_TALK_2</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>150569</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_301_HP_PR</member>
+        <member name="messageID">150571</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_HP_CONFIRM</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_301_PR</member>
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299_HP_CONFIRM</member>
+        <member name="next">Z5020X_299_HP_50203</member>
+        <member name="messageIDs">
+            <element>150512</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_299_HP_50204</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300_HP_CONFIRM</member>
+        <member name="next">Z5020X_300_HP_50205</member>
+        <member name="messageIDs">
+            <element>150542</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_300_HP_50206</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50206</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301_HP_CONFIRM</member>
+        <member name="next">Z5020X_301_HP_50207</member>
+        <member name="messageIDs">
+            <element>150572</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_301_HP_50208</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50208</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_299_HP_50203</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50203</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_299_HP_50204</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50204</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_300_HP_50205</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50205</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_300_HP_50206</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50206</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_301_HP_50207</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50207</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_301_HP_50208</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">50208</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150579</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_299</member>
+        <member name="next">Z5020X_299_PR</member>
+        <member name="messageIDs">
+            <element>150490</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_300</member>
+        <member name="next">Z5020X_300_PR</member>
+        <member name="messageIDs">
+            <element>150520</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z5020X_301</member>
+        <member name="next">Z5020X_301_PR</member>
+        <member name="messageIDs">
+            <element>150550</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z5020X_EXIT</member>
+        <member name="next">Z5020X_EXIT_50101</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z5020X_EXIT_20101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_EXIT_50101</member>
+        <member name="messageID">150655</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_TO_50101</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z5020X_EXIT_20101</member>
+        <member name="messageID">150664</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z5020X_TO_20101</member>
+                    <member name="messageID">150584</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">150585</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_TO_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z5020X_TO_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20101</member>
+                    <member name="spotID">50006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

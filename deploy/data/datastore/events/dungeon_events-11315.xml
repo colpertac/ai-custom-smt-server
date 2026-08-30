@@ -1,0 +1,1222 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D11315_657</member>
+        <member name="next">D11315_657_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_657_FIRST_1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">615</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11315_657_RESULT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_MAIN</member>
+        <member name="next">D11315_657_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>218000</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_FIRST_1</member>
+        <member name="next">D11315_657_FIRST_2</member>
+        <member name="messageIDs">
+            <element>218008</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_RESULT</member>
+        <member name="next">D11315_657_WIN_LOW</member>
+        <member name="messageIDs">
+            <element>218009</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_657_WIN_HIGH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>35</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11315_657_LOSE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11315_657_MAIN_PR</member>
+        <member name="messageID">218001</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11315_657_GO</member>
+                    <member name="messageID">218002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11315_657_WAIT</member>
+                    <member name="messageID">218003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11315_657_LEAVE</member>
+                    <member name="messageID">218004</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_657_FIRST_2</member>
+        <member name="next">D11315_657_RESULT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">615</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">D11315_657_WIN_LOW</member>
+        <member name="next">D11315_657_EXIT</member>
+        <member name="messageID">218011</member>
+        <member name="transformScriptID">transforme_flag</member>
+        <member name="transformScriptParams">
+            <element>1</element>
+            <element>INSTANCE</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">D11315_657_WIN_HIGH</member>
+        <member name="next">D11315_657_EXIT</member>
+        <member name="messageID">218012</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_657_FIRST_HIGH_1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">618</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="transformScriptID">transforme_flag</member>
+        <member name="transformScriptParams">
+            <element>1</element>
+            <element>INSTANCE</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_LOSE</member>
+        <member name="next">D11315_657_EXIT</member>
+        <member name="messageIDs">
+            <element>218010</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_GO</member>
+        <member name="next">D11315_657_GO_END</member>
+        <member name="messageIDs">
+            <element>218005</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_WAIT</member>
+        <member name="messageIDs">
+            <element>218006</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_LEAVE</member>
+        <member name="next">D11315_TO50101</member>
+        <member name="messageIDs">
+            <element>218007</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_EXIT</member>
+        <member name="next">D11315_657_EXIT_PR</member>
+        <member name="messageIDs">
+            <element>218014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_FIRST_HIGH_1</member>
+        <member name="next">D11315_657_FIRST_HIGH_2</member>
+        <member name="messageIDs">
+            <element>218013</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_657_GO_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">145</member>
+                    <member name="fadeInDelay">50</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">657</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218022</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>5387</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>5388</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">START_TIMER</member>
+                    <member name="timerID">114</member>
+                    <member name="timerExpirationEventID">D11315_TIMEUP</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">50</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11315_SPAWN_5386</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">110</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11315_SPAWN_5386</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">150</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11315_FEVER_TIME</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_TO50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50018</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218021</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11315_657_EXIT_PR</member>
+        <member name="messageID">218015</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11315_657_BYE</member>
+                    <member name="messageID">218016</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11315_657_WAIT</member>
+                    <member name="messageID">218017</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_657_FIRST_HIGH_2</member>
+        <member name="next">D11315_657_EXIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">618</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11315_657_BYE</member>
+        <member name="next">D11315_TO50101</member>
+        <member name="messageIDs">
+            <element>218018</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_DEFEAT_5384</member>
+        <member name="next">D11315_POINTS_UP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5384</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11315_POINTS_UP</member>
+        <member name="next">D11315_POINTS_UP1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_POINTS_UP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_POINTS_UP1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_POINTS_UP2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_DEFEAT_5385</member>
+        <member name="next">D11315_POINTS_DOWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5385</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11315_POINTS_DOWN</member>
+        <member name="next">D11315_POINTS_DOWN1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_POINTS_DOWN2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_POINTS_DOWN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">DECREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_POINTS_DOWN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">DECREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11315_SPAWN_5386</member>
+        <member name="next">D11315_SPAWN_5386_2</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_SPAWN_5386_3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_SPAWN_5386_2</member>
+        <member name="next">D11315_SPAWN_5386_4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218029</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_SPAWN_5386_3</member>
+        <member name="next">D11315_SPAWN_5386_4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218030</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_SPAWN_5386_4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5386</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="setMode">DECREMENT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStageEffect">
+                                <member name="messageID">218028</member>
+                                <member name="effectType">3</member>
+                                <member name="includeMessage">true</member>
+                                <member name="sourceContext">ALL</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11315_POINTS_UP</member>
+                                <member name="sourceContext">NONE</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">10</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionSpawn">
+                                <member name="spawnGroupIDs">
+                                    <pair>
+                                        <key>5386</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                                <member name="mode">DESPAWN</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11315_SPAWN_5388</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_SPAWN_5388</member>
+        <member name="next">D11315_SPAWN_5388_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218024</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">GTE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_SPAWN_5388_LOOP</member>
+        <member name="next">D11315_SPAWN_5388_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">DECREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>5388</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">GTE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_TIMEUP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11315_TIMEUP_ST</member>
+                    <member name="sourceContext">NONE</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_TIMEUP_ST</member>
+        <member name="next">D11315_TREASURE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="isStop">true</member>
+                    <member name="musicID">145</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">657</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>5384</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5385</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5386</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5387</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5388</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11315_TREASURE</member>
+        <member name="next">D11315_TREASURE_1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_TREASURE_2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>35</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_TREASURE_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">38171</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">6</member>
+                                <member name="MaxStack">6</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="ItemType">38166</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">1001</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_TREASURE_2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">38171</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">15</member>
+                                <member name="MaxStack">15</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="ItemType">38166</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">3</member>
+                                <member name="MaxStack">3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">1001</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_FEVER_TIME</member>
+        <member name="next">D11315_FEVER_TIME_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11315_FEVER_TIME_2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_FEVER_TIME_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218025</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11315_FEVER_TIME_2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">218026</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

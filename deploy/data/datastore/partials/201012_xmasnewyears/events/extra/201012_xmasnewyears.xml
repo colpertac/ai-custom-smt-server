@@ -1,0 +1,1824 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX201012_324</member>
+        <member name="next">EX201012_324_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_324_OPTIONAL_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201012_324_SPLIT</member>
+        <member name="next">EX201012_324_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_324_NEWYEARS</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201012</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_324_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201012</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_324_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20101201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_324_MODS</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201012_324_OPTIONAL_PR</member>
+        <member name="messageID">1165253</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_SPLIT</member>
+                    <member name="messageID">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z60101_324</member>
+                    <member name="messageID">202095</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_MAIN</member>
+        <member name="next">EX201012_324_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>750624</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_NEWYEARS</member>
+        <member name="messageIDs">
+            <element>750775</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_PRE</member>
+        <member name="messageIDs">
+            <element>750620</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_CD</member>
+        <member name="messageIDs">
+            <element>750621</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_MODS</member>
+        <member name="next">EX201012_324_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>750625</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201012_324_MAIN_PR</member>
+        <member name="messageID">750630</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM1_SET</member>
+                    <member name="messageID">750631</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM2_SET</member>
+                    <member name="messageID">750632</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM3_SET</member>
+                    <member name="messageID">750633</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM4_SET</member>
+                    <member name="messageID">750634</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM5_SET</member>
+                    <member name="messageID">750635</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM6_SET</member>
+                    <member name="messageID">750636</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM7_SET</member>
+                    <member name="messageID">750637</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_ITEM8_SET</member>
+                    <member name="messageID">750638</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_END</member>
+                    <member name="messageID">750639</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM1_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM2_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM3_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM4_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM5_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM6_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>6</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM7_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_ITEM8_SET</member>
+        <member name="next">EX201012_324_TRADE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>8</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_END</member>
+        <member name="messageIDs">
+            <element>750641</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE</member>
+        <member name="next">EX201012_324_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>750642</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201012_324_TRADE_PR</member>
+        <member name="messageID">750643</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5501</member>
+                                            <member name="value2">3</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>2</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12344</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>3</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">7215</member>
+                                            <member name="value2">5</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>4</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">25052</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>5</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5350</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>6</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">10542</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>7</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5041</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>8</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5687</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE1</member>
+                                <member name="queueNext">EX201012_324_TRADE1_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE2</member>
+                                <member name="queueNext">EX201012_324_TRADE2_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>2</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE3</member>
+                                <member name="queueNext">EX201012_324_TRADE3_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>3</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE4</member>
+                                <member name="queueNext">EX201012_324_TRADE4_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>4</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE5</member>
+                                <member name="queueNext">EX201012_324_TRADE5_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>5</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE6</member>
+                                <member name="queueNext">EX201012_324_TRADE6_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>6</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE7</member>
+                                <member name="queueNext">EX201012_324_TRADE7_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>7</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_324_TRADE8</member>
+                                <member name="queueNext">EX201012_324_TRADE8_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20101201</key>
+                                                    <value>8</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_324_TRADE_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_MI</member>
+        <member name="messageIDs">
+            <element>750645</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_IF</member>
+        <member name="messageIDs">
+            <element>750646</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE1</member>
+        <member name="messageIDs">
+            <element>750647</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5501</key>
+                            <value>-3</value>
+                        </pair>
+                        <pair>
+                            <key>12360</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750660</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE2</member>
+        <member name="messageIDs">
+            <element>750648</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12361</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12344</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750661</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE3</member>
+        <member name="messageIDs">
+            <element>750649</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12361</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7215</key>
+                            <value>-5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750662</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE4</member>
+        <member name="messageIDs">
+            <element>750650</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12362</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>25052</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750663</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE5</member>
+        <member name="messageIDs">
+            <element>750651</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5350</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12362</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750664</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE6</member>
+        <member name="messageIDs">
+            <element>750652</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE6_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12363</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>10542</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750665</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE7</member>
+        <member name="messageIDs">
+            <element>750653</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE7_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12363</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5041</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750666</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE8</member>
+        <member name="messageIDs">
+            <element>750654</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_324_TRADE8_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12364</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5687</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750667</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101201</member>
+                    <member name="duration">7200</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_324_TRADE_CANCEL</member>
+        <member name="messageIDs">
+            <element>750644</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201012_2039</member>
+        <member name="next">EX201012_2039_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201012</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_MAIN</member>
+        <member name="next">EX201012_2039_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>750706</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_PRE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750732</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201012_2039_MAIN_PR</member>
+        <member name="messageID">750707</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_2039_COIN</member>
+                    <member name="messageID">750708</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201012_2039_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101202</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_2039_END</member>
+                    <member name="messageID">750709</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_COIN</member>
+        <member name="next">EX201012_2039_COIN_PR</member>
+        <member name="messageIDs">
+            <element>750712</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_CD</member>
+        <member name="messageIDs">
+            <element>750705</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_END</member>
+        <member name="messageIDs">
+            <element>750717</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201012_2039_COIN_PR</member>
+        <member name="messageID">750713</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_2039_RESULT</member>
+                    <member name="messageID">750714</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201012_2039_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_2039_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12368</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_2039_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12369</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201012_2039_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12370</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201012_2039_END</member>
+                    <member name="messageID">750715</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT</member>
+        <member name="messageIDs">
+            <element>750722</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT4</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT5</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT6</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>10</element>
+            <element>15</element>
+            <element>25</element>
+            <element>30</element>
+            <element>5</element>
+            <element>15</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_IF</member>
+        <member name="messageIDs">
+            <element>750720</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_MI</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750733</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT1</member>
+        <member name="next">EX201012_2039_RESULT1_END</member>
+        <member name="messageIDs">
+            <element>750724</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT2</member>
+        <member name="messageIDs">
+            <element>750725</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2_1_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2_2_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2_3_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2_4_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201012_2039_RESULT2_5_END</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_random</member>
+        <member name="branchScriptParams">
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT3</member>
+        <member name="next">EX201012_2039_RESULT3_END</member>
+        <member name="messageIDs">
+            <element>750726</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT4</member>
+        <member name="next">EX201012_2039_RESULT2_1_END</member>
+        <member name="messageIDs">
+            <element>750727</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT5</member>
+        <member name="next">EX201012_2039_RESULT5_END</member>
+        <member name="messageIDs">
+            <element>750728</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201012_2039_RESULT6</member>
+        <member name="next">EX201012_2039_RESULT6_END</member>
+        <member name="messageIDs">
+            <element>750729</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>32</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750734</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT2_1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>705</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750735</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT2_2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>49014</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750737</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT2_3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>49010</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750740</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT2_4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>49016</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750741</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT2_5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>49011</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750742</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5509</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750736</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750738</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_2039_RESULT6_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12368</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12369</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12370</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101202</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">7801</member>
+                    <member name="mode">SOLO_CREATE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">7801</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750739</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201012_XMAS_NY</member>
+        <member name="next">EX201012_XMAS</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201012_NY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_DATETIME</member>
+                                <member name="value1">12290000</member>
+                                <member name="value2">1130000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_XMAS</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201012_NY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20101201</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

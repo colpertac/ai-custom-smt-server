@@ -1,0 +1,336 @@
+<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">10000</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <!-- Trigger on boss flag set -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">2000</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionZoneInstance">
+                                <member name="mode">STOP_TIMER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">10001</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <!-- Trigger on special enemy flag set -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">4000</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionZoneInstance">
+                                <member name="mode">STOP_TIMER</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">G1_Q66_UPDATE</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">INSTANCE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- TIGERCAT -->
+    <object name="ServerZonePartial">
+        <member name="ID">20000</member>
+        <member name="AutoApply">false</member>
+        <member name="SkillBlacklist">
+            <element>5704</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>2424</key>
+                                        <value>1</value>
+                                    </pair>
+                                    <pair>
+                                        <key>2178</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">CHARACTER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Medium Difficulty Flag. -->
+    <object name="ServerZonePartial">
+        <member name="ID">21000</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- High Difficulty Flag. -->
+    <object name="ServerZonePartial">
+        <member name="ID">21001</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Premium Item Flag. -->
+    <object name="ServerZonePartial">
+        <member name="ID">21002</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>334</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">21003</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SPAWN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">TOKUSEI</member>
+                                <member name="sourceContext">SOURCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1131303</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">21004</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">TOKUSEI</member>
+                                <member name="sourceContext">SOURCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>9999998</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Transcend -->
+    <object name="ServerZonePartial">
+        <member name="ID">21005</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SPAWN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>2987</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">SOURCE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Ziotite Activity -->
+    <object name="ServerZonePartial">
+        <member name="ID">21006</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>2515</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">CHARACTER_AND_PARTNER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- PVP -->
+    <object name="ServerZonePartial">
+        <member name="ID">30000</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">PRE_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>4100</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">SOURCE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">TOKUSEI</member>
+                                <member name="sourceContext">SOURCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>790007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_OUT</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="isReplace">true</member>
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>4100</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">SOURCE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">60000</member>
+        <member name="AutoApply">false</member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SPAWN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionAddRemoveStatus">
+                                <member name="statusStacks">
+                                    <pair>
+                                        <key>911</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                                <member name="targetType">SOURCE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

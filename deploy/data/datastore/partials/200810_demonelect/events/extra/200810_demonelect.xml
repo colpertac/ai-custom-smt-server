@@ -1,0 +1,843 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358</member>
+        <member name="next">EX20081001_358_PR</member>
+        <member name="messageIDs">
+            <element>250901</element>
+            <element>250902</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20081001_358_PR</member>
+        <member name="messageID">250902</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_INFO1</member>
+                    <member name="messageID">250903</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_INFO2</member>
+                    <member name="messageID">250904</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE</member>
+                    <member name="messageID">250905</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20081001_358_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">250906</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_INFO1</member>
+        <member name="next">EX20081001_358_PR</member>
+        <member name="messageIDs">
+            <element>250907</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_INFO2</member>
+        <member name="next">EX20081001_358_PR</member>
+        <member name="messageIDs">
+            <element>250908</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_VOTE</member>
+        <member name="next">EX20081001_358_VOTE_PR</member>
+        <member name="messageIDs">
+            <element>250910</element>
+            <element>250911</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_IF</member>
+        <member name="messageIDs">
+            <element>250909</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20081001_358_VOTE_PR</member>
+        <member name="messageID">250911</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_L</member>
+                    <member name="messageID">250912</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_N</member>
+                    <member name="messageID">250914</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_C</member>
+                    <member name="messageID">250913</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_VOTE_L</member>
+        <member name="next">EX20081001_358_VOTE_L_PR</member>
+        <member name="messageIDs">
+            <element>250915</element>
+            <element>250918</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_VOTE_N</member>
+        <member name="next">EX20081001_358_VOTE_N_PR</member>
+        <member name="messageIDs">
+            <element>250916</element>
+            <element>250919</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_VOTE_C</member>
+        <member name="next">EX20081001_358_VOTE_C_PR</member>
+        <member name="messageIDs">
+            <element>250917</element>
+            <element>250920</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20081001_358_VOTE_L_PR</member>
+        <member name="messageID">250918</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_L_1</member>
+                    <member name="messageID">250921</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_L_10</member>
+                    <member name="messageID">250922</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_L_100</member>
+                    <member name="messageID">250923</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_PR</member>
+                    <member name="messageID">250924</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20081001_358_VOTE_N_PR</member>
+        <member name="messageID">250919</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_N_1</member>
+                    <member name="messageID">250921</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_N_10</member>
+                    <member name="messageID">250922</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_N_100</member>
+                    <member name="messageID">250923</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_PR</member>
+                    <member name="messageID">250924</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20081001_358_VOTE_C_PR</member>
+        <member name="messageID">250920</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_C_1</member>
+                    <member name="messageID">250921</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_C_10</member>
+                    <member name="messageID">250922</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_CONFIRM</member>
+                    <member name="queueNext">EX20081001_358_VOTE_C_100</member>
+                    <member name="messageID">250923</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5359</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20081001_358_VOTE_PR</member>
+                    <member name="messageID">250924</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20081001_358_VOTE_CONFIRM</member>
+        <member name="messageIDs">
+            <element>250925</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_L_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081001</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_L_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081001</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_L_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081001</element>
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_N_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081002</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_N_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081002</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_N_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081002</element>
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_C_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081003</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_C_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081003</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_358_VOTE_C_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5359</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5360</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20081003</element>
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250926</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20081001_SOAPBOX_LOOP</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="negate">true</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20081001</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX4</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX5</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20081001_SOAPBOX6</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>2200</element>
+            <element>2200</element>
+            <element>2200</element>
+            <element>2200</element>
+            <element>700</element>
+            <element>500</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250930</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">180</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250931</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">240</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250932</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">150</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250933</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">210</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250934</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20081001_SOAPBOX6</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250935</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">180</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

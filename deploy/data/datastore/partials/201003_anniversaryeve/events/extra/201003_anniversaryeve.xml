@@ -1,0 +1,804 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX201003_3309</member>
+        <member name="next">EX201003_3309_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_REQ</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">302</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_REQ</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20100301</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_PRE_MT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_MT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">711</member>
+                                <member name="value2">5</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_DONE</member>
+        <member name="messageID">200018</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_REQ</member>
+        <member name="messageID">200017</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE_MT</member>
+        <member name="next">EX201003_3309_PRE_PR</member>
+        <member name="messageID">200001</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_Q711_MT</member>
+        <member name="next">EX201003_3309_Q711_PR</member>
+        <member name="messageID">200010</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE_PR</member>
+        <member name="messageID">650548</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE1_1_MT</member>
+                    <member name="messageID">650530</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE1_2_MT</member>
+                    <member name="messageID">650531</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_Q711_PR</member>
+        <member name="messageID">650544</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_Q711_DONE_MT</member>
+                    <member name="messageID">650545</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201003_3309_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5501</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201003_3309_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20100301</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201003_3309_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201003_3309_Q711_NEXT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">711</member>
+                                            <member name="value2">4</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_Q711_END</member>
+                    <member name="messageID">650546</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE1_1_MT</member>
+        <member name="next">EX201003_3309_PRE1_1_PR</member>
+        <member name="messageID">200002</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE1_2_MT</member>
+        <member name="next">EX201003_3309_PRE1_2_PR</member>
+        <member name="messageID">200003</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_Q711_DONE_MT</member>
+        <member name="messageID">200013</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P5_START_M</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P5_START_F</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_gender</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_MI</member>
+        <member name="messageID">200011</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_CD</member>
+        <member name="messageID">200012</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_IF</member>
+        <member name="messageID">200016</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_Q711_NEXT</member>
+        <member name="messageID">200015</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P1_START</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P2_START</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P3_START</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_3309_Q711_P4_START</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_questPhase</member>
+        <member name="branchScriptParams">
+            <element>711</element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_Q711_END</member>
+        <member name="messageID">200014</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE1_1_PR</member>
+        <member name="messageID">650532</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE2_MT</member>
+                    <member name="messageID">650534</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE1_2_PR</member>
+        <member name="messageID">650533</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE2_MT</member>
+                    <member name="messageID">650534</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P5_START_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4326</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650554</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P5_START_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4327</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650554</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>705</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650556</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20100301</member>
+                    <member name="duration">28800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>705</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650556</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20100301</member>
+                    <member name="duration">28800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>705</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650556</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20100301</member>
+                    <member name="duration">28800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>705</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5501</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650556</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20100301</member>
+                    <member name="duration">28800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE2_MT</member>
+        <member name="next">EX201003_3309_PRE2_PR</member>
+        <member name="messageID">200004</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE2_PR</member>
+        <member name="messageID">650535</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE3_MT</member>
+                    <member name="messageID">650536</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE3_MT</member>
+        <member name="next">EX201003_3309_PRE3_PR</member>
+        <member name="messageID">200005</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE3_PR</member>
+        <member name="messageID">650537</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE4_MT</member>
+                    <member name="messageID">650538</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE4_MT</member>
+        <member name="next">EX201003_3309_PRE4_PR</member>
+        <member name="messageID">200006</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE4_PR</member>
+        <member name="messageID">650539</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE5_MT</member>
+                    <member name="messageID">650540</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE5_MT</member>
+        <member name="next">EX201003_3309_PRE5_PR</member>
+        <member name="messageID">200007</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201003_3309_PRE5_PR</member>
+        <member name="messageID">650541</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_Q711_CONFIRM</member>
+                    <member name="queueNext">EX201003_3309_Q711_START</member>
+                    <member name="messageID">650542</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201003_3309_PRE_END</member>
+                    <member name="messageID">650543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_Q711_CONFIRM</member>
+        <member name="messageID">200008</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_3309_Q711_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650553</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_3309_PRE_END</member>
+        <member name="messageID">200009</member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201003_312_WATCH</member>
+        <member name="next">EX201003_312_POST</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201003_312_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">711</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_312_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">711</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_312_Q711_DONE</member>
+                    <member name="queueNext">EX201003_312_Q711_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">711</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201003_312_Q711</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">711</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_312_POST</member>
+        <member name="messageID">200034</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_312_PRE</member>
+        <member name="next">EX201003_312_PRE_FLAG</member>
+        <member name="messageID">200031</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_312_IF</member>
+        <member name="messageID">200035</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_312_Q711_DONE</member>
+        <member name="messageID">200033</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_312_Q711_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5406</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">711</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">3309</member>
+                    <member name="sourceClientOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650555</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">EX201003_312_Q711</member>
+        <member name="messageID">200032</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_312_PRE_FLAG</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20100301</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201003_SHOW_3309</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">3309</member>
+                    <member name="sourceClientOnly">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="scriptID">bool_player</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_COMPLETE</member>
+                    <member name="value1">711</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,88 @@
+﻿<objects>
+    <!-- Time-limited event: SWEETS of DEATH/DEATH＆SWEETS -->
+    <object name="ServerZonePartial">
+        <member name="ID">20110201</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>60101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- ＮＰＣサイエン -->
+                <object name="ServerNPC">
+                    <member name="ID">324</member>
+                    <member name="SpotID">60100</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201102_324</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- ゴモリー -->
+                <object name="ServerNPC">
+                    <member name="ID">491</member>
+                    <member name="ActorID">491</member>
+                    <member name="SpotID">60501</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201102_491</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <!-- Post-state active -->
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201102</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201102_SET_POST_STATE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20110202</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>150101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">Z150101_DBATTLE_ON</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,677 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002</member>
+        <member name="next">EX20131001_3002_PR</member>
+        <member name="messageIDs">
+            <element>1157550</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_PR</member>
+        <member name="messageID">1157580</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_TALK</member>
+                    <member name="messageID">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON1</member>
+                    <member name="messageID">1157541</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON2</member>
+                    <member name="messageID">1157542</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON3</member>
+                    <member name="messageID">1157543</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1157544</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_ITEM1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_ITEM2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_randomWeighted</member>
+                    <member name="branchScriptParams">
+                        <element>10</element>
+                        <element>90</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_TALK</member>
+        <member name="next">EX20131001_3002_PR</member>
+        <member name="messageIDs">
+            <element>1157551</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON1</member>
+        <member name="next">EX20131001_3002_DEMON1_PR</member>
+        <member name="messageIDs">
+            <element>1157555</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON2</member>
+        <member name="next">EX20131001_3002_DEMON2_PR</member>
+        <member name="messageIDs">
+            <element>1157556</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON3</member>
+        <member name="next">EX20131001_3002_DEMON3_PR</member>
+        <member name="messageIDs">
+            <element>1157557</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_ITEM1</member>
+        <member name="next">EX20131001_3002_ITEM1_PR</member>
+        <member name="messageIDs">
+            <element>1157570</element>
+            <element>1157581</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_ITEM2</member>
+        <member name="next">EX20131001_3002_ITEM2_PR</member>
+        <member name="messageIDs">
+            <element>1157571</element>
+            <element>1157572</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_END</member>
+        <member name="messageIDs">
+            <element>1157565</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_DEMON1_PR</member>
+        <member name="messageID">1157555</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON1_CONFIRM</member>
+                    <member name="messageID">1157541</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1112</member>
+                                            <member name="value2">1</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_DEMON1_DEAD_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_DEMON2_PR</member>
+        <member name="messageID">1157556</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON2_CONFIRM</member>
+                    <member name="messageID">1157542</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1113</member>
+                                            <member name="value2">1</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_DEMON2_DEAD_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_DEMON3_PR</member>
+        <member name="messageID">1157557</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_DEMON3_CONFIRM</member>
+                    <member name="messageID">1157543</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1148</member>
+                                            <member name="value2">1</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_DEMON3_DEAD_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_ITEM1_PR</member>
+        <member name="messageID">1157582</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_ITEM_CONFIRM</member>
+                    <member name="queueNext">EX20131001_3002_ITEM_END</member>
+                    <member name="messageID">1157545</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MI_NONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21379</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21379</member>
+                                            <member name="value2">3</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131001_3002_ITEM2_PR</member>
+        <member name="messageID">1157583</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_ITEM_CONFIRM</member>
+                    <member name="queueNext">EX20131001_3002_ITEM_END</member>
+                    <member name="messageID">1157545</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MI_NONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21379</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131001_3002_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21379</member>
+                                            <member name="value2">3</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131001_3002_END</member>
+                    <member name="messageID">1157385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON1_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON1_END</member>
+        <member name="messageIDs">
+            <element>1157552</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_MP</member>
+        <member name="messageIDs">
+            <element>1157566</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_LOCKED</member>
+        <member name="messageIDs">
+            <element>1157567</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_IF</member>
+        <member name="messageIDs">
+            <element>1157568</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON1_DEAD_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON1_END</member>
+        <member name="messageIDs">
+            <element>1157558</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON2_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON2_END</member>
+        <member name="messageIDs">
+            <element>1157553</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON2_DEAD_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON2_END</member>
+        <member name="messageIDs">
+            <element>1157559</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON3_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON3_END</member>
+        <member name="messageIDs">
+            <element>1157554</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_DEMON3_DEAD_CONFIRM</member>
+        <member name="next">EX20131001_3002_ITEM</member>
+        <member name="queueNext">EX20131001_3002_DEMON3_END</member>
+        <member name="messageIDs">
+            <element>1157560</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_ITEM_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1157569</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131001_3002_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21391</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>21379</key>
+                            <value>-3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157596</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1157601</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_MI_NONE</member>
+        <member name="messageIDs">
+            <element>1157573</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_MI</member>
+        <member name="messageIDs">
+            <element>1157574</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131001_3002_ITEM</member>
+        <member name="messageIDs">
+            <element>1157564</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131001_3002_DEMON1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21390</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157593</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1157598</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131001_3002_DEMON2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21390</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157594</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1157599</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131001_3002_DEMON3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21390</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157595</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1157600</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

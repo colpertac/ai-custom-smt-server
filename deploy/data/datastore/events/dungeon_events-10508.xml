@@ -1,0 +1,1220 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D10508_3377</member>
+        <member name="next">D10508_3377_LEAVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10508_3377_ACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_LEAVE</member>
+        <member name="next">D10508_3377_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>1158769</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_ACTIVE</member>
+        <member name="next">D10508_3377_ACTIVE_PR</member>
+        <member name="messageIDs">
+            <element>1158773</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10508_3377_LEAVE_PR</member>
+        <member name="messageID">1158770</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_BYE</member>
+                    <member name="queueNext">D10508_TO_240501</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_LEAVE_END</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10508_3377_ACTIVE_PR</member>
+        <member name="messageID">1158773</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_ACTIVE_LEAVE</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_CONTINUE</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_BYE</member>
+        <member name="messageIDs">
+            <element>1158771</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_TO_240501</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">240501</member>
+                    <member name="spotID">50003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_LEAVE_END</member>
+        <member name="messageIDs">
+            <element>1158772</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_ACTIVE_LEAVE</member>
+        <member name="next">D10508_3377_ACTIVE_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>1158774</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_CONTINUE</member>
+        <member name="messageIDs">
+            <element>1158778</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10508_3377_ACTIVE_LEAVE_PR</member>
+        <member name="messageID">1158774</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_ACTIVE_BYE</member>
+                    <member name="queueNext">D10508_TO_240501</member>
+                    <member name="messageID">1158776</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10508_3377_CONTINUE</member>
+                    <member name="messageID">1158777</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10508_3377_ACTIVE_BYE</member>
+        <member name="messageIDs">
+            <element>1158775</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_START</member>
+        <member name="next">D10508_RESPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">START_TIMER</member>
+                    <member name="stopOnFailure">false</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158765</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">300</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_TIME_UP</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">20</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">40</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">60</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">80</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">100</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">140</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">160</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">180</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">200</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">220</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">240</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">260</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">280</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_RESPAWN</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_WARN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S03</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S04</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S05</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S06</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S07</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S08</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S09</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S10</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D10508_RESPAWN_S11</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_WARN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158761</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_TIME_UP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                        <element>4</element>
+                        <element>5</element>
+                        <element>6</element>
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>11</element>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158762</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10508_BOSS_SPAWN_SOUTH</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10508_BOSS_SPAWN_NORTH</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>2</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_SPAWN_SOUTH</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158763</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_DONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2391</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2392</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2393</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2394</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2395</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050101</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050102</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050103</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050108</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050109</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050110</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050111</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_SPAWN_NORTH</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158764</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10508_DONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">3</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2386</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2387</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2388</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2389</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="state">1</member>
+                                <member name="actorID">2390</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050104</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050105</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050106</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">2</member>
+                    <member name="actorID">1050107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_WARN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10508_BOSS_WARN1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10508_BOSS_WARN2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10508_BOSS_WARN3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_WARN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158766</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158784</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_WARN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158767</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158785</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_BOSS_WARN3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158768</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158786</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158852</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158853</member>
+                    <member name="effectType">4</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">3</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">4</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S05</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">5</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>6</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">6</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S07</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>7</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">7</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S08</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">8</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S09</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>9</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">9</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">10</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_RESPAWN_S11</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>11</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">1050801</member>
+                    <member name="value2">11</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_REWARD_W</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState"/>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158781</member>
+                    <member name="effectType">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">100843</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>-10508</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_REWARD_R</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState"/>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158782</member>
+                    <member name="effectType">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">100843</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>-10508</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D10508_REWARD_Y</member>
+        <member name="next">D10508_REWARD_Y_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10508_REWARD_Y_END</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>2000</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_REWARD_Y_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158780</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10508_REWARD_Y_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState"/>
+            </element>
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">100843</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158779</member>
+                    <member name="transformScriptID">transforma_flag</member>
+                    <member name="transformScriptParams">
+                        <element>1</element>
+                        <element>INSTANCE_CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158783</member>
+                    <member name="effectType">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>-10508</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,829 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_533</member>
+        <member name="messageIDs">
+            <element>106100</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z230102_535A</member>
+        <member name="next">Z230102_535A_KICK</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z230102_535A_GREETING</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">187</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z230102_535A_AMULET</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25052</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_AMULET</member>
+        <member name="next">Z230102_535A_AMULET_01</member>
+        <member name="messageIDs">
+            <element>106501</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_535A_AMULET_01</member>
+        <member name="messageID">106502</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_AMULET_02</member>
+                    <member name="messageID">106504</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_AMULET_03</member>
+                    <member name="messageID">106505</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_AMULET_02</member>
+        <member name="messageIDs">
+            <element>106506</element>
+            <element>106507</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_AMULET_03</member>
+        <member name="next">Z230102_535A_AMULET_04</member>
+        <member name="messageIDs">
+            <element>106508</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_535A_AMULET_04</member>
+        <member name="messageID">106509</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_AMULET_05</member>
+                    <member name="messageID">106510</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">106511</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_AMULET_05</member>
+        <member name="next">Z230102_535A_AMULET_06</member>
+        <member name="messageIDs">
+            <element>106512</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_535A_AMULET_06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">106513</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25052</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">187</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_KICK</member>
+        <member name="next">Z230102_535A_KICK_01</member>
+        <member name="messageIDs">
+            <element>106514</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_535A_KICK_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">106503</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">230101</member>
+                    <member name="spotID">50502</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_GREETING</member>
+        <member name="next">Z230102_535A_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>106600</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_535A_MAIN_PROMPT</member>
+        <member name="messageID">106601</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_EXCHANGE</member>
+                    <member name="messageID">106602</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="negate">true</member>
+                                <member name="params">
+                                    <element>-52</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_COIN_BALANCE</member>
+                    <member name="messageID">106603</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">106604</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535A_COIN_BALANCE</member>
+        <member name="next">Z230102_535A_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>106635</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_535A_EXCHANGE</member>
+        <member name="messageID">106744</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_BARTER_55</member>
+                    <member name="messageID">106879</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_REVERSE_00</member>
+                    <member name="messageID">106614</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_EXPERTISE_01</member>
+                    <member name="messageID">106615</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z230102_EXPERTISE_00</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">188</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535A_MAIN_PROMPT</member>
+                    <member name="messageID">1156513</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z230102_BARTER_55</member>
+		<member name="useNext">Z230102_535_END</member>
+        <member name="menuType">808</member>
+        <member name="shopID">55</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_REVERSE_00</member>
+        <member name="next">Z230102_REVERSE_01</member>
+        <member name="messageIDs">
+            <element>106626</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_REVERSE_01</member>
+        <member name="messageID">106626</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_LOW_COINS</member>
+                    <member name="messageID">106608</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z230102_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z230102_REVERSE_03</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_coin</member>
+                                            <member name="value1">50000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535_END</member>
+                    <member name="messageID">106609</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_LOW_COINS</member>
+        <member name="messageIDs">
+            <element>106638</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_IF</member>
+        <member name="messageIDs">
+            <element>106639</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_REVERSE_03</member>
+        <member name="next">Z230102_REVERSE_04</member>
+        <member name="messageIDs">
+            <element>106640</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_REVERSE_04</member>
+        <member name="next">Z230102_REVERSE_05</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">-52</member>
+                    <member name="duration">86400</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">COINS</member>
+                    <member name="value">-50000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">106710</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_REVERSE_05</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>7601</element>
+                        <element>7602</element>
+                        <element>7603</element>
+                        <element>7604</element>
+                        <element>7605</element>
+                        <element>7606</element>
+                        <element>7615</element>
+                        <element>7616</element>
+                        <element>7617</element>
+                        <element>7618</element>
+                        <element>7619</element>
+                        <element>7620</element>
+                        <element>7629</element>
+                        <element>7630</element>
+                        <element>7631</element>
+                        <element>7632</element>
+                        <element>7633</element>
+                        <element>7634</element>
+                        <element>7643</element>
+                        <element>7644</element>
+                        <element>7645</element>
+                        <element>7646</element>
+                        <element>7647</element>
+                        <element>7648</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535_END</member>
+        <member name="messageIDs">
+            <element>106653</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_EXPERTISE_00</member>
+        <member name="next">Z230102_535A_EXCHANGE</member>
+        <member name="messageIDs">
+            <element>106707</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_EXPERTISE_01</member>
+        <member name="next">Z230102_EXPERTISE_02</member>
+        <member name="messageIDs">
+            <element>106627</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_EXPERTISE_02</member>
+        <member name="messageID">106627</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_LOW_COINS</member>
+                    <member name="messageID">106608</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z230102_EXPERTISE_03</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_coin</member>
+                                            <member name="value1">20000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535_END</member>
+                    <member name="messageID">106609</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_EXPERTISE_03</member>
+        <member name="next">Z230102_EXPERTISE_04</member>
+        <member name="messageIDs">
+            <element>106640</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_EXPERTISE_04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">-52</member>
+                    <member name="duration">86400</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">188</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">106643</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="expertiseMax">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">COINS</member>
+                    <member name="value">-20000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z230102_535B</member>
+        <member name="next">Z230102_535A_KICK</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z230102_535B_GREETING</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">187</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z230102_535A_AMULET</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25052</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535B_GREETING</member>
+        <member name="next">Z230102_535B_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>106040</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_535B_MAIN_PROMPT</member>
+        <member name="messageID">106041</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_TALK</member>
+                    <member name="messageID">106046</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_BARTER_54</member>
+                    <member name="messageID">106042</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="negate">true</member>
+                                <member name="params">
+                                    <element>-23</element>
+                                    <element>-24</element>
+                                    <element>-25</element>
+                                    <element>-26</element>
+                                    <element>-51</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535B_COOLDOWN_EXPLANATION</member>
+                    <member name="messageID">106043</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>-23</element>
+                                    <element>-24</element>
+                                    <element>-25</element>
+                                    <element>-26</element>
+                                    <element>-51</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_535B_BALANCE</member>
+                    <member name="messageID">106603</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">106604</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_TALK</member>
+        <member name="next">Z230102_535B_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>106047</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535B_COOLDOWN_EXPLANATION</member>
+        <member name="messageIDs">
+            <element>106044</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_535B_BALANCE</member>
+        <member name="next">Z230102_535B_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>106635</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z230102_BARTER_54</member>
+		<member name="useNext">Z230102_535_END</member>
+        <member name="menuType">808</member>
+        <member name="shopID">54</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_536</member>
+        <member name="next">Z230102_536_01</member>
+        <member name="messageIDs">
+            <element>106002</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_536_01</member>
+        <member name="messageID">106003</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">WEBGAME</member>
+                    <member name="messageID">106004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_536_02</member>
+                    <member name="messageID">106005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_536_02</member>
+        <member name="messageIDs">
+            <element>106006</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537</member>
+        <member name="next">Z230102_537_01</member>
+        <member name="messageIDs">
+            <element>106021</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230102_537_01</member>
+        <member name="messageID">106022</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_537_02x</member>
+                    <member name="messageID">106023</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z230102_537_02a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">1083</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z230102_537_02a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">1084</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_537_02b</member>
+                    <member name="messageID">106024</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_537_02c</member>
+                    <member name="messageID">106025</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230102_537_04</member>
+                    <member name="messageID">106205</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537_02x</member>
+        <member name="messageIDs">
+            <element>106032</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537_04</member>
+        <member name="messageIDs">
+            <element>106030</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537_02a</member>
+        <member name="next">Z230102_537_03a</member>
+        <member name="messageIDs">
+            <element>106026</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_537_03a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">230108</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537_02b</member>
+        <member name="next">Z230102_537_03b</member>
+        <member name="messageIDs">
+            <element>106027</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_537_03b</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">230103</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230102_537_02c</member>
+        <member name="next">Z230102_537_03c</member>
+        <member name="messageIDs">
+            <element>106028</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230102_537_03c</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">230101</member>
+                    <member name="spotID">50502</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

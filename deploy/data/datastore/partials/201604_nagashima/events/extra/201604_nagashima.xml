@@ -1,0 +1,325 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_587</member>
+        <member name="next">SD_587_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956002</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_587_MAIN_PR</member>
+        <member name="messageID">1157061</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_GO</member>
+                    <member name="messageID">1157062</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_GLOBAL</member>
+                    <member name="messageID">956125</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20160402</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201507_587_CHALLENGE</member>
+                    <member name="messageID">1157611</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201507</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="skipInvalid">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201507_587_D10511</member>
+                    <member name="messageID">1157612</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201307</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="skipInvalid">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_END</member>
+                    <member name="messageID">1157063</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201307_587_ITEM</member>
+                    <member name="messageID">1157064</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201307</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="skipInvalid">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1157065</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201307</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>50101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_587_GO</member>
+        <member name="next">N587_GO</member>
+        <member name="messageIDs">
+            <element>956003</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_587_GLOBAL</member>
+        <member name="next">SD_587_GLOBAL_PR</member>
+        <member name="messageIDs">
+            <element>956126</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_587_END</member>
+        <member name="messageIDs">
+            <element>956004</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_587_GLOBAL_PR</member>
+        <member name="messageID">956127</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_TO_220101</member>
+                    <member name="messageID">956128</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_TO_220102</member>
+                    <member name="messageID">956129</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_TO_220103</member>
+                    <member name="messageID">956130</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_587_END</member>
+                    <member name="messageID">956131</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_587_TO_220101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_587_TO_220102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220102</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_587_TO_220103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220103</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956013</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20101</member>
+                    <member name="spotID">50070</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_100101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956011</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">100101</member>
+                    <member name="spotID">50070</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_130101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956010</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">130101</member>
+                    <member name="spotID">50070</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_140101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956012</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">140101</member>
+                    <member name="spotID">50070</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3323</member>
+        <member name="next">SD_3323_PR</member>
+        <member name="messageIDs">
+            <element>956020</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_3323_PR</member>
+        <member name="messageID">956021</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_327</member>
+                    <member name="messageID">747</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_327</member>
+        <member name="menuType">808</member>
+        <member name="shopID">327</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_328</member>
+        <member name="menuType">808</member>
+        <member name="shopID">328</member>
+    </object>
+</objects>

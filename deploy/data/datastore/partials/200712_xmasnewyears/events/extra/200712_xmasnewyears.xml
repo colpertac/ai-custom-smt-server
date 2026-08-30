@@ -1,0 +1,2005 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX200712_312</member>
+        <member name="next">EX200712_312_XMAS</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_NY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20071201</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS</member>
+        <member name="next">EX200712_312_XMAS_PR</member>
+        <member name="messageIDs">
+            <element>155002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY</member>
+        <member name="next">EX200712_312_NY_PR</member>
+        <member name="messageIDs">
+            <element>155003</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_INVALID</member>
+        <member name="next">EX200712_312_INVALID_PR</member>
+        <member name="messageIDs">
+            <element>155001</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_XMAS_PR</member>
+        <member name="messageID">155005</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_CARD</member>
+                    <member name="messageID">155007</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_XMAS_DEMON1</member>
+                    <member name="messageID">155008</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_XMAS_DEMON2</member>
+                    <member name="messageID">155009</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_XMAS_INFO4</member>
+                    <member name="messageID">155012</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_XMAS_INFO5</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>312</key>
+                                                    <value>5</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_NY_PR</member>
+        <member name="messageID">155006</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_CARD</member>
+                    <member name="messageID">155007</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_NY_DEMON1</member>
+                    <member name="messageID">155010</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_NY_DEMON2</member>
+                    <member name="messageID">155011</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_NY_INFO4</member>
+                    <member name="messageID">155013</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_NY_INFO5</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>312</key>
+                                                    <value>5</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_INVALID_PR</member>
+        <member name="messageID">155004</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312_CARD</member>
+                    <member name="messageID">155007</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_312_CARD</member>
+        <member name="next">EX200712_312_CARD1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20071201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20071202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20071203</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20071204</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20071205</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">2</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON1</member>
+        <member name="next">EX200712_312_XMAS_DEMON1_PR</member>
+        <member name="messageIDs">
+            <element>155051</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON2</member>
+        <member name="next">EX200712_312_XMAS_DEMON2_PR</member>
+        <member name="messageIDs">
+            <element>155052</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_INFO4</member>
+        <member name="next">EX200712_312_XMAS_PR</member>
+        <member name="messageIDs">
+            <element>155065</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_INFO5</member>
+        <member name="next">EX200712_312_XMAS_PR</member>
+        <member name="messageIDs">
+            <element>155066</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_END</member>
+        <member name="messageIDs">
+            <element>155069</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON1</member>
+        <member name="next">EX200712_312_NY_DEMON1_PR</member>
+        <member name="messageIDs">
+            <element>155053</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON2</member>
+        <member name="next">EX200712_312_NY_DEMON2_PR</member>
+        <member name="messageIDs">
+            <element>155054</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_INFO4</member>
+        <member name="next">EX200712_312_NY_PR</member>
+        <member name="messageIDs">
+            <element>155067</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_INFO5</member>
+        <member name="next">EX200712_312_NY_PR</member>
+        <member name="messageIDs">
+            <element>155068</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD1</member>
+        <member name="next">EX200712_312_CARD1_PR</member>
+        <member name="messageIDs">
+            <element>155018</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CD</member>
+        <member name="messageIDs">
+            <element>155016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_IF</member>
+        <member name="messageIDs">
+            <element>155015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD2</member>
+        <member name="next">EX200712_312_CARD2_PR</member>
+        <member name="messageIDs">
+            <element>155019</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD3</member>
+        <member name="next">EX200712_312_CARD3_PR</member>
+        <member name="messageIDs">
+            <element>155020</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4</member>
+        <member name="next">EX200712_312_CARD4_PR</member>
+        <member name="messageIDs">
+            <element>155017</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5</member>
+        <member name="next">EX200712_312_CARD5_PR</member>
+        <member name="messageIDs">
+            <element>155021</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_XMAS_DEMON1_PR</member>
+        <member name="messageID">155055</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_XMAS_DEMON1_CONFIRM</member>
+                    <member name="messageID">155059</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_XMAS_DEMON1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5047</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155060</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_XMAS_DEMON2_PR</member>
+        <member name="messageID">155056</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_XMAS_DEMON2_CONFIRM</member>
+                    <member name="messageID">155059</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_XMAS_DEMON2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5049</member>
+                                            <member name="value2">15</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155060</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_NY_DEMON1_PR</member>
+        <member name="messageID">155057</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_NY_DEMON1_CONFIRM</member>
+                    <member name="messageID">155059</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_NY_DEMON1_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5048</member>
+                                            <member name="value2">7</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155060</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_NY_DEMON2_PR</member>
+        <member name="messageID">155058</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_NY_DEMON2_CONFIRM</member>
+                    <member name="messageID">155059</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_NY_DEMON2_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5050</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155060</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_CARD1_PR</member>
+        <member name="messageID">155023</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312_CARD</member>
+                    <member name="messageID">155027</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">300</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_CARD2_PR</member>
+        <member name="messageID">155024</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312_CARD</member>
+                    <member name="messageID">155027</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">300</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_CARD3_PR</member>
+        <member name="messageID">155025</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N312_CARD</member>
+                    <member name="messageID">155027</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">300</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_CARD4_PR</member>
+        <member name="messageID">155022</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_CARD4_SPLIT_XMAS</member>
+                    <member name="messageID">155027</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">300</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CARD4_SPLIT_NY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20071201</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200712_312_CARD5_PR</member>
+        <member name="messageID">155026</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_CARD5_SPLIT_XMAS</member>
+                    <member name="messageID">155027</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">300</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200712_312_CARD5_SPLIT_NY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20071201</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200712_312_END</member>
+                    <member name="messageID">155028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON1_CONFIRM</member>
+        <member name="next">EX200712_312_XMAS_DEMON1_END</member>
+        <member name="messageIDs">
+            <element>155061</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CF</member>
+        <member name="messageIDs">
+            <element>155046</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON1_MI</member>
+        <member name="messageIDs">
+            <element>155047</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON2_CONFIRM</member>
+        <member name="next">EX200712_312_XMAS_DEMON2_END</member>
+        <member name="messageIDs">
+            <element>155062</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_XMAS_DEMON2_MI</member>
+        <member name="messageIDs">
+            <element>155048</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON1_CONFIRM</member>
+        <member name="next">EX200712_312_NY_DEMON1_END</member>
+        <member name="messageIDs">
+            <element>155063</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON1_CF</member>
+        <member name="messageIDs">
+            <element>155049</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON2_CONFIRM</member>
+        <member name="next">EX200712_312_NY_DEMON2_END</member>
+        <member name="messageIDs">
+            <element>155064</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_NY_DEMON2_CF</member>
+        <member name="messageIDs">
+            <element>155050</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_MI</member>
+        <member name="messageIDs">
+            <element>155029</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_312_CARD4_SPLIT_XMAS</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_XMAS_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_XMAS_2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_XMAS_3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_XMAS_10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>50</element>
+            <element>30</element>
+            <element>15</element>
+            <element>5</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_312_CARD4_SPLIT_NY</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_NY_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_NY_2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_NY_3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD4_NY_10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>50</element>
+            <element>30</element>
+            <element>15</element>
+            <element>5</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_312_CARD5_SPLIT_XMAS</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_XMAS_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_XMAS_2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_XMAS_3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_XMAS_10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>50</element>
+            <element>30</element>
+            <element>15</element>
+            <element>5</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_312_CARD5_SPLIT_NY</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_NY_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_NY_2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_NY_3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200712_312_CARD5_NY_10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>50</element>
+            <element>30</element>
+            <element>15</element>
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_XMAS_DEMON1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5047</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>750</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">155091</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_XMAS_DEMON2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5049</key>
+                            <value>-15</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>1810</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">155092</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_NY_DEMON1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5048</key>
+                            <value>-7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>751</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">155093</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_NY_DEMON2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5050</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>1811</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">155094</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_XMAS_1</member>
+        <member name="next">EX200712_312_CARD4_XMAS_1_END</member>
+        <member name="messageIDs">
+            <element>155030</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_XMAS_2</member>
+        <member name="next">EX200712_312_CARD4_XMAS_2_END</member>
+        <member name="messageIDs">
+            <element>155031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_XMAS_3</member>
+        <member name="next">EX200712_312_CARD4_XMAS_3_END</member>
+        <member name="messageIDs">
+            <element>155032</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_XMAS_10</member>
+        <member name="next">EX200712_312_CARD4_XMAS_10_END</member>
+        <member name="messageIDs">
+            <element>155033</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_NY_1</member>
+        <member name="next">EX200712_312_CARD4_NY_1_END</member>
+        <member name="messageIDs">
+            <element>155038</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_NY_2</member>
+        <member name="next">EX200712_312_CARD4_NY_2_END</member>
+        <member name="messageIDs">
+            <element>155039</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_NY_3</member>
+        <member name="next">EX200712_312_CARD4_NY_3_END</member>
+        <member name="messageIDs">
+            <element>155040</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD4_NY_10</member>
+        <member name="next">EX200712_312_CARD4_NY_10_END</member>
+        <member name="messageIDs">
+            <element>155041</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_XMAS_1</member>
+        <member name="next">EX200712_312_CARD5_XMAS_1_END</member>
+        <member name="messageIDs">
+            <element>155034</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_XMAS_2</member>
+        <member name="next">EX200712_312_CARD5_XMAS_2_END</member>
+        <member name="messageIDs">
+            <element>155035</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_XMAS_3</member>
+        <member name="next">EX200712_312_CARD5_XMAS_3_END</member>
+        <member name="messageIDs">
+            <element>155036</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_XMAS_10</member>
+        <member name="next">EX200712_312_CARD5_XMAS_10_END</member>
+        <member name="messageIDs">
+            <element>155037</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_NY_1</member>
+        <member name="next">EX200712_312_CARD5_NY_1_END</member>
+        <member name="messageIDs">
+            <element>155042</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_NY_2</member>
+        <member name="next">EX200712_312_CARD5_NY_2_END</member>
+        <member name="messageIDs">
+            <element>155043</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_NY_3</member>
+        <member name="next">EX200712_312_CARD5_NY_3_END</member>
+        <member name="messageIDs">
+            <element>155044</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200712_312_CARD5_NY_10</member>
+        <member name="next">EX200712_312_CARD5_NY_10_END</member>
+        <member name="messageIDs">
+            <element>155045</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_XMAS_1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5047</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_XMAS_2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5047</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_XMAS_3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5047</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_XMAS_10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5047</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_NY_1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5048</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_NY_2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5048</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_NY_3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5048</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD4_NY_10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5048</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5401</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071204</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_XMAS_1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5049</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_XMAS_2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5049</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_XMAS_3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5049</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_XMAS_10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5049</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_NY_1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5050</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_NY_2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5050</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_NY_3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5050</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_312_CARD5_NY_10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-300</value>
+                        </pair>
+                        <pair>
+                            <key>5050</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>5402</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20071205</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200712_XMAS_NY</member>
+        <member name="next">EX200712_XMAS</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200712_NY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_DATETIME</member>
+                                <member name="value1">12260000</member>
+                                <member name="value2">1020000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_XMAS</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20071201</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200712_NY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20071201</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

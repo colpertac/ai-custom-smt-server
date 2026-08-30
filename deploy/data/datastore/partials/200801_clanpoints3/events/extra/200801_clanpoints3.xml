@@ -1,0 +1,3588 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX200801_318</member>
+        <member name="next">EX200801_318_ACTIVE_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_POST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>200801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_UNUSED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>200801</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_ACTIVE_SPLIT</member>
+        <member name="next">EX200801_318_ACTIVE_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_LEVEL_LOW</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">15</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20080101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_POST</member>
+        <member name="next">EX200801_318_KEY</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_KEY_NONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5275</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5276</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5277</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5278</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5279</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5280</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5281</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5282</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_UNUSED</member>
+        <member name="next">EX200801_318_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>100513</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_ACTIVE_MAIN</member>
+        <member name="next">EX200801_318_MAIN</member>
+        <member name="messageIDs">
+            <element>100502</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_NO_CLAN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">CLAN_HOME</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_LEVEL_LOW</member>
+        <member name="messageIDs">
+            <element>100500</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_CD</member>
+        <member name="messageIDs">
+            <element>100501</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_KEY</member>
+        <member name="next">EX200801_318_KEY_PR</member>
+        <member name="messageIDs">
+            <element>100657</element>
+            <element>100656</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_KEY_NONE</member>
+        <member name="messageIDs">
+            <element>100655</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_MAIN_PR</member>
+        <member name="messageID">100505</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_SPLIT</member>
+                    <member name="messageID">100506</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_SPLIT</member>
+                    <member name="messageID">100507</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_SPLIT</member>
+                    <member name="messageID">100508</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_INFO</member>
+                    <member name="messageID">100509</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_MAIN</member>
+        <member name="next">EX200801_318_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>100504</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_NO_CLAN</member>
+        <member name="next">EX200801_318_NO_CLAN_PR</member>
+        <member name="messageIDs">
+            <element>100503</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_KEY_PR</member>
+        <member name="messageID">150592</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_KEY_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_DATA1_SPLIT</member>
+        <member name="next">EX200801_318_DATA1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q544_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">544</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q544_QUIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">544</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q545_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">545</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q545_QUIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">545</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q546_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">546</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q546_QUIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">546</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">547</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">548</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">549</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">550</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">551</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">552</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_DATA2_SPLIT</member>
+        <member name="next">EX200801_318_DATA2</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q547_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">547</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">689</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_SKILL_LEARNED</member>
+                                <member name="value1">5301</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q547_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">547</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q548_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">548</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">105</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_SKILL_LEARNED</member>
+                                <member name="value1">5117</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q548_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">548</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q549_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">549</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">1234</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q549_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">549</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">544</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">545</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">546</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">550</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">551</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">552</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_DATA3_SPLIT</member>
+        <member name="next">EX200801_318_DATA3</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q550_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">550</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q550_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">550</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q551_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">551</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q551_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">551</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q552_READY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE_REQUIREMENTS</member>
+                                <member name="value1">552</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q552_QUIT2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">552</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">544</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">545</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">546</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">547</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">548</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200801_318_QUEST_OTHER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">549</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_INFO</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100645</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_NO_CLAN_PR</member>
+        <member name="messageID">100642</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_NO_CLAN_INFO</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_NO_CLAN_END</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_ROOM</member>
+        <member name="next">EX200801_318_ROOM_PR</member>
+        <member name="messageIDs">
+            <element>150593</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_KEY_CANCEL</member>
+        <member name="messageIDs">
+            <element>100644</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1</member>
+        <member name="next">EX200801_318_DATA1_PR</member>
+        <member name="messageIDs">
+            <element>100515</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q544_READY</member>
+        <member name="next">EX200801_318_Q544_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q544_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q544_QUIT</member>
+        <member name="next">EX200801_318_Q544_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100539</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q545_READY</member>
+        <member name="next">EX200801_318_Q545_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q545_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q545_QUIT</member>
+        <member name="next">EX200801_318_Q545_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100539</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q546_READY</member>
+        <member name="next">EX200801_318_Q546_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q546_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q546_QUIT</member>
+        <member name="next">EX200801_318_Q546_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100539</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_QUEST_OTHER</member>
+        <member name="next">EX200801_318_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>100514</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2</member>
+        <member name="next">EX200801_318_DATA2_PR</member>
+        <member name="messageIDs">
+            <element>100554</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q547_READY</member>
+        <member name="next">EX200801_318_Q547_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q547_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_QUIT2</member>
+        <member name="next">EX200801_318_Q547_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100574</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q548_READY</member>
+        <member name="next">EX200801_318_Q548_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q548_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_QUIT2</member>
+        <member name="next">EX200801_318_Q548_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100582</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q549_READY</member>
+        <member name="next">EX200801_318_Q549_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q549_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_QUIT2</member>
+        <member name="next">EX200801_318_Q549_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100588</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3</member>
+        <member name="next">EX200801_318_DATA3_PR</member>
+        <member name="messageIDs">
+            <element>100594</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q550_READY</member>
+        <member name="next">EX200801_318_Q550_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q550_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_QUIT2</member>
+        <member name="next">EX200801_318_Q550_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100614</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q551_READY</member>
+        <member name="next">EX200801_318_Q551_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q551_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_QUIT2</member>
+        <member name="next">EX200801_318_Q551_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100621</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200801_318_Q552_READY</member>
+        <member name="next">EX200801_318_Q552_IF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200801_318_Q552_FINISH</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_QUIT2</member>
+        <member name="next">EX200801_318_Q552_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100627</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_INFO_PR</member>
+        <member name="messageID">100646</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_INFO1</member>
+                    <member name="messageID">100647</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_INFO2</member>
+                    <member name="messageID">100648</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_INFO3</member>
+                    <member name="messageID">100649</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_INFO4</member>
+                    <member name="messageID">100650</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_NO_CLAN_INFO</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100644</element>
+            <element>100645</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_NO_CLAN_END</member>
+        <member name="messageIDs">
+            <element>100643</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_ROOM_PR</member>
+        <member name="messageID">150643</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150635</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50201</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5275</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150636</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50202</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5276</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150637</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50203</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5277</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150638</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50204</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5278</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150639</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50205</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5279</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150640</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50206</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5280</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150641</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50207</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5281</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_ROOM_MI</member>
+                    <member name="messageID">150642</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_ROOM_CONFIRM</member>
+                                <member name="queueNext">EX200801_318_TO_50208</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5282</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA1_PR</member>
+        <member name="messageID">100516</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_1</member>
+                    <member name="messageID">100517</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL15</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">15</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_2</member>
+                    <member name="messageID">100518</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL35</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">35</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_3</member>
+                    <member name="messageID">100519</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL55</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">55</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_MAIN_PR</member>
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q544_IF</member>
+        <member name="messageIDs">
+            <element>100544</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q544_DONE</member>
+        <member name="next">EX200801_318_Q544_FIN</member>
+        <member name="messageIDs">
+            <element>100545</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q544_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q544_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q545_IF</member>
+        <member name="messageIDs">
+            <element>100548</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q545_DONE</member>
+        <member name="next">EX200801_318_Q545_FIN</member>
+        <member name="messageIDs">
+            <element>100549</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q545_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q545_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q546_IF</member>
+        <member name="messageIDs">
+            <element>100551</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q546_DONE</member>
+        <member name="next">EX200801_318_Q546_FIN</member>
+        <member name="messageIDs">
+            <element>100552</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q546_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q546_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA2_PR</member>
+        <member name="messageID">100555</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_1</member>
+                    <member name="messageID">100556</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL15</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">15</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_2</member>
+                    <member name="messageID">100557</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL35</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">35</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_3</member>
+                    <member name="messageID">100558</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL55</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">55</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_MAIN_PR</member>
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_IF</member>
+        <member name="messageIDs">
+            <element>100575</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_FINISH</member>
+        <member name="next">EX200801_318_Q547_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100576</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q547_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q547_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_IF</member>
+        <member name="messageIDs">
+            <element>100583</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_FINISH</member>
+        <member name="next">EX200801_318_Q548_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100584</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q548_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q548_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_IF</member>
+        <member name="messageIDs">
+            <element>100589</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_FINISH</member>
+        <member name="next">EX200801_318_Q549_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100590</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q549_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q549_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA3_PR</member>
+        <member name="messageID">100595</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_1</member>
+                    <member name="messageID">100596</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL15</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">15</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_2</member>
+                    <member name="messageID">100597</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL35</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">35</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_3</member>
+                    <member name="messageID">100598</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_DATA_REQ_LEVEL55</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">55</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200801_318_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_MAIN_PR</member>
+                    <member name="messageID">100510</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_IF</member>
+        <member name="messageIDs">
+            <element>100615</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_FINISH</member>
+        <member name="next">EX200801_318_Q550_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100616</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q550_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q550_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_IF</member>
+        <member name="messageIDs">
+            <element>100622</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_FINISH</member>
+        <member name="next">EX200801_318_Q551_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100623</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q551_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q551_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_IF</member>
+        <member name="messageIDs">
+            <element>100628</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_FINISH</member>
+        <member name="next">EX200801_318_Q552_FINISH_PR</member>
+        <member name="messageIDs">
+            <element>100629</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q552_QUIT_PR</member>
+        <member name="messageID">100540</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q552_QUIT_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_QUEST_QUIT_CANCEL</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_INFO1</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100651</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_INFO2</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100652</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_INFO3</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100653</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_INFO4</member>
+        <member name="next">EX200801_318_INFO_PR</member>
+        <member name="messageIDs">
+            <element>100654</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_ROOM_MI</member>
+        <member name="next">EX200801_318_ROOM_PR</member>
+        <member name="messageIDs">
+            <element>150646</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_ROOM_CONFIRM</member>
+        <member name="messageIDs">
+            <element>150644</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50201</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50201</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150647</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50202</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50202</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150648</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50203</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50203</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150649</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50204</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50204</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150650</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50205</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50205</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150651</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50206</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50206</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150652</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50207</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50207</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150653</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_TO_50208</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50208</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150654</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_1</member>
+        <member name="next">EX200801_318_DATA1_1_PR</member>
+        <member name="messageIDs">
+            <element>100524</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA_REQ_LEVEL15</member>
+        <member name="messageIDs">
+            <element>100520</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_MQ</member>
+        <member name="messageIDs">
+            <element>100523</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_2</member>
+        <member name="next">EX200801_318_DATA1_2_PR</member>
+        <member name="messageIDs">
+            <element>100529</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA_REQ_LEVEL35</member>
+        <member name="messageIDs">
+            <element>100521</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_3</member>
+        <member name="next">EX200801_318_DATA1_3_PR</member>
+        <member name="messageIDs">
+            <element>100534</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA_REQ_LEVEL55</member>
+        <member name="messageIDs">
+            <element>100522</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q544_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">544</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100546</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080101</element>
+                        <element>10</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q544_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q544_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_QUEST_QUIT_CANCEL</member>
+        <member name="messageIDs">
+            <element>100541</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q545_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">545</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100550</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080101</element>
+                        <element>25</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q545_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q545_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q546_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">546</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100553</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100547</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080101</element>
+                        <element>100</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q546_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q546_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_1</member>
+        <member name="next">EX200801_318_DATA2_1_PR</member>
+        <member name="messageIDs">
+            <element>100559</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_2</member>
+        <member name="next">EX200801_318_DATA2_2_PR</member>
+        <member name="messageIDs">
+            <element>100564</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_3</member>
+        <member name="next">EX200801_318_DATA2_3_PR</member>
+        <member name="messageIDs">
+            <element>100569</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q547_FINISH_PR</member>
+        <member name="messageID">100577</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q547_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q547_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q547_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q548_FINISH_PR</member>
+        <member name="messageID">100585</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q548_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q548_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q548_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q549_FINISH_PR</member>
+        <member name="messageID">100591</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q549_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q549_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q549_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_1</member>
+        <member name="next">EX200801_318_DATA3_1_PR</member>
+        <member name="messageIDs">
+            <element>100599</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_2</member>
+        <member name="next">EX200801_318_DATA3_2_PR</member>
+        <member name="messageIDs">
+            <element>100604</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_3</member>
+        <member name="next">EX200801_318_DATA3_3_PR</member>
+        <member name="messageIDs">
+            <element>100609</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q550_FINISH_PR</member>
+        <member name="messageID">100617</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q550_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q550_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q550_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q551_FINISH_PR</member>
+        <member name="messageID">100624</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q551_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q551_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q551_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_Q552_FINISH_PR</member>
+        <member name="messageID">100630</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q552_DONE</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_Q552_QUIT1</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_QUIT_CONFIRM</member>
+        <member name="next">EX200801_318_Q552_QUIT_END</member>
+        <member name="messageIDs">
+            <element>100542</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA1_1_PR</member>
+        <member name="messageID">100525</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_1_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA1_2_PR</member>
+        <member name="messageID">100530</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_2_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA1_3_PR</member>
+        <member name="messageID">100535</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_3_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA1_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q544_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">544</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q545_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">545</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q546_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">546</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA2_1_PR</member>
+        <member name="messageID">100560</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_1_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA2_2_PR</member>
+        <member name="messageID">100565</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_2_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA2_3_PR</member>
+        <member name="messageID">100570</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_3_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA2_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_DONE</member>
+        <member name="next">EX200801_318_Q547_FIN</member>
+        <member name="messageIDs">
+            <element>100579</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q547_QUIT1</member>
+        <member name="next">EX200801_318_Q547_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q547_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">547</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_DONE</member>
+        <member name="next">EX200801_318_Q548_FIN</member>
+        <member name="messageIDs">
+            <element>100579</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q548_QUIT1</member>
+        <member name="next">EX200801_318_Q548_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q548_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">548</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_DONE</member>
+        <member name="next">EX200801_318_Q549_FIN</member>
+        <member name="messageIDs">
+            <element>100579</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q549_QUIT1</member>
+        <member name="next">EX200801_318_Q549_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q549_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">549</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA3_1_PR</member>
+        <member name="messageID">100600</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_1_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA3_2_PR</member>
+        <member name="messageID">100605</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_2_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200801_318_DATA3_3_PR</member>
+        <member name="messageID">100610</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_3_CONFIRM</member>
+                    <member name="messageID">100511</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200801_318_DATA3_PR</member>
+                    <member name="messageID">100512</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_DONE</member>
+        <member name="next">EX200801_318_Q550_FIN</member>
+        <member name="messageIDs">
+            <element>100618</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q550_QUIT1</member>
+        <member name="next">EX200801_318_Q550_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q550_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">550</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_DONE</member>
+        <member name="next">EX200801_318_Q551_FIN</member>
+        <member name="messageIDs">
+            <element>100618</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q551_QUIT1</member>
+        <member name="next">EX200801_318_Q551_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q551_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">551</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_DONE</member>
+        <member name="next">EX200801_318_Q552_FIN</member>
+        <member name="messageIDs">
+            <element>100618</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_Q552_QUIT1</member>
+        <member name="next">EX200801_318_Q552_QUIT_PR</member>
+        <member name="messageIDs">
+            <element>100578</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q552_QUIT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">552</member>
+                    <member name="phase">-1</member>
+                    <member name="transformScriptID">transforma_questQuit</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_1_CONFIRM</member>
+        <member name="next">EX200801_318_Q544_START</member>
+        <member name="messageIDs">
+            <element>100526</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_2_CONFIRM</member>
+        <member name="next">EX200801_318_Q545_START</member>
+        <member name="messageIDs">
+            <element>100531</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA1_3_CONFIRM</member>
+        <member name="next">EX200801_318_Q546_START</member>
+        <member name="messageIDs">
+            <element>100536</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_1_CONFIRM</member>
+        <member name="next">EX200801_318_Q547_START</member>
+        <member name="messageIDs">
+            <element>100561</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_2_CONFIRM</member>
+        <member name="next">EX200801_318_Q548_START</member>
+        <member name="messageIDs">
+            <element>100566</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA2_3_CONFIRM</member>
+        <member name="next">EX200801_318_Q549_START</member>
+        <member name="messageIDs">
+            <element>100571</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q547_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">547</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100580</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100581</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080102</element>
+                        <element>15</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q548_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">548</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100586</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100587</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080102</element>
+                        <element>22</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q549_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">549</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100592</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100593</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080102</element>
+                        <element>40</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_1_CONFIRM</member>
+        <member name="next">EX200801_318_Q550_START</member>
+        <member name="messageIDs">
+            <element>100601</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_2_CONFIRM</member>
+        <member name="next">EX200801_318_Q551_START</member>
+        <member name="messageIDs">
+            <element>100606</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200801_318_DATA3_3_CONFIRM</member>
+        <member name="next">EX200801_318_Q552_START</member>
+        <member name="messageIDs">
+            <element>100611</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q550_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>7129</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">550</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100619</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100620</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080103</element>
+                        <element>20</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q551_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>7128</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>7126</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">551</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100625</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100626</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080103</element>
+                        <element>30</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q552_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>280</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>3235</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">552</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100631</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100632</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20080103</element>
+                        <element>45</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20080101</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q544_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">544</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100527</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100528</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q545_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">545</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100532</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100533</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q546_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">546</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100537</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100538</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q547_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">547</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100562</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100563</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q548_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">548</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100567</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100568</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q549_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">549</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100572</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100573</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q550_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">550</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100602</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100603</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q551_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">551</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100607</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100608</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200801_318_Q552_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">552</member>
+                    <member name="forceUpdate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100612</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">100613</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,105 @@
+<objects>
+    <!-- Time-limited event: IMAGINEクリスマス・お正月イベント -->
+    <object name="ServerZonePartial">
+        <member name="ID">20071201</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 悪魔スナック営業マン -->
+                <object name="ServerNPC">
+                    <member name="ID">312</member>
+                    <member name="SpotID">60025</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX200712_312</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20071202</member>
+        <member name="DynamicMapIDs">
+            <element>5121002</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 悪魔スナック営業部長 -->
+                <object name="ServerNPC">
+                    <member name="ID">313</member>
+                    <member name="SpotID">60401</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>312</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX200712_312</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="DisplayFlag">76</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20071203</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+            <element>5121002</element>
+        </member>
+        <member name="Triggers">
+            <!-- Set the Xmas or New Year's mode based on system date -->
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX200712_XMAS_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SYSTEMTIME</member>
+                    <member name="Value">0</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX200712_XMAS_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

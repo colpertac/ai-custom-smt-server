@@ -1,0 +1,614 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX20150102_3414</member>
+        <member name="next">EX20150102_3414_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_AFRAID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">124</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_MAIN</member>
+        <member name="next">EX20150102_3414_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1186001</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_AFRAID</member>
+        <member name="messageIDs">
+            <element>1186000</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20150102_3414_MAIN_PR</member>
+        <member name="messageID">1186002</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20150102_3414_BOOST</member>
+                    <member name="messageID">1186003</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2470</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2471</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2472</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20150102_3414_DBOOST</member>
+                    <member name="messageID">1186004</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2470</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2471</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_BOOST_ACTIVE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">2472</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_DBOOST_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20150104</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20150102_3414_EQUIP</member>
+                    <member name="messageID">1186005</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20150102_3414_EQUIP_DONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">673</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20150102_3414_INFO</member>
+                    <member name="messageID">1186006</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20150102_3414_END</member>
+                    <member name="messageID">1186007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_BOOST</member>
+        <member name="next">EX20150102_3414_BOOST_READY</member>
+        <member name="messageIDs">
+            <element>1186009</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_BOOST_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20150104</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_BOOST_ACTIVE</member>
+        <member name="messageIDs">
+            <element>1186013</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_DBOOST</member>
+        <member name="messageIDs">
+            <element>1186012</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_DBOOST1_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_DBOOST2_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_DBOOST3_END</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_PD</member>
+        <member name="messageIDs">
+            <element>1186023</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_DBOOST_CD</member>
+        <member name="messageIDs">
+            <element>1186011</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_EQUIP</member>
+        <member name="next">EX20150102_3414_EQUIP_READY</member>
+        <member name="messageIDs">
+            <element>1186015</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">3</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_EQUIP_DONE</member>
+        <member name="messageIDs">
+            <element>1186014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_INFO</member>
+        <member name="next">EX20150102_3414_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1186018</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_END</member>
+        <member name="messageIDs">
+            <element>1186019</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_BOOST_READY</member>
+        <member name="messageIDs">
+            <element>1186010</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_BOOST1_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_BOOST2_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_BOOST3_END</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_BOOST_CD</member>
+        <member name="messageIDs">
+            <element>1186008</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_DBOOST1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="targetType">PARTNER</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2470</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186020</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_DBOOST2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="targetType">PARTNER</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2471</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186021</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_DBOOST3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="targetType">PARTNER</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2472</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186022</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_EQUIP_READY</member>
+        <member name="messageIDs">
+            <element>1186016</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_EQUIP_M_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20150102_3414_EQUIP_F_END</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_gender</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20150102_3414_IF</member>
+        <member name="messageIDs">
+            <element>1186017</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_BOOST1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2470</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186020</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_BOOST2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2471</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186021</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_BOOST3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2472</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1186022</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20150104</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_EQUIP_M_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23937</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>24343</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>26424</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">673</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20150102_3414_EQUIP_F_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23938</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>24344</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>26425</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">673</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

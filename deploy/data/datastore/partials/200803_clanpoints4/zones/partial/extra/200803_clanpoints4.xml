@@ -1,0 +1,50 @@
+<objects>
+    <!-- Time-limited event: 第4回クラン対抗イベント「思念～SHI-NEN～」-->
+    <object name="ServerZonePartial">
+        <member name="ID">20080301</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 集計係のイノセント -->
+                <object name="ServerNPC">
+                    <member name="ID">322</member>
+                    <member name="X">140</member>
+                    <member name="Y">-1359.07</member>
+                    <member name="Rotation">-1.58825</member>
+                    <!-- Spot removed after event -->
+                    <!--<member name="SpotID">60039</member>-->
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20080301_322</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Mode (0 = event active, 1 = post event, 2 = event over) -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080301</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

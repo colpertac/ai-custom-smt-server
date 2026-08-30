@@ -1,0 +1,3573 @@
+﻿<objects>
+    <object name="EventPrompt">
+        <member name="ID">D52X_LEAVE</member>
+        <member name="messageID">23</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D52X_TO_20102</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D52X_TO_20102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20102</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5201_BOSS_DOOR</member>
+        <member name="messageID">17</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5201_BOSS_MOV</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5201_BOSS_MOV</member>
+        <member name="next">D5201_BOSS_ENTER</member>
+        <member name="sceneID">2</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5201_BOSS_DA_MOV</member>
+                    <member name="queueNext">D5201_BOSS_ENTER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5201_BOSS_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="spotID">1</member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5201_BOSS_DA_MOV</member>
+        <member name="sceneID">4</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5201_S10000</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="messageID">162279</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5201_BOSS_DA</member>
+        <member name="next">D5201_BOSS_DA_MOV</member>
+        <member name="queueNext">D5201_Q302_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">520002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5201_Q302_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">302</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">50000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="value1">302</member>
+                    <member name="value2">3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5201_BOSS_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5201_BOSS_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000028</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000029</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000030</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000031</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000032</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5202_BOSS_DOOR</member>
+        <member name="messageID">17</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5202_BOSS_MOV</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5202_BOSS_MOV</member>
+        <member name="next">D5202_BOSS_ENTER</member>
+        <member name="sceneID">14</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5202_BOSS_DA_MOV</member>
+                    <member name="queueNext">D5202_BOSS_ENTER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5202_BOSS_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="spotID">1</member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5202_BOSS_DA_MOV</member>
+        <member name="sceneID">15</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5202_BOSS_DA</member>
+        <member name="next">D5202_BOSS_DA_MOV</member>
+        <member name="queueNext">D5202_BOSS_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">520002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5202_BOSS_DA_MOV</member>
+                    <member name="queueNext">D5202_Q306_P3_START</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">306</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5202_BOSS_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000028</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000029</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000030</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000031</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000032</element>
+                        <element>5200</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5202_Q306_P3_START</member>
+        <member name="next">D5202_BOSS_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">306</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">200000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_BOSS_DOOR</member>
+        <member name="messageID">17</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_BOSS_DOOR_PR</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D5203_BOSS_SPAWN_MOV</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>2</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_BOSS_DOOR_PR</member>
+        <member name="messageID">250734</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_RANK1_SET</member>
+                    <member name="messageID">250735</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_RANK2_SET</member>
+                    <member name="messageID">250736</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_RANK3_SET</member>
+                    <member name="messageID">250737</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_RANK4_SET</member>
+                    <member name="messageID">250738</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">250739</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS_SPAWN_MOV</member>
+        <member name="next">D5203_BOSS1_SPAWN_MOV</member>
+        <member name="sceneID">7001</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS_SPAWN_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS2_SPAWN_MOV</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS3_SPAWN_MOV</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS4_SPAWN_MOV</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_RANK1_SET</member>
+        <member name="next">D5203_BOSS_SPAWN_MOV</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_RANK2_SET</member>
+        <member name="next">D5203_BOSS_SPAWN_MOV</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_RANK3_SET</member>
+        <member name="next">D5203_BOSS_SPAWN_MOV</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_RANK4_SET</member>
+        <member name="next">D5203_BOSS_SPAWN_MOV</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS1_SPAWN_MOV</member>
+        <member name="next">D5203_BOSS_SPAWN_SPLIT</member>
+        <member name="sceneID">7011</member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_BOSS_SPAWN_SPLIT</member>
+        <member name="next">D5203_BOSS_ENTER</member>
+        <member name="queueNext">D5203_SPAWN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS_DA_MOV</member>
+                    <member name="queueNext">D5203_BOSS_ENTER</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS2_SPAWN_MOV</member>
+        <member name="next">D5203_BOSS_SPAWN_SPLIT</member>
+        <member name="sceneID">7021</member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS3_SPAWN_MOV</member>
+        <member name="next">D5203_BOSS_SPAWN_SPLIT</member>
+        <member name="sceneID">7031</member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS4_SPAWN_MOV</member>
+        <member name="next">D5203_BOSS_SPAWN_SPLIT</member>
+        <member name="sceneID">7041</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_SPAWN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS1_SPAWN_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS2_SPAWN_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS3_SPAWN_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS4_SPAWN_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS1_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS2_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS3_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_BOSS4_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5203_BOSS_DA_MOV</member>
+        <member name="sceneID">7002</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS1_SPAWN_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS2_SPAWN_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS3_SPAWN_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS4_SPAWN_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS1_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>11</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS2_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>21</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS3_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>31</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">300</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5203_BOSS3_SPAWN_ADDS</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS4_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>41</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325</member>
+        <member name="next">D5203_325_PR</member>
+        <member name="messageIDs">
+            <element>250740</element>
+            <element>250741</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_325_PR</member>
+        <member name="messageID">250741</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_TRADE_DESC</member>
+                    <member name="messageID">250750</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_TRADE</member>
+                    <member name="messageID">250751</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_LEAVE</member>
+                    <member name="messageID">250742</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_LEAVE_DETAILED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_notUsed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_END</member>
+                    <member name="messageID">250776</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_TRADE_DESC</member>
+        <member name="next">D5203_325_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>250752</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_TRADE</member>
+        <member name="next">D5203_325_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>250753</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_LEAVE</member>
+        <member name="next">D5203_325_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>250743</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_LEAVE_DETAILED</member>
+        <member name="next">D5203_325_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>250746</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_END</member>
+        <member name="messageIDs">
+            <element>750345</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20080801</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_325_TRADE_PR</member>
+        <member name="messageID">250753</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_ITEM</member>
+                    <member name="messageID">250754</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">STATUS_ACTIVE</member>
+                                            <member name="value1">1005</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_XP</member>
+                    <member name="messageID">250755</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="compareMode">EXISTS</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP</member>
+                    <member name="messageID">250800</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_STATUS1</member>
+                    <member name="messageID">250756</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_STATUS2</member>
+                    <member name="messageID">250757</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_ITEM_SET</member>
+                    <member name="messageID">250758</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">1500</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_END</member>
+                    <member name="messageID">250776</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_325_LEAVE_PR</member>
+        <member name="messageID">250747</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D52X_TO_20102</member>
+                    <member name="messageID">250742</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D5203_325_LEAVE_COMPLAIN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="compareMode">LT_OR_NAN</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080801</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_END</member>
+                    <member name="messageID">250739</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_ITEM</member>
+        <member name="next">D5203_325_ITEM_PR</member>
+        <member name="messageIDs">
+            <element>250773</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_CD</member>
+        <member name="messageIDs">
+            <element>250774</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_IF</member>
+        <member name="messageIDs">
+            <element>250705</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_XP</member>
+        <member name="next">D5203_325_XP_SPLIT</member>
+        <member name="messageIDs">
+            <element>250760</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_PD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_ALIVE</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP_SPLIT_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_MP</member>
+        <member name="messageIDs">
+            <element>250759</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_PD</member>
+        <member name="messageIDs">
+            <element>750337</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_WARP</member>
+        <member name="next">D5203_325_WARP_PR</member>
+        <member name="messageIDs">
+            <element>250801</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_STATUS1</member>
+        <member name="next">D5203_325_STATUS1_END</member>
+        <member name="messageIDs">
+            <element>250766</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_STATUS2</member>
+        <member name="next">D5203_325_STATUS2_END</member>
+        <member name="messageIDs">
+            <element>250768</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_ITEM_SET</member>
+        <member name="next">D5203_325_ITEM_SET_END</member>
+        <member name="messageIDs">
+            <element>250770</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_IF12</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">12</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_LEAVE_COMPLAIN</member>
+        <member name="next">D52X_TO_20102</member>
+        <member name="messageIDs">
+            <element>750301</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_LEAVE_VALUABLE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">233</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_325_ITEM_PR</member>
+        <member name="messageID">250799</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_ITEM_CONFIRM</member>
+                    <member name="messageID">250775</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_TRADE_PR</member>
+                    <member name="messageID">250776</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_325_XP_SPLIT</member>
+        <member name="next">D5203_325_XP1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_PD2</member>
+        <member name="messageIDs">
+            <element>750355</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_325_XP_SPLIT_FIRST</member>
+        <member name="next">D5203_325_XP1_FIRST</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP2_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP3_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_XP4_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_325_WARP_PR</member>
+        <member name="messageID">250801</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_30102</member>
+                    <member name="messageID">250802</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_90104</member>
+                    <member name="messageID">250803</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_80104</member>
+                    <member name="messageID">250804</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_70104</member>
+                    <member name="messageID">250805</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_80103</member>
+                    <member name="messageID">250806</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_70103</member>
+                    <member name="messageID">250807</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_50101</member>
+                    <member name="messageID">250808</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_100101</member>
+                    <member name="messageID">250809</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_WARP_CONFIRM</member>
+                    <member name="queueNext">D5203_325_WARP_130101</member>
+                    <member name="messageID">250810</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5351</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5203_325_TRADE_PR</member>
+                    <member name="messageID">250776</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_STATUS1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>1028</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250767</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_STATUS2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>1023</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250769</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_SET_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1500</value>
+                        </pair>
+                        <pair>
+                            <key>7809</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7801</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7802</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7803</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7804</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7805</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7806</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7807</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7808</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7810</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7811</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7812</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_IF12</member>
+        <member name="messageIDs">
+            <element>250771</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_LEAVE_VALUABLE1</member>
+        <member name="next">D5203_325_LEAVE_VALUABLE2</member>
+        <member name="messageIDs">
+            <element>750302</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_ITEM_CONFIRM</member>
+        <member name="next">D5203_325_ITEM_SPLIT</member>
+        <member name="messageIDs">
+            <element>250777</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_SPLIT_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">20000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">300000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">600000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">1000000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP1_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">40000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP2_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">50000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP3_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">80000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_XP4_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">PARTNER</member>
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250761</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>250811</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_30102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_90104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_80104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_70104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">55000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_80103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80103</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_70103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70103</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50013</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_100101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">100101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_WARP_130101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250813</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">130101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_LEAVE_VALUABLE2</member>
+        <member name="next">D5203_325_LEAVE_VALUABLE3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">233</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750303</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_325_ITEM_SPLIT</member>
+        <member name="next">D5203_325_ITEM_RANK1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_325_ITEM_SPLIT_FIRST</member>
+        <member name="next">D5203_325_ITEM_RANK1_FIRST</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK2_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK3_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_RANK4_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_LEAVE_VALUABLE3</member>
+        <member name="next">D52X_TO_20102</member>
+        <member name="messageIDs">
+            <element>750356</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK1</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>10227</element>
+                        <element>280</element>
+                        <element>1053</element>
+                        <element>12055</element>
+                        <element>5705</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>280</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK2</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>10563</element>
+                        <element>11028</element>
+                        <element>11027</element>
+                        <element>10227</element>
+                        <element>280</element>
+                        <element>1051</element>
+                        <element>1053</element>
+                        <element>12055</element>
+                        <element>5705</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X5</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>280</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK3</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>11027</element>
+                        <element>11028</element>
+                        <element>280</element>
+                        <element>1053</element>
+                        <element>42116</element>
+                        <element>5333</element>
+                        <element>12055</element>
+                        <element>5705</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X10</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>280</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X10</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>42116</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK4</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>200</element>
+                        <element>200</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>200</element>
+                        <element>200</element>
+                        <element>200</element>
+                        <element>10184</element>
+                        <element>10227</element>
+                        <element>10727</element>
+                        <element>11027</element>
+                        <element>11028</element>
+                        <element>280</element>
+                        <element>1051</element>
+                        <element>1053</element>
+                        <element>5333</element>
+                        <element>42116</element>
+                        <element>12224</element>
+                        <element>5705</element>
+                        <element>12055</element>
+                        <element>7835</element>
+                        <element>2225</element>
+                        <element>1711</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X10</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>280</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_325_ITEM_X20</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>42116</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK1_FIRST</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>1000</element>
+                        <element>1500</element>
+                        <element>1500</element>
+                        <element>5000</element>
+                        <element>1053</element>
+                        <element>274</element>
+                        <element>5258</element>
+                        <element>273</element>
+                        <element>1051</element>
+                        <element>280</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK2_FIRST</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>1000</element>
+                        <element>1500</element>
+                        <element>1500</element>
+                        <element>5000</element>
+                        <element>1053</element>
+                        <element>274</element>
+                        <element>7835</element>
+                        <element>273</element>
+                        <element>1051</element>
+                        <element>280</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK3_FIRST</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>1</element>
+                        <element>500</element>
+                        <element>500</element>
+                        <element>1000</element>
+                        <element>1500</element>
+                        <element>1500</element>
+                        <element>4999</element>
+                        <element>7813</element>
+                        <element>1053</element>
+                        <element>5333</element>
+                        <element>7835</element>
+                        <element>273</element>
+                        <element>1051</element>
+                        <element>280</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_RANK4_FIRST</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandomWeighted</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>CHARACTER</element>
+                        <element>10</element>
+                        <element>1000</element>
+                        <element>1000</element>
+                        <element>1000</element>
+                        <element>1000</element>
+                        <element>1000</element>
+                        <element>4990</element>
+                        <element>7813</element>
+                        <element>1053</element>
+                        <element>5333</element>
+                        <element>7835</element>
+                        <element>273</element>
+                        <element>1051</element>
+                        <element>280</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5351</key>
+                            <value>-3</value>
+                        </pair>
+                        <pair>
+                            <key>273</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>274</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>280</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>1051</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>1053</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>1711</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>2225</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5258</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5333</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>5705</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>7813</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>7835</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>10184</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>10227</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>10563</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>10727</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>11027</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>11028</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>12055</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>12224</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>42116</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>100</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>1005</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_X3</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_X5</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_X10</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_325_ITEM_X20</member>
+        <member name="next">D5203_325_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_S40015</member>
+        <member name="next">D5203_INTRO</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_INTRO_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D5203_INTRO_MID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080801</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_INTRO</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750296</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_INTRO_FIRST</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250720</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_INTRO_MID</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">250722</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D5203_325_UNUSED</member>
+        <member name="messageIDs">
+            <element>250812</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS3_SPAWN_ADDS</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_enableSpawnGroup</member>
+                    <member name="params">
+                        <element>32</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750342</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">10</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStageEffect">
+                                <member name="messageID">750343</member>
+                                <member name="effectType">3</member>
+                                <member name="sourceContext">ALL</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">520103</member>
+                    <member name="value2">31</member>
+                    <member name="scriptID">bool_groupSpawned</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_BOSS_DA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">325</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>40000137</element>
+                        <element>5200</element>
+                        <element>5203</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">3</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">4</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">6</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D5203_BOSS_DA_MOV</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D5203_S40031</member>
+        <member name="next">D5203_GIVE_UP</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20080801</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D5203_WRONG_EXIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5203_GIVE_UP</member>
+        <member name="messageID">750344</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D52X_TO_20102</member>
+                    <member name="messageID">750346</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">750294</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5203_WRONG_EXIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750347</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

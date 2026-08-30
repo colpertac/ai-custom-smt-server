@@ -1,0 +1,646 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX20100601_492</member>
+        <member name="next">EX20100601_492_START</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100601_492_MAIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">714</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100601_492_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">714</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START</member>
+        <member name="next">EX20100601_492_START_PR</member>
+        <member name="messageIDs">
+            <element>650781</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MAIN</member>
+        <member name="next">EX20100601_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>650798</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX</member>
+        <member name="next">EX20100601_492_EX_PR</member>
+        <member name="messageIDs">
+            <element>650813</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100601_492_START_PR</member>
+        <member name="messageID">650782</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_START_Q1</member>
+                    <member name="messageID">650783</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_START_Q2</member>
+                    <member name="messageID">650784</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_START_Q3</member>
+                    <member name="messageID">650785</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_START_TY</member>
+                    <member name="messageID">650786</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_REFUSE</member>
+                    <member name="messageID">650787</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100601_492_MAIN_PR</member>
+        <member name="messageID">650799</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_MAIN_Q1</member>
+                    <member name="messageID">650800</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_MAIN_Q2</member>
+                    <member name="messageID">650801</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_MAIN_Q714_FIN1</member>
+                    <member name="messageID">650802</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="compareMode">EQUAL</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_IF1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_MAIN_END</member>
+                    <member name="messageID">650803</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100601_492_EX_PR</member>
+        <member name="messageID">650814</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_GIVE</member>
+                    <member name="messageID">650802</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="compareMode">EQUAL</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_END</member>
+                    <member name="messageID">650803</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START_Q1</member>
+        <member name="next">EX20100601_492_START_PR</member>
+        <member name="messageIDs">
+            <element>650788</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START_Q2</member>
+        <member name="next">EX20100601_492_START_PR</member>
+        <member name="messageIDs">
+            <element>650789</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START_Q3</member>
+        <member name="next">EX20100601_492_START_PR</member>
+        <member name="messageIDs">
+            <element>650790</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START_TY</member>
+        <member name="next">EX20100601_492_START_CONFIRM</member>
+        <member name="messageIDs">
+            <element>650791</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_REFUSE</member>
+        <member name="messageIDs">
+            <element>650797</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MAIN_Q1</member>
+        <member name="next">EX20100601_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>650804</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MAIN_Q2</member>
+        <member name="next">EX20100601_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>650805</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MAIN_Q714_FIN1</member>
+        <member name="next">EX20100601_492_MAIN_Q714_FIN2</member>
+        <member name="messageIDs">
+            <element>650808</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MI1</member>
+        <member name="messageIDs">
+            <element>650806</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MI2</member>
+        <member name="messageIDs">
+            <element>650807</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_IF1</member>
+        <member name="messageIDs">
+            <element>650841</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MAIN_END</member>
+        <member name="messageIDs">
+            <element>650812</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_GIVE</member>
+        <member name="next">EX20100601_492_EX_GIVE_PR</member>
+        <member name="messageIDs">
+            <element>650831</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_END</member>
+        <member name="messageIDs">
+            <element>650819</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100601_492_START_CONFIRM</member>
+        <member name="messageID">650792</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_Q714_START</member>
+                    <member name="messageID">650793</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_START_WAIT</member>
+                    <member name="messageID">650794</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100601_492_MAIN_Q714_FIN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1834</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12160</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">714</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650809</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650810</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100601_492_EX_GIVE_PR</member>
+        <member name="messageID">650832</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_GIVE1</member>
+                    <member name="messageID">650833</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="value2">100</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_GIVE2</member>
+                    <member name="messageID">650834</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_GIVE3</member>
+                    <member name="messageID">650835</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_MI2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12160</member>
+                                            <member name="value2">10000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100601_492_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100601_492_EX_GIVE_END</member>
+                    <member name="messageID">650836</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100601_492_Q714_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">714</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650795</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650796</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_MQ</member>
+        <member name="messageIDs">
+            <element>650830</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_START_WAIT</member>
+        <member name="next">EX20100601_492_START_PR</member>
+        <member name="messageIDs">
+            <element>650780</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_GIVE1</member>
+        <member name="next">EX20100601_492_EX_GIVE1_END</member>
+        <member name="messageIDs">
+            <element>650815</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_IF2</member>
+        <member name="messageIDs">
+            <element>650842</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_GIVE2</member>
+        <member name="next">EX20100601_492_EX_GIVE2_END</member>
+        <member name="messageIDs">
+            <element>650846</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_GIVE3</member>
+        <member name="next">EX20100601_492_EX_GIVE3_END</member>
+        <member name="messageIDs">
+            <element>650847</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_492_EX_GIVE_END</member>
+        <member name="messageIDs">
+            <element>650837</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100601_492_EX_GIVE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12160</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>4895</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650838</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100601_492_EX_GIVE2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4896</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12160</key>
+                            <value>-4000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650839</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100601_492_EX_GIVE3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4897</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12160</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">650840</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_DEFEAT1</member>
+        <member name="messageIDs">
+            <element>650843</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_DEFEAT2</member>
+        <member name="messageIDs">
+            <element>650844</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100601_DEFEAT3</member>
+        <member name="messageIDs">
+            <element>650845</element>
+        </member>
+    </object>
+</objects>

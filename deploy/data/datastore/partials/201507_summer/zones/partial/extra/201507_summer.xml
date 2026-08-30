@@ -1,0 +1,74 @@
+﻿<objects>
+    <!-- Time-limited event: 将門顕現 -->
+    <object name="ServerZonePartial">
+        <member name="ID">20150701</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- Ｙキキビーチ管理人　ナガシマ -->
+                <object name="ServerNPC">
+                    <member name="ID">587</member>
+                    <member name="SpotID">68055</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">N587</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <!-- Moved to Ueno after event
+            <element>
+                <object name="ServerNPC">
+                    <member name="ID">656</member>
+                    <member name="SpotID">68056</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201507_656</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>-->
+            <element>
+                <!-- ヤクシャ -->
+                <object name="ServerNPC">
+                    <member name="ID">3419</member>
+                    <member name="SpotID">68074</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201507_3419</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201507</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

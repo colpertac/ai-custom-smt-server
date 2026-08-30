@@ -1,0 +1,541 @@
+<objects>
+    <object name="Event">
+        <member name="ID">Z150201_3365</member>
+        <member name="next">Z150201_3365_GREETING</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z150201_3365_ENEMY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">1202</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_ENEMY</member>
+        <member name="next">Z15020X_EXIT_01</member>
+        <member name="messageIDs">
+            <element>1206555</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_EXIT_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">150101</member>
+                    <member name="spotID">50201</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_GREETING</member>
+        <member name="next">Z150201_3365_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1206550</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150201_3365_MAIN_PROMPT</member>
+        <member name="messageID">1206560</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_TALK</member>
+                    <member name="messageID">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_EXCHANGE</member>
+                    <member name="messageID">1206501</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4244</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_TALK</member>
+        <member name="next">Z150201_3365_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1206595</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150201_3365_EXCHANGE</member>
+        <member name="messageID">1206565</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_PLUGIN_MI</member>
+                    <member name="messageID">1206511</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z150201_3365_PLUGIN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">BETHEL</member>
+                                            <member name="value1">0</member>
+                                            <member name="value2">150000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PLUGIN</member>
+                                <member name="value1">77</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_BARTER_3</member>
+                    <member name="messageID">1206506</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_MAIN_PROMPT</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_PLUGIN_MI</member>
+        <member name="next">Z150201_3365_EXCHANGE</member>
+        <member name="messageIDs">
+            <element>1206590</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z150201_BARTER_3</member>
+		<member name="useNext">Z150201_3365_EXCHANGE</member>
+        <member name="menuType">808</member>
+        <member name="shopID">3</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_PLUGIN</member>
+        <member name="next">Z150201_3365_PLUGIN_01</member>
+        <member name="messageIDs">
+            <element>1206575</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150201_3365_PLUGIN_01</member>
+        <member name="messageID">1206570</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_PLUGIN_03</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150201_3365_PLUGIN_02</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_PLUGIN_02</member>
+        <member name="next">Z150201_3365_EXCHANGE</member>
+        <member name="messageIDs">
+            <element>1206585</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150201_3365_PLUGIN_03</member>
+        <member name="next">Z150201_3365_PLUGIN_END</member>
+        <member name="messageIDs">
+            <element>1206610</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z150201_3365_PLUGIN_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">BETHEL</member>
+                    <member name="value">-150000</member>
+                    <member name="isSet">true</member>
+                    <member name="modifier">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">PLUGIN</member>
+                    <member name="ID">77</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1206532</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1206537</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_EXIT</member>
+        <member name="messageID">1206656</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_EXIT_01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_1070001</member>
+        <member name="messageID">1206650</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_I10701</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">event_instanceJoin</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">10701</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z15020X_EXIT_01</member>
+                                <member name="conditions">
+									<element>
+										<object name="EventCondition">
+											<member name="type">TIMESPAN_WEEK</member>
+											<member name="value1">11136</member>
+											<member name="value2">11200</member>
+										</object>
+									</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_I10701</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">10701</member>
+                    <member name="variantID">50000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_1070002</member>
+        <member name="messageID">1206651</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_I10702</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">event_instanceJoin</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">10702</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z15020X_EXIT_01</member>
+                                <member name="conditions">
+									<element>
+										<object name="EventCondition">
+											<member name="type">TIMESPAN_WEEK</member>
+											<member name="value1">11136</member>
+											<member name="value2">11200</member>
+										</object>
+									</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_I10702</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">10702</member>
+                    <member name="variantID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_1070003</member>
+        <member name="messageID">1206652</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_I10703</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">event_instanceJoin</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">10703</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z15020X_EXIT_01</member>
+                                <member name="conditions">
+									<element>
+										<object name="EventCondition">
+											<member name="type">TIMESPAN_WEEK</member>
+											<member name="value1">11136</member>
+											<member name="value2">11200</member>
+										</object>
+									</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_I10703</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">10703</member>
+                    <member name="variantID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_1070004</member>
+        <member name="messageID">1206653</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_I10704</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">event_instanceJoin</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">10704</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z15020X_EXIT_01</member>
+                                <member name="conditions">
+									<element>
+										<object name="EventCondition">
+											<member name="type">TIMESPAN_WEEK</member>
+											<member name="value1">11136</member>
+											<member name="value2">11200</member>
+										</object>
+									</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_I10704</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">10704</member>
+                    <member name="variantID">50003</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z15020X_1070005</member>
+        <member name="messageID">1206654</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z15020X_I10705</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">event_instanceJoin</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">10705</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z15020X_EXIT_01</member>
+                                <member name="conditions">
+									<element>
+										<object name="EventCondition">
+											<member name="type">TIMESPAN_WEEK</member>
+											<member name="value1">11136</member>
+											<member name="value2">11200</member>
+										</object>
+									</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z15020X_I10705</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">10705</member>
+                    <member name="variantID">50004</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

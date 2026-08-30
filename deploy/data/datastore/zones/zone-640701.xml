@@ -1,0 +1,250 @@
+<objects>
+    <!-- 冥地神宮 -->
+    <object name="ServerZone">
+        <member name="ID">640701</member>
+        <member name="DynamicMapID">6407001</member>
+        <member name="Global">false</member>
+        <member name="GroupID">70101</member>
+        <member name="StartingX">54.94</member>
+        <member name="StartingY">2166.90</member>
+        <member name="StartingRotation">1.58</member>
+        <member name="NPCs">
+            <element>
+                <!-- お針子リリィ -->
+                <object name="ServerNPC">
+                    <member name="ID">560</member>
+                    <member name="ActorID">560</member>
+                    <member name="SpotID">60003</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6407_560</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 愚かな男 -->
+                <object name="ServerNPC">
+                    <member name="ID">561</member>
+                    <member name="ActorID">561</member>
+                    <member name="SpotID">60002</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6407_561</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">0</member>
+                </object>
+            </element>
+        </member>
+        <member name="Objects">
+            <element>
+                <!-- 帰還装置 -->
+                <object name="ServerObject">
+                    <member name="ID">640301</member>
+                    <member name="ActorID">640301</member>
+                    <member name="SpotID">69001</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6407_EXIT</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">0</member>
+                </object>
+            </element>
+        </member>
+        <member name="Spawns">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">1</member>
+                        <member name="EnemyType">3311</member>
+                        <member name="Category">BOSS</member>
+                        <member name="Level">20</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">50000</member>
+                        <member name="DropSetIDs">
+                            <element>4</element>
+                            <element>73</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>2</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">2</member>
+                        <member name="EnemyType">3312</member>
+                        <member name="Category">BOSS</member>
+                        <member name="Level">50</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">200000</member>
+                        <member name="DropSetIDs">
+                            <element>4</element>
+                            <element>73</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">3</member>
+                        <member name="EnemyType">3313</member>
+                        <member name="Category">BOSS</member>
+                        <member name="Level">80</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">800000</member>
+                        <member name="DropSetIDs">
+                            <element>4</element>
+                            <element>73</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">1</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>3</value>
+                            </pair>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA</member>
+                                    <member name="sourceContext">NONE</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA_EACH</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>2</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">2</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>2</key>
+                                <value>3</value>
+                            </pair>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA</member>
+                                    <member name="sourceContext">NONE</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA_EACH</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">3</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>3</key>
+                                <value>3</value>
+                            </pair>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA</member>
+                                    <member name="sourceContext">NONE</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_DA_EACH</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots">
+            <pair>
+                <key>10001</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10001</member>
+                        <member name="LeaveActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_WARN</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10002</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10002</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_BOSS_ROOM</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10003</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10003</member>
+                        <member name="LeaveActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D6407_SPAWN</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+    </object>
+</objects>

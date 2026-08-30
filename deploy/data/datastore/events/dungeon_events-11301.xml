@@ -1,0 +1,2881 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D11301_113010X</member>
+        <member name="next">D11301_113010X_PR</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_113010X_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">1</member>
+                                <member name="value2">1</member>
+                                <member name="scriptID">bool_flagCompare</member>
+                                <member name="params">
+                                    <element>CHARACTER</element>
+                                    <element>ZONE</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_113010X_PR</member>
+        <member name="messageID">1160232</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_ROOM_START</member>
+                    <member name="messageID">1160202</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D11301_113010X_DONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">1</member>
+                                            <member name="scriptID">bool_flagCompare</member>
+                                            <member name="params">
+                                                <element>CHARACTER</element>
+                                                <element>ZONE</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1160204</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_113010X_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160251</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="transformScriptID">transforma_flagDynamic</member>
+                    <member name="transformScriptParams">
+                        <element>CHARACTER</element>
+                        <element>1</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>CHARACTER</element>
+                        <element>1</element>
+                        <element>1</element>
+                        <element>ADD</element>
+                        <element>60999</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="transformScriptID">transforma_flag</member>
+                    <member name="transformScriptParams">
+                        <element>1</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130110</member>
+        <member name="messageID">1160232</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130110_NEXT</member>
+                    <member name="messageID">1160217</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>1130105</element>
+                                    <element>1130232</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_LEAVE</member>
+                    <member name="messageID">1160216</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1160204</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130110_NEXT</member>
+        <member name="messageID">1160233</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130110_NEXT_END</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130110</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_LEAVE</member>
+        <member name="messageID">1160249</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_TO_50101</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D11301_TO_20101</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_INSTANCE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>1</key>
+                                                    <value>20101</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130110_NEXT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                    <member name="transformScriptID">transforma_zoneChangeDynamic</member>
+                    <member name="transformScriptParams">
+                        <element>CHARACTER</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_TO_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50076</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_TO_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20101</member>
+                    <member name="spotID">51008</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111</member>
+        <member name="next">D11301_1130111_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1130111</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_1130111_WARP_OK</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23760</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>1130201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_1130111_WARP_OK</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23759</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>1130201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_PR</member>
+        <member name="messageID">1160232</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_ROOM1_START</member>
+                    <member name="messageID">1160202</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D11301_1130111_DONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>1</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160203</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1130111</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">4</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_LEAVE</member>
+                    <member name="messageID">1160216</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1160204</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP_OK</member>
+        <member name="next">D11301_1130111_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1130111</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_DONE</member>
+        <member name="messageID">1160250</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_PR</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP</member>
+        <member name="messageID">1160218</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP04</member>
+                    <member name="messageID">1160219</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">4</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP11</member>
+                    <member name="messageID">1160220</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">11</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP18</member>
+                    <member name="messageID">1160221</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">18</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP25</member>
+                    <member name="messageID">1160222</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">25</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP32</member>
+                    <member name="messageID">1160223</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11301</member>
+                                <member name="value2">32</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_PR</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP04</member>
+        <member name="messageID">1160224</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP04_END</member>
+                    <member name="messageID">1160203</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP11</member>
+        <member name="messageID">1160225</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP11_END</member>
+                    <member name="messageID">1160203</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP18</member>
+        <member name="messageID">1160226</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP18_END</member>
+                    <member name="messageID">1160203</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP25</member>
+        <member name="messageID">1160227</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP25_END</member>
+                    <member name="messageID">1160203</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11301_1130111_WARP32</member>
+        <member name="messageID">1160228</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP32_END</member>
+                    <member name="messageID">1160203</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11301_1130111_WARP</member>
+                    <member name="messageID">1160215</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP04_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160244</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130204</member>
+                    <member name="spotID">50001</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP11_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160245</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130211</member>
+                    <member name="spotID">50001</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP18_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160246</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130218</member>
+                    <member name="spotID">50001</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP25_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160247</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130225</member>
+                    <member name="spotID">50001</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1130111_WARP32_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160248</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130232</member>
+                    <member name="spotID">50001</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM01_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1011</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1012</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1013</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1014</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1015</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM02_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1021</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1022</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1023</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1024</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1025</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM03_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1031</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1032</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1033</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1034</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1035</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM04_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1041</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1042</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1043</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1044</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1045</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62004</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM05_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1052</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1053</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1054</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1055</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM06_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1061</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1062</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1063</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1064</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1065</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM07_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1071</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1072</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1073</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1074</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1075</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM08_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1081</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1082</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1083</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1084</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1085</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62008</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM09_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1091</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1092</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1093</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1094</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1095</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62009</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_ROOM10_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1101</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1102</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1103</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1104</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">1105</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">3</member>
+                    <member name="actorID">62010</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>1130105</element>
+                                    <element>1130232</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11301_BOX</member>
+        <member name="next">D11301_BOX_TREASURE_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_1BOX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">100</member>
+                                <member name="value2">1</member>
+                                <member name="scriptID">bool_flagCompare</member>
+                                <member name="params">
+                                    <element>CHARACTER</element>
+                                    <element>CHARACTER</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_IF2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>2010</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">2</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11301_BOX_TREASURE_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE01</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE02</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE03</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE04</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE05</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE06</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE07</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE08</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE09</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11301_BOX_TREASURE10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_flag</member>
+        <member name="branchScriptParams">
+            <element>100</element>
+            <element>CHARACTER</element>
+            <element>2001</element>
+            <element>2002</element>
+            <element>2003</element>
+            <element>2004</element>
+            <element>2005</element>
+            <element>2006</element>
+            <element>2007</element>
+            <element>2008</element>
+            <element>2009</element>
+            <element>2010</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_1BOX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160229</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_IF2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160231</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_IF</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160230</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>101</element>
+                        <element>101</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>102</element>
+                        <element>102</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>101</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2001</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>201</element>
+                        <element>201</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>202</element>
+                        <element>202</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>201</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2002</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>301</element>
+                        <element>301</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>302</element>
+                        <element>302</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>301</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2003</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>401</element>
+                        <element>401</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>402</element>
+                        <element>402</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>401</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2004</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE05</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>501</element>
+                        <element>501</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>502</element>
+                        <element>502</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>501</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2005</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>601</element>
+                        <element>601</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>602</element>
+                        <element>602</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>601</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2006</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE07</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>701</element>
+                        <element>701</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>702</element>
+                        <element>702</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>701</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2007</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE08</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>801</element>
+                        <element>801</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>802</element>
+                        <element>802</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>801</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2008</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE09</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>901</element>
+                        <element>901</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>902</element>
+                        <element>902</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>901</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2009</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_BOX_TREASURE10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1001</element>
+                        <element>1001</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1002</element>
+                        <element>1002</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1003</element>
+                        <element>1003</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1004</element>
+                        <element>1004</element>
+                        <element>ZONE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21569</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21570</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21571</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21572</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21573</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21574</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21575</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21576</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21577</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21578</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21579</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21580</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21581</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21582</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21583</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21584</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21585</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>21586</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>40132</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_addItemFlagRange</member>
+                    <member name="transformScriptParams">
+                        <element>1001</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2010</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">255</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11302_CONTINUE</member>
+        <member name="next">D11302_CONTINUE_INVALID</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="negate">true</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11302_CONTINUE_SET</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>1130202</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11302</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">11302</member>
+                                <member name="value2">33</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11302_CONTINUE_INVALID</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11302_CONTINUE_SET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>11302</element>
+                        <element>1</element>
+                        <element>EVENT_COUNTER</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11302_CONTINUE_WARP1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11302_CONTINUE_WARP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11302_CONTINUE_WARP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">1130200</member>
+                    <member name="spotID">50001</member>
+                    <member name="transformScriptID">transforma_zoneChangeDynamic</member>
+                    <member name="transformScriptParams">
+                        <element>INSTANCE</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11302_CONTINUE_WARP2</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11302_CONTINUE_WARP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11302_PROGRESS_CHECK</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11302_PROGRESS_RESET</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">1</member>
+                                <member name="value2">11302</member>
+                                <member name="scriptID">bool_flagCompare</member>
+                                <member name="params">
+                                    <element>INSTANCE</element>
+                                    <element>EVENT_COUNTER</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11302_PROGRESS_RESET</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>11302</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_SET_EXIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>50101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11301_SET_EXIT_20101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_previousZone</member>
+                                <member name="params">
+                                    <element>20101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11301_SET_EXIT_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>20101</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

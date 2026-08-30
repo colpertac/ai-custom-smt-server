@@ -1,0 +1,50 @@
+<objects>
+    <!-- Time-limited event: 1周年前夜祭イベント「日本分断東西対決!!　勝つのはどっち!?」 -->
+    <object name="ServerZonePartial">
+        <member name="ID">20080302</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- ＮＰＣサイエン -->
+                <object name="ServerNPC">
+                    <member name="ID">324</member>
+                    <member name="X">0</member>
+                    <member name="Y">-3900</member>
+                    <member name="Rotation">1.5</member>
+                    <!-- Spot removed after event -->
+                    <!--<member name="SpotID">60040</member>-->
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20080302_324</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Mode (0 = event active, 1 = post event) -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080302</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

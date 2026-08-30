@@ -1,0 +1,359 @@
+﻿<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">D10507_619</member>
+        <member name="next">D10507_619_PR</member>
+        <member name="messageIDs">
+            <element>1158630</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10507_619_PR</member>
+        <member name="messageID">1158631</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_BUY_628</member>
+                    <member name="messageID">1158632</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_SELL_628</member>
+                    <member name="messageID">1158633</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_619_TALK</member>
+                    <member name="messageID">1158634</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1158635</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D10507_619_TALK</member>
+        <member name="next">D10507_619_PR</member>
+        <member name="messageIDs">
+            <element>1158636</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D10507_DA_ALL</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10507_BUFF</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_SP1_SPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object/>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>20</element>
+            <element>5</element>
+            <element>75</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D10507_BUFF</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10507_BUFF1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_BUFF2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_BUFF3</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_BUFF4</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>4</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_SP1_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1158678</element>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D10507_SP1_SPAWN1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_SP1_SPAWN2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D10507_SP1_SPAWN3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_BUFF1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158660</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_BUFF2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>102</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158661</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_BUFF3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>413</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158662</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_BUFF4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>622</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158663</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_SP1_SPAWN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158675</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_SP1_SPAWN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158676</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_SP1_SPAWN3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1158677</member>
+                    <member name="effectType">3</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10507_DOOR_IN</member>
+        <member name="messageID">1158655</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_ROOM_ENTER</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_ROOM_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10507_DOOR_OUT</member>
+        <member name="messageID">1158656</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_ROOM_LEAVE</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_ROOM_LEAVE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D10507_EXIT</member>
+        <member name="messageID">1158657</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D10507_TO_70101</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D10507_TO_70101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70101</member>
+                    <member name="spotID">59002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">D10507_BUY_628</member>
+        <member name="menuType">175</member>
+        <member name="shopID">628</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">D10507_SELL_628</member>
+        <member name="menuType">176</member>
+        <member name="shopID">628</member>
+    </object>
+</objects>

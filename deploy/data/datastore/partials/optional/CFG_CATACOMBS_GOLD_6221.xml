@@ -1,0 +1,72 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">6221</member>
+        <member name="DynamicMapIDs">
+            <element>6221007</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to increase apples
+            when 解戒の実 is not used in 魔階シナガワ神殿騎士廟(金)
+            Change key values to increase/decrease multiplier.
+            Key 20 is the multiplier for normal Bai Hu.
+            Key 21 is the multiplier for true Bai Hu.
+            Key 22 is the multiplier for Samael.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>21</key>
+                                        <value>25</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>22</key>
+                                        <value>60</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,2009 @@
+﻿<objects>
+    <!-- 01, 02, 07, 08 -->
+    <object name="Event">
+        <member name="ID">D1000X_01_LAZY</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D1000X_01_NPC</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D1000X_01_NPC</member>
+        <member name="next">D1000X_01_NPC_0</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D1000X_01_NPC_1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">835</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_NPC_0</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">482</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_NPC_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">483</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D1000X_3345</member>
+        <member name="next">D1000X_3345_01</member>
+        <member name="messageIDs">
+            <element>181306</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_3345_01</member>
+        <member name="messageID">181307</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_3345_03</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_3345_02</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D1000X_3345_02</member>
+        <member name="messageIDs">
+            <element>181309</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D1000X_3345_03</member>
+        <member name="next">D1000X_3345_04</member>
+        <member name="messageIDs">
+            <element>181308</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_3345_04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181311</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40104</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D1000X_EV01</member>
+        <member name="next">D1000X_SP04</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_SP01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">833</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_EV01a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">833</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="value1">833</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">833</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_SP02</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_SP03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D1000X_01_NPC</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>100010000</element>
+                        <element>100010001</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_07_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D1000X_01_NPC</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>100010000</element>
+                        <element>100010002</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_08_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D1000X_01_NPC</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>100010000</element>
+                        <element>100010003</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_ML001</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML001</member>
+        <member name="next">D1000X_01_PR001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400110</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_01_PR001</member>
+        <member name="messageID">181002</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML002</member>
+                    <member name="messageID">181003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML002a</member>
+                    <member name="messageID">181004</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML002</member>
+        <member name="next">D1000X_01_PR002</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400111</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_01_PR002</member>
+        <member name="messageID">181005</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML003</member>
+                    <member name="messageID">181006</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML003a</member>
+                    <member name="messageID">181007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML003</member>
+        <member name="next">D1000X_01_PA001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400113</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML003a</member>
+        <member name="next">D1000X_01_PA001a</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400109</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_PA001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181017</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>333</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_PA001a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181017</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML002a</member>
+        <member name="next">D1000X_01_PA002</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400112</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_PA002</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181017</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40104</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D1000X_EV01a</member>
+        <member name="next">D1000X_SP04a</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D1000X_SP02a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_SP03a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>333</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_Q833_UPDATE</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="compareMode">GTE</member>
+                    <member name="value1">833</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="compareMode">LT</member>
+                    <member name="value1">833</member>
+                    <member name="value2">3</member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181018</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP02a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_NPC</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_Q833_UPDATE</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionCreateLoot">
+                                <member name="isBossBox">true</member>
+                                <member name="dropSetIDs">
+                                    <element>100010000</element>
+                                    <element>100010001</element>
+                                </member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                                <member name="locations">
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">101</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">102</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">103</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">104</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">105</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP03a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_NPC</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_Q833_UPDATE</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionCreateLoot">
+                                <member name="isBossBox">true</member>
+                                <member name="dropSetIDs">
+                                    <element>100010000</element>
+                                    <element>100010001</element>
+                                </member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                                <member name="locations">
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">101</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">102</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">103</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">104</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">105</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_SP04a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181024</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181028</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">833</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_NPC</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_01_Q833_UPDATE</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionCreateLoot">
+                                <member name="isBossBox">true</member>
+                                <member name="dropSetIDs">
+                                    <element>100010000</element>
+                                    <element>100010001</element>
+                                </member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                                <member name="locations">
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">101</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">102</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">103</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">104</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object>
+                                            <member name="SpotID">105</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D1000X_3332</member>
+        <member name="next">D1000X_01_ML004a</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D1000X_01_ML004</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">833</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML004</member>
+        <member name="next">D1000X_01_PR003</member>
+        <member name="messageID">400117</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML004a</member>
+        <member name="next">D1000X_01_PR003</member>
+        <member name="messageID">400118</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_01_PR003</member>
+        <member name="messageID">181055</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML005</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_01_ML005a</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML005</member>
+        <member name="next">D1000X_01_PA003</member>
+        <member name="messageID">400219</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_01_ML005a</member>
+        <member name="messageID">400220</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_01_PA003</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181017</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40104</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 03 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_03_ML001</member>
+        <member name="next">D1000X_03_PR001</member>
+        <member name="messageID">5700160</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_03_PR001</member>
+        <member name="messageID">181121</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_03_ML002a</member>
+                    <member name="messageID">181122</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_03_ML002b</member>
+                    <member name="messageID">181123</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_03_ML002a</member>
+        <member name="next">D1000X_03_PA01</member>
+        <member name="messageID">5700161</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_03_ML002b</member>
+        <member name="next">D1000X_03_PA01</member>
+        <member name="messageID">5700162</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_03_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">834</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">467</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181331</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 04 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_04_ML001</member>
+        <member name="next">D1000X_04_PR001</member>
+        <member name="messageID">1500010</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_04_PR001</member>
+        <member name="messageID">181121</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_04_ML002a</member>
+                    <member name="messageID">181122</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_04_ML002b</member>
+                    <member name="messageID">181123</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_04_ML002a</member>
+        <member name="next">D1000X_04_PA01</member>
+        <member name="messageID">1500011</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_04_ML002b</member>
+        <member name="next">D1000X_04_PA01</member>
+        <member name="messageID">1500012</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_04_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">834</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">468</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181130</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">150101</member>
+                    <member name="spotID">50011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 05 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_05_ML001</member>
+        <member name="next">D1000X_05_PR001</member>
+        <member name="messageID">6300020</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_05_PR001</member>
+        <member name="messageID">181121</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_05_ML002a</member>
+                    <member name="messageID">181122</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_05_ML002b</member>
+                    <member name="messageID">181123</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_05_ML002a</member>
+        <member name="next">D1000X_05_PA01</member>
+        <member name="messageID">6300021</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_05_ML002b</member>
+        <member name="next">D1000X_05_PA01</member>
+        <member name="messageID">6300022</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_05_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">834</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">469</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181130</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 06 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_06_ML001</member>
+        <member name="next">D1000X_06_PR001</member>
+        <member name="messageID">8100200</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D1000X_06_PR001</member>
+        <member name="messageID">181127</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_06_ML002a</member>
+                    <member name="messageID">181128</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D1000X_06_ML002b</member>
+                    <member name="messageID">181129</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_06_ML002a</member>
+        <member name="next">D1000X_06_SP01</member>
+        <member name="messageID">8100201</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_06_ML002b</member>
+        <member name="next">D1000X_06_SP01</member>
+        <member name="messageID">8100202</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_06_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">480</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_06_ML003</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_06_ML003</member>
+        <member name="next">D1000X_06_DF01</member>
+        <member name="messageID">8100203</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_06_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">834</member>
+                    <member name="phase">6</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181130</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">230101</member>
+                    <member name="spotID">50505</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 09 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_09_ML001</member>
+        <member name="next">D1000X_09_PA01</member>
+        <member name="messageID">5700170</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_09_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181331</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 10 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_10_ML001</member>
+        <member name="next">D1000X_10_PA01</member>
+        <member name="messageID">1500020</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_10_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181331</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">150101</member>
+                    <member name="spotID">50011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 11 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_11_ML001</member>
+        <member name="next">D1000X_11_PA01</member>
+        <member name="messageID">6300030</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_11_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181331</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 12 -->
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_12_MS001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181332</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">6</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">250101</member>
+                    <member name="spotID">52001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D1000X_12_Q835</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_12_ML001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">467</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_12_ML002</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">468</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_12_ML003</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">469</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_12_ML001</member>
+        <member name="next">D1000X_12_SP001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">2500010</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_12_ML002</member>
+        <member name="next">D1000X_12_SP002</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">2500011</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_12_ML003</member>
+        <member name="next">D1000X_12_SP003</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">2500011</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_12_SP001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_12_MS001</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_12_SP002</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_12_MS001</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_12_SP003</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_12_MS001</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 13 -->
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_13_ML001</member>
+        <member name="next">D1000X_13_ML002</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400310</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_13_ML002</member>
+        <member name="next">D1000X_13_MS001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">400351</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_13_MS001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">300000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181224</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181333</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">7</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">835</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40104</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 14 -->
+    <object name="Event">
+        <member name="ID">D1000X_14_SP00</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D1000X_14_ML01_M</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">GENDER</member>
+                                <member name="value1">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D1000X_14_ML01_F</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_14_ML01_M</member>
+        <member name="next">D1000X_14_SP01</member>
+        <member name="messageID">400411</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_14_ML01_F</member>
+        <member name="next">D1000X_14_SP01</member>
+        <member name="messageID">400412</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_14_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D1000X_14_ZF01</member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_14_ZF01</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_14_DF01</member>
+        <member name="next">D1000X_14_ML02</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1800</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_disableSpawnGroup</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1800</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D1000X_14_ML02</member>
+        <member name="next">D1000X_14_PA01</member>
+        <member name="messageID">400413</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D1000X_14_PA01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">300000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181212</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">181213</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">473</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">836</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">836</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40101</member>
+                    <member name="spotID">50012</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

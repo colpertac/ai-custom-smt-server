@@ -1,0 +1,2084 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX201403_609</member>
+        <member name="next">EX201403_609_ITEM_1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_609_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20140301</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_609_MISC</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_609_ITEM_1</member>
+        <member name="next">EX201403_609_ITEM_2</member>
+        <member name="messageIDs">
+            <element>1161011</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_609_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_609_CD</member>
+        <member name="messageIDs">
+            <element>1161014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_609_MISC</member>
+        <member name="messageIDs">
+            <element>1161010</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_609_ITEM_2</member>
+        <member name="next">EX201403_609_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21604</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_relativeCooldown</member>
+                    <member name="params">
+                        <element>20140301</element>
+                        <element>0</element>
+                        <element>0</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_609_IF</member>
+        <member name="messageIDs">
+            <element>1161012</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_609_ITEM_END</member>
+        <member name="next">EX201403_609_CD</member>
+        <member name="messageIDs">
+            <element>1161013</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201403_3344</member>
+        <member name="next">EX201403_3344_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_MAIN</member>
+        <member name="next">EX201403_3344_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161055</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201403_3344_PRE</member>
+        <member name="next">EX201403_3344_PRE_INTRO</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_PRE_MQ</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUESTS_ACTIVE</member>
+                                <member name="value1">20</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_PRE_INTRO_KNOWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">757</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_MAIN_PR</member>
+        <member name="messageID">1161055</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_BARTER_617</member>
+                    <member name="messageID">1161056</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL_PR</member>
+                    <member name="messageID">1161057</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="compareMode">EXISTS</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_INFO</member>
+                    <member name="messageID">1161058</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1161059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_PRE_INTRO</member>
+        <member name="next">EX201403_3344_Q758_DESC</member>
+        <member name="messageIDs">
+            <element>1161053</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_PRE_MQ</member>
+        <member name="messageIDs">
+            <element>1161051</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_PRE_INTRO_KNOWN</member>
+        <member name="next">EX201403_3344_Q758_DESC</member>
+        <member name="messageIDs">
+            <element>1161052</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201403_BARTER_617</member>
+        <member name="next">EX201403_3344_BARTER_TY</member>
+        <member name="menuType">808</member>
+        <member name="shopID">617</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">758</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_SKILL_PR</member>
+        <member name="messageID">1161388</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL1</member>
+                    <member name="messageID">1161389</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL2</member>
+                    <member name="messageID">1161390</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL3</member>
+                    <member name="messageID">1161391</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL4</member>
+                    <member name="messageID">1161392</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL4_DONE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">20140301</member>
+                                            <member name="value2">1</member>
+                                            <member name="scriptID">bool_counterValue</member>
+                                            <member name="params">
+                                                <element>1</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_MAIN_PR</member>
+                    <member name="messageID">1161393</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL_MP</member>
+        <member name="next">EX201403_3344_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161386</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL_PD</member>
+        <member name="next">EX201403_3344_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161387</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_INFO</member>
+        <member name="next">EX201403_3344_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161062</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_Q758_DESC</member>
+        <member name="next">EX201403_3344_Q758_START</member>
+        <member name="messageIDs">
+            <element>1161054</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_BARTER_TY</member>
+        <member name="next">EX201403_3344_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161061</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_Q758_DONE2</member>
+        <member name="next">EX201403_3344_Q758_FIN</member>
+        <member name="messageIDs">
+            <element>1161063</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_Q758_DONE1</member>
+        <member name="next">EX201403_3344_Q758_FIN</member>
+        <member name="messageIDs">
+            <element>1161060</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL1</member>
+        <member name="next">EX201403_3344_SKILL1_PR</member>
+        <member name="messageIDs">
+            <element>1161397</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL2</member>
+        <member name="next">EX201403_3344_SKILL2_PR</member>
+        <member name="messageIDs">
+            <element>1161398</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL3</member>
+        <member name="next">EX201403_3344_SKILL3_PR</member>
+        <member name="messageIDs">
+            <element>1161399</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL4</member>
+        <member name="next">EX201403_3344_SKILL4_PR</member>
+        <member name="messageIDs">
+            <element>1161400</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL4_DONE</member>
+        <member name="next">EX201403_3344_SKILL_PR</member>
+        <member name="messageIDs">
+            <element>1161394</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_Q758_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">758</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161407</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_Q758_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">758</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">3000000</member>
+                    <member name="adjustable">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161408</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_SKILL1_PR</member>
+        <member name="messageID">1161410</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL1_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">445</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">3</member>
+                                            <member name="negate">true</member>
+                                            <member name="scriptID">bool_demonInheritAllowed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21605</member>
+                                            <member name="value2">1400</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_SKILL2_PR</member>
+        <member name="messageID">1161411</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL2_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">377</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="negate">true</member>
+                                            <member name="scriptID">bool_demonInheritAllowed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21605</member>
+                                            <member name="value2">1400</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_SKILL3_PR</member>
+        <member name="messageID">1161412</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL3_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">851</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21605</member>
+                                            <member name="value2">2800</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3344_SKILL4_PR</member>
+        <member name="messageID">1161413</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL4_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">580</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3344_SKILL_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21605</member>
+                                            <member name="value2">2800</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3344_SKILL_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_SKILL1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21605</key>
+                            <value>-1400</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="targetType">PARTNER</member>
+                    <member name="skillIDs">
+                        <element>445</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161402</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">758</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL_INVALID</member>
+        <member name="messageIDs">
+            <element>1161395</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3344_SKILL_MI</member>
+        <member name="messageIDs">
+            <element>1161396</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_SKILL2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21605</key>
+                            <value>-1400</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="targetType">PARTNER</member>
+                    <member name="skillIDs">
+                        <element>377</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161403</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">758</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_SKILL3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21605</key>
+                            <value>-2800</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="targetType">PARTNER</member>
+                    <member name="skillIDs">
+                        <element>851</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161404</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">758</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3344_SKILL4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21605</key>
+                            <value>-2800</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="targetType">PARTNER</member>
+                    <member name="skillIDs">
+                        <element>580</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161405</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20140301</element>
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">758</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3344_Q758_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201403_3384</member>
+        <member name="next">EX201403_3384_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20140301</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">758</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MAIN</member>
+        <member name="next">EX201403_3384_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1161072</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_FIRST</member>
+        <member name="next">EX201403_3384_FIRST_END</member>
+        <member name="messageIDs">
+            <element>1161071</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_PRE</member>
+        <member name="messageIDs">
+            <element>1161119</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MAIN_PR</member>
+        <member name="messageID">1161072</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO</member>
+                    <member name="messageID">1161073</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_INFO</member>
+                    <member name="messageID">1161074</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1161075</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_FIRST_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20140301</element>
+                        <element>0</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO</member>
+        <member name="next">EX201403_3384_MO_PR</member>
+        <member name="messageIDs">
+            <element>1161076</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_INFO</member>
+        <member name="next">EX201403_3384_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1161081</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_PR</member>
+        <member name="messageID">1161076</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1</member>
+                    <member name="messageID">1161077</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2</member>
+                    <member name="messageID">1161078</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3</member>
+                    <member name="messageID">1161079</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MAIN_PR</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_INFO_PR</member>
+        <member name="messageID">1161081</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_INFO1</member>
+                    <member name="messageID">1161082</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_INFO2</member>
+                    <member name="messageID">1161083</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_INFO3</member>
+                    <member name="messageID">1161084</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_INFO4</member>
+                    <member name="messageID">1161085</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MAIN_PR</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK1</member>
+        <member name="next">EX201403_3384_MO_RANK1_PR</member>
+        <member name="messageIDs">
+            <element>1161126</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK2</member>
+        <member name="next">EX201403_3384_MO_RANK2_PR</member>
+        <member name="messageIDs">
+            <element>1161127</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK3</member>
+        <member name="next">EX201403_3384_MO_RANK3_PR</member>
+        <member name="messageIDs">
+            <element>1161128</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_INFO1</member>
+        <member name="next">EX201403_3384_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1161086</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_INFO2</member>
+        <member name="next">EX201403_3384_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1161087</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_INFO3</member>
+        <member name="next">EX201403_3384_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1161088</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_INFO4</member>
+        <member name="next">EX201403_3384_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1161089</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK1_PR</member>
+        <member name="messageID">1161090</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_ITEM1</member>
+                    <member name="messageID">1161093</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_ITEM2</member>
+                    <member name="messageID">1161094</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">21603</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK2_PR</member>
+        <member name="messageID">1161091</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_ITEM1</member>
+                    <member name="messageID">1161093</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_ITEM2</member>
+                    <member name="messageID">1161094</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">21603</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK3_PR</member>
+        <member name="messageID">1161092</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_ITEM1</member>
+                    <member name="messageID">1161093</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_ITEM2</member>
+                    <member name="messageID">1161094</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">21603</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM1</member>
+        <member name="next">EX201403_3384_MO_RANK1_ITEM1_PR</member>
+        <member name="messageIDs">
+            <element>1161120</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM2</member>
+        <member name="next">EX201403_3384_MO_RANK1_ITEM2_PR</member>
+        <member name="messageIDs">
+            <element>1161095</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM1</member>
+        <member name="next">EX201403_3384_MO_RANK2_ITEM1_PR</member>
+        <member name="messageIDs">
+            <element>1161121</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM2</member>
+        <member name="next">EX201403_3384_MO_RANK2_ITEM2_PR</member>
+        <member name="messageIDs">
+            <element>1161095</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM1</member>
+        <member name="next">EX201403_3384_MO_RANK3_ITEM1_PR</member>
+        <member name="messageIDs">
+            <element>1161122</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM2</member>
+        <member name="next">EX201403_3384_MO_RANK3_ITEM2_PR</member>
+        <member name="messageIDs">
+            <element>1161095</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM1_PR</member>
+        <member name="messageID">1161120</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_ITEM1_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3384_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21602</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM2_PR</member>
+        <member name="messageID">1161129</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_ITEM2_END</member>
+                    <member name="messageID">1161096</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK1_PR</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM1_PR</member>
+        <member name="messageID">1161121</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_ITEM1_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3384_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21602</member>
+                                            <member name="value2">4</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM2_PR</member>
+        <member name="messageID">1161129</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_ITEM2_END</member>
+                    <member name="messageID">1161096</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK2_PR</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM1_PR</member>
+        <member name="messageID">1161122</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_ITEM1_END</member>
+                    <member name="messageID">1161123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201403_3384_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">21602</member>
+                                            <member name="value2">8</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_PR</member>
+                    <member name="messageID">1161124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM2_PR</member>
+        <member name="messageID">1161129</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_ITEM2_END</member>
+                    <member name="messageID">1161096</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201403_3384_MO_RANK3_PR</member>
+                    <member name="messageID">1161080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM1_END</member>
+        <member name="next">EX201403_D11305</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21602</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161104</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11305</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MI</member>
+        <member name="messageIDs">
+            <element>1161097</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK1_ITEM2_END</member>
+        <member name="next">EX201403_D11305</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21603</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161107</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11305</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM1_END</member>
+        <member name="next">EX201403_D11403</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21602</key>
+                            <value>-4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161105</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11403</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK2_ITEM2_END</member>
+        <member name="next">EX201403_D11403</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21603</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161107</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11403</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM1_END</member>
+        <member name="next">EX201403_D11503</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21602</key>
+                            <value>-8</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161106</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11503</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_3384_MO_RANK3_ITEM2_END</member>
+        <member name="next">EX201403_D11503</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>21603</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1161107</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3384</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201403_3384_MO_ACCESS_ITEM2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11503</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_D11305</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11305</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11305</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_ACCESS_ITEM1</member>
+        <member name="next">EX201403_D11305</member>
+        <member name="messageIDs">
+            <element>1161118</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11305</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11403</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11503</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_D11403</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_D11503</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201403_3384_MO_ACCESS_ITEM2</member>
+        <member name="next">EX201403_D11305</member>
+        <member name="messageIDs">
+            <element>1161125</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11305</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11403</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11503</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_D11403</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201403_D11503</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3384</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_D11403</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11403</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11403</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201403_D11503</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11503</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11503</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

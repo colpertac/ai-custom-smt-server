@@ -1,0 +1,2548 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D11304_3361</member>
+        <member name="next">D11304_3361_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11304_3361_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_3361_REWARD_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_3361_REWARD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11304_3361_DONE</member>
+        <member name="messageIDs">
+            <element>1160358</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11304_3361_PRE</member>
+        <member name="next">D11304_3361_PRE_PR</member>
+        <member name="messageIDs">
+            <element>1160357</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11304_3361_REWARD_IF</member>
+        <member name="messageIDs">
+            <element>1160371</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D11304_3361_REWARD</member>
+        <member name="next">D11304_3361_REWARD_DONE</member>
+        <member name="messageIDs">
+            <element>1160359</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11304_3361_PRE_PR</member>
+        <member name="messageID">1160357</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11304_START</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">D11304_3361_REWARD_DONE</member>
+        <member name="next">D11304_3361_REWARD_END</member>
+        <member name="messageID">1160360</member>
+        <member name="transformScriptID">transforme_flag</member>
+        <member name="transformScriptParams">
+            <element>1</element>
+            <element>INSTANCE</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">6</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionSpawn">
+                                <member name="spawnGroupIDs">
+                                    <pair>
+                                        <key>101</key>
+                                        <value>10</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">150</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_BOMB_SPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">300</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_BOMB_SPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">450</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_BOMB_SPAWN</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_ROUND2_START</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160372</member>
+                    <member name="effectType">4</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160458</member>
+                    <member name="effectType">3</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">3361</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_3361_REWARD_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>1</element>
+                        <element>INSTANCE</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>21592</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="transformScriptID">transforma_multiplyItemCount</member>
+                    <member name="transformScriptParams">
+                        <element>21592</element>
+                        <element>1</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_ROUND2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                        <element>2</element>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>11</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>12</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_ROUND3_START</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_ROUND3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>11</element>
+                        <element>12</element>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>21</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>22</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_ROUND4_START</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_ROUND4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>21</element>
+                        <element>22</element>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>31</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>32</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">120</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_ROUND5_START</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_ROUND5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>31</element>
+                        <element>32</element>
+                        <element>101</element>
+                        <element>102</element>
+                        <element>103</element>
+                        <element>104</element>
+                        <element>111</element>
+                        <element>112</element>
+                        <element>113</element>
+                        <element>114</element>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>41</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>42</element>
+                        <element>43</element>
+                        <element>44</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS1_DA</member>
+        <member name="next">D11304_ROUND2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS_DA_UP1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>100</element>
+                        <element>INSTANCE</element>
+                        <element>ZONE</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>ZONE</element>
+                        <element>100</element>
+                        <element>100</element>
+                        <element>ADD_FLAG</element>
+                        <element>101</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>ZONE</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS_DA_UP2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>100</element>
+                        <element>INSTANCE</element>
+                        <element>ZONE</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>ZONE</element>
+                        <element>100</element>
+                        <element>100</element>
+                        <element>ADD_FLAG</element>
+                        <element>102</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>ZONE</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS_DA_UP3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>100</element>
+                        <element>INSTANCE</element>
+                        <element>ZONE</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>ZONE</element>
+                        <element>100</element>
+                        <element>100</element>
+                        <element>ADD_FLAG</element>
+                        <element>103</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>ZONE</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS_DA_UP4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>100</element>
+                        <element>INSTANCE</element>
+                        <element>ZONE</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>ZONE</element>
+                        <element>100</element>
+                        <element>100</element>
+                        <element>ADD_FLAG</element>
+                        <element>104</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>ZONE</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS_DA_UP5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>100</element>
+                        <element>INSTANCE</element>
+                        <element>ZONE</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>ZONE</element>
+                        <element>100</element>
+                        <element>100</element>
+                        <element>ADD_FLAG</element>
+                        <element>105</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>ZONE</element>
+                        <element>INSTANCE</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">GTE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS2_DA</member>
+        <member name="next">D11304_ROUND3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS3_DA</member>
+        <member name="next">D11304_ROUND4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS4_DA</member>
+        <member name="next">D11304_ROUND5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS5_DA</member>
+        <member name="next">D11304_BOSS5_DA_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>42</element>
+                        <element>43</element>
+                        <element>44</element>
+                    </member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>101</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11304_BOSS5_DA_SPLIT</member>
+        <member name="next">D11304_END</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11304_BONUS_TIME</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">5</member>
+                                <member name="value2">95</member>
+                                <member name="scriptID">bool_random</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">3361</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160384</member>
+                    <member name="effectType">4</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BONUS_TIME</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>51</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionZoneInstance">
+                                <member name="mode">STOP_TIMER</member>
+                                <member name="timerID">90</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_BOSS5_EX_DA_EACH</member>
+                                <member name="sourceContext">ALL</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_END</member>
+                                <member name="sourceContext">NONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">START_TIMER</member>
+                    <member name="timerID">90</member>
+                    <member name="timerExpirationEventID">D11304_BONUS_TIME_UP</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1160383</member>
+                    <member name="effectType">4</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BOSS1_DA</member>
+        <member name="next">D11304_ROUND2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>2</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BOSS2_DA</member>
+        <member name="next">D11304_ROUND3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>6</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BOSS3_DA</member>
+        <member name="next">D11304_ROUND4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>5</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>6</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BOSS4_DA</member>
+        <member name="next">D11304_ROUND5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>3</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>5</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>6</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BOSS5_DA</member>
+        <member name="next">D11304_BOSS5_DA_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>42</element>
+                        <element>43</element>
+                        <element>44</element>
+                    </member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>101</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>4</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>5</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>5</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>6</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BOSS1_DA</member>
+        <member name="next">D11304_ROUND2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>5</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>8</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>11</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BOSS2_DA</member>
+        <member name="next">D11304_ROUND3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>6</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>9</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>11</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BOSS3_DA</member>
+        <member name="next">D11304_ROUND4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>6</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>8</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>9</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>12</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BOSS4_DA</member>
+        <member name="next">D11304_ROUND5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>6</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>8</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>9</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>12</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BOSS5_DA</member>
+        <member name="next">D11304_BOSS5_DA_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>42</element>
+                        <element>43</element>
+                        <element>44</element>
+                    </member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>101</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>101</key>
+                            <value>7</value>
+                        </pair>
+                        <pair>
+                            <key>102</key>
+                            <value>8</value>
+                        </pair>
+                        <pair>
+                            <key>103</key>
+                            <value>9</value>
+                        </pair>
+                        <pair>
+                            <key>104</key>
+                            <value>10</value>
+                        </pair>
+                        <pair>
+                            <key>105</key>
+                            <value>14</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP1</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP2</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP3</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP4</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D11304_BOSS_DA_UP5</member>
+                    <member name="autoOnly">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BONUS_TIME_UP</member>
+        <member name="next">D11304_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>51</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">DESPAWN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11304_BOSS5_EX_DA_EACH</member>
+        <member name="next">D11304_BOSS5_EX_DA_EACH_NORMAL</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11304_BOSS5_EX_DA_EACH_BOOST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">811</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_BOSS5_EX_DA_EACH_BOOST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">812</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D11304_BOSS5_EX_DA_EACH_NORMAL</member>
+        <member name="next">D11304_BONUS_XP</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11402_BONUS_XP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11402</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11502_BONUS_XP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11502</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOSS5_EX_DA_EACH_BOOST</member>
+        <member name="next">D11304_BONUS_XP_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1160480</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D11402_BONUS_XP_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11402</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11502_BONUS_XP_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11502</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BONUS_XP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">3000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BONUS_XP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">6000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BONUS_XP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">12000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BONUS_XP_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">15000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11402_BONUS_XP_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">30000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11502_BONUS_XP_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">60000000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOMB_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRandom</member>
+                    <member name="params">
+                        <element>100</element>
+                        <element>1</element>
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>1</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>101</element>
+                                    <element>102</element>
+                                    <element>103</element>
+                                    <element>104</element>
+                                    <element>111</element>
+                                    <element>112</element>
+                                    <element>113</element>
+                                    <element>114</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_BOMB_SPAWN1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>101</element>
+                                    <element>111</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_BOMB_SPAWN2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>102</element>
+                                    <element>112</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_BOMB_SPAWN3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>103</element>
+                                    <element>113</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D11304_BOMB_SPAWN4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>104</element>
+                                    <element>114</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOMB_SPAWN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>101</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_SELF_DESTRUCT1</member>
+                                <member name="sourceContext">ENEMIES</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>111</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOMB_SPAWN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>102</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_SELF_DESTRUCT2</member>
+                                <member name="sourceContext">ENEMIES</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>112</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOMB_SPAWN3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>103</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_SELF_DESTRUCT3</member>
+                                <member name="sourceContext">ENEMIES</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>113</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_BOMB_SPAWN4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>104</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D11304_SELF_DESTRUCT4</member>
+                                <member name="sourceContext">ENEMIES</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>114</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_SELF_DESTRUCT1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">1071046</member>
+                    <member name="delay">60</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_triggerSkill</member>
+                    <member name="params">
+                        <element>848</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">4533</member>
+                    <member name="scriptID">bool_enemyFilter</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_SELF_DESTRUCT2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">1071046</member>
+                    <member name="delay">60</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_triggerSkill</member>
+                    <member name="params">
+                        <element>848</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">4534</member>
+                    <member name="scriptID">bool_enemyFilter</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_SELF_DESTRUCT3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">1071046</member>
+                    <member name="delay">60</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_triggerSkill</member>
+                    <member name="params">
+                        <element>848</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">4535</member>
+                    <member name="scriptID">bool_enemyFilter</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_SELF_DESTRUCT4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">1071046</member>
+                    <member name="delay">60</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_triggerSkill</member>
+                    <member name="params">
+                        <element>848</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">4536</member>
+                    <member name="scriptID">bool_enemyFilter</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_ENTERED</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D11304_EXIT</member>
+        <member name="messageID">23</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D11304_TO_240701</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D11304_TO_240701</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">240701</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

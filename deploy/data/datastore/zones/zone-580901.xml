@@ -1,0 +1,131 @@
+<objects>
+    <!-- COMP-Hack（リリス） -->
+    <object name="ServerZone">
+        <member name="ID">580901</member>
+        <member name="DynamicMapID">5809001</member>
+        <member name="Global">false</member>
+        <member name="GroupID">50101</member>
+        <member name="StartingX">4348.68</member>
+        <member name="StartingY">-18.03</member>
+        <member name="StartingRotation">3.12</member>
+        <member name="NPCs"/>
+        <member name="Objects">
+            <element>
+                <!-- 起動プログラム -->
+                <object name="ServerObject">
+                    <member name="ID">570173</member>
+                    <member name="SpotID">60000</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5809_EXIT</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">3</member>
+                </object>
+            </element>
+        </member>
+        <member name="Spawns">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">1</member>
+                        <member name="EnemyType">2202</member>
+                        <member name="Level">45</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">1</member>
+                        <member name="InheritDrops">false</member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">1</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>1</value>
+                            </pair>
+                        </member>
+                        <member name="SpawnActions">
+                            <element>
+                                <object name="ActionStageEffect">
+                                    <member name="messageID">650299</member>
+                                    <member name="includeMessage">true</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionUpdateZoneFlags">
+                                    <member name="flagStates">
+                                        <pair>
+                                            <key>2000</key>
+                                            <value>1</value>
+                                        </pair>
+                                    </member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStageEffect">
+                                    <member name="messageID">650300</member>
+                                    <member name="includeMessage">true</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D5809_Q709_ADVANCE</member>
+                                    <member name="sourceContext">ALL</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnLocationGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">1</member>
+                        <member name="GroupIDs">
+                            <element>1</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>4</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots">
+            <pair>
+                <key>10000</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10000</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionSpawn">
+                                    <member name="spawnLocationGroupIDs">
+                                        <element>1</element>
+                                    </member>
+                                    <member name="mode">ONE_TIME</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+    </object>
+</objects>

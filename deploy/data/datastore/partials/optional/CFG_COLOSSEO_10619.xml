@@ -1,0 +1,32 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">10619</member>
+        <member name="DynamicMapIDs">
+            <element>10619001</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to remove apples/sands 
+            from chests in 異界バトルコロッセオ
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10619</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

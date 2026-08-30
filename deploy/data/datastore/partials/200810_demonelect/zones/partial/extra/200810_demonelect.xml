@@ -1,0 +1,40 @@
+<objects>
+    <!-- Time-limited event: 栄冠は誰のもの！？　悪魔総裁選！ -->
+    <object name="ServerZonePartial">
+        <member name="ID">20081001</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 選挙管理委員 -->
+                <object name="ServerNPC">
+                    <member name="ID">358</member>
+                    <member name="SpotID">60028</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_358</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Originally triggered by now removed spots -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081001_SOAPBOX_LOOP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

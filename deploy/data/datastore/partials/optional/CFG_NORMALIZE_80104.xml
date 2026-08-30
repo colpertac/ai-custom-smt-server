@@ -1,0 +1,33 @@
+﻿<objects>
+    <!-- 
+    Enables a "normal" (as in it has room for selecting different modes)
+    dungeon prompt for dungeon lobby 80104 .
+    -->
+    <object name="ServerZonePartial">
+        <member name="ID">6280104</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>80104</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>80104</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

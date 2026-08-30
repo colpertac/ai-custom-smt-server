@@ -1,0 +1,32 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">20107</member>
+        <member name="DynamicMapIDs">
+            <element>20107</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to disable SP reward from the beginner's event
+            if the demon already has SP.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20107</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

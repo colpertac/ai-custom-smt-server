@@ -1,0 +1,46 @@
+<objects>
+    <!-- Time-limited event: サイエンの野望　～世界征服への一歩～／サイエンの野望Ⅱ　～デビルサイエン誕生…？～ -->
+    <object name="ServerZonePartial">
+        <member name="ID">20090401</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- ＮＰＣサイエン -->
+                <object name="ServerNPC">
+                    <member name="ID">324</member>
+                    <member name="SpotID">60049</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20090401_324</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Enable "Candle Night" flag -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20090401</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

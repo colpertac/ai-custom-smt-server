@@ -1,0 +1,2629 @@
+<objects>
+    <!-- NPC 341 -->
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_341</member>
+        <member name="next">Z140103_341_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>105020</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_341_MAIN_PROMPT</member>
+        <member name="messageID">105021</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_BUY_38</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_SELL_38</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_REPAIR_38</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_341_TALK</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_BUY_38</member>
+        <member name="menuType">175</member>
+        <member name="shopID">38</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_SELL_38</member>
+        <member name="menuType">176</member>
+        <member name="shopID">38</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_REPAIR_38</member>
+        <member name="menuType">177</member>
+        <member name="shopID">38</member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z140103_341_TALK</member>
+        <member name="next">Z140103_341_TALK_01</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z140103_341_TALK_02</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_WEEK</member>
+                                <member name="value1">72000</member>
+                                <member name="value2">72400</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_341_TALK_01</member>
+        <member name="next">Z140103_341_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>105022</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_341_TALK_02</member>
+        <member name="next">Z140103_341_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>105027</element>
+        </member>
+    </object>
+    <!-- NPC 352 -->
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352</member>
+        <member name="next">Z140103_352_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>105040</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_MAIN_PROMPT</member>
+        <member name="messageID">105040</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_BUY_39</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_SELL_39</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_REPAIR_39</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_TALK</member>
+                    <member name="messageID">40004</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200707_352</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="skipInvalid">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_MI</member>
+                    <member name="messageID">170666</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">4260</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S000</member>
+                    <member name="messageID">170849</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_BUY_39</member>
+        <member name="menuType">175</member>
+        <member name="shopID">39</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_SELL_39</member>
+        <member name="menuType">176</member>
+        <member name="shopID">39</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z140103_REPAIR_39</member>
+        <member name="menuType">177</member>
+        <member name="shopID">39</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_TALK</member>
+        <member name="next">Z140103_352_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>105042</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z140103_352_Q675</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_07</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">675</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_20</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">675</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">675</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_00</member>
+        <member name="next">Z140103_352_Q675_01</member>
+        <member name="messageID">1400002</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_01</member>
+        <member name="messageID">170667</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_03</member>
+                    <member name="messageID">170668</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_02</member>
+                    <member name="messageID">170669</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_02</member>
+        <member name="messageID">1400003</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_03</member>
+        <member name="next">Z140103_352_Q675_04</member>
+        <member name="messageID">1400004</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_04</member>
+        <member name="messageID">170670</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_05</member>
+                    <member name="messageID">170671</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_02</member>
+                    <member name="messageID">170672</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_MQ</member>
+        <member name="messageID">1400005</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_05</member>
+        <member name="next">Z140103_352_Q675_06</member>
+        <member name="messageID">1400006</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170696</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">0</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z140103_352_Q675_07</member>
+        <member name="next">Z140103_352_Q675_08b</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_08a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">1055</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_08a</member>
+        <member name="next">Z140103_352_Q675_09a</member>
+        <member name="messageID">1400007</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_09a</member>
+        <member name="messageID">170673</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_12k</member>
+                    <member name="messageID">170674</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10a</member>
+                    <member name="messageID">170675</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_10a</member>
+        <member name="messageID">1400008</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_08b</member>
+        <member name="next">Z140103_352_Q675_09b</member>
+        <member name="messageID">1400016</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_09b</member>
+        <member name="messageID">170683</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_11a</member>
+                    <member name="messageID">170684</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_11b</member>
+                    <member name="messageID">170688</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170695</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12j</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5401</member>
+                                            <member name="value2">5</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5403</member>
+                                            <member name="value2">5</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5404</member>
+                                            <member name="value2">5</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5405</member>
+                                            <member name="value2">5</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170675</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_10b</member>
+        <member name="messageID">1400012</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_IF</member>
+        <member name="messageID">1400010</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_X</member>
+        <member name="messageID">1400017</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_11a</member>
+        <member name="messageID">170683</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170685</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12206</member>
+                                            <member name="value2">20</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170686</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12b</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12207</member>
+                                            <member name="value2">20</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170687</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12c</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12208</member>
+                                            <member name="value2">20</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170675</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_11b</member>
+        <member name="messageID">170683</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170689</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12d</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">251</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170690</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12e</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">252</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170691</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12f</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">255</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170692</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12g</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">253</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170693</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12h</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">254</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_X</member>
+                    <member name="messageID">170694</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_Q675_12i</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">256</member>
+                                            <member name="value2">10</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170675</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12a</member>
+        <member name="next">Z140103_352_Q675_13a</member>
+        <member name="messageID">1400018</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13a</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12b</member>
+        <member name="next">Z140103_352_Q675_13b</member>
+        <member name="messageID">1400019</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13b</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12c</member>
+        <member name="next">Z140103_352_Q675_13c</member>
+        <member name="messageID">1400020</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13c</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12d</member>
+        <member name="next">Z140103_352_Q675_13d</member>
+        <member name="messageID">1400021</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13d</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12e</member>
+        <member name="next">Z140103_352_Q675_13e</member>
+        <member name="messageID">1400022</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13e</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12f</member>
+        <member name="next">Z140103_352_Q675_13f</member>
+        <member name="messageID">1400023</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13f</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>6</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12g</member>
+        <member name="next">Z140103_352_Q675_13g</member>
+        <member name="messageID">1400024</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13g</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>7</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12h</member>
+        <member name="next">Z140103_352_Q675_13h</member>
+        <member name="messageID">1400025</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13h</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>8</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12i</member>
+        <member name="next">Z140103_352_Q675_13i</member>
+        <member name="messageID">1400026</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13i</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>9</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12j</member>
+        <member name="next">Z140103_352_Q675_13j</member>
+        <member name="messageID">1400027</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13j</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_12k</member>
+        <member name="next">Z140103_352_Q675_13k</member>
+        <member name="messageID">1400009</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_13k</member>
+        <member name="next">Z140103_352_Q675_14</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>11</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_14</member>
+        <member name="messageID">170676</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_15_L</member>
+                    <member name="messageID">170677</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_15_N</member>
+                    <member name="messageID">170678</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_15_C</member>
+                    <member name="messageID">170679</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_15_L</member>
+        <member name="next">Z140103_352_Q675_16_L</member>
+        <member name="messageID">1400011</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_16_L</member>
+        <member name="messageID">170680</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_17_L</member>
+                    <member name="messageID">170681</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170682</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_17_L</member>
+        <member name="next">Z140103_352_Q675_18</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>4260</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>4261</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_15_N</member>
+        <member name="next">Z140103_352_Q675_16_N</member>
+        <member name="messageID">1400014</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_16_N</member>
+        <member name="messageID">170680</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_17_N</member>
+                    <member name="messageID">170681</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170682</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_17_N</member>
+        <member name="next">Z140103_352_Q675_18</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>4260</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>4262</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_15_C</member>
+        <member name="next">Z140103_352_Q675_16_C</member>
+        <member name="messageID">1400015</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_Q675_16_C</member>
+        <member name="messageID">170680</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_17_C</member>
+                    <member name="messageID">170681</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_Q675_10b</member>
+                    <member name="messageID">170682</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_17_C</member>
+        <member name="next">Z140103_352_Q675_18</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>4260</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>4263</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_18</member>
+        <member name="next">Z140103_352_Q675_19</member>
+        <member name="messageID">1400029</member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z140103_352_Q675_19</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19c</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19d</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19e</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>5</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19f</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>6</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19g</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>7</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19h</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>8</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19i</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>9</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19j</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>10</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z140103_352_Q675_19k</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">675</member>
+                                <member name="compareMode">EQUAL</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>11</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12206</key>
+                            <value>-20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19b</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12207</key>
+                            <value>-20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19c</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12208</key>
+                            <value>-20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19d</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>251</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19e</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>252</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19f</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>255</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19g</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>253</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19h</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>254</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19i</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>256</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19j</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5401</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5403</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5404</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5405</key>
+                            <value>-5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_Q675_19k</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170697</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170698</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">170699</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">100000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>1055</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">675</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_MI</member>
+        <member name="messageID">1400028</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z140103_352_Q675_20</member>
+        <member name="next">Z140103_352_Q675_01</member>
+        <member name="messageID">1400001</member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z140103_352_S000</member>
+        <member name="next">Z140103_352_S002</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z140103_352_S001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25091</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25092</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25093</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_S001</member>
+        <member name="messageIDs">
+            <element>170850</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_S002</member>
+        <member name="next">Z140103_352_S003</member>
+        <member name="messageIDs">
+            <element>170851</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_S003</member>
+        <member name="messageID">170852</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25091_W0</member>
+                    <member name="messageID">170902</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25091</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_I25091_M0</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">GENDER</member>
+                                            <member name="value1">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25092_W0</member>
+                    <member name="messageID">170903</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25092</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_I25092_M0</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">GENDER</member>
+                                            <member name="value1">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25093_W0</member>
+                    <member name="messageID">170904</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">25093</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_I25093_M0</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">GENDER</member>
+                                            <member name="value1">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S004</member>
+                    <member name="messageID">170854</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_S004</member>
+        <member name="messageIDs">
+            <element>170855</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_S005</member>
+        <member name="messageIDs">
+            <element>170880</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_IF</member>
+        <member name="messageIDs">
+            <element>170856</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_IF2</member>
+        <member name="messageIDs">
+            <element>170881</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25091_W0</member>
+        <member name="next">Z140103_352_I25091_W1</member>
+        <member name="messageIDs">
+            <element>170901</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25091_W1</member>
+        <member name="messageID">170861</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25091_W2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25091_W2</member>
+        <member name="next">Z140103_352_I25091_W3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25091_W3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25091</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35038</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25091_M0</member>
+        <member name="next">Z140103_352_I25091_M1</member>
+        <member name="messageIDs">
+            <element>170900</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25091_M1</member>
+        <member name="messageID">170857</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25091_M2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25091_M2</member>
+        <member name="next">Z140103_352_I25091_M3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25091_M3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25091</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35037</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25092_W0</member>
+        <member name="next">Z140103_352_I25092_W1</member>
+        <member name="messageIDs">
+            <element>170901</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25092_W1</member>
+        <member name="messageID">170897</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25092_W2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25092_W2</member>
+        <member name="next">Z140103_352_I25092_W3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25092_W3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25092</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35040</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25092_M0</member>
+        <member name="next">Z140103_352_I25092_M1</member>
+        <member name="messageIDs">
+            <element>170900</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25092_M1</member>
+        <member name="messageID">170896</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25092_M2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25092_M2</member>
+        <member name="next">Z140103_352_I25092_M3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25092_M3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25092</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35039</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25093_W0</member>
+        <member name="next">Z140103_352_I25093_W1</member>
+        <member name="messageIDs">
+            <element>170901</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25093_W1</member>
+        <member name="messageID">170899</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25093_W2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25093_W2</member>
+        <member name="next">Z140103_352_I25093_W3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25093_W3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25093</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35042</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25093_M0</member>
+        <member name="next">Z140103_352_I25093_M1</member>
+        <member name="messageIDs">
+            <element>170900</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z140103_352_I25093_M1</member>
+        <member name="messageID">170898</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_I25093_M2</member>
+                    <member name="messageID">170858</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z140103_352_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="value1">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z140103_352_S005</member>
+                    <member name="messageID">170859</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z140103_352_I25093_M2</member>
+        <member name="next">Z140103_352_I25093_M3</member>
+        <member name="messageIDs">
+            <element>170860</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z140103_352_I25093_M3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>25093</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>35041</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

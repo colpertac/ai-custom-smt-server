@@ -1,0 +1,149 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">Z130102_13</member>
+        <member name="next">Z130102_13_GREETING</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z130102_13_INVASION_GREETING</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_WEEK</member>
+                                <member name="value1">60900</member>
+                                <member name="value2">62400</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z130102_13_INVASION_GREETING</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_WEEK</member>
+                                <member name="value1">0</member>
+                                <member name="value2">2159</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z130102_13_GREETING</member>
+        <member name="next">Z130102_13_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>103000</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z130102_13_MAIN_PROMPT</member>
+        <member name="messageID">103001</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_BUY</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_SELL</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_REPAIR</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_TALK</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z130102_13_BUY</member>
+        <member name="menuType">175</member>
+        <member name="shopID">31</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z130102_13_SELL</member>
+        <member name="menuType">176</member>
+        <member name="shopID">31</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z130102_13_REPAIR</member>
+        <member name="menuType">177</member>
+        <member name="shopID">31</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z130102_13_TALK</member>
+        <member name="next">Z130102_13_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>103002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z130102_13_INVASION_GREETING</member>
+        <member name="next">Z130102_13_INVASION_PROMPT</member>
+        <member name="messageIDs">
+            <element>150282</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z130102_13_INVASION_PROMPT</member>
+        <member name="messageID">150283</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_BUY</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_SELL</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_REPAIR</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z130102_13_TALK2</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z130102_13_TALK2</member>
+        <member name="next">Z130102_13_INVASION_PROMPT</member>
+        <member name="messageIDs">
+            <element>150284</element>
+        </member>
+    </object>
+</objects>

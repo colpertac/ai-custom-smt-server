@@ -1,0 +1,3858 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390A</member>
+        <member name="next">EX20121202_390A_PR</member>
+        <member name="messageIDs">
+            <element>1155074</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390A_PR</member>
+        <member name="messageID">1155074</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390A_DESC</member>
+                    <member name="messageID">1155079</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390A_END</member>
+                    <member name="messageID">1155080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390A_DESC</member>
+        <member name="next">EX20121202_390A_PR2</member>
+        <member name="messageIDs">
+            <element>1155075</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390A_END</member>
+        <member name="messageIDs">
+            <element>1155076</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390A_PR2</member>
+        <member name="messageID">1155093</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390A_CONFIRM</member>
+                    <member name="queueNext">EX20121202_TO_240301</member>
+                    <member name="messageID">1155079</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390A_CANCEL</member>
+                    <member name="messageID">1155080</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390A_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1155077</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_TO_240301</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">240301</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390A_CANCEL</member>
+        <member name="messageIDs">
+            <element>1155078</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B</member>
+        <member name="next">EX20121202_390B_MAIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>390</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_MP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">COMP_DEMON</member>
+                                <member name="value1">3874</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">3874</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_LOCKED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">3874</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_LOCKED</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_DEMON_LEAVE</member>
+                    <member name="queueNext">EX20121202_390B_DEMON_LEAVE_END</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">3874</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_MAIN</member>
+        <member name="next">EX20121202_390B_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1154046</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_MP</member>
+        <member name="messageIDs">
+            <element>1154002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_LOCKED</member>
+        <member name="messageIDs">
+            <element>1154101</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_DEMON_LEAVE</member>
+        <member name="messageIDs">
+            <element>1154001</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_DEMON_LEAVE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154058</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20121202_390B_ACCESS</member>
+        <member name="next">EX20121202_390B_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">1</member>
+                                <member name="value2">20</member>
+                                <member name="compareMode">BETWEEN</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20028</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20029</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20030</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20031</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">21</member>
+                                <member name="value2">40</member>
+                                <member name="compareMode">BETWEEN</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20028</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">41</member>
+                                <member name="value2">60</member>
+                                <member name="compareMode">BETWEEN</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20029</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">61</member>
+                                <member name="value2">80</member>
+                                <member name="compareMode">BETWEEN</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20030</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">81</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20031</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_ACCESS_SP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_MAIN_PR</member>
+        <member name="messageID">1154047</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_INFO</member>
+                    <member name="messageID">1154048</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_HELP</member>
+                    <member name="messageID">1154049</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_notUsed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_NO_HELP</member>
+                    <member name="messageID">1154050</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_LEAVE</member>
+                    <member name="messageID">1154087</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1154051</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_ACCESS_INVALID</member>
+        <member name="next">EX20121202_390B_ACCESS_INVALID_PR</member>
+        <member name="messageIDs">
+            <element>1154040</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_ACCESS_SP</member>
+        <member name="next">EX20121202_390B_ACCESS_SP_PR</member>
+        <member name="messageIDs">
+            <element>1154003</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_INFO</member>
+        <member name="next">EX20121202_390B_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1154052</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_HELP</member>
+        <member name="next">EX20121202_390B_HELP_PR</member>
+        <member name="messageIDs">
+            <element>1154008</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_MQ</member>
+        <member name="messageIDs">
+            <element>1154053</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_CF</member>
+        <member name="messageIDs">
+            <element>1154007</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_NO_HELP</member>
+        <member name="messageIDs">
+            <element>1154054</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_LEAVE</member>
+        <member name="next">EX20121202_390B_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>1154090</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_ACCESS_INVALID_PR</member>
+        <member name="messageID">1154041</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_ACCESS_REJECT</member>
+                    <member name="messageID">1154042</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_ACCESS_INVALID_CANCEL</member>
+                    <member name="messageID">1154043</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_ACCESS_SP_PR</member>
+        <member name="messageID">1154004</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_ACCESS_JOIN</member>
+                    <member name="messageID">1154005</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_CF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_ACCESS_REJECT</member>
+                    <member name="messageID">1154006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_HELP_PR</member>
+        <member name="messageID">1154009</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_CHARM_JOIN_CONFIRM</member>
+                    <member name="messageID">1154010</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_CHARM_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12880</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_CHARM_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK1</member>
+                    <member name="messageID">1154011</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">21</member>
+                                            <member name="value2">40</member>
+                                            <member name="compareMode">BETWEEN</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK3</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">41</member>
+                                            <member name="value2">60</member>
+                                            <member name="compareMode">BETWEEN</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK4</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">61</member>
+                                            <member name="value2">80</member>
+                                            <member name="compareMode">BETWEEN</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK5</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">LEVEL</member>
+                                            <member name="value1">81</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_HELP_END</member>
+                    <member name="messageID">1154012</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_LEAVE_PR</member>
+        <member name="messageID">1154091</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_LEAVE1</member>
+                    <member name="queueNext">EX20121202_TO_20101</member>
+                    <member name="messageID">1154092</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_LEAVE2</member>
+                    <member name="queueNext">EX20121202_TO_50101</member>
+                    <member name="messageID">1154093</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_MAIN_PR</member>
+                    <member name="messageID">1155071</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_ACCESS_REJECT</member>
+        <member name="next">EX20121202_390B_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1154044</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_ACCESS_INVALID_CANCEL</member>
+        <member name="messageIDs">
+            <element>1154045</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_ACCESS_JOIN</member>
+        <member name="next">EX20121202_390B_HELP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>390</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_CHARM_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154013</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_CHARM_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_CHARM_MI</member>
+        <member name="messageIDs">
+            <element>1154015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_CHARM_CONFIRM</member>
+        <member name="next">EX20121202_390B_CHARM_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK1</member>
+        <member name="messageIDs">
+            <element>1154094</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_CHARM_END</member>
+                    <member name="queueNext">EX20121202_D6428_RANK2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">21</member>
+                                <member name="value2">40</member>
+                                <member name="compareMode">BETWEEN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_CHARM_END</member>
+                    <member name="queueNext">EX20121202_D6428_RANK3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">41</member>
+                                <member name="value2">60</member>
+                                <member name="compareMode">BETWEEN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_CHARM_END</member>
+                    <member name="queueNext">EX20121202_D6428_RANK4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">61</member>
+                                <member name="value2">80</member>
+                                <member name="compareMode">BETWEEN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_CHARM_END</member>
+                    <member name="queueNext">EX20121202_D6428_RANK5</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LEVEL</member>
+                                <member name="value1">81</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK1</member>
+        <member name="next">EX20121202_390B_COIN_RANK1_PR</member>
+        <member name="messageIDs">
+            <element>1154016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK2</member>
+        <member name="next">EX20121202_390B_COIN_RANK2_PR</member>
+        <member name="messageIDs">
+            <element>1154023</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK3</member>
+        <member name="next">EX20121202_390B_COIN_RANK3_PR</member>
+        <member name="messageIDs">
+            <element>1154027</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK4</member>
+        <member name="next">EX20121202_390B_COIN_RANK4_PR</member>
+        <member name="messageIDs">
+            <element>1154031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK5</member>
+        <member name="next">EX20121202_390B_COIN_RANK5_PR</member>
+        <member name="messageIDs">
+            <element>1154035</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_HELP_END</member>
+        <member name="next">EX20121202_390B_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1154039</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_LEAVE1</member>
+        <member name="messageIDs">
+            <element>1154088</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_TO_20101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20101</member>
+                    <member name="spotID">51006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_LEAVE2</member>
+        <member name="messageIDs">
+            <element>1154089</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_TO_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">51023</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154014</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_CHARM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12880</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154057</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_D6428_RANK1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_D6428_RANK2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="variantID">20028</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="mode">JOIN</member>
+                    <member name="variantID">20028</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_D6428_RANK3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="variantID">20029</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="mode">JOIN</member>
+                    <member name="variantID">20029</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_D6428_RANK4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="variantID">20030</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="mode">JOIN</member>
+                    <member name="variantID">20030</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_D6428_RANK5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="variantID">20031</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">6428</member>
+                    <member name="mode">JOIN</member>
+                    <member name="variantID">20031</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_COIN_RANK1_PR</member>
+        <member name="messageID">1154017</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK1_JOIN_CONFIRM</member>
+                    <member name="messageID">1154018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">100</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK1_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_CANCEL</member>
+                    <member name="messageID">1154019</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_COIN_RANK2_PR</member>
+        <member name="messageID">1154024</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK2_JOIN_CONFIRM</member>
+                    <member name="messageID">1154018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK2_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_CANCEL</member>
+                    <member name="messageID">1154019</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_COIN_RANK3_PR</member>
+        <member name="messageID">1154028</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK3_JOIN_CONFIRM</member>
+                    <member name="messageID">1154018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK3_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK3_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_CANCEL</member>
+                    <member name="messageID">1154019</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_COIN_RANK4_PR</member>
+        <member name="messageID">1154032</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK4_JOIN_CONFIRM</member>
+                    <member name="messageID">1154018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK4_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">10000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK4_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_CANCEL</member>
+                    <member name="messageID">1154019</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_390B_COIN_RANK5_PR</member>
+        <member name="messageID">1154036</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_RANK5_JOIN_CONFIRM</member>
+                    <member name="messageID">1154018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK5_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">15000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_390B_COIN_RANK5_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>390</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_390B_COIN_CANCEL</member>
+                    <member name="messageID">1154019</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK1_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154020</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_COIN_RANK1_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20028</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20029</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20030</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20031</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK1_MI</member>
+        <member name="messageIDs">
+            <element>1154021</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK1_CONFIRM</member>
+        <member name="next">EX20121202_390B_COIN_RANK1_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK1</member>
+        <member name="messageIDs">
+            <element>1154095</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_CANCEL</member>
+        <member name="messageIDs">
+            <element>1154022</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK2_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154025</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_COIN_RANK2_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20028</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK2_MI</member>
+        <member name="messageIDs">
+            <element>1154026</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK2_CONFIRM</member>
+        <member name="next">EX20121202_390B_COIN_RANK2_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK2</member>
+        <member name="messageIDs">
+            <element>1154096</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK3_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154029</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_COIN_RANK3_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20029</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK3_MI</member>
+        <member name="messageIDs">
+            <element>1154030</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK3_CONFIRM</member>
+        <member name="next">EX20121202_390B_COIN_RANK3_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK3</member>
+        <member name="messageIDs">
+            <element>1154097</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK4_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154033</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_COIN_RANK4_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20030</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK4_MI</member>
+        <member name="messageIDs">
+            <element>1154034</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK4_CONFIRM</member>
+        <member name="next">EX20121202_390B_COIN_RANK4_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK4</member>
+        <member name="messageIDs">
+            <element>1154098</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK5_JOIN_CONFIRM</member>
+        <member name="next">EX20121202_390B_MO_DONE</member>
+        <member name="messageIDs">
+            <element>1154037</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_390B_COIN_RANK5_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>390</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6428</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">20031</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">EXISTS</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK5_MI</member>
+        <member name="messageIDs">
+            <element>1154038</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_390B_COIN_RANK5_CONFIRM</member>
+        <member name="next">EX20121202_390B_COIN_RANK5_END</member>
+        <member name="queueNext">EX20121202_D6428_RANK5</member>
+        <member name="messageIDs">
+            <element>1154099</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_COIN_RANK1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154060</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_COIN_RANK2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154061</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_COIN_RANK3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154062</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_COIN_RANK4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154063</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_390B_COIN_RANK5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>3874</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-15000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154064</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20121202_389</member>
+        <member name="next">EX20121202_389_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_MOUNT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">801</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_MOUNT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">1183</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_NO_ITEM</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12879</member>
+                                <member name="value2">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_MAIN</member>
+        <member name="next">EX20121202_389_TOTAL_CALC</member>
+        <member name="messageIDs">
+            <element>1155002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_MOUNT</member>
+        <member name="messageIDs">
+            <element>1155125</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_NO_ITEM</member>
+        <member name="messageIDs">
+            <element>1155001</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_TOTAL_CALC</member>
+        <member name="next">EX20121202_389_TOTAL</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagCopy</member>
+                    <member name="params">
+                        <element>20121205</element>
+                        <element>389</element>
+                        <element>EVENT_COUNTER</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX20121202_389_TOTAL</member>
+        <member name="next">EX20121202_389_MAIN_PR</member>
+        <member name="messageID">1155124</member>
+        <member name="transformScriptID">transforme_flag</member>
+        <member name="transformScriptParams">
+            <element>389</element>
+            <element>CHARACTER</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_389_MAIN_PR</member>
+        <member name="messageID">1155003</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE_PR</member>
+                    <member name="messageID">1155004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1155005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_389_TRADE_PR</member>
+        <member name="messageID">1155006</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE_SELECT</member>
+                    <member name="messageID">1155007</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12879</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE_CANCEL</member>
+                    <member name="messageID">1155008</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_TRADE_SELECT</member>
+        <member name="next">EX20121202_389_TRADE_SELECT_PR</member>
+        <member name="messageIDs">
+            <element>1155010</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_MI</member>
+        <member name="messageIDs">
+            <element>1155038</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_TRADE_CANCEL</member>
+        <member name="messageIDs">
+            <element>1155009</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_389_TRADE_SELECT_PR</member>
+        <member name="messageID">1155011</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE1</member>
+                    <member name="messageID">1155012</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>99</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>199</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>299</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>399</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>499</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>599</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>699</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>799</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>899</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>999</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE10</member>
+                    <member name="messageID">1155013</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12879</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>100</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>90</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>200</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>190</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>300</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>290</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>400</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>390</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>500</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>490</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>600</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>590</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>700</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>690</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>800</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>790</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>900</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>890</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>1000</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>990</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE100</member>
+                    <member name="messageID">1155014</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12879</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>100</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>200</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>100</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>300</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>200</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>400</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>300</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>500</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>400</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>600</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>500</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>700</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>600</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>800</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>700</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>900</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>800</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_IF2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">LT</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>1000</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>389</key>
+                                                    <value>900</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_TRADE_PR</member>
+                    <member name="messageID">1155008</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_TRADE1</member>
+        <member name="next">EX20121202_389_REWARD_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12879</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155039</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20121205</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_IF2</member>
+        <member name="messageIDs">
+            <element>1155036</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_IF</member>
+        <member name="messageIDs">
+            <element>1155037</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_TRADE10</member>
+        <member name="next">EX20121202_389_REWARD_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12879</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155040</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20121205</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_TRADE100</member>
+        <member name="next">EX20121202_389_REWARD_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12879</key>
+                            <value>-100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155041</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20121205</element>
+                        <element>100</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20121202_389_REWARD_SPLIT</member>
+        <member name="next">EX20121202_389_REWARD_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD1000</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>1000</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">1000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD900</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>900</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">900</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD800</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>800</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">800</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD700</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>700</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">700</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD600</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>600</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">600</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD500</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>500</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">500</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD400</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>400</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">400</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD300</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>300</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">300</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD200</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>200</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">200</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD100</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>389</key>
+                                        <value>100</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD100_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">100</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD200_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">200</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD300_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">300</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD400_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">400</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD500_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">500</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD600_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">600</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD700_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">700</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD800_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">800</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD900_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">900</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20121202_389_REWARD1000_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20121205</member>
+                                <member name="value2">1000</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD_DONE</member>
+        <member name="messageIDs">
+            <element>1155015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD1000</member>
+        <member name="next">EX20121202_389_REWARD1000_END</member>
+        <member name="messageIDs">
+            <element>1155016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD900</member>
+        <member name="next">EX20121202_389_REWARD_MID_END</member>
+        <member name="messageIDs">
+            <element>1155017</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD800</member>
+        <member name="next">EX20121202_389_REWARD800_END</member>
+        <member name="messageIDs">
+            <element>1155018</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD700</member>
+        <member name="next">EX20121202_389_REWARD_MID_END</member>
+        <member name="messageIDs">
+            <element>1155019</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD600</member>
+        <member name="next">EX20121202_389_REWARD_MID_END</member>
+        <member name="messageIDs">
+            <element>1155020</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD500</member>
+        <member name="next">EX20121202_389_REWARD500_END</member>
+        <member name="messageIDs">
+            <element>1155021</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD400</member>
+        <member name="next">EX20121202_389_REWARD_MID_END</member>
+        <member name="messageIDs">
+            <element>1155022</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD300</member>
+        <member name="next">EX20121202_389_REWARD_GENDER</member>
+        <member name="messageIDs">
+            <element>1155023</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD200</member>
+        <member name="next">EX20121202_389_REWARD_MID_END</member>
+        <member name="messageIDs">
+            <element>1155024</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD100</member>
+        <member name="next">EX20121202_389_REWARD_GENDER</member>
+        <member name="messageIDs">
+            <element>1155025</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD100_PRE</member>
+        <member name="messageIDs">
+            <element>1155035</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD200_PRE</member>
+        <member name="messageIDs">
+            <element>1155034</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD300_PRE</member>
+        <member name="messageIDs">
+            <element>1155033</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD400_PRE</member>
+        <member name="messageIDs">
+            <element>1155032</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD500_PRE</member>
+        <member name="messageIDs">
+            <element>1155031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD600_PRE</member>
+        <member name="messageIDs">
+            <element>1155030</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD700_PRE</member>
+        <member name="messageIDs">
+            <element>1155029</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD800_PRE</member>
+        <member name="messageIDs">
+            <element>1155028</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD900_PRE</member>
+        <member name="messageIDs">
+            <element>1155027</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD1000_PRE</member>
+        <member name="messageIDs">
+            <element>1155026</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD1000_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>774</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD_MID_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD800_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>12881</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD500_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>25123</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20121202_389_REWARD_GENDER</member>
+        <member name="next">EX20121202_389_REWARD_GENDER_PR</member>
+        <member name="messageIDs">
+            <element>1155095</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20121202_389_REWARD_GENDER_PR</member>
+        <member name="messageID">1155096</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_REWARD100_END_M</member>
+                    <member name="messageID">1155097</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_REWARD300_END_M</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">20121205</member>
+                                            <member name="value2">300</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20121202_389_REWARD100_END_F</member>
+                    <member name="messageID">1155098</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20121202_389_REWARD300_END_F</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">20121205</member>
+                                            <member name="value2">300</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD100_END_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>35085</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD300_END_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>22526</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD100_END_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>35086</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20121202_389_REWARD300_END_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>49059</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>22527</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

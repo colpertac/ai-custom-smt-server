@@ -1,0 +1,2718 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX20131003_614</member>
+        <member name="next">EX20131003_614_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ1_DONE_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">1</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_MAIN</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201160</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_614_QUIZ1_DONE_SPLIT</member>
+        <member name="next">EX20131003_QUIZ1_REWARD</member>
+        <member name="queueNext">EX20131003_614_QUIZ1_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_QUIZ1_REWARD_IF</member>
+                    <member name="queueNext">EX20131003_614_QUIZ1_DONE_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_MAIN_PR</member>
+        <member name="messageID">201161</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_INFO1</member>
+                    <member name="messageID">201162</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_INFO2</member>
+                    <member name="messageID">201163</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_INFO3</member>
+                    <member name="messageID">201164</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_INFO4</member>
+                    <member name="messageID">201165</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_INFO5</member>
+                    <member name="messageID">201166</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1</member>
+                    <member name="messageID">201167</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_QUIZ1_RETRY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">20131003</member>
+                                            <member name="scriptID">bool_counterValue</member>
+                                            <member name="params">
+                                                <element>1</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2</member>
+                    <member name="messageID">201168</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_QUIZ2_RETRY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">20131003</member>
+                                            <member name="value2">2</member>
+                                            <member name="scriptID">bool_counterValue</member>
+                                            <member name="params">
+                                                <element>1</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_SUPPORT</member>
+                    <member name="messageID">201169</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201170</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_QUIZ1_REWARD</member>
+        <member name="messageIDs">
+            <element>201200</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_614_QUIZ1_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ1_DONE_M</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ1_DONE_F</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_gender</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_QUIZ1_REWARD_IF</member>
+        <member name="messageIDs">
+            <element>201199</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_DONE_IF</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_INFO1</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201171</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_INFO2</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201172</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_INFO3</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201173</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_INFO4</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201174</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_INFO5</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201175</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ1</member>
+        <member name="next">EX20131003_614_QUIZ1_PR</member>
+        <member name="messageIDs">
+            <element>201176</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ1_RETRY</member>
+        <member name="next">EX20131003_614_QUIZ1_PR</member>
+        <member name="messageIDs">
+            <element>201289</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ2</member>
+        <member name="next">EX20131003_614_QUIZ2_PR</member>
+        <member name="messageIDs">
+            <element>201204</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ2_RETRY</member>
+        <member name="next">EX20131003_614_QUIZ2_PR</member>
+        <member name="messageIDs">
+            <element>201289</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_SUPPORT</member>
+        <member name="next">EX20131003_614_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201222</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_SUPPORT_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23680</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">2</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_SUPPORT_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23681</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">2</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_DONE_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23680</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>0</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_DONE_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23681</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>0</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ1_PR</member>
+        <member name="messageID">201177</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_START</member>
+                    <member name="messageID">201178</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ2_PR</member>
+        <member name="messageID">201177</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_START</member>
+                    <member name="messageID">201178</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_SUPPORT_PR</member>
+        <member name="messageID">201222</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201223</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_SUPPORT1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_SUPPORT2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_SUPPORT3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_randomSplit</member>
+                    <member name="branchScriptParams">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201224</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_MAIN_PR</member>
+                    <member name="messageID">201225</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_START</member>
+        <member name="next">EX20131003_614_QUIZ1_Q1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131001</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>20131002</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ2_START</member>
+        <member name="next">EX20131003_614_QUIZ2_Q1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131001</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>20131002</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_SUPPORT1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">158</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2295</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201226</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>201229</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_SUPPORT2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">159</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2296</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201227</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>201230</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_SUPPORT3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">162</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2299</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201228</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>201231</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ1_Q1</member>
+        <member name="next">EX20131003_614_QUIZ1_Q1_PR</member>
+        <member name="messageIDs">
+            <element>201180</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ2_Q1</member>
+        <member name="next">EX20131003_614_QUIZ2_Q1_PR</member>
+        <member name="messageIDs">
+            <element>201205</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ1_Q1_PR</member>
+        <member name="messageID">201181</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q2</member>
+                    <member name="messageID">201182</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q1_CORRECT</member>
+                    <member name="messageID">201183</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q2</member>
+                    <member name="messageID">201184</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ2_Q1_PR</member>
+        <member name="messageID">201206</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q1_CORRECT</member>
+                    <member name="messageID">201207</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q2</member>
+                    <member name="messageID">201208</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q2</member>
+                    <member name="messageID">201209</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ1_Q2</member>
+        <member name="next">EX20131003_614_QUIZ1_Q2_PR</member>
+        <member name="messageIDs">
+            <element>201185</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_Q1_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ1_Q2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131001</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ2_Q1_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ2_Q2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131002</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ2_Q2</member>
+        <member name="next">EX20131003_614_QUIZ2_Q2_PR</member>
+        <member name="messageIDs">
+            <element>201210</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ1_Q2_PR</member>
+        <member name="messageID">201186</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q2_CORRECT</member>
+                    <member name="messageID">201187</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q3</member>
+                    <member name="messageID">201188</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q3</member>
+                    <member name="messageID">201189</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ2_Q2_PR</member>
+        <member name="messageID">201211</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q3</member>
+                    <member name="messageID">201212</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q3</member>
+                    <member name="messageID">201213</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q2_CORRECT</member>
+                    <member name="messageID">201214</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_Q2_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ1_Q3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131001</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ1_Q3</member>
+        <member name="next">EX20131003_614_QUIZ1_Q3_PR</member>
+        <member name="messageIDs">
+            <element>201190</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ2_Q3</member>
+        <member name="next">EX20131003_614_QUIZ2_Q3_PR</member>
+        <member name="messageIDs">
+            <element>201215</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ2_Q2_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ2_Q3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131002</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ1_Q3_PR</member>
+        <member name="messageID">201274</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_Q3_CORRECT</member>
+                    <member name="messageID">201191</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_RESULT</member>
+                    <member name="messageID">201192</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_RESULT</member>
+                    <member name="messageID">201193</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ2_Q3_PR</member>
+        <member name="messageID">201216</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_RESULT</member>
+                    <member name="messageID">201217</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_RESULT</member>
+                    <member name="messageID">201218</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ2_Q3_CORRECT</member>
+                    <member name="messageID">201219</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ1_Q3_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ_RESULT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131001</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_614_QUIZ_RESULT</member>
+        <member name="next">EX20131003_614_QUIZ_PERFECT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ_MISS1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ_MISS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ_MISS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ2_Q3_CORRECT</member>
+        <member name="next">EX20131003_614_QUIZ_RESULT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131002</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ_PERFECT</member>
+        <member name="messageIDs">
+            <element>201194</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_614_QUIZ1_DONE_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131001</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_QUIZ2_REWARD</member>
+                    <member name="queueNext">EX20131003_614_QUIZ2_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131002</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">2</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ_MISS1</member>
+        <member name="next">EX20131003_614_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201195</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ_MISS2</member>
+        <member name="next">EX20131003_614_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201196</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ_MISS3</member>
+        <member name="next">EX20131003_614_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201197</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_QUIZ2_REWARD</member>
+        <member name="messageIDs">
+            <element>201220</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_614_QUIZ2_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">947</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">949</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201221</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>2</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_614_QUIZ_RETRY_PR</member>
+        <member name="messageID">201198</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ1_START</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_614_QUIZ2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20131002</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_QUIT</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_614_QUIZ_QUIT</member>
+        <member name="messageIDs">
+            <element>201201</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_615</member>
+        <member name="next">EX20131003_615_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ1_DONE_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">3</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">4</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_MAIN</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201232</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_615_QUIZ1_DONE_SPLIT</member>
+        <member name="next">EX20131003_QUIZ1_REWARD</member>
+        <member name="queueNext">EX20131003_615_QUIZ1_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_QUIZ1_REWARD</member>
+                    <member name="queueNext">EX20131003_615_QUIZ1_DONE_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_MAIN_PR</member>
+        <member name="messageID">201161</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_INFO1</member>
+                    <member name="messageID">201233</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_INFO2</member>
+                    <member name="messageID">201163</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_INFO3</member>
+                    <member name="messageID">201164</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_INFO4</member>
+                    <member name="messageID">201165</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_INFO5</member>
+                    <member name="messageID">201166</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1</member>
+                    <member name="messageID">201167</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_615_QUIZ1_RETRY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">20131003</member>
+                                            <member name="value2">3</member>
+                                            <member name="scriptID">bool_counterValue</member>
+                                            <member name="params">
+                                                <element>1</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2</member>
+                    <member name="messageID">201168</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">3</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_615_QUIZ2_RETRY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">20131003</member>
+                                            <member name="value2">5</member>
+                                            <member name="scriptID">bool_counterValue</member>
+                                            <member name="params">
+                                                <element>1</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_SUPPORT</member>
+                    <member name="messageID">201169</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201170</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_615_QUIZ1_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ1_DONE_M</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ1_DONE_F</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_gender</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_DONE_IF</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>4</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_INFO1</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201234</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_INFO2</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201235</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_INFO3</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201236</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_INFO4</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201237</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_INFO5</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201238</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ1</member>
+        <member name="next">EX20131003_615_QUIZ1_PR</member>
+        <member name="messageIDs">
+            <element>201239</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ1_RETRY</member>
+        <member name="next">EX20131003_615_QUIZ1_PR</member>
+        <member name="messageIDs">
+            <element>201289</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ2</member>
+        <member name="next">EX20131003_615_QUIZ2_PR</member>
+        <member name="messageIDs">
+            <element>201253</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ2_RETRY</member>
+        <member name="next">EX20131003_615_QUIZ2_PR</member>
+        <member name="messageIDs">
+            <element>201289</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_SUPPORT</member>
+        <member name="next">EX20131003_615_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201222</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_SUPPORT_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23682</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">5</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_SUPPORT_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23683</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">5</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_DONE_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23682</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>3</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_DONE_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23683</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>3</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ1_PR</member>
+        <member name="messageID">201177</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_START</member>
+                    <member name="messageID">201178</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ2_PR</member>
+        <member name="messageID">201177</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_START</member>
+                    <member name="messageID">201178</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_SUPPORT_PR</member>
+        <member name="messageID">201222</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201223</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_615_SUPPORT1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_615_SUPPORT2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_randomSplit</member>
+                    <member name="branchScriptParams">
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201224</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_MAIN_PR</member>
+                    <member name="messageID">201225</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_START</member>
+        <member name="next">EX20131003_615_QUIZ1_Q1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131003</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>20131004</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ2_START</member>
+        <member name="next">EX20131003_615_QUIZ2_Q1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131003</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>20131004</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_SUPPORT1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">160</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2300</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201270</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>201272</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_SUPPORT2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">161</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2301</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201271</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>201273</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ1_Q1</member>
+        <member name="next">EX20131003_615_QUIZ1_Q1_PR</member>
+        <member name="messageIDs">
+            <element>201180</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ2_Q1</member>
+        <member name="next">EX20131003_615_QUIZ2_Q1_PR</member>
+        <member name="messageIDs">
+            <element>201254</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ1_Q1_PR</member>
+        <member name="messageID">201181</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q1_CORRECT</member>
+                    <member name="messageID">201240</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q2</member>
+                    <member name="messageID">201241</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q2</member>
+                    <member name="messageID">201242</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ2_Q1_PR</member>
+        <member name="messageID">201255</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q1_CORRECT</member>
+                    <member name="messageID">201256</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q2</member>
+                    <member name="messageID">201257</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q2</member>
+                    <member name="messageID">201258</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_Q1_CORRECT</member>
+        <member name="next">EX20131003_615_QUIZ1_Q2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131003</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ1_Q2</member>
+        <member name="next">EX20131003_615_QUIZ1_Q2_PR</member>
+        <member name="messageIDs">
+            <element>201243</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ2_Q1_CORRECT</member>
+        <member name="next">EX20131003_615_QUIZ2_Q2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131004</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ2_Q2</member>
+        <member name="next">EX20131003_615_QUIZ2_Q2_PR</member>
+        <member name="messageIDs">
+            <element>201259</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ1_Q2_PR</member>
+        <member name="messageID">201275</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q3</member>
+                    <member name="messageID">201244</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q3</member>
+                    <member name="messageID">201245</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_Q2_CORRECT</member>
+                    <member name="messageID">201246</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ2_Q2_PR</member>
+        <member name="messageID">201260</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q3</member>
+                    <member name="messageID">201261</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q3</member>
+                    <member name="messageID">201262</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q2_CORRECT</member>
+                    <member name="messageID">201263</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ1_Q3</member>
+        <member name="next">EX20131003_615_QUIZ1_Q3_PR</member>
+        <member name="messageIDs">
+            <element>201247</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_Q2_CORRECT</member>
+        <member name="next">EX20131003_615_QUIZ1_Q3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131003</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ2_Q3</member>
+        <member name="next">EX20131003_615_QUIZ2_Q3_PR</member>
+        <member name="messageIDs">
+            <element>201264</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ2_Q2_CORRECT</member>
+        <member name="next">EX20131003_615_QUIZ2_Q3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131004</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ1_Q3_PR</member>
+        <member name="messageID">201276</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ_RESULT</member>
+                    <member name="messageID">201248</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_CORRECT3</member>
+                    <member name="messageID">201249</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ_RESULT</member>
+                    <member name="messageID">201250</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ2_Q3_PR</member>
+        <member name="messageID">201265</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ_RESULT</member>
+                    <member name="messageID">201266</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ_RESULT</member>
+                    <member name="messageID">201267</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ2_Q3_CORRECT</member>
+                    <member name="messageID">201268</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_615_QUIZ_RESULT</member>
+        <member name="next">EX20131003_615_QUIZ_PERFECT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ_MISS1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ_MISS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ_MISS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131000</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ1_CORRECT3</member>
+        <member name="next">EX20131003_615_QUIZ_RESULT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131003</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ2_Q3_CORRECT</member>
+        <member name="next">EX20131003_615_QUIZ_RESULT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>20131004</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>20131000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ_PERFECT</member>
+        <member name="messageIDs">
+            <element>201194</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_615_QUIZ1_DONE_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131003</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">3</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20131003_QUIZ2_REWARD</member>
+                    <member name="queueNext">EX20131003_615_QUIZ2_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20131004</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">5</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ_MISS1</member>
+        <member name="next">EX20131003_615_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201195</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ_MISS2</member>
+        <member name="next">EX20131003_615_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201196</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_615_QUIZ_MISS3</member>
+        <member name="next">EX20131003_615_QUIZ_RETRY_PR</member>
+        <member name="messageIDs">
+            <element>201197</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_615_QUIZ2_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">948</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">949</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">201269</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>5</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_615_QUIZ_RETRY_PR</member>
+        <member name="messageID">201198</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_615_QUIZ1_START</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_615_QUIZ2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="compareMode">GTE</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20131004</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_614_QUIZ_QUIT</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_616</member>
+        <member name="next">EX20131003_616_PRE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_616_MAIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">6</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_PRE</member>
+        <member name="next">EX20131003_616_PRE_PR</member>
+        <member name="messageIDs">
+            <element>201291</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_MAIN</member>
+        <member name="next">EX20131003_616_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201298</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_616_PRE_PR</member>
+        <member name="messageID">201291</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_616_PRE_KNOWN</member>
+                    <member name="messageID">201292</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_616_PRE_MEET</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">415</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">422</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">426</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">440</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201293</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_616_MAIN_PR</member>
+        <member name="messageID">201298</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_616_INFO1</member>
+                    <member name="messageID">201294</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_616_INFO2</member>
+                    <member name="messageID">201295</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_616_INFO3</member>
+                    <member name="messageID">201296</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201297</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_PRE_KNOWN</member>
+        <member name="next">EX20131003_616_PRE_END</member>
+        <member name="messageIDs">
+            <element>201302</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_PRE_MEET</member>
+        <member name="next">EX20131003_616_PRE_END</member>
+        <member name="messageIDs">
+            <element>201303</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_INFO1</member>
+        <member name="next">EX20131003_616_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201299</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_INFO2</member>
+        <member name="next">EX20131003_616_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201300</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_616_INFO3</member>
+        <member name="next">EX20131003_616_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201301</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_616_PRE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>6</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20131003_617</member>
+        <member name="next">EX20131003_617_PRE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20131003_617_MAIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20131003</member>
+                                <member name="value2">7</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_PRE</member>
+        <member name="next">EX20131003_617_PRE_PR</member>
+        <member name="messageIDs">
+            <element>201304</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_MAIN</member>
+        <member name="next">EX20131003_617_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201305</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_617_PRE_PR</member>
+        <member name="messageID">201304</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_PRE_KNOWN</member>
+                    <member name="messageID">201292</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20131003_617_PRE_MEET</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">415</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">422</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">426</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">439</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201293</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_617_MAIN_PR</member>
+        <member name="messageID">201305</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_INFO1</member>
+                    <member name="messageID">201294</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_INFO2</member>
+                    <member name="messageID">201307</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_BARTER1</member>
+                    <member name="messageID">201309</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_BARTER2</member>
+                    <member name="messageID">201311</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">21457</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_INFO3</member>
+                    <member name="messageID">201317</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201297</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_PRE_KNOWN</member>
+        <member name="next">EX20131003_617_PRE_END</member>
+        <member name="messageIDs">
+            <element>201320</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_PRE_MEET</member>
+        <member name="next">EX20131003_617_PRE_END</member>
+        <member name="messageIDs">
+            <element>201319</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_INFO1</member>
+        <member name="next">EX20131003_617_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201306</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_INFO2</member>
+        <member name="next">EX20131003_617_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201308</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_BARTER1</member>
+        <member name="next">EX20131003_617_BARTER1_PR</member>
+        <member name="messageIDs">
+            <element>201315</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_BARTER2</member>
+        <member name="next">EX20131003_617_BARTER2_PR</member>
+        <member name="messageIDs">
+            <element>201316</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20131003_617_INFO3</member>
+        <member name="next">EX20131003_617_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>201318</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20131003_617_PRE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20131003</element>
+                        <element>7</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_617_BARTER1_PR</member>
+        <member name="messageID">201310</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_BARTER_1022</member>
+                    <member name="messageID">201312</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_BARTER_1023</member>
+                    <member name="messageID">201313</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201297</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20131003_617_BARTER2_PR</member>
+        <member name="messageID">201311</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_BARTER_1024</member>
+                    <member name="messageID">201312</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_BARTER_1025</member>
+                    <member name="messageID">201313</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_BARTER_1026</member>
+                    <member name="messageID">201314</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20131003_617_MAIN_PR</member>
+                    <member name="messageID">201179</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">201297</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX20131003_BARTER_1022</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1022</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX20131003_BARTER_1023</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1023</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX20131003_BARTER_1024</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1024</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX20131003_BARTER_1025</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1025</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX20131003_BARTER_1026</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1026</member>
+    </object>
+</objects>

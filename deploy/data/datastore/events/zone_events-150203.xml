@@ -1,0 +1,198 @@
+<objects>
+    <object name="Event">
+        <member name="ID">Z150203_3367</member>
+        <member name="next">Z150203_3367_GREETING</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z150203_3367_ENEMY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="value1">1051</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_ENEMY</member>
+        <member name="next">Z15020X_EXIT_01</member>
+        <member name="messageIDs">
+            <element>1206557</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_GREETING</member>
+        <member name="next">Z150203_3367_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1206552</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150203_3367_MAIN_PROMPT</member>
+        <member name="messageID">1206562</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_TALK</member>
+                    <member name="messageID">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_EXCHANGE</member>
+                    <member name="messageID">1206502</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4244</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_TALK</member>
+        <member name="next">Z150203_3367_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1206597</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150203_3367_EXCHANGE</member>
+        <member name="messageID">1206567</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_PLUGIN_MI</member>
+                    <member name="messageID">1206513</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z150203_3367_PLUGIN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">BETHEL</member>
+                                            <member name="value1">2</member>
+                                            <member name="value2">150000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PLUGIN</member>
+                                <member name="value1">79</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_BARTER_5</member>
+                    <member name="messageID">1206507</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_MAIN_PROMPT</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z150203_BARTER_5</member>
+		<member name="useNext">Z150203_3367_EXCHANGE</member>
+        <member name="menuType">808</member>
+        <member name="shopID">5</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_PLUGIN_MI</member>
+        <member name="next">Z150203_3367_EXCHANGE</member>
+        <member name="messageIDs">
+            <element>1206592</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_PLUGIN</member>
+        <member name="next">Z150203_3367_PLUGIN_01</member>
+        <member name="messageIDs">
+            <element>1206577</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z150203_3367_PLUGIN_01</member>
+        <member name="messageID">1206572</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_PLUGIN_03</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z150203_3367_PLUGIN_02</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_PLUGIN_03</member>
+        <member name="next">Z150203_3367_PLUGIN_END</member>
+        <member name="messageIDs">
+            <element>1206612</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z150203_3367_PLUGIN_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">BETHEL</member>
+                    <member name="value">-150000</member>
+                    <member name="isSet">true</member>
+                    <member name="modifier">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">PLUGIN</member>
+                    <member name="ID">79</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1206534</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1206539</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z150203_3367_PLUGIN_02</member>
+        <member name="next">Z150203_3367_EXCHANGE</member>
+        <member name="messageIDs">
+            <element>1206587</element>
+        </member>
+    </object>
+</objects>

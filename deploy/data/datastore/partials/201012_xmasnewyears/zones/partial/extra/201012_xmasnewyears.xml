@@ -1,0 +1,75 @@
+﻿<objects>
+    <!-- Time-limited event: 年末年始イベント「ダイヤモンドダスト」 -->
+    <object name="ServerZonePartial">
+        <member name="ID">20101201</member>
+        <member name="DynamicMapIDs">
+            <element>60101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- ＮＰＣサイエン -->
+                <object name="ServerNPC">
+                    <member name="ID">324</member>
+                    <member name="SpotID">60100</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201012_324</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20101202</member>
+        <member name="DynamicMapIDs">
+            <element>20110</element>
+            <element>60101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <object name="ServerNPC">
+                    <member name="ID">2039</member>
+                    <member name="SpotID">60500</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201012_2039</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <!-- Set the Xmas or New Year's mode based on system date -->
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201012_XMAS_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SYSTEMTIME</member>
+                    <member name="Value">0</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201012_XMAS_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

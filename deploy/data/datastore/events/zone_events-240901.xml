@@ -1,0 +1,681 @@
+﻿<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249</member>
+        <member name="next">Z240901_249_PR</member>
+        <member name="messageIDs">
+            <element>1180202</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_249_PR</member>
+        <member name="messageID">1180202</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO</member>
+                    <member name="messageID">1180203</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">38019</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">38020</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">38021</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MO_SETUP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_notUsed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MO_ACCESS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11310</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO</member>
+                    <member name="messageID">1180204</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO</member>
+        <member name="next">Z240901_249_MO_PR</member>
+        <member name="messageIDs">
+            <element>1180224</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MI</member>
+        <member name="next">Z240901_249_PR</member>
+        <member name="messageIDs">
+            <element>1180219</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO_SETUP</member>
+        <member name="next">Z240901_249_MO_SETUP_END</member>
+        <member name="messageIDs">
+            <element>1180192</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO_ACCESS</member>
+        <member name="next">Z240901_249_MO_ACCESS_PR</member>
+        <member name="messageIDs">
+            <element>1180220</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180205</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_249_MO_PR</member>
+        <member name="messageID">1180224</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK1_END</member>
+                    <member name="queueNext">Z240901_TO_D11310</member>
+                    <member name="messageID">1180225</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38019</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK2_END</member>
+                    <member name="queueNext">Z240901_TO_D11310</member>
+                    <member name="messageID">1180226</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38020</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK3_END</member>
+                    <member name="queueNext">Z240901_TO_D11310</member>
+                    <member name="messageID">1180227</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38021</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_249_MO_SETUP_END</member>
+        <member name="next">Z240901_249_MO</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1180191</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z240901_249_MO_ACCESS</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11310</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_249_MO_ACCESS_PR</member>
+        <member name="messageID">1180221</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_ACCESS2</member>
+                    <member name="messageID">1180222</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_ACCESS_IGNORE</member>
+                    <member name="messageID">1180223</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_249_INFO_PR</member>
+        <member name="messageID">1180205</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO1</member>
+                    <member name="messageID">1180206</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO2</member>
+                    <member name="messageID">1180207</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO3</member>
+                    <member name="messageID">1180208</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO4</member>
+                    <member name="messageID">1180209</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO5</member>
+                    <member name="messageID">1180210</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_INFO6</member>
+                    <member name="messageID">1180211</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_PR</member>
+                    <member name="messageID">1180212</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_249_MO_RANK1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>38019</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">632</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">633</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">634</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1180230</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_TO_D11310</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11310</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11310</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_249_MO_RANK2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>38020</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">632</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">633</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">634</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1180231</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_249_MO_RANK3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>38021</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">632</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">633</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">634</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1180232</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO_ACCESS2</member>
+        <member name="next">Z240901_249_MO_ACCESS2_PR</member>
+        <member name="messageIDs">
+            <element>1180224</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO_ACCESS_IGNORE</member>
+        <member name="next">Z240901_249_MO_PR</member>
+        <member name="messageIDs">
+            <element>1180229</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO1</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180213</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO2</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180214</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO3</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180215</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO4</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180216</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO5</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180217</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_INFO6</member>
+        <member name="next">Z240901_249_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1180218</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_249_MO_ACCESS2_PR</member>
+        <member name="messageID">1180224</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK1_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="messageID">1180225</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38019</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MO_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11310</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK2_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="messageID">1180226</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38020</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MO_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11310</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_249_MO_RANK3_END</member>
+                    <member name="queueNext">event_instanceJoin</member>
+                    <member name="messageID">1180227</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">38021</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z240901_249_MO_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11310</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_249_MO_INVALID</member>
+        <member name="messageIDs">
+            <element>1180228</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_3004</member>
+        <member name="next">Z240901_3004_LEAVE</member>
+        <member name="messageIDs">
+            <element>1180264</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_3004_LEAVE</member>
+        <member name="next">Z240901_3004_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>1180265</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z240901_3004_LEAVE_PR</member>
+        <member name="messageID">1180265</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z240901_3004_LEAVE_CONFIRM</member>
+                    <member name="queueNext">Z240901_TO_40101</member>
+                    <member name="messageID">1180266</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1180267</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z240901_3004_LEAVE_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1180269</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_TO_40101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40101</member>
+                    <member name="spotID">59004</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1180276</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z240901_ZONE_IN_SKILLS</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">TOKUSEI</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>9900002</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="scriptID">bool_player</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="value1">778</member>
+                    <member name="value2">0</member>
+                    <member name="compareMode">GTE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

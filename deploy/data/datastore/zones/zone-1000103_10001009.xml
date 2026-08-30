@@ -1,0 +1,88 @@
+﻿<objects>
+    <!-- 魔階シブヤクォーツ -->
+    <object name="ServerZone">
+        <member name="ID">1000103</member>
+        <member name="DynamicMapID">10001009</member>
+        <member name="Global">false</member>
+        <member name="GroupID">100101</member>
+        <member name="StartingX">2637.56</member>
+        <member name="StartingY">8008.73</member>
+        <member name="StartingRotation">0.00</member>
+        <member name="NPCs"/>
+        <member name="Objects"/>
+        <member name="Spawns">
+            <pair>
+                <key>3656</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">3656</member>
+                        <member name="EnemyType">3656</member>
+                        <member name="Level">62</member>
+                        <member name="XP">150000</member>
+                        <member name="TalkResist">100</member>
+                        <member name="TalkResults">0</member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">1</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>3656</key>
+                                <value>1</value>
+                            </pair>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnLocationGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">1</member>
+                        <member name="GroupIDs">
+                            <element>1</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>1</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots"/>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionSpawn">
+                                <member name="spawnLocationGroupIDs">
+                                    <element>1</element>
+                                </member>
+                                <member name="mode">ONE_TIME</member>
+                                <member name="defeatActions">
+                                    <element>
+                                        <object name="ActionStartEvent">
+                                            <member name="eventID">D1000X_09_ML001</member>
+                                            <member name="sourceContext">ALL</member>
+                                            <member name="location">ZONE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

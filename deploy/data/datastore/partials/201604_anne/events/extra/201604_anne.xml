@@ -1,0 +1,2482 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_660</member>
+        <member name="next">SD_660_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956031</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_MAIN_PR</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TALK_SPLIT</member>
+                    <member name="messageID">1164408</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BUY_633</member>
+                    <member name="messageID">1164409</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EXCHANGE_PR</member>
+                    <member name="messageID">956079</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">SD_677_HELP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="compareMode">EQUAL</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>3572</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1164410</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">SD_660_TALK_SPLIT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_660_TALK_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_660_TALK_2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>2</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BUY_633</member>
+        <member name="menuType">175</member>
+        <member name="shopID">633</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_EXCHANGE_PR</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_410</member>
+                    <member name="messageID">956098</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EQUIP_PR</member>
+                    <member name="messageID">956099</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TICKET_PR1</member>
+                    <member name="messageID">956100</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">956101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_431</member>
+                    <member name="messageID">956102</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_432</member>
+                    <member name="messageID">956103</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">956104</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_434</member>
+                    <member name="messageID">956081</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_MAIN_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1164410</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_HELP</member>
+        <member name="messageIDs">
+            <element>956170</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_660_TALK_1</member>
+        <member name="next">SD_660_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1164411</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_660_TALK_2</member>
+        <member name="next">SD_660_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956086</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_410</member>
+        <member name="menuType">808</member>
+        <member name="shopID">410</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_EQUIP_PR</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_428</member>
+                    <member name="messageID">956106</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_429</member>
+                    <member name="messageID">956107</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">956108</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EXCHANGE_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_TICKET_PR1</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_411</member>
+                    <member name="messageID">956062</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_412</member>
+                    <member name="messageID">956063</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_413</member>
+                    <member name="messageID">956064</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_414</member>
+                    <member name="messageID">956065</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_415</member>
+                    <member name="messageID">956066</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_416</member>
+                    <member name="messageID">956067</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TICKET_PR2</member>
+                    <member name="messageID">956060</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EXCHANGE_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_431</member>
+        <member name="menuType">808</member>
+        <member name="shopID">431</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_432</member>
+        <member name="menuType">808</member>
+        <member name="shopID">432</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_434</member>
+        <member name="menuType">808</member>
+        <member name="shopID">434</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_428</member>
+        <member name="menuType">808</member>
+        <member name="shopID">428</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_429</member>
+        <member name="menuType">808</member>
+        <member name="shopID">429</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_411</member>
+        <member name="menuType">808</member>
+        <member name="shopID">411</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_412</member>
+        <member name="menuType">808</member>
+        <member name="shopID">412</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_413</member>
+        <member name="menuType">808</member>
+        <member name="shopID">413</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_414</member>
+        <member name="menuType">808</member>
+        <member name="shopID">414</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_415</member>
+        <member name="menuType">808</member>
+        <member name="shopID">415</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_416</member>
+        <member name="menuType">808</member>
+        <member name="shopID">416</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_TICKET_PR2</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TICKET_PR1</member>
+                    <member name="messageID">956061</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_417</member>
+                    <member name="messageID">956068</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_418</member>
+                    <member name="messageID">956069</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_419</member>
+                    <member name="messageID">956070</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_420</member>
+                    <member name="messageID">956071</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_421</member>
+                    <member name="messageID">956072</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_422</member>
+                    <member name="messageID">956073</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TICKET_PR3</member>
+                    <member name="messageID">956060</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EXCHANGE_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_417</member>
+        <member name="menuType">808</member>
+        <member name="shopID">417</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_418</member>
+        <member name="menuType">808</member>
+        <member name="shopID">418</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_419</member>
+        <member name="menuType">808</member>
+        <member name="shopID">419</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_420</member>
+        <member name="menuType">808</member>
+        <member name="shopID">420</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_421</member>
+        <member name="menuType">808</member>
+        <member name="shopID">421</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_422</member>
+        <member name="menuType">808</member>
+        <member name="shopID">422</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_660_TICKET_PR3</member>
+        <member name="messageID">956035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_TICKET_PR2</member>
+                    <member name="messageID">956061</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_423</member>
+                    <member name="messageID">956074</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_424</member>
+                    <member name="messageID">956075</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_425</member>
+                    <member name="messageID">956076</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_BARTER_426</member>
+                    <member name="messageID">956077</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_660_EXCHANGE_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_423</member>
+        <member name="menuType">808</member>
+        <member name="shopID">423</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_424</member>
+        <member name="menuType">808</member>
+        <member name="shopID">424</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_425</member>
+        <member name="menuType">808</member>
+        <member name="shopID">425</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">SD_BARTER_426</member>
+        <member name="menuType">808</member>
+        <member name="shopID">426</member>
+    </object>
+    <object name="Event">
+        <member name="ID">SD_677</member>
+        <member name="next">SD_677_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_677_REWARD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2575</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3572</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_MAIN</member>
+        <member name="next">SD_660_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956032</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_REWARD</member>
+        <member name="next">SD_677_REWARD_PR</member>
+        <member name="messageIDs">
+            <element>956172</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_677_REWARD_PR</member>
+        <member name="messageID">956173</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_677_ITEM</member>
+                    <member name="messageID">956174</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">SD_677_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_677_TITLE</member>
+                    <member name="queueNext">SD_677_TITLE1</member>
+                    <member name="messageID">956191</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TITLE_AVAILABLE</member>
+                                <member name="value1">201</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_677_TITLE</member>
+                    <member name="queueNext">SD_677_TITLE2</member>
+                    <member name="messageID">956192</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TITLE_AVAILABLE</member>
+                                <member name="value1">301</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_677_TITLE</member>
+                    <member name="queueNext">SD_677_TITLE3</member>
+                    <member name="messageID">956193</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TITLE_AVAILABLE</member>
+                                <member name="value1">401</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_677_WARN</member>
+                    <member name="messageID">956176</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_ITEM</member>
+        <member name="next">SD_677_ITEM_END</member>
+        <member name="messageIDs">
+            <element>956178</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_IF</member>
+        <member name="messageIDs">
+            <element>956183</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_TITLE</member>
+        <member name="next">SD_677_TITLE_END</member>
+        <member name="messageIDs">
+            <element>956179</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_677_TITLE1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">201</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">202</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">203</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">204</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">205</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">206</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">207</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">208</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">209</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">210</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">211</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">212</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">213</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">214</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">215</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">216</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">217</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">218</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">219</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">220</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">221</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">222</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">223</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">224</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">225</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_677_TITLE2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">301</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">302</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">303</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">304</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">305</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">306</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">307</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">308</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">309</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">310</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">311</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">312</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">313</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">314</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">315</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">316</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">317</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">318</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">319</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">320</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">321</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">322</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">323</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_677_TITLE3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">401</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">402</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">403</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">404</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">405</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">406</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">407</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">408</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">409</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">410</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">411</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">412</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">413</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">414</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">415</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">416</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">417</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">418</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">419</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">420</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">421</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">422</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">423</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">424</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">425</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">426</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">427</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">428</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_677_WARN</member>
+        <member name="messageIDs">
+            <element>956185</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_677_ITEM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>699</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2575</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_677_TITLE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956181</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2575</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_2475</member>
+        <member name="messageID">957014</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_TO_220101</member>
+                    <member name="messageID">957015</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>220101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_TO_220102</member>
+                    <member name="messageID">957016</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>220102</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_TO_220103</member>
+                    <member name="messageID">957017</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>220103</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">957018</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_220101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_220102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220102</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_TO_220103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220103</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">SD_3572</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_3572_INTRO_1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3572_INTRO_2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>2</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_INTRO_1</member>
+        <member name="next">SD_3572_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956149</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_INTRO_2</member>
+        <member name="next">SD_3572_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>956050</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_3572_MAIN_PR</member>
+        <member name="messageID">956051</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_EXPERT</member>
+                    <member name="messageID">956152</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_BEAT</member>
+                    <member name="messageID">956052</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_BEAT</member>
+                    <member name="messageID">956053</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_TALK</member>
+                    <member name="messageID">956056</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_EXPERT</member>
+        <member name="next">SD_3572_EXPERT_PR1</member>
+        <member name="messageIDs">
+            <element>956153</element>
+            <element>956154</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3572_BEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">65705</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_3572_BEAT_SUCCESS</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3572_BEAT_FAIL1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3572_BEAT_FAIL2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>10</element>
+            <element>45</element>
+            <element>45</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_TALK</member>
+        <member name="messageIDs">
+            <element>956057</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_3572_EXPERT_PR1</member>
+        <member name="messageID">956154</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_EXPERT_PR2</member>
+                    <member name="messageID">956155</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_MAIN_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">SD_3572_BEAT_SUCCESS</member>
+        <member name="next">SD_3572_ITAI_WIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_3572_ITAI_LOSE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20160501</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20160502</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_BEAT_FAIL1</member>
+        <member name="messageIDs">
+            <element>956055</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_BEAT_FAIL2</member>
+        <member name="messageIDs">
+            <element>956054</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_3572_EXPERT_PR2</member>
+        <member name="messageID">956154</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_EXPERT_MI</member>
+                    <member name="messageID">956156</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">SD_3572_EXPERT_MAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">74</member>
+                                            <member name="scriptID">bool_expertiseExtension</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">SD_3572_EXPERT_END1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">38237</member>
+                                            <member name="value2">50</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">SD_3572_MAIN_PR</member>
+                    <member name="messageID">956059</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_ITAI_WIN</member>
+        <member name="next">SD_3572_DROP</member>
+        <member name="messageIDs">
+            <element>956150</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_ITAI_LOSE</member>
+        <member name="messageIDs">
+            <element>956151</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_EXPERT_MI</member>
+        <member name="messageIDs">
+            <element>956160</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_EXPERT_MAX</member>
+        <member name="messageIDs">
+            <element>956157</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">SD_3572_EXPERT_END1</member>
+        <member name="next">SD_3572_EXPERT_END2</member>
+        <member name="messageIDs">
+            <element>956158</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3572_DROP</member>
+        <member name="next">SD_3572_DROP_CD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>38237</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_3572_DROP_CD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20160501</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3572_EXPERT_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>38237</key>
+                            <value>-50</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">956159</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="expertiseMax">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3572_DROP_CD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_relativeCooldown</member>
+                    <member name="params">
+                        <element>20160501</element>
+                        <element>0</element>
+                        <element>0</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3572_DROP_CD2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_relativeCooldown</member>
+                    <member name="params">
+                        <element>20160502</element>
+                        <element>0</element>
+                        <element>0</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">957019</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">3572</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>100</key>
+                            <value>60014</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3572</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">3572</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_DA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">957020</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">3572</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3572</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">SD_DA_STATUS</member>
+                    <member name="autoOnly">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_DA_STATUS</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2575</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2108</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_CHARACTER_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2108</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">SD_3401_REWARD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_51XX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5101</element>
+                                    <element>5121</element>
+                                    <element>5131</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_540X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5401</element>
+                                    <element>5402</element>
+                                    <element>5403</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_542X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5421</element>
+                                    <element>5423</element>
+                                    <element>5422</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_548X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5481</element>
+                                    <element>5482</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_550X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5501</element>
+                                    <element>5502</element>
+                                    <element>5503</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_552X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5521</element>
+                                    <element>5522</element>
+                                    <element>5523</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_553X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5531</element>
+                                    <element>5533</element>
+                                    <element>5535</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_570X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5701</element>
+                                    <element>5702</element>
+                                    <element>5703</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_571X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5711</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_572X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5721</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_620X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6201</element>
+                                    <element>6202</element>
+                                    <element>6203</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_622X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_63XXB</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6301</element>
+                                    <element>6302</element>
+                                    <element>6303</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_63XXG_F</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6304</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_63XXG</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6304</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_920X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9201</element>
+                                    <element>9202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_921X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9211</element>
+                                    <element>9212</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_922X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_10901</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10901</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_10902</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10902</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_10903</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10903</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_117XX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11703</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">SD_3401_REWARD_13001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>13001</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_51XX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_540X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_542X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_548X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_550X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_552X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_553X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>19</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_570X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>7</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_571X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_572X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_620X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_622X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_63XXB</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_63XXG_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>16</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_63XXG</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>11</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_920X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_921X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>12</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_922X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_10901</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_10902</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>11</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_10903</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>22</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_117XX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_3401_REWARD_13001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

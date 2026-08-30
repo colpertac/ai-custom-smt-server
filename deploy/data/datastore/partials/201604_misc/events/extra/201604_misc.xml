@@ -1,0 +1,72 @@
+<objects>
+    <object name="Event">
+        <member name="ID">SD_D1020X_BOX</member>
+        <member name="next">SD_D1020X_BOX_PR</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">N120010X_1BOX_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1200999</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">SD_D1020X_BOX_PR</member>
+        <member name="messageID">1200182</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">N120010X</member>
+                    <member name="messageID">956094</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1200184</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_D1020X_120010X_REWARD</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>1200101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38237</element>
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">SD_D1020X_120010X_EXTRA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>956096</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

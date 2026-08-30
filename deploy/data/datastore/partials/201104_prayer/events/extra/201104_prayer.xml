@@ -1,0 +1,1067 @@
+<objects>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316</member>
+        <member name="next">EX20110402_3316_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3316</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>201104</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_XPREQ</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20110401</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20110402</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20110402_3316_SPLIT</member>
+        <member name="next">EX20110402_3316_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20110401</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">382</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_INVALID1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_INVALID2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_INVALID3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2104</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_INVALID4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2105</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_MP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_PD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_ALIVE</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_XPREQ</member>
+        <member name="next">EX20110402_3316_SPLIT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_xpProgressCalc</member>
+                    <member name="params">
+                        <element>20.0</element>
+                        <element>3316</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_PRAY_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3316</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_PRAY_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201104</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_MAIN</member>
+        <member name="next">EX20110402_3316_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>750861</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20110402_3316_POST</member>
+        <member name="next">EX20110402_3316_POST_REWARD_SETUP</member>
+        <member name="queueNext">EX20110402_3316_POST_REWARD_CLAN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">6</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_FIRST_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">200000000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">500000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_PRE</member>
+        <member name="next">EX20110402_3316_PRE_END</member>
+        <member name="messageIDs">
+            <element>750860</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_INVALID1</member>
+        <member name="messageIDs">
+            <element>750865</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_INVALID2</member>
+        <member name="messageIDs">
+            <element>750866</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_INVALID3</member>
+        <member name="messageIDs">
+            <element>750867</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_INVALID4</member>
+        <member name="messageIDs">
+            <element>750868</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_MP</member>
+        <member name="messageIDs">
+            <element>750885</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_PD</member>
+        <member name="messageIDs">
+            <element>750886</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20110402_3316_PRAY_PR</member>
+        <member name="messageID">750862</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20110402_3316_SPLIT</member>
+                    <member name="messageID">3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201104</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20110402_3316_PRAY_CONFIRM</member>
+                    <member name="messageID">100648</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3316</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20110402_PRAY_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="negate">true</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201104</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201104</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">88</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="negate">true</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201104</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20110402_3316_MAIN_PR</member>
+        <member name="messageID">750862</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20110402_3316_RESET</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20110402_3316_MAIN_END</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD_SETUP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounterSum</member>
+                    <member name="params">
+                        <element>20110401</element>
+                        <element>3316</element>
+                        <element>1</element>
+                        <element>50000000</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20110402_3316_POST_REWARD_CLAN</member>
+        <member name="next">EX20110402_3316_POST_REWARD_END</member>
+        <member name="queueNext">EX20110402_3316_POST_DONE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_FIRST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3316</key>
+                                        <value>50000000</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">6</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_POST_DONE</member>
+        <member name="messageIDs">
+            <element>850035</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_POST_FIRST_IF</member>
+        <member name="messageIDs">
+            <element>850033</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_POST_FIRST</member>
+        <member name="next">EX20110402_3316_POST_REWARD_SETUP</member>
+        <member name="queueNext">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="messageIDs">
+            <element>850000</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_PRE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">382</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">909</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750869</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_PRAY_CONFIRM</member>
+        <member name="next">EX20110402_PRAY</member>
+        <member name="messageIDs">
+            <element>3411</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_PRAY_CONFIRM</member>
+        <member name="next">EX20110402_PRAY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">3411</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_RESET</member>
+        <member name="next">EX20110402_3316_RESET_END</member>
+        <member name="messageIDs">
+            <element>750863</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20110402_3316_MAIN_END</member>
+        <member name="messageIDs">
+            <element>750864</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>6</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="next">EX20110402_3316_POST_REWARD_END</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">500000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">4000000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">1</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">20000000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">2</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">100000000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">3</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD5</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EVENT_COUNTER</member>
+                                <member name="value1">20110401</member>
+                                <member name="value2">200000000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">4</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20110402_3316_POST_REWARD6</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3316</key>
+                                        <value>50000000</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20110402</member>
+                                <member name="value2">5</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_PRAY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_xpProgressCalc</member>
+                    <member name="params">
+                        <element>20.0</element>
+                        <element>3316</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagMath</member>
+                    <member name="params">
+                        <element>CHARACTER</element>
+                        <element>3316</element>
+                        <element>3317</element>
+                        <element>MULT</element>
+                        <element>-1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="transformScriptID">transforma_flag</member>
+                    <member name="transformScriptParams">
+                        <element>3317</element>
+                        <element>CHARACTER</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110401</element>
+                        <element>3316</element>
+                        <element>0</element>
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2104</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>2105</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_RESET_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2104</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750870</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD1</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">911</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>0</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">850001</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD2</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">912</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">850002</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD3</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">910</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>2</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">850003</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD4</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">913</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>3</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">850004</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD5</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12420</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>4</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_3316_POST_REWARD6</member>
+        <member name="next">EX20110402_3316_POST_REWARD_LOOP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantSkills">
+                    <member name="skillIDs">
+                        <element>5791</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20110402</element>
+                        <element>5</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">850006</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <!-- The original chat control was removed from the client after the
+             event. In order to mimic this functionality this event was added
+             and wired up to the optional NPC mode prompt to allow the XP buff.
+             GMs can use this event directly or targeted on a non-GM player to
+             mimic the functionality. -->
+        <member name="ID">PRAY</member>
+        <member name="next">EX20110402_3316_XPREQ</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>201104</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20110402_PRAY_FAIL</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2104</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20110402_PRAY_FAIL</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">119006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

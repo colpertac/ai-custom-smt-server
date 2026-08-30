@@ -1,0 +1,1213 @@
+<objects>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_CLEAR_ITEM</member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="scriptID">bool_player</member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="transformScriptID">transforma_clearItems</member>
+                    <member name="transformScriptParams">
+                        <element>12143</element>
+                        <element>12144</element>
+                        <element>12145</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_BOSS_MINIONS</member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="scriptID">bool_enemyFilter</member>
+                    <member name="value1">2466</member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_spawnNear</member>
+                    <member name="params">
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM001</member>
+        <member name="next">D7301_PR001</member>
+        <member name="messageIDs">
+            <element>117002</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7301_PR001</member>
+        <member name="messageID">117021</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7301_NM003</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D7301_NM002</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">10000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7301_NM004</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM004</member>
+        <member name="messageIDs">
+            <element>117003</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM002</member>
+        <member name="next">D7301_NM002a</member>
+        <member name="messageIDs">
+            <element>117004</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_NM002a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM003</member>
+        <member name="messageIDs">
+            <element>117005</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_PA001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">174</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7301_PA001a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">2905</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_PA001a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">TOKUSEI</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_ZF01</member>
+        <member name="next">D7301_ZF01a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_ResetInstancePoison</member>
+                    <member name="params">
+                        <element>-3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>501</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>7301</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D7301_EF001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>500</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_ZF01a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>500</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_ZF02</member>
+        <member name="next">D7301_ZF02a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_ResetInstancePoison</member>
+                    <member name="params">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>501</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_ZF02a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="setMode">DECREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>500</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_EF001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">117018</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>13</element>
+                        <element>14</element>
+                        <element>15</element>
+                        <element>16</element>
+                        <element>17</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7301_CLEAR</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>501</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_CLEAR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_disableSpawnGroup</member>
+                    <member name="params">
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>11</element>
+                        <element>12</element>
+                        <element>13</element>
+                        <element>14</element>
+                        <element>15</element>
+                        <element>16</element>
+                        <element>17</element>
+                        <element>18</element>
+                        <element>19</element>
+                        <element>20</element>
+                        <element>21</element>
+                        <element>22</element>
+                        <element>23</element>
+                        <element>24</element>
+                        <element>25</element>
+                        <element>26</element>
+                        <element>27</element>
+                        <element>28</element>
+                        <element>29</element>
+                        <element>30</element>
+                        <element>31</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_nextPhase</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">25</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_nextPhase</member>
+                                <member name="params">
+                                    <element>3</element>
+                                    <element>4</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7301_SC001</member>
+        <member name="next">D7301_PM001</member>
+        <member name="sceneID">2018</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_PM001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">68</member>
+                    <member name="fadeInDelay">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_SP001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">EQUAL</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_enableSpawnGroup</member>
+                    <member name="params">
+                        <element>2</element>
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>11</element>
+                        <element>12</element>
+                        <element>13</element>
+                        <element>14</element>
+                        <element>15</element>
+                        <element>16</element>
+                        <element>17</element>
+                        <element>18</element>
+                        <element>19</element>
+                        <element>20</element>
+                        <element>21</element>
+                        <element>22</element>
+                        <element>23</element>
+                        <element>24</element>
+                        <element>25</element>
+                        <element>26</element>
+                        <element>27</element>
+                        <element>28</element>
+                        <element>29</element>
+                        <element>30</element>
+                        <element>31</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7301_CLEAR2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10006</element>
+                    </member>
+                    <member name="spawnActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">debug_noEvent</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10007</element>
+                    </member>
+                    <member name="spawnActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">debug_noEvent</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10008</element>
+                    </member>
+                    <member name="spawnActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">debug_noEvent</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10009</element>
+                    </member>
+                    <member name="spawnActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">debug_noEvent</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>10010</element>
+                    </member>
+                    <member name="spawnActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">debug_noEvent</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_CLEAR2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">STOP_TIMER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_disableSpawnGroup</member>
+                    <member name="params">
+                        <element>2</element>
+                        <element>3</element>
+                        <element>4</element>
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>11</element>
+                        <element>12</element>
+                        <element>13</element>
+                        <element>14</element>
+                        <element>15</element>
+                        <element>16</element>
+                        <element>17</element>
+                        <element>18</element>
+                        <element>19</element>
+                        <element>20</element>
+                        <element>21</element>
+                        <element>22</element>
+                        <element>23</element>
+                        <element>24</element>
+                        <element>25</element>
+                        <element>26</element>
+                        <element>27</element>
+                        <element>28</element>
+                        <element>29</element>
+                        <element>30</element>
+                        <element>31</element>
+                        <element>700</element>
+                        <element>701</element>
+                        <element>702</element>
+                        <element>703</element>
+                        <element>704</element>
+                        <element>705</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_nextPhase</member>
+                    <member name="params">
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="bossGroupID">1</member>
+                    <member name="dropSetIDs">
+                        <element>73010100</element>
+                        <element>7300</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">1000</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1001</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1002</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1003</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1004</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1005</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1006</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1007</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1008</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1009</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1010</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1011</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1012</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1013</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1014</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1015</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1016</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1017</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1018</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1019</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1020</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1021</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1022</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1023</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1024</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1025</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1026</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1027</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1028</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">1029</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7301_SC002</member>
+        <member name="next">D7301_PA002</member>
+        <member name="sceneID">12018</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_PA002</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">TOKUSEI</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301000</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_ResetInstancePoison</member>
+                    <member name="params">
+                        <element>0</element>
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">190</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM006</member>
+        <member name="messageIDs">
+            <element>117001</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM007</member>
+        <member name="messageIDs">
+            <element>117016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM008</member>
+        <member name="messageIDs">
+            <element>117012</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM009</member>
+        <member name="messageIDs">
+            <element>117011</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM010</member>
+        <member name="messageIDs">
+            <element>117014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM011</member>
+        <member name="messageIDs">
+            <element>117000</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM012</member>
+        <member name="messageIDs">
+            <element>117006</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM013</member>
+        <member name="messageIDs">
+            <element>117015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM014</member>
+        <member name="messageIDs">
+            <element>117013</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM015</member>
+        <member name="next">D7301_PR002</member>
+        <member name="messageIDs">
+            <element>117007</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7301_PR002</member>
+        <member name="messageID">117009</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7301_NM016</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7301_NM017</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM016</member>
+        <member name="messageIDs">
+            <element>117008</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7301_NM017</member>
+        <member name="messageIDs">
+            <element>117010</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7301_PR003</member>
+        <member name="messageID">117017</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7301_PA003</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_PA003</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">551</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30101</member>
+                    <member name="spotID">50008</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D7301_BOX</member>
+        <member name="next">N120010X</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">N120010X_1BOX_SPLIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1200999</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D7301_BOX_STATUS_ERR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">STATUS_ACTIVE</member>
+                                <member name="value1">1179</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_BOX_STATUS_ERR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1166011</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_120010X_REWARD</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>1200101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>12142</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_120010X_EXTRA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>1179</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D7301_BOSS_TOKUSEI</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7301_BOSS_TOKUSEI_2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_enemyFilter</member>
+                                <member name="value1">2466</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_BOSS_TOKUSEI_2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">TOKUSEI</member>
+                    <member name="sourceContext">SOURCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301001</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7301002</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7301003</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7301004</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>7301005</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7301_FAIL</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>7301</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_disableSpawnGroup</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>2</element>
+                        <element>3</element>
+                        <element>4</element>
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>11</element>
+                        <element>12</element>
+                        <element>13</element>
+                        <element>14</element>
+                        <element>15</element>
+                        <element>16</element>
+                        <element>17</element>
+                        <element>18</element>
+                        <element>19</element>
+                        <element>20</element>
+                        <element>21</element>
+                        <element>22</element>
+                        <element>23</element>
+                        <element>24</element>
+                        <element>25</element>
+                        <element>26</element>
+                        <element>27</element>
+                        <element>28</element>
+                        <element>29</element>
+                        <element>30</element>
+                        <element>31</element>
+                        <element>700</element>
+                        <element>701</element>
+                        <element>702</element>
+                        <element>703</element>
+                        <element>704</element>
+                        <element>705</element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">731001</member>
+                    <member name="state">3</member>
+                    <member name="sourceContext">NONE</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D7301_PA003</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

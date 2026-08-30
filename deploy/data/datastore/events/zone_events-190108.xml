@@ -1,0 +1,213 @@
+<objects>
+    <object name="Event">
+        <member name="ID">Z190108_398</member>
+        <member name="next">Z190108_398_GREETING</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">event_instanceJoin</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">6901</member>
+                                <member name="value2">6902</member>
+                                <member name="compareMode">BETWEEN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z190108_398_GREETING</member>
+        <member name="next">Z190108_398_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>142401</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190108_398_MAIN_PROMPT</member>
+        <member name="messageID">142402</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_398_MI</member>
+                    <member name="messageID">142403</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z190108_398_ENTER</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">142410</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190108_398_MI</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">142490</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z190108_398_ENTER</member>
+        <member name="next">Z190108_398_SELECTION</member>
+        <member name="messageIDs">
+            <element>142450</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190108_398_SELECTION</member>
+        <member name="messageID">142451</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_398_UENO</member>
+                    <member name="messageID">142452</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_398_SHINAGAWA</member>
+                    <member name="messageID">142453</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190108_398_UENO</member>
+        <member name="messageID">142480</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_CREATE_I6901</member>
+                    <member name="messageID">142481</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">142482</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190108_398_SHINAGAWA</member>
+        <member name="messageID">142480</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_CREATE_I6902</member>
+                    <member name="messageID">142481</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">142482</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190108_CREATE_I6901</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>583</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">6901</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190108_CREATE_I6902</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>583</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">6902</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z190108_ENTER</member>
+        <member name="messageID">142301</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z190108_ZC01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z190108_ZC01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">190101</member>
+                    <member name="spotID">50004</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,536 @@
+<objects>
+    <!-- NPC 006 -->
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6</member>
+        <member name="next">Z50103_6_PR</member>
+        <member name="messageIDs">
+            <element>41012</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_6_PR</member>
+        <member name="messageID">42012</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_BUY_12</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_SELL_12</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_REPAIR_12</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_6_TALK</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_BUY_12</member>
+        <member name="menuType">175</member>
+        <member name="shopID">12</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_SELL_12</member>
+        <member name="menuType">176</member>
+        <member name="shopID">12</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_REPAIR_12</member>
+        <member name="menuType">177</member>
+        <member name="shopID">12</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>43012</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_6_PR02</member>
+        <member name="messageID">42012</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_BUY_12</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_SELL_12</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_REPAIR_12</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_6_TALK2</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z50103_6_TALK2</member>
+        <member name="next">Z50103_6_TALK_F</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK_M</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">GENDER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z50103_6_TALK_F</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK4</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z50103_6_TALK_M</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK_M1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK_M2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK4</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z50103_6_TALK3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>4</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK1</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>41103</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK4</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>41104</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK3</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>41105</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK_M1</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>41101</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_6_TALK_M2</member>
+        <member name="next">Z50103_6_PR02</member>
+        <member name="messageIDs">
+            <element>41102</element>
+        </member>
+    </object>
+    <!-- NPC 007 -->
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7</member>
+        <member name="next">Z50103_7_PR</member>
+        <member name="messageIDs">
+            <element>41013</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_7_PR</member>
+        <member name="messageID">42013</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_BUY_13</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_SELL_13</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_REPAIR_13</member>
+                    <member name="messageID">40003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_7_TALK</member>
+                    <member name="messageID">40004</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z50103_7_DCM_CHECK</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">2</member>
+                                            <member name="scriptID">bool_appearance</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z50103_7_DCM_CHECK</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">4</member>
+                                            <member name="scriptID">bool_appearance</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z50103_7_DCM_CHECK</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">102</member>
+                                            <member name="scriptID">bool_appearance</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">Z50103_7_DCM_CHECK</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">1</member>
+                                            <member name="value2">106</member>
+                                            <member name="scriptID">bool_appearance</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_BUY_13</member>
+        <member name="menuType">175</member>
+        <member name="shopID">13</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_SELL_13</member>
+        <member name="menuType">176</member>
+        <member name="shopID">13</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_REPAIR_13</member>
+        <member name="menuType">177</member>
+        <member name="shopID">13</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_TALK</member>
+        <member name="next">Z50103_7_PR</member>
+        <member name="messageIDs">
+            <element>43013</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z50103_7_DCM_CHECK</member>
+        <member name="next">Z50103_7_DCM</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z50103_7_DCM_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_DCM</member>
+        <member name="next">Z50103_7_DCM_PR</member>
+        <member name="messageIDs">
+            <element>101501</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_DCM_IF</member>
+        <member name="messageIDs">
+            <element>101507</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_7_DCM_PR</member>
+        <member name="messageID">101502</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_7_MI</member>
+                    <member name="messageID">101503</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z50103_7_DCM_CONFIRM</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_7_DCM_CANCEL</member>
+                    <member name="messageID">101504</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_MI</member>
+        <member name="messageIDs">
+            <element>101509</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_DCM_CONFIRM</member>
+        <member name="next">Z50103_7_DCM_END</member>
+        <member name="messageIDs">
+            <element>101505</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_7_DCM_CANCEL</member>
+        <member name="messageIDs">
+            <element>101506</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z50103_7_DCM_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>10687</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">101508</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- NPC 304 -->
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_304</member>
+        <member name="next">Z50103_304_PR</member>
+        <member name="messageIDs">
+            <element>101450</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_304_PR</member>
+        <member name="messageID">101451</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_304_STYLE</member>
+                    <member name="messageID">101452</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_304_STYLE_END</member>
+                    <member name="messageID">101453</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_304_INFO</member>
+                    <member name="messageID">101454</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">101456</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_304_STYLE</member>
+        <member name="next">Z50103_STYLE_3</member>
+        <member name="messageIDs">
+            <element>101457</element>
+            <element>101458</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_304_STYLE_END</member>
+        <member name="messageIDs">
+            <element>101460</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z50103_304_INFO</member>
+        <member name="messageID">101461</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_304_INFO_Y</member>
+                    <member name="messageID">101462</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50103_304_INFO_N</member>
+                    <member name="messageID">101463</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z50103_STYLE_3</member>
+        <member name="menuType">417</member>
+        <member name="shopID">3</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_304_INFO_Y</member>
+        <member name="next">Z50103_304_PR</member>
+        <member name="messageIDs">
+            <element>101464</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z50103_304_INFO_N</member>
+        <member name="next">Z50103_304_PR</member>
+        <member name="messageIDs">
+            <element>101465</element>
+        </member>
+    </object>
+</objects>

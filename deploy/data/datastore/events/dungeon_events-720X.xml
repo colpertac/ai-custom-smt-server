@@ -1,0 +1,2473 @@
+﻿<objects>
+    <object name="EventPrompt">
+        <member name="ID">D720X_EXIT</member>
+        <member name="messageID">23</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_EXIT_00</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_EXIT_00</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">190103</member>
+                    <member name="spotID">50003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_COC4</member>
+        <member name="next">D720X_COC4_00</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">7200001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="value1">906</member>
+                    <member name="value2">3</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_COC4_00</member>
+        <member name="next">D720X_COC4_01</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">7200002</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_COC4_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163835</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">906</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294_00</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144005</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294_02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144004</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_294A</member>
+        <member name="next">D720X_294_02</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_294_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_294A_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294A_01</member>
+        <member name="next">D720X_294_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_294B</member>
+        <member name="next">D720X_294_02</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_294_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_294B_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294B_01</member>
+        <member name="next">D720X_294_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_294C</member>
+        <member name="next">D720X_294_02</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_294_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_294C_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_294C_01</member>
+        <member name="next">D720X_294_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_OD_MI</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144002</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_MIASMA</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_MIASMA_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>720101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_MIASMA_02</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>720201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_MIASMA_03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>720301</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_MIASMA_04</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>720401</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_MIASMA_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>139</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                    <member name="allowNull">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_MIASMA_02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>138</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                    <member name="allowNull">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_MIASMA_03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>137</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                    <member name="allowNull">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_MIASMA_04</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144006</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>136</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                    <member name="allowNull">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D7204_3362</member>
+        <member name="next">D7204_3362_00</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7204_3362_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PLUGIN</member>
+                                <member name="value1">75</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">40181</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7204_3362_00</member>
+        <member name="messageIDs">
+            <element>144010</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7204_3362_01</member>
+        <member name="next">D7204_3362_02</member>
+        <member name="messageIDs">
+            <element>144011</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7204_3362_02</member>
+        <member name="messageID">144012</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7204_3362_03</member>
+                    <member name="messageID">144013</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7204_3362_04</member>
+                    <member name="messageID">144014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">144015</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7204_3362_03</member>
+        <member name="messageIDs">
+            <element>144016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7204_3362_04</member>
+        <member name="next">D7204_3362_05</member>
+        <member name="messageIDs">
+            <element>144017</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7204_3362_05</member>
+        <member name="messageID">144018</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7204_3362_07</member>
+                    <member name="messageID">144019</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7204_3362_06</member>
+                    <member name="messageID">144015</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D7204_3362_06</member>
+        <member name="messageIDs">
+            <element>144022</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7204_3362_07</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144020</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>144021</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>40181</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">PLUGIN</member>
+                    <member name="ID">75</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144023</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2235</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_PLUGIN_STATUS</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">ITEM</member>
+                    <member name="value1">40181</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144026</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>2235</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 01 -->
+    <object name="EventPrompt">
+        <member name="ID">D720X_01_OD01</member>
+        <member name="messageID">144001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">720005</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_OD_MI</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next"/>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">NPC_STATE</member>
+                                            <member name="value1">720005</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D720X_01_OD01a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5296</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_01_OD01a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">720005</member>
+                    <member name="state">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_01_OD02</member>
+        <member name="messageID">144001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">720007</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_OD_MI</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next"/>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">NPC_STATE</member>
+                                            <member name="value1">720007</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D720X_01_OD02a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5296</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_01_OD02a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">720007</member>
+                    <member name="state">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_01_OD03</member>
+        <member name="messageID">144001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">720006</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_OD_MI</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next"/>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">NPC_STATE</member>
+                                            <member name="value1">720006</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D720X_01_OD03a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5296</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_01_OD03a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">720006</member>
+                    <member name="state">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_01_TR01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">3</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>40</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>72010000</element>
+                        <element>72010001</element>
+                        <element>72010002</element>
+                        <element>72010003</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 02 -->
+    <object name="EventPrompt">
+        <member name="ID">D720X_02_OD01</member>
+        <member name="messageID">144001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">720013</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_OD_MI</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next"/>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">NPC_STATE</member>
+                                            <member name="value1">720005</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D720X_02_OD01a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5296</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_02_OD01a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">720013</member>
+                    <member name="state">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_02_OD02</member>
+        <member name="messageID">144001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">NPC_STATE</member>
+                    <member name="value1">720010</member>
+                    <member name="value2">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_OD_MI</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next"/>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">NPC_STATE</member>
+                                            <member name="value1">720007</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D720X_02_OD02a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5296</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_02_OD02a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5296</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">720010</member>
+                    <member name="state">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_02_TR01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">3</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="dropSetIDs">
+                        <element>72010000</element>
+                        <element>72010001</element>
+                        <element>72010002</element>
+                        <element>72010003</element>
+                    </member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">106</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">107</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">108</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">109</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">110</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_02_294C</member>
+        <member name="next">D720X_294_02</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_294_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D720X_02_294C_01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_02_294C_01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">144007</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5332</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 03 -->
+    <object name="Event">
+        <member name="ID">D720X_03_COC5</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_03_COC5_00</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">907</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_00</member>
+        <member name="next">D720X_03_COC5_01</member>
+        <member name="messageID">7200003</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC5_01</member>
+        <member name="messageID">163837</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC5_MI</member>
+                    <member name="messageID">163878</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D720X_03_COC5_03</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">800</member>
+                                            <member name="value2">1000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC5_02</member>
+                    <member name="messageID">163879</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_02</member>
+        <member name="messageID">7200005</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_MI</member>
+        <member name="messageID">7200006</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_03</member>
+        <member name="next">D720X_03_COC5_04</member>
+        <member name="messageID">7200004</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_03_COC5_04a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">907</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_04a</member>
+        <member name="next">D720X_03_COC5_05</member>
+        <member name="messageID">7200007</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_04</member>
+        <member name="next">D720X_03_COC5_05</member>
+        <member name="messageID">7200008</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC5_05</member>
+        <member name="next">D720X_03_COC5_06</member>
+        <member name="messageID">7200009</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_03_COC5_06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">-1</member>
+                    <member name="fadeInDelay">200</member>
+                    <member name="fadeOutDelay">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>800</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D720X_03_COC6</member>
+        <member name="next">D720X_03_COC6_00</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D720X_03_COC6_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_03_COC6_IF</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163877</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_00</member>
+        <member name="next">D720X_03_COC6_01</member>
+        <member name="messageID">7200010</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_01</member>
+        <member name="next">D720X_03_COC6_02</member>
+        <member name="messageID">7200011</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_02</member>
+        <member name="messageID">163838</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_03</member>
+                    <member name="messageID">163839</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_05</member>
+                    <member name="messageID">163840</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_07</member>
+                    <member name="messageID">163841</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_03</member>
+        <member name="next">D720X_03_COC6_04</member>
+        <member name="messageID">7200012</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_04</member>
+        <member name="messageID">163842</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_05</member>
+                    <member name="messageID">163840</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_07</member>
+                    <member name="messageID">163841</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_13</member>
+                    <member name="messageID">163843</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_05</member>
+        <member name="next">D720X_03_COC6_06</member>
+        <member name="messageID">7200013</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_06</member>
+        <member name="messageID">163844</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_03</member>
+                    <member name="messageID">163839</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_07</member>
+                    <member name="messageID">163841</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_13</member>
+                    <member name="messageID">163843</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_11</member>
+                    <member name="messageID">163845</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_07</member>
+        <member name="next">D720X_03_COC6_08</member>
+        <member name="messageID">7200014</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_08</member>
+        <member name="messageID">163847</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_09</member>
+                    <member name="messageID">163848</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_05</member>
+                    <member name="messageID">163840</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_13</member>
+                    <member name="messageID">163843</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_09</member>
+        <member name="next">D720X_03_COC6_10</member>
+        <member name="messageID">7200016</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_10</member>
+        <member name="messageID">163849</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_05</member>
+                    <member name="messageID">163840</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_13</member>
+                    <member name="messageID">163843</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_11</member>
+        <member name="next">D720X_03_COC6_12</member>
+        <member name="messageID">7200015</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_12</member>
+        <member name="messageID">163846</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_09</member>
+                    <member name="messageID">163848</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_07</member>
+                    <member name="messageID">163841</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_13</member>
+                    <member name="messageID">163843</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_13</member>
+        <member name="next">D720X_03_COC6_14</member>
+        <member name="messageID">7200017</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_14</member>
+        <member name="next">D720X_03_COC6_15</member>
+        <member name="messageID">7200018</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_15</member>
+        <member name="next">D720X_03_COC6_16</member>
+        <member name="messageID">7200019</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_16</member>
+        <member name="next">D720X_03_COC6_17</member>
+        <member name="messageID">7200020</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D720X_03_COC6_17</member>
+        <member name="messageID">163850</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_18</member>
+                    <member name="messageID">163851</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D720X_03_COC6_18a</member>
+                    <member name="messageID">163852</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_18</member>
+        <member name="next">D720X_03_COC6_19</member>
+        <member name="messageID">7200021</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_18a</member>
+        <member name="next">D720X_03_COC6_19</member>
+        <member name="messageID">7200022</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D720X_03_COC6_19</member>
+        <member name="next">D720X_03_COC6_20</member>
+        <member name="messageID">7200023</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_03_COC6_20</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163853</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">122</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>163444</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">0</member>
+                    <member name="effectType">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>135</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>1566</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>799</key>
+                            <value>50000</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>50000</value>
+                        </pair>
+                    </member>
+                    <member name="notify">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163882</member>
+                    <member name="effectType">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163854</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">906</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">907</member>
+                    <member name="phase">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">150000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_03_BOSS_PM002</member>
+        <member name="next">D720X_03_COC5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">-1</member>
+                    <member name="fadeInDelay">200</member>
+                    <member name="fadeOutDelay">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">163968</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>136</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>137</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>138</key>
+                            <value>0</value>
+                        </pair>
+                        <pair>
+                            <key>139</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="targetType">CHARACTER</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D720X_03_SCREAM</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="isStop">true</member>
+                    <member name="musicID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionPlaySoundEffect">
+                    <member name="soundID">100844</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7201_03_BOSS</member>
+        <member name="messageID">163836</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7201_03_BOSS_SC01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7201_03_BOSS_SC01</member>
+        <member name="next">D7201_03_BOSS_PM01</member>
+        <member name="sceneID">4015</member>
+        <member name="eventLock">true</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7201_03_BOSS_PM01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">61</member>
+                    <member name="fadeInDelay">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7201_03_BOSS_SP01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7201_03_BOSS_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7201_03_BOSS_DF01</member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_startRemoteEvent</member>
+                                <member name="params">
+                                    <element>Z190103_BOSS_DEAD</element>
+                                    <element>190103</element>
+                                    <element>190103</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7201_03_BOSS_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>72010004</element>
+                        <element>72010005</element>
+                    </member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">11</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">12</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">13</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">14</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">15</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2033</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D7201_03_BOSS_SC02</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7201_03_BOSS_SC02</member>
+        <member name="next">D720X_03_BOSS_PM002</member>
+        <member name="sceneID">12015</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7202_03_BOSS</member>
+        <member name="messageID">163836</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7202_03_BOSS_SC01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7202_03_BOSS_SC01</member>
+        <member name="next">D7202_03_BOSS_PM01</member>
+        <member name="sceneID">4014</member>
+        <member name="eventLock">true</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7202_03_BOSS_PM01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">61</member>
+                    <member name="fadeInDelay">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7202_03_BOSS_SP01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7202_03_BOSS_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7202_03_BOSS_DF01</member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_startRemoteEvent</member>
+                                <member name="params">
+                                    <element>Z190103_BOSS_DEAD</element>
+                                    <element>190103</element>
+                                    <element>190103</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7202_03_BOSS_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>72010006</element>
+                        <element>72010007</element>
+                    </member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">11</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">12</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">13</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">14</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">15</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2033</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D7202_03_BOSS_SC02</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7202_03_BOSS_SC02</member>
+        <member name="next">D720X_03_BOSS_PM002</member>
+        <member name="sceneID">12014</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7203_03_BOSS</member>
+        <member name="messageID">163836</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7203_03_BOSS_SC01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7203_03_BOSS_SC01</member>
+        <member name="next">D7203_03_BOSS_PM01</member>
+        <member name="sceneID">4013</member>
+        <member name="eventLock">true</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7203_03_BOSS_PM01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">61</member>
+                    <member name="fadeInDelay">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7203_03_BOSS_SP01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7203_03_BOSS_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7203_03_BOSS_DF01</member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_startRemoteEvent</member>
+                                <member name="params">
+                                    <element>Z190103_BOSS_DEAD</element>
+                                    <element>190103</element>
+                                    <element>190103</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7203_03_BOSS_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>72010008</element>
+                        <element>72010009</element>
+                    </member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">11</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">12</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">13</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">14</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">15</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2033</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D7203_03_BOSS_SC02</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7203_03_BOSS_SC02</member>
+        <member name="next">D720X_03_BOSS_PM002</member>
+        <member name="sceneID">12013</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D7204_03_BOSS</member>
+        <member name="messageID">163836</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D7204_03_BOSS_SC01</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7204_03_BOSS_SC01</member>
+        <member name="next">D7204_03_BOSS_PM01</member>
+        <member name="sceneID">2012</member>
+        <member name="eventLock">true</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7204_03_BOSS_PM01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">61</member>
+                    <member name="fadeInDelay">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">0</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D7204_03_BOSS_SP01</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7204_03_BOSS_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D7204_03_BOSS_DF01</member>
+                                <member name="sourceContext">NONE</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_startRemoteEvent</member>
+                                <member name="params">
+                                    <element>Z190103_BOSS_DEAD</element>
+                                    <element>190103</element>
+                                    <element>190103</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D7204_03_BOSS_DF01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>4</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="isBossBox">true</member>
+                    <member name="dropSetIDs">
+                        <element>72010010</element>
+                        <element>72010011</element>
+                    </member>
+                    <member name="bossGroupID">1</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">11</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">12</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">13</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">14</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">15</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2033</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStartEvent">
+                    <member name="eventID">D7204_03_BOSS_SC02</member>
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D7204_03_BOSS_SC02</member>
+        <member name="next">D720X_03_BOSS_PM002</member>
+        <member name="sceneID">12012</member>
+    </object>
+</objects>

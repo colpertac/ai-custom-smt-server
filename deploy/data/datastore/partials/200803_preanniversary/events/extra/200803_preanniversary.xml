@@ -1,0 +1,1327 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150920</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_PR</member>
+        <member name="messageID">150921</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">3</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TALK1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TALK2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TALK3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_randomSplit</member>
+                    <member name="branchScriptParams">
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_INFO</member>
+                    <member name="messageID">150922</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_INFO_POST</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080302</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE</member>
+                    <member name="messageID">150923</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_POST_TRADE_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_notUsed</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_POST_TRADE</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080302</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TRADE_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5322</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TRADE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TALK1</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150926</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TALK2</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150927</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TALK3</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150928</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO</member>
+        <member name="next">EX20080302_324_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150930</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO_POST</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150962</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE</member>
+        <member name="next">EX20080302_324_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>150942</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE_MI</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150969</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE</member>
+        <member name="next">EX20080302_324_POST_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>150963</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE_MI</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150955</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE_IF</member>
+        <member name="next">EX20080302_324_PR</member>
+        <member name="messageIDs">
+            <element>150956</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20080302_324_POST_TRADE_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20080302</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_END</member>
+        <member name="messageIDs">
+            <element>150924</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_INFO_PR</member>
+        <member name="messageID">150931</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_INFO1</member>
+                    <member name="messageID">150932</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_INFO2</member>
+                    <member name="messageID">150933</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_INFO3</member>
+                    <member name="messageID">150934</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_INFO4</member>
+                    <member name="messageID">150935</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_PR</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_TRADE_PR</member>
+        <member name="messageID">150943</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1</member>
+                    <member name="messageID">150944</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2</member>
+                    <member name="messageID">150945</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_PR</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_POST_TRADE_PR</member>
+        <member name="messageID">150963</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE_INFO</member>
+                    <member name="messageID">150964</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1</member>
+                    <member name="messageID">150965</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TRADE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2</member>
+                    <member name="messageID">150966</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_TRADE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_PR</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO1</member>
+        <member name="next">EX20080302_324_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150937</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO2</member>
+        <member name="next">EX20080302_324_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150938</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO3</member>
+        <member name="next">EX20080302_324_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150939</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_INFO4</member>
+        <member name="next">EX20080302_324_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150940</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE1</member>
+        <member name="next">EX20080302_324_TRADE1_PR</member>
+        <member name="messageIDs">
+            <element>150947</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE2</member>
+        <member name="next">EX20080302_324_TRADE2_PR</member>
+        <member name="messageIDs">
+            <element>150948</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_TRADE_END</member>
+        <member name="messageIDs">
+            <element>150957</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE_INFO</member>
+        <member name="next">EX20080302_324_POST_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>150968</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE1</member>
+        <member name="next">EX20080302_324_POST_TRADE1_PR</member>
+        <member name="messageIDs">
+            <element>150971</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE2</member>
+        <member name="next">EX20080302_324_POST_TRADE2_PR</member>
+        <member name="messageIDs">
+            <element>150974</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_TRADE1_PR</member>
+        <member name="messageID">150947</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1_1</member>
+                    <member name="messageID">150949</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1_5</member>
+                    <member name="messageID">150950</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1_10</member>
+                    <member name="messageID">150951</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1_50</member>
+                    <member name="messageID">150952</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">50</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE1_100</member>
+                    <member name="messageID">150953</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_PR</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_TRADE2_PR</member>
+        <member name="messageID">150948</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2_1</member>
+                    <member name="messageID">150949</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2_5</member>
+                    <member name="messageID">150950</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2_10</member>
+                    <member name="messageID">150951</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2_50</member>
+                    <member name="messageID">150952</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">50</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE2_100</member>
+                    <member name="messageID">150953</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5322</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_PR</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_POST_TRADE1_PR</member>
+        <member name="messageID">150976</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1_MI</member>
+                    <member name="messageID">150949</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_POST_TRADE1_1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5323</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1_5</member>
+                    <member name="messageID">150950</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5323</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1_10</member>
+                    <member name="messageID">150951</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5323</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1_50</member>
+                    <member name="messageID">150952</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5323</member>
+                                <member name="value2">50</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE1_100</member>
+                    <member name="messageID">150953</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5323</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20080302_324_POST_TRADE2_PR</member>
+        <member name="messageID">150976</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2_MI</member>
+                    <member name="messageID">150949</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20080302_324_POST_TRADE2_1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5324</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2_5</member>
+                    <member name="messageID">150950</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5324</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2_10</member>
+                    <member name="messageID">150951</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5324</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2_50</member>
+                    <member name="messageID">150952</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5324</member>
+                                <member name="value2">50</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE2_100</member>
+                    <member name="messageID">150953</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5324</member>
+                                <member name="value2">100</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_POST_TRADE</member>
+                    <member name="messageID">18</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20080302_324_TRADE_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE1_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5323</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150978</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE1_5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5323</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150978</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE1_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5323</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150978</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE1_50</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-50</value>
+                        </pair>
+                        <pair>
+                            <key>5323</key>
+                            <value>50</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150978</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE1_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5323</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150978</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE2_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5324</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150979</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE2_5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5324</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150979</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE2_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5324</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150979</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE2_50</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-50</value>
+                        </pair>
+                        <pair>
+                            <key>5324</key>
+                            <value>50</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150979</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_TRADE2_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5322</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5324</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150979</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE1_MI</member>
+        <member name="next">EX20080302_324_POST_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>150972</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE1_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5323</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150981</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE1_5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5323</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150981</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE1_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5323</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>20</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150981</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE1_50</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5323</key>
+                            <value>-50</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150981</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE1_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5323</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>200</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150981</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20080302_324_POST_TRADE2_MI</member>
+        <member name="next">EX20080302_324_POST_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>150975</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE2_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5324</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150982</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE2_5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5324</key>
+                            <value>-5</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150982</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE2_10</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5324</key>
+                            <value>-10</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150982</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE2_50</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5324</key>
+                            <value>-50</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>50</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150982</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20080302_324_POST_TRADE2_100</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5324</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>5325</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">150982</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

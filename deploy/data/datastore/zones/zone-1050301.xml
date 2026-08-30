@@ -1,0 +1,203 @@
+<objects>
+    <!-- 魔階セルタワー（変） -->
+    <object name="ServerZone">
+        <member name="ID">1050301</member>
+        <member name="DynamicMapID">10503001</member>
+        <member name="Global">false</member>
+        <member name="GroupID">70103</member>
+        <member name="StartingX">-1.32</member>
+        <member name="StartingY">-2386.27</member>
+        <member name="StartingRotation">1.57</member>
+        <member name="NPCs"/>
+        <member name="Objects">
+            <element>
+                <!-- ゲート -->
+                <object name="ServerObject">
+                    <member name="ID">550001</member>
+                    <member name="ActorID">550001</member>
+                    <member name="SpotID">60100</member>
+                    <member name="State">0</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D10503_EXIT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">550003</member>
+                    <member name="ActorID">550003</member>
+                    <member name="SpotID">60001</member>
+                    <member name="State">1</member>
+                    <member name="Actions"/>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">550004</member>
+                    <member name="ActorID">550004</member>
+                    <member name="SpotID">60000</member>
+                    <member name="State">0</member>
+                    <member name="Actions"/>
+                </object>
+            </element>
+            <element>
+                <!-- 間欠泉 -->
+                <object name="ServerObject">
+                    <member name="ID">556001</member>
+                    <member name="ActorID">556001</member>
+                    <member name="SpotID">60400</member>
+                    <member name="State">2</member>
+                    <member name="Actions"/>
+                </object>
+            </element>
+        </member>
+        <member name="Spawns">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">1</member>
+                        <member name="EnemyType">3911</member>
+                        <member name="Category">BOSS</member>
+                        <member name="Level">35</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">0</member>
+                        <member name="DropSetIDs"/>
+                        <member name="InheritDrops">false</member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>2</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">2</member>
+                        <member name="EnemyType">245</member>
+                        <member name="Level">37</member>
+                        <member name="TalkResist">100</member>
+                        <member name="XP">0</member>
+                        <member name="DropSetIDs"/>
+                        <member name="InheritDrops">false</member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">1</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>1</value>
+                            </pair>
+                            <pair>
+                                <key>2</key>
+                                <value>5</value>
+                            </pair>
+                        </member>
+                        <member name="DefeatActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_SP_DA</member>
+                                    <member name="sourceContext">NONE</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots">
+            <pair>
+                <key>10000</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10000</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_BOSS_DOOR</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10001</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10001</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionSetNPCState">
+                                    <member name="actorID">550003</member>
+                                    <member name="state">3</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10002</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10002</member>
+                        <member name="LeaveActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_WARN</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_WARN_REPEAT</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10003</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10003</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_EXIT</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>10004</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10004</member>
+                        <member name="LeaveActions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D10503_SET_RANK</member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+    </object>
+</objects>

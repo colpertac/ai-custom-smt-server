@@ -1,0 +1,54 @@
+﻿<objects>
+    <!-- Time-limited event: カッパの海開き -->
+    <object name="ServerZonePartial">
+        <member name="ID">20100701</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>30101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20100702</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>7401001</element>
+            <element>220101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- ＤＢカトリ -->
+                <object name="ServerNPC">
+                    <member name="ID">492</member>
+                    <member name="SpotID">30003</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20100701_492</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,150 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_210_INFO</member>
+        <member name="next">EX200711_210_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150800</element>
+            <element>150803</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200711_210_INFO_PR</member>
+        <member name="messageID">150804</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200711_210_INFO1</member>
+                    <member name="messageID">150805</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200711_210_INFO2</member>
+                    <member name="messageID">150806</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200711_210_INFO3</member>
+                    <member name="messageID">150807</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">150811</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_210_INFO1</member>
+        <member name="next">EX200711_210_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150808</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_210_INFO2</member>
+        <member name="next">EX200711_210_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150809</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_210_INFO3</member>
+        <member name="next">EX200711_210_INFO_PR</member>
+        <member name="messageIDs">
+            <element>150810</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX200711_G1</member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">CLAN_HOME</member>
+                    <member name="negate">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="scriptID">bool_currentInstanceVariant</member>
+                    <member name="params">
+                        <element>1</element>
+                        <element>2</element>
+                        <element>3</element>
+                        <element>4</element>
+                        <element>5</element>
+                        <element>6</element>
+                        <element>7</element>
+                        <element>8</element>
+                        <element>9</element>
+                        <element>10</element>
+                        <element>17</element>
+                        <element>18</element>
+                        <element>19</element>
+                        <element>20</element>
+                        <element>21</element>
+                        <element>22</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object/>
+            </element>
+            <element>
+                <object/>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200711_G1_INCREMENT</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX200711_G1_INCREMENT</member>
+                </object>
+            </element>
+            <element>
+                <object/>
+            </element>
+            <element>
+                <object/>
+            </element>
+            <element>
+                <object/>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_dungeonTrialResultExists</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200711_G1_INCREMENT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20071101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_DONE1</member>
+        <member name="messageIDs">
+            <element>150820</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200711_DONE2</member>
+        <member name="messageIDs">
+            <element>150821</element>
+        </member>
+    </object>
+</objects>

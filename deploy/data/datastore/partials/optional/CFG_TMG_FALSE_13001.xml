@@ -1,0 +1,57 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">13001</member>
+        <member name="DynamicMapIDs">
+            <element>13001011</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to reduce magnetite/apples
+            when using 大いなる魔術書 in 魔階トチョウ(偽).
+            5998 to lock the doors on the top floor.
+            5999 for apples.
+            6000 for magnetite.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>6000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>5999</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>5998</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

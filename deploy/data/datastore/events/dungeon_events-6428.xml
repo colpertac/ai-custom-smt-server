@@ -1,0 +1,2515 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D6428_390A</member>
+        <member name="next">D6428_390A_ITEM</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_390_LEAVE_PR</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_390A_PRE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_390A_ACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM</member>
+        <member name="next">D6428_390A_ITEM_PR</member>
+        <member name="messageIDs">
+            <element>1155138</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390_LEAVE_PR</member>
+        <member name="messageID">1155213</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390_LEAVE_CONFIRM</member>
+                    <member name="queueNext">D6428_390_DEMON_LEAVE</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390_LEAVE_CONFIRM2</member>
+                                <member name="queueNext">D6428_TO_240301</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_DEMON</member>
+                                            <member name="value1">3874</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D6428_390_LEAVE_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">3874</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D6428_390_LEAVE_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_PRE</member>
+        <member name="next">D6428_390A_PRE_PR</member>
+        <member name="messageIDs">
+            <element>1155131</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ACTIVE</member>
+        <member name="messageIDs">
+            <element>1155197</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM_PR</member>
+        <member name="messageID">1155139</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_SELECT</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_END</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390_LEAVE_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1155135</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390_DEMON_LEAVE</member>
+        <member name="next">D6428_TO_240301</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1154058</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390_LEAVE_CONFIRM2</member>
+        <member name="messageIDs">
+            <element>1155137</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_TO_240301</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155212</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">240301</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390_LEAVE_MP</member>
+        <member name="messageIDs">
+            <element>1155136</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390_LEAVE_LOCKED</member>
+        <member name="messageIDs">
+            <element>1155134</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_PRE_PR</member>
+        <member name="messageID">1155132</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_START</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_PRE_END</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM_SELECT</member>
+        <member name="next">D6428_390A_ITEM_SELECT_PR</member>
+        <member name="messageIDs">
+            <element>1155140</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_END</member>
+        <member name="messageIDs">
+            <element>1155158</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_START</member>
+        <member name="next">D6428_NEXT_WAVE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="duration">180</member>
+                    <member name="actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_TIME_UP</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_PRE_END</member>
+        <member name="messageIDs">
+            <element>1155133</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM_SELECT_PR</member>
+        <member name="messageID">1155140</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM01</member>
+                    <member name="messageID">1155141</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM02</member>
+                    <member name="messageID">1155142</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM03</member>
+                    <member name="messageID">1155143</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM04</member>
+                    <member name="messageID">1155144</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM05</member>
+                    <member name="messageID">1155145</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM06</member>
+                    <member name="messageID">1155146</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM07</member>
+                    <member name="messageID">1155147</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM08</member>
+                    <member name="messageID">1155148</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1155149</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_SELECT_PR2</member>
+                    <member name="messageID">1155150</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_NEXT_WAVE</member>
+        <member name="next">D6428_SP1_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_SP2_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20028</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_SP3_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20029</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_SP4_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20030</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_SP5_SPAWN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20031</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM01</member>
+        <member name="next">D6428_390A_ITEM01_PR</member>
+        <member name="messageIDs">
+            <element>1155184</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM02</member>
+        <member name="next">D6428_390A_ITEM02_PR</member>
+        <member name="messageIDs">
+            <element>1155185</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM03</member>
+        <member name="next">D6428_390A_ITEM03_PR</member>
+        <member name="messageIDs">
+            <element>1155186</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM04</member>
+        <member name="next">D6428_390A_ITEM04_PR</member>
+        <member name="messageIDs">
+            <element>1155187</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM05</member>
+        <member name="next">D6428_390A_ITEM05_PR</member>
+        <member name="messageIDs">
+            <element>1155188</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM06</member>
+        <member name="next">D6428_390A_ITEM06_PR</member>
+        <member name="messageIDs">
+            <element>1155189</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM07</member>
+        <member name="next">D6428_390A_ITEM07_PR</member>
+        <member name="messageIDs">
+            <element>1155190</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM08</member>
+        <member name="next">D6428_390A_ITEM08_PR</member>
+        <member name="messageIDs">
+            <element>1155191</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM_SELECT_PR2</member>
+        <member name="messageID">1155140</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_SELECT_PR</member>
+                    <member name="messageID">1155151</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM09</member>
+                    <member name="messageID">1155152</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM10</member>
+                    <member name="messageID">1155153</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM11</member>
+                    <member name="messageID">1155154</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM12</member>
+                    <member name="messageID">1155155</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1155149</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SP1_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SP2_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SP3_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SP4_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SP5_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>5</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM01_PR</member>
+        <member name="messageID">1155184</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM01_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5614</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM02_PR</member>
+        <member name="messageID">1155185</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM02_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5617</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM03_PR</member>
+        <member name="messageID">1155186</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM03_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5620</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM04_PR</member>
+        <member name="messageID">1155187</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM04_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5623</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM05_PR</member>
+        <member name="messageID">1155188</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM05_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5626</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM06_PR</member>
+        <member name="messageID">1155189</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM06_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5629</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM07_PR</member>
+        <member name="messageID">1155190</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM07_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5632</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM08_PR</member>
+        <member name="messageID">1155191</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM08_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5635</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM09</member>
+        <member name="next">D6428_390A_ITEM09_PR</member>
+        <member name="messageIDs">
+            <element>1155192</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM10</member>
+        <member name="next">D6428_390A_ITEM10_PR</member>
+        <member name="messageIDs">
+            <element>1155193</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM11</member>
+        <member name="next">D6428_390A_ITEM11_PR</member>
+        <member name="messageIDs">
+            <element>1155194</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM12</member>
+        <member name="next">D6428_390A_ITEM12_PR</member>
+        <member name="messageIDs">
+            <element>1155195</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1155156</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM01_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5614</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155159</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_MI</member>
+        <member name="messageIDs">
+            <element>1155157</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390A_ITEM_CANCEL</member>
+        <member name="messageIDs">
+            <element>1155196</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM02_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5617</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155160</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM03_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5620</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155161</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM04_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5623</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155162</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM05_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5626</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155163</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM06_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5629</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155164</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM07_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5632</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155165</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM08_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5635</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155166</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM09_PR</member>
+        <member name="messageID">1155192</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM09_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5638</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM10_PR</member>
+        <member name="messageID">1155193</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM10_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5641</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM11_PR</member>
+        <member name="messageID">1155194</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM11_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5644</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390A_ITEM12_PR</member>
+        <member name="messageID">1155195</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CONFIRM</member>
+                    <member name="queueNext">D6428_390A_ITEM12_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390A_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5647</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390A_ITEM_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM09_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5638</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155167</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM10_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5641</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155168</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM11_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5644</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155169</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_390A_ITEM12_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5647</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1155170</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6428_390B</member>
+        <member name="next">D6428_390_LEAVE_PR</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_390B_LEAVE_ACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390B_LEAVE_ACTIVE</member>
+        <member name="next">D6428_390B_LEAVE_ACTIVE_PR</member>
+        <member name="messageIDs">
+            <element>1155209</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6428_390B_LEAVE_ACTIVE_PR</member>
+        <member name="messageID">1155210</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390B_LEAVE_ACTIVE_CONFIRM</member>
+                    <member name="queueNext">D6428_390_DEMON_LEAVE</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6428_390B_LEAVE_ACTIVE_CONFIRM</member>
+                                <member name="queueNext">D6428_TO_240301</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">COMP_DEMON</member>
+                                            <member name="value1">3874</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D6428_390_LEAVE_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">3874</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">D6428_390_LEAVE_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6428_390B_LEAVE_ACTIVE_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390B_LEAVE_ACTIVE_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1155211</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6428_390B_LEAVE_ACTIVE_CANCEL</member>
+        <member name="messageIDs">
+            <element>1155208</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_TIME_UP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_SPAWN_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_SPAWN_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>100</element>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D6428_WAVE_DA</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6428_WAVE_DA</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">642801</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_groupSpawned</member>
+                                <member name="params">
+                                    <element>SpawnLocationGroup</element>
+                                    <element>1</element>
+                                    <element>2</element>
+                                    <element>3</element>
+                                    <element>4</element>
+                                    <element>5</element>
+                                    <element>100</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_NEXT_WAVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_DONE</member>
+        <member name="next">D6428_REWARD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD1_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20028</element>
+                                    <element>20029</element>
+                                    <element>20030</element>
+                                    <element>20031</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD2_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20028</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20028</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD3_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20029</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20029</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD4_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20030</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD4</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20030</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD5_EX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20031</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D6428_REWARD5</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstanceVariant</member>
+                                <member name="params">
+                                    <element>20031</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">1200</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD1_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">2</member>
+                                <member name="MaxStack">2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>64280001</element>
+                        <element>64280002</element>
+                        <element>64280003</element>
+                        <element>64280004</element>
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">1440</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD2_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">2</member>
+                                <member name="MaxStack">2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>64280001</element>
+                        <element>64280002</element>
+                        <element>64280003</element>
+                        <element>64280004</element>
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">3360</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">2800</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD3_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">2</member>
+                                <member name="MaxStack">2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>64280001</element>
+                        <element>64280002</element>
+                        <element>64280003</element>
+                        <element>64280004</element>
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">60000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">50000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD4_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">2</member>
+                                <member name="MaxStack">2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>64280001</element>
+                        <element>64280002</element>
+                        <element>64280003</element>
+                        <element>64280004</element>
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">168000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD4</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">140000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD5_EX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">2</member>
+                                <member name="MaxStack">2</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>64280001</element>
+                        <element>64280002</element>
+                        <element>64280003</element>
+                        <element>64280004</element>
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">468000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6428_REWARD5</member>
+        <member name="actions">
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12879</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>6428</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">105</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">390000</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

@@ -1,0 +1,60 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">9221</member>
+        <member name="DynamicMapIDs">
+            <element>9221006</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to increase apples
+            when NSSR-2 card is not used in 魔階ナカノ地下遺構(金)
+            Change key values to increase/decrease multiplier.
+            Key 20 is the multiplier for normal Genbu.
+            Key 21 is the multiplier for true Genbu.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20</key>
+                                        <value>20</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_CHARACTER</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>21</key>
+                                        <value>24</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

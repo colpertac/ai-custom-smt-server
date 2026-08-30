@@ -1,0 +1,185 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325</member>
+        <member name="next">EX200808_325_PR</member>
+        <member name="messageIDs">
+            <element>250700</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX200808_325_PR</member>
+        <member name="messageID">250707</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200808_325_INFO</member>
+                    <member name="messageID">250708</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200808_325_INFO2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>20080801</key>
+                                                    <value>2</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX200808_325_TRADE</member>
+                    <member name="messageID">250702</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX200808_325_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">42102</member>
+                                            <member name="value2">10</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="value1">42102</member>
+                                            <member name="value2">10</member>
+                                            <member name="negate">true</member>
+                                            <member name="scriptID">bool_material</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX200808_325_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">250709</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325_INFO</member>
+        <member name="messageIDs">
+            <element>250701</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325_INFO2</member>
+        <member name="messageIDs">
+            <element>250716</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325_TRADE</member>
+        <member name="next">EX200808_325_MTRADE_END</member>
+        <member name="messageIDs">
+            <element>250703</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX200808_325_TRADE_END</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">42102</member>
+                                <member name="value2">10</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325_MI</member>
+        <member name="messageIDs">
+            <element>250706</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX200808_325_IF</member>
+        <member name="messageIDs">
+            <element>250705</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200808_325_MTRADE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>42102</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                    <member name="mode">MATERIAL_TANK</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>528</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX200808_325_TRADE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>528</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>42102</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

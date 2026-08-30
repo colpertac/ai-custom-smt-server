@@ -1,0 +1,318 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12</member>
+        <member name="next">Z100104_12_PR</member>
+        <member name="messageIDs">
+            <element>102300</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z100104_12_PR</member>
+        <member name="messageID">102301</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_BUY_25</member>
+                    <member name="messageID">40001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_SELL_25</member>
+                    <member name="messageID">40002</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_12_TALK</member>
+                    <member name="messageID">40004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_12_Q501</member>
+                    <member name="messageID">173021</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">501</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_12_Q501_P3_PR</member>
+                    <member name="messageID">173021</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">501</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">576</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">576</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_VDAY</member>
+                    <member name="skipInvalid">true</member>
+                    <member name="messageID">450001</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">40005</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z100104_BUY_25</member>
+        <member name="menuType">175</member>
+        <member name="shopID">25</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z100104_SELL_25</member>
+        <member name="menuType">176</member>
+        <member name="shopID">25</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_TALK</member>
+        <member name="next">Z100104_12_PR</member>
+        <member name="messageIDs">
+            <element>102302</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z100104_12_Q501</member>
+        <member name="next">Z100104_12_Q501_INVALID</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_P0_1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">501</member>
+                                <member name="value2">2</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_P2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">501</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_P3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">501</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_INVALID</member>
+        <member name="messageIDs">
+            <element>173031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_P0_1</member>
+        <member name="messageIDs">
+            <element>173022</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_P1_START</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">501</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_P2</member>
+        <member name="next">Z100104_12_Q501_P3_START</member>
+        <member name="messageIDs">
+            <element>173023</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_P3</member>
+        <member name="next">Z100104_12_Q501_P3_PR</member>
+        <member name="messageIDs">
+            <element>173024</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z100104_12_Q501_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z100104_12_Q501_P1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">501</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z100104_12_Q501_P3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>333</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">501</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z100104_12_Q501_P3_PR</member>
+        <member name="messageID">173025</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_12_Q501_P3_BUY</member>
+                    <member name="messageID">173026</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z100104_12_Q501_P3_CANCEL</member>
+                    <member name="messageID">173027</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_IF</member>
+        <member name="messageIDs">
+            <element>173031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_P3_BUY</member>
+        <member name="next">Z100104_12_Q501_P3_ITEM</member>
+        <member name="messageIDs">
+            <element>173028</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z100104_12_Q501_P3_CANCEL</member>
+        <member name="messageIDs">
+            <element>173029</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z100104_12_Q501_P3_ITEM</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-100</value>
+                        </pair>
+                        <pair>
+                            <key>333</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

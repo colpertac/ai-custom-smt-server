@@ -1,0 +1,85 @@
+<objects>
+    <!-- 終末之地　イチガヤ -->
+    <object name="ServerZone">
+        <member name="ID">1260112</member>
+        <member name="DynamicMapID">12601010</member>
+        <member name="Global">false</member>
+        <member name="GroupID">260101</member>
+        <member name="StartingX">67600.00</member>
+        <member name="StartingY">0.00</member>
+        <member name="StartingRotation">0.00</member>
+        <member name="NPCs">
+            <element>
+                <!-- クロエ -->
+                <object name="ServerNPC">
+                    <member name="ID">653</member>
+                    <member name="SpotID">60601</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D12601_12_653</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Objects">
+            <element>
+                <!-- 宝箱１ -->
+                <object name="ServerObject">
+                    <member name="ID">1200101</member>
+                    <member name="SpotID">60602</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">N120010X</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_ZONE_IN</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D12601_08_CLEANSE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D12601_12_TR01</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">1200100</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D12601_120010X_REWARD_08</member>
+                                <member name="autoOnly">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

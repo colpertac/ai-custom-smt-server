@@ -1,0 +1,46 @@
+<objects>
+    <!-- Time-limited event (post state): 栄冠は誰のもの！？　悪魔総裁選！ -->
+    <object name="ServerZonePartial">
+        <member name="ID">20081010</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 選挙管理委員 -->
+                <object name="ServerNPC">
+                    <member name="ID">358</member>
+                    <member name="SpotID">60028</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081003_358</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Pre-event = 0, normal event = 1 -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20081002</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

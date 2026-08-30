@@ -1,0 +1,1123 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B</member>
+        <member name="next">EX201304_583B_PR</member>
+        <member name="messageIDs">
+            <element>1156451</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_PR</member>
+        <member name="messageID">1156451</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK</member>
+                    <member name="messageID">1156452</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_TALK_KNOWN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_COMPLETE</member>
+                                            <member name="value1">725</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TRADE</member>
+                    <member name="messageID">1156453</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_END</member>
+                    <member name="messageID">1156454</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50106_583</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK</member>
+        <member name="next">EX201304_583B_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1156457</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK_KNOWN</member>
+        <member name="next">EX201304_583B_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1156456</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TRADE</member>
+        <member name="next">EX201304_583B_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>1156383</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_END</member>
+        <member name="messageIDs">
+            <element>1156467</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_TALK_PR</member>
+        <member name="messageID">1156458</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK1</member>
+                    <member name="messageID">1156459</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK2</member>
+                    <member name="messageID">1156460</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK3</member>
+                    <member name="messageID">1156461</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK4</member>
+                    <member name="messageID">1156462</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_PR</member>
+                    <member name="messageID">1156463</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_END</member>
+                    <member name="messageID">1156454</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_TRADE_PR</member>
+        <member name="messageID">1156383</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TRADE_ITEM</member>
+                    <member name="messageID">1156384</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP</member>
+                    <member name="messageID">1156385</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_SKILL</member>
+                    <member name="messageID">1156386</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_SKILL_MP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="compareMode">EXISTS</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_SKILL_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_PR</member>
+                    <member name="messageID">1156387</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_END</member>
+                    <member name="messageID">1156454</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK1</member>
+        <member name="next">EX201304_583B_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1156364</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK2</member>
+        <member name="next">EX201304_583B_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1156464</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK3</member>
+        <member name="next">EX201304_583B_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1156365</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK4</member>
+        <member name="next">EX201304_583B_TALK4_PR</member>
+        <member name="messageIDs">
+            <element>1156366</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TRADE_ITEM</member>
+        <member name="next">EX201304_BARTER_1011</member>
+        <member name="messageIDs">
+            <element>1156388</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP</member>
+        <member name="next">EX201304_583B_DEQUIP_PR</member>
+        <member name="messageIDs">
+            <element>1156389</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_SKILL</member>
+        <member name="next">EX201304_583B_SKILL_PR</member>
+        <member name="messageIDs">
+            <element>1156409</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_SKILL_MP</member>
+        <member name="messageIDs">
+            <element>1156401</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_SKILL_PD</member>
+        <member name="messageIDs">
+            <element>1156402</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_TALK4_PR</member>
+        <member name="messageID">1156367</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK4_FULL</member>
+                    <member name="messageID">1156368</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TALK_PR</member>
+                    <member name="messageID">1156369</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201304_BARTER_1011</member>
+        <member name="menuType">808</member>
+        <member name="shopID">1011</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP_PR</member>
+        <member name="messageID">1156390</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP1</member>
+                    <member name="messageID">1156391</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP2</member>
+                    <member name="messageID">1156392</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP3</member>
+                    <member name="messageID">1156393</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP4</member>
+                    <member name="messageID">1156394</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP5</member>
+                    <member name="messageID">1156395</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP6</member>
+                    <member name="messageID">1156396</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TRADE_PR</member>
+                    <member name="messageID">1156397</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_END</member>
+                    <member name="messageID">1156454</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_SKILL_PR</member>
+        <member name="messageID">1156410</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_SKILL1_END</member>
+                    <member name="messageID">1156416</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130401</member>
+                                <member name="value2">6</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">455</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_SKILL2_END</member>
+                    <member name="messageID">1156417</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130401</member>
+                                <member name="value2">7</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_SKILL_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_SKILL_LEARNED</member>
+                                            <member name="value1">456</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_PR</member>
+                    <member name="messageID">1156418</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_END</member>
+                    <member name="messageID">1156454</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TALK4_FULL</member>
+        <member name="messageIDs">
+            <element>1156370</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201304_583B_TITLE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">725</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP1</member>
+        <member name="next">EX201304_583B_DEQUIP1_PR</member>
+        <member name="messageIDs">
+            <element>1156398</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP2</member>
+        <member name="next">EX201304_583B_DEQUIP2_PR</member>
+        <member name="messageIDs">
+            <element>1156411</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP3</member>
+        <member name="next">EX201304_583B_DEQUIP3_PR</member>
+        <member name="messageIDs">
+            <element>1156412</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP4</member>
+        <member name="next">EX201304_583B_DEQUIP4_PR</member>
+        <member name="messageIDs">
+            <element>1156413</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP5</member>
+        <member name="next">EX201304_583B_DEQUIP5_PR</member>
+        <member name="messageIDs">
+            <element>1156414</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP6</member>
+        <member name="next">EX201304_583B_DEQUIP6_PR</member>
+        <member name="messageIDs">
+            <element>1156415</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_SKILL1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">5000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156468</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130401</element>
+                        <element>6</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_SKILL_INVALID</member>
+        <member name="messageIDs">
+            <element>1156422</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_SKILL2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">5000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156468</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130401</element>
+                        <element>7</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TITLE</member>
+        <member name="next">EX201304_583B_TITLE_PR</member>
+        <member name="messageIDs">
+            <element>1156371</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP1_PR</member>
+        <member name="messageID">1156399</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP1_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36135</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP2_PR</member>
+        <member name="messageID">1156420</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP2_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36136</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP3_PR</member>
+        <member name="messageID">1156420</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP3_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36137</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP4_PR</member>
+        <member name="messageID">1156420</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP4_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36138</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP5_PR</member>
+        <member name="messageID">1156420</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP5_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36139</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_DEQUIP6_PR</member>
+        <member name="messageID">1156420</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP6_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">36140</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201304_583B_DEQUIP_SPMAX</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SOUL_POINTS</member>
+                                            <member name="value1">100000</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_DEQUIP_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201304_583B_TITLE_PR</member>
+        <member name="messageID">1156372</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TITLE1</member>
+                    <member name="queueNext">EX201304_583B_TITLE1_END</member>
+                    <member name="messageID">1156374</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TITLE2</member>
+                    <member name="queueNext">EX201304_583B_TITLE2_END</member>
+                    <member name="messageID">1156375</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TITLE3</member>
+                    <member name="queueNext">EX201304_583B_TITLE3_END</member>
+                    <member name="messageID">1156376</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201304_583B_TITLE_CANCEL</member>
+                    <member name="messageID">1156183</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36135</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156479</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP_MI</member>
+        <member name="messageIDs">
+            <element>1156400</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_DEQUIP_SPMAX</member>
+        <member name="messageIDs">
+            <element>1156421</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36136</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156480</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36137</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156481</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36138</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156482</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36139</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156483</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_DEQUIP6_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>36140</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">2000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156484</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TITLE1</member>
+        <member name="messageIDs">
+            <element>1156377</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_TITLE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">920</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156378</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TITLE2</member>
+        <member name="messageIDs">
+            <element>1156379</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_TITLE2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">921</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156380</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TITLE3</member>
+        <member name="messageIDs">
+            <element>1156381</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201304_583B_TITLE3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">TITLE</member>
+                    <member name="ID">922</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1156382</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201304_583B_TITLE_CANCEL</member>
+        <member name="messageIDs">
+            <element>1156373</element>
+        </member>
+    </object>
+</objects>

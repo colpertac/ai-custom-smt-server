@@ -1,0 +1,571 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX201102_324</member>
+        <member name="next">EX201102_324_ACTIVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201102_324_POST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201102</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_324_ACTIVE</member>
+        <member name="messageIDs">
+            <element>372050</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z60101_324</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_324_POST</member>
+        <member name="messageIDs">
+            <element>372051</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z60101_324</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491</member>
+        <member name="next">EX201102_491_PR</member>
+        <member name="messageIDs">
+            <element>750779</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201102_491_PR</member>
+        <member name="messageID">750780</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_PRE</member>
+                    <member name="queueNext">EX201102_491_PRE_ITEM</member>
+                    <member name="messageID">750781</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MAIN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">381</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_PRE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_PRE_END</member>
+                    <member name="messageID">750782</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_END</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">381</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_PRE</member>
+        <member name="messageIDs">
+            <element>750794</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_491_PRE_ITEM</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1838</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">381</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_MAIN</member>
+        <member name="next">EX201102_491_MAIN_INFO</member>
+        <member name="messageIDs">
+            <element>750796</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_PRE_IF</member>
+        <member name="messageIDs">
+            <element>750783</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_PRE_END</member>
+        <member name="messageIDs">
+            <element>750784</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_END</member>
+        <member name="messageIDs">
+            <element>750812</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_MAIN_INFO</member>
+        <member name="next">EX201102_491_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>750786</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201102_491_MAIN_PR</member>
+        <member name="messageID">750787</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_CONFIRM</member>
+                    <member name="queueNext">EX201102_491_TRADE1_END</member>
+                    <member name="messageID">750788</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">1838</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12384</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_CONFIRM_EX</member>
+                    <member name="queueNext">EX201102_491_TRADE2_END</member>
+                    <member name="messageID">750789</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">1838</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12385</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_CONFIRM</member>
+                    <member name="queueNext">EX201102_491_TRADE3_END</member>
+                    <member name="messageID">750790</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">1841</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12384</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_CONFIRM_EX</member>
+                    <member name="queueNext">EX201102_491_TRADE4_END</member>
+                    <member name="messageID">750791</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">1841</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">12385</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201102_491_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201102_491_TRADE_CANCEL</member>
+                    <member name="messageID">750792</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_CONFIRM</member>
+        <member name="messageIDs">
+            <element>750798</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_491_TRADE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1838</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12384</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>1839</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_MI</member>
+        <member name="messageIDs">
+            <element>750804</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_IF</member>
+        <member name="messageIDs">
+            <element>750806</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_CONFIRM_EX</member>
+        <member name="messageIDs">
+            <element>750800</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_491_TRADE2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1838</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12385</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>1840</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_491_TRADE3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1841</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12384</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>1842</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_491_TRADE4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1841</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12385</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>1843</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201102_491_TRADE_CANCEL</member>
+        <member name="messageIDs">
+            <element>750802</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201102_SET_POST_STATE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">491</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>201102</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

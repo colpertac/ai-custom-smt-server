@@ -1,0 +1,162 @@
+﻿<objects>
+    <!-- Server shutdown miscellaneous changes -->
+    <object name="ServerZonePartial">
+        <member name="ID">20160498</member>
+        <!-- Daily Mission items added -->
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>10201001</element>
+            <element>10201002</element>
+            <element>10201003</element>
+            <element>10201004</element>
+            <element>10201005</element>
+            <element>10201006</element>
+            <element>10201007</element>
+            <element>10201008</element>
+            <element>10201009</element>
+            <element>10201010</element>
+            <element>10201011</element>
+        </member>
+        <member name="Objects">
+            <element>
+                <!-- 宝箱１ -->
+                <object name="ServerObject">
+                    <member name="ID">1200101</member>
+                    <member name="SpotID">62101</member>
+                    <member name="State">3</member>
+                    <member name="ActorID">1200101</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_BOX</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 宝箱２ -->
+                <object name="ServerObject">
+                    <member name="ID">1200102</member>
+                    <member name="SpotID">62102</member>
+                    <member name="State">3</member>
+                    <member name="ActorID">1200102</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_BOX</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 宝箱３ -->
+                <object name="ServerObject">
+                    <member name="ID">1200103</member>
+                    <member name="SpotID">62103</member>
+                    <member name="State">3</member>
+                    <member name="ActorID">1200103</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_BOX</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 宝箱４ -->
+                <object name="ServerObject">
+                    <member name="ID">1200104</member>
+                    <member name="SpotID">62104</member>
+                    <member name="State">3</member>
+                    <member name="ActorID">1200104</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_BOX</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 宝箱５ -->
+                <object name="ServerObject">
+                    <member name="ID">1200105</member>
+                    <member name="SpotID">62105</member>
+                    <member name="State">3</member>
+                    <member name="ActorID">1200105</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_BOX</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">1200100</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_120010X_REWARD</member>
+                                <member name="autoOnly">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">1200999</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">SD_D1020X_120010X_EXTRA</member>
+                                <member name="autoOnly">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20160499</member>
+        <!-- Daily Mission hack limits changed from 1/2 to 5/10 -->
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+            <element>50101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20160401</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

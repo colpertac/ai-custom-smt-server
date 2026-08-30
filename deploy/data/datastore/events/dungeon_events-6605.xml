@@ -1,0 +1,724 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">D6605_393</member>
+        <member name="next">D6605_393_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6605_393_REPEAT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_MAIN</member>
+        <member name="next">D6605_393_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>550390</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_REPEAT</member>
+        <member name="next">D6605_393_REPEAT_PR</member>
+        <member name="messageIDs">
+            <element>550400</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_393_MAIN_PR</member>
+        <member name="messageID">550391</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_TALK</member>
+                    <member name="messageID">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_393_REPEAT_PR</member>
+        <member name="messageID">550401</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_REPEAT_CONFIRM</member>
+                    <member name="queueNext">D6605_TO_660502</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6605_393_REPEAT_CONFIRM</member>
+                                <member name="queueNext">D6605_TO_660402</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_currentInstance</member>
+                                            <member name="params">
+                                                <element>6604</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_REPEAT_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_TALK</member>
+        <member name="next">D6605_393_WARP_PR</member>
+        <member name="messageIDs">
+            <element>550393</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_END</member>
+        <member name="messageIDs">
+            <element>550392</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_REPEAT_CONFIRM</member>
+        <member name="messageIDs">
+            <element>550402</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_TO_660502</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">550397</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">660502</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_TO_660402</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">660402</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_REPEAT_CANCEL</member>
+        <member name="messageIDs">
+            <element>550403</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_393_WARP_PR</member>
+        <member name="messageID">550394</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_WARP_CONFIRM</member>
+                    <member name="queueNext">D6605_TO_660502</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6605_393_WARP_CONFIRM</member>
+                                <member name="queueNext">D6605_TO_660402</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_currentInstance</member>
+                                            <member name="params">
+                                                <element>6604</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_393_WARP_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_WARP_CONFIRM</member>
+        <member name="messageIDs">
+            <element>550395</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_393_WARP_CANCEL</member>
+        <member name="messageIDs">
+            <element>550396</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_BOSS_DOOR</member>
+        <member name="messageID">17</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_BOSS_ENTER</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6605_BOSS_SPAWN</member>
+                                <member name="queueNext">D6605_BOSS_ENTER</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_FLAGS</member>
+                                            <member name="compareMode">LT_OR_NAN</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>1</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_BOSS_ENTER</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_BOSS_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                    <member name="sourceContext">NONE</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6605_249</member>
+        <member name="next">D6605_249_MAIN</member>
+        <member name="queueNext">D6605_249_FLAG</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6605_249_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>249</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_249_MAIN</member>
+        <member name="messageIDs">
+            <element>550415</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_249_FLAG</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">550416</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>249</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_249_DONE</member>
+        <member name="messageIDs">
+            <element>550417</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6605_306</member>
+        <member name="next">D6605_306_MAIN</member>
+        <member name="queueNext">D6605_306_FLAG</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6605_306_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>306</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_306_MAIN</member>
+        <member name="messageIDs">
+            <element>550420</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_306_FLAG</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">550421</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>306</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_306_DONE</member>
+        <member name="messageIDs">
+            <element>550422</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6604_443</member>
+        <member name="next">D6604_443_RETREAT</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6604_443_RETREAT_DEFEATED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6604_443_RETREAT</member>
+        <member name="next">D6604_443_RETREAT_PR</member>
+        <member name="messageIDs">
+            <element>550424</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6604_443_RETREAT_DEFEATED</member>
+        <member name="next">D6604_443_RETREAT_PR</member>
+        <member name="messageIDs">
+            <element>550458</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6604_443_RETREAT_PR</member>
+        <member name="messageID">550425</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_TO_50101</member>
+                    <member name="messageID">15</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6604_443_Q706_P2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">706</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6604_443_RETREAT_CANCEL</member>
+                    <member name="messageID">16</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_TO_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">51027</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6604_443_Q706_P2_START</member>
+        <member name="next">D6605_TO_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">706</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6604_443_RETREAT_CANCEL</member>
+        <member name="messageIDs">
+            <element>550426</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D6605_443</member>
+        <member name="next">D6605_443_LEAVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D6605_443_LEAVE_COMPLETED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">706</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_443_LEAVE</member>
+        <member name="next">D6605_443_LEAVE_PR</member>
+        <member name="messageIDs">
+            <element>550429</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_443_LEAVE_COMPLETED</member>
+        <member name="next">D6605_443_Q706_P6_START</member>
+        <member name="messageIDs">
+            <element>550428</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_443_LEAVE_PR</member>
+        <member name="messageID">550430</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_TO_50101</member>
+                    <member name="messageID">15</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6605_443_LEAVE_REPEAT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_COMPLETE</member>
+                                            <member name="value1">706</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_443_LEAVE_CANCEL</member>
+                    <member name="messageID">16</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D6605_443_LEAVE_CANCEL_REPEAT</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_COMPLETE</member>
+                                            <member name="value1">706</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_443_Q706_P6_START</member>
+        <member name="next">D6605_443_LEAVE_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">706</member>
+                    <member name="phase">6</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_443_LEAVE_REPEAT</member>
+        <member name="messageIDs">
+            <element>550459</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_443_LEAVE_CANCEL</member>
+        <member name="messageIDs">
+            <element>550431</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D6605_443_LEAVE_CANCEL_REPEAT</member>
+        <member name="messageIDs">
+            <element>550460</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6604_BOSS_WARN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">550411</member>
+                    <member name="effectType">3</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_CHARACTER_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_BOSS_DA_Q706</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">706</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventCondition">
+                    <member name="type">QUEST_PHASE</member>
+                    <member name="value1">706</member>
+                    <member name="value2">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D6605_EXIT</member>
+        <member name="messageID">23</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D6605_TO_150102</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D6605_TO_150102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">150102</member>
+                    <member name="spotID">50003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

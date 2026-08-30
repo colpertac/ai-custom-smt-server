@@ -1,0 +1,1693 @@
+<objects>
+    <!-- Checkpoint 1 -->
+    <object name="Event">
+        <member name="ID">D75_CP1</member>
+        <member name="next">D75_CP1_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_CP1_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP1_BUSY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP1_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_MAIN</member>
+        <member name="next">D75_CP1_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179290</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_DONE1</member>
+        <member name="messageIDs">
+            <element>179302</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_BUSY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179301</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_DONE2</member>
+        <member name="messageIDs">
+            <element>179303</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_CP1_MAIN_PR</member>
+        <member name="messageID">179291</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP1_GIVE</member>
+                    <member name="messageID">179292</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D75_CP1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">10</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP1_REJECT</member>
+                    <member name="messageID">179293</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP1_END</member>
+                    <member name="messageID">179228</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_GIVE</member>
+        <member name="next">D75_CP1_GIVE_END</member>
+        <member name="messageIDs">
+            <element>179294</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_REJECT</member>
+        <member name="next">D75_CP1_REJECT_END</member>
+        <member name="messageIDs">
+            <element>179297</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179300</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_GIVE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>10</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179295</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179386</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP1_MI</member>
+        <member name="messageIDs">
+            <element>179296</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_REJECT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">1</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>4</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Checkpoint 2 -->
+    <object name="Event">
+        <member name="ID">D75_CP2</member>
+        <member name="next">D75_CP2_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_CP2_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP2_BUSY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP2_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_MAIN</member>
+        <member name="next">D75_CP2_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179304</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_DONE1</member>
+        <member name="messageIDs">
+            <element>179316</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_BUSY</member>
+        <member name="messageIDs">
+            <element>179315</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_DONE2</member>
+        <member name="messageIDs">
+            <element>179317</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_CP2_MAIN_PR</member>
+        <member name="messageID">179305</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP2_ACCEPT</member>
+                    <member name="messageID">179306</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP2_WAKE</member>
+                    <member name="messageID">179307</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D75_CP2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">129</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP2_END</member>
+                    <member name="messageID">179228</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_ACCEPT</member>
+        <member name="next">D75_CP2_ACCEPT_END</member>
+        <member name="messageIDs">
+            <element>179308</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_WAKE</member>
+        <member name="next">D75_CP2_WAKE_END</member>
+        <member name="messageIDs">
+            <element>179310</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_MI</member>
+        <member name="messageIDs">
+            <element>179312</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP2_END</member>
+        <member name="messageIDs">
+            <element>179314</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP2_ACCEPT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179309</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP2_WAKE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">2</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>5</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>129</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179311</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Checkpoint 3 -->
+    <object name="Event">
+        <member name="ID">D75_CP3</member>
+        <member name="next">D75_CP3_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_CP3_BUSY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP3_DONE1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CP3_DONE2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_MAIN</member>
+        <member name="next">D75_CP3_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179318</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_BUSY</member>
+        <member name="messageIDs">
+            <element>179328</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_DONE1</member>
+        <member name="messageIDs">
+            <element>179329</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_DONE2</member>
+        <member name="messageIDs">
+            <element>179330</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_CP3_MAIN_PR</member>
+        <member name="messageID">179319</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP3_GIVE</member>
+                    <member name="messageID">179320</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D75_CP3_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">124</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP3_REJECT</member>
+                    <member name="messageID">179321</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CP3_END</member>
+                    <member name="messageID">179228</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_GIVE</member>
+        <member name="next">D75_CP3_GIVE_END</member>
+        <member name="messageIDs">
+            <element>179322</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_MI</member>
+        <member name="messageIDs">
+            <element>179324</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_REJECT</member>
+        <member name="next">D75_CP3_REJECT_END</member>
+        <member name="messageIDs">
+            <element>179325</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CP3_END</member>
+        <member name="messageIDs">
+            <element>179327</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP3_GIVE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">3</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>6</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>124</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179323</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP3_REJECT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">3</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>7</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Checkpoint 4 -->
+    <object name="Event">
+        <member name="ID">D75_CP4</member>
+        <member name="next">D75_CP4_PR</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_CP4_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">GTE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>4</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_CP4_PR</member>
+        <member name="messageID">179331</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_BOSS_SPAWN</member>
+                    <member name="messageID">179332</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">179333</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP4_DONE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179340</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSS_SPAWN</member>
+        <member name="next">D75_ROUTEB</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_ROUTEA</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                    <pair>
+                                        <key>3</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_ROUTED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>3</value>
+                                    </pair>
+                                    <pair>
+                                        <key>2</key>
+                                        <value>3</value>
+                                    </pair>
+                                    <pair>
+                                        <key>3</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_ROUTEC</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_ROUTEC</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_ROUTEC</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_ROUTEB</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">4</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>9</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_ROUTEA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">4</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>8</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_ROUTED</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">4</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>11</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_ROUTEC</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">4</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>10</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- Extra "Checkpoint" -->
+    <object name="Event">
+        <member name="ID">D75_CPEX</member>
+        <member name="next">D75_CPEX_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D75_CPEX_BUSY</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>5</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CPEX_INTRO</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_INSTANCE_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>4</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D75_CPEX_MI</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">5333</member>
+                                <member name="value2">10</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CPEX_MAIN</member>
+        <member name="next">D75_CPEX_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179341</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CPEX_BUSY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179348</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CPEX_INTRO</member>
+        <member name="messageIDs">
+            <element>179343</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_CPEX_MI</member>
+        <member name="messageIDs">
+            <element>179342</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_CPEX_MAIN_PR</member>
+        <member name="messageID">179344</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_CPEX_SPAWN</member>
+                    <member name="messageID">179345</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">179346</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CPEX_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spotID">10</member>
+                    <member name="spawnGroupIDs">
+                        <pair>
+                            <key>12</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                    <member name="mode">ONE_TIME</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5333</key>
+                            <value>-10</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179347</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>5</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_INSTANCE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>5</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- NPC 3309 -->
+    <object name="EventNPCMessage">
+        <member name="ID">D75_3309A</member>
+        <member name="next">D75_3309_PR</member>
+        <member name="messageIDs">
+            <element>179360</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D75_3309_PR</member>
+        <member name="messageID">179357</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_3309_LEAVE</member>
+                    <member name="messageID">179358</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D75_3309_END</member>
+                    <member name="messageID">179359</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_3309_LEAVE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179362</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40101</member>
+                    <member name="spotID">50006</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_3309_END</member>
+        <member name="messageIDs">
+            <element>179361</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D75_3309B</member>
+        <member name="next">D75_3309B_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100802_3309B</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="skipInvalid">true</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D75_3309B_MAIN</member>
+        <member name="next">D75_3309_PR</member>
+        <member name="messageIDs">
+            <element>179487</element>
+        </member>
+    </object>
+    <!-- Spawns -->
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179298</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP1_DEFEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179299</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP2_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179387</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP2_DEFEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179313</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>2</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP3_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179385</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_CP3_DEFEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179326</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>3</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSA_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179334</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSB_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179334</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSC_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179336</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSD_SPAWN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179335</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSA_DEFEAT</member>
+        <member name="next">D75_BOSS_DEFEAT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179337</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12231</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">3</member>
+                                <member name="MaxStack">3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>7500</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">100</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSS_DEFEAT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>2000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_INSTANCE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>4</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">33091</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="state">1</member>
+                    <member name="actorID">33092</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSB_DEFEAT</member>
+        <member name="next">D75_BOSS_DEFEAT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179337</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12231</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">3</member>
+                                <member name="MaxStack">3</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>7500</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">100</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSC_DEFEAT</member>
+        <member name="next">D75_BOSS_DEFEAT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179339</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12231</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>7500</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">100</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSD_DEFEAT</member>
+        <member name="next">D75_BOSS_DEFEAT_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="sourceContext">ALL</member>
+                    <member name="location">ZONE</member>
+                    <member name="messageID">179338</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionCreateLoot">
+                    <member name="drops">
+                        <element>
+                            <object>
+                                <member name="ItemType">12231</member>
+                                <member name="Rate">100</member>
+                                <member name="MinStack">5</member>
+                                <member name="MaxStack">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="ItemType">12232</member>
+                                <member name="Rate">100</member>
+                                <member name="MaxStack">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="dropSetIDs">
+                        <element>7500</element>
+                    </member>
+                    <member name="isBossBox">true</member>
+                    <member name="locations">
+                        <element>
+                            <object>
+                                <member name="SpotID">100</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">101</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">102</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">103</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="SpotID">104</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D75_BOSSEX_DEFEAT</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179349</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

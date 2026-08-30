@@ -1,0 +1,147 @@
+﻿<objects>
+    <!-- Time-limited event: サイレントメビウス × 真・女神転生IMAGINE -->
+    <object name="ServerZonePartial">
+        <member name="ID">20140101</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- サエ -->
+                <object name="ServerNPC">
+                    <member name="ID">624</member>
+                    <member name="SpotID">60043</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201401_624</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20140102</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- サエ -->
+                <object name="ServerNPC">
+                    <member name="ID">624</member>
+                    <member name="SpotID">69951</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201401_624</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20140103</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>11301005</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_FLAG_SET</member>
+                    <member name="Value">2000</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionRunScript">
+                                <member name="scriptID">action_eventCounter</member>
+                                <member name="params">
+                                    <element>20140101</element>
+                                    <element>1</element>
+                                    <element>3</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20140104</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>11302011</element>
+            <element>11302012</element>
+            <element>11302013</element>
+            <element>11302014</element>
+            <element>11302015</element>
+            <element>11302016</element>
+            <element>11302017</element>
+            <element>11302018</element>
+            <element>11302019</element>
+            <element>11302020</element>
+            <element>11302021</element>
+            <element>11302022</element>
+            <element>11302023</element>
+            <element>11302024</element>
+            <element>11302025</element>
+            <element>11302026</element>
+            <element>11302027</element>
+            <element>11302028</element>
+            <element>11302029</element>
+            <element>11302030</element>
+            <element>11302031</element>
+            <element>11302032</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_DEATH</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX201401_KILLUP</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20140105</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+            <element>50101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Enables the ability to continue between second instance runs -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201401</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

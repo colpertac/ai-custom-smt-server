@@ -1,0 +1,2655 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_QKAPPA</member>
+        <member name="next">Z30101_PR038</member>
+        <member name="messageIDs">
+            <element>179126</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_QCOMP</member>
+        <member name="next">EX20100701_326_WARP_PR</member>
+        <member name="messageIDs">
+            <element>179128</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_326_WARP_PR</member>
+        <member name="messageID">179129</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_326_WARP1_PAY</member>
+                    <member name="messageID">179130</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_326_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">10000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_326_WARP2_PAY</member>
+                    <member name="messageID">179131</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_326_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_326_WARP_CANCEL</member>
+                    <member name="messageID">179132</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_WARP1_PAY</member>
+        <member name="next">EX20100701_326_WARP1_END</member>
+        <member name="messageIDs">
+            <element>179133</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_MI</member>
+        <member name="messageIDs">
+            <element>179147</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_WARP2_PAY</member>
+        <member name="next">EX20100701_326_WARP2_END</member>
+        <member name="messageIDs">
+            <element>179134</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_326_WARP_CANCEL</member>
+        <member name="messageIDs">
+            <element>179135</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_326_WARP1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">7401</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">7401</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_326_WARP2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">220101</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492</member>
+        <member name="next">EX20100701_492_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_004</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">715</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_005</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">714</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_MAIN</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179035</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_004</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179037</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_005</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179036</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_MAIN_PR</member>
+        <member name="messageID">179038</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_Q1</member>
+                    <member name="messageID">179039</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_Q2</member>
+                    <member name="messageID">179040</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_Q3</member>
+                    <member name="messageID">179041</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT</member>
+                    <member name="messageID">179042</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_END</member>
+                    <member name="messageID">179043</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_Q1</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179044</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_Q2</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179045</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_Q3</member>
+        <member name="next">EX20100701_492_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>179046</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_SUPPORT</member>
+        <member name="next">EX20100701_492_BONUS1</member>
+        <member name="messageIDs">
+            <element>179047</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_END</member>
+        <member name="messageIDs">
+            <element>179048</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_BONUS1</member>
+        <member name="next">EX20100701_492_BONUSINACTIVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">5990</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">5991</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">26316</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">26317</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_BONUSINACTIVE</member>
+        <member name="next">EX20100701_492_SUPPORT_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>201007</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_BONUS2</member>
+        <member name="next">EX20100701_492_BONUSINACTIVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23037</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23038</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23650</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUS3</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">23651</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_SUPPORT_PR</member>
+        <member name="messageID">179049</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS1</member>
+                    <member name="messageID">179050</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_STATUS1_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS2</member>
+                    <member name="messageID">179051</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_STATUS2_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS3</member>
+                    <member name="messageID">179052</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_STATUS3_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS4</member>
+                    <member name="messageID">179053</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_STATUS4_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS5</member>
+                    <member name="messageID">179054</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_STATUS5_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP</member>
+                    <member name="messageID">179055</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_END</member>
+                    <member name="messageID">179056</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_BONUS3</member>
+        <member name="next">EX20100701_492_BONUSINACTIVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUSACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">9729</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUSACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">24011</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUSACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">24224</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_BONUSACTIVE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">EQUIPPED</member>
+                                <member name="value1">33192</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS1</member>
+        <member name="next">EX20100701_492_STATUS1_PR</member>
+        <member name="messageIDs">
+            <element>179058</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS1_BONUS</member>
+        <member name="next">EX20100701_492_STATUS1_PR</member>
+        <member name="messageIDs">
+            <element>179057</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS2</member>
+        <member name="next">EX20100701_492_STATUS2_PR</member>
+        <member name="messageIDs">
+            <element>179064</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS2_BONUS</member>
+        <member name="next">EX20100701_492_STATUS2_PR</member>
+        <member name="messageIDs">
+            <element>179063</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS3</member>
+        <member name="next">EX20100701_492_STATUS3_PR</member>
+        <member name="messageIDs">
+            <element>179066</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS3_BONUS</member>
+        <member name="next">EX20100701_492_STATUS3_PR</member>
+        <member name="messageIDs">
+            <element>179065</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS4</member>
+        <member name="next">EX20100701_492_STATUS4_PR</member>
+        <member name="messageIDs">
+            <element>179068</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS4_BONUS</member>
+        <member name="next">EX20100701_492_STATUS4_PR</member>
+        <member name="messageIDs">
+            <element>179067</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS5</member>
+        <member name="next">EX20100701_492_STATUS5_PR</member>
+        <member name="messageIDs">
+            <element>179070</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_STATUS5_BONUS</member>
+        <member name="next">EX20100701_492_STATUS5_PR</member>
+        <member name="messageIDs">
+            <element>179069</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP</member>
+        <member name="next">EX20100701_492_WARP_YN</member>
+        <member name="messageIDs">
+            <element>179071</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_SUPPORT_END</member>
+        <member name="messageIDs">
+            <element>179072</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_BONUSACTIVE</member>
+        <member name="next">EX20100701_492_SUPPORT_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>201007</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_STATUS1_PR</member>
+        <member name="messageID">179059</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS1_SET</member>
+                    <member name="messageID">179060</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">10000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">100000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_CANCEL</member>
+                    <member name="messageID">179061</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_STATUS2_PR</member>
+        <member name="messageID">179059</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS2_SET</member>
+                    <member name="messageID">179060</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">10000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">100000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_CANCEL</member>
+                    <member name="messageID">179061</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_STATUS3_PR</member>
+        <member name="messageID">179059</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS3_SET</member>
+                    <member name="messageID">179060</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">50000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_CANCEL</member>
+                    <member name="messageID">179061</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_STATUS4_PR</member>
+        <member name="messageID">179059</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS4_SET</member>
+                    <member name="messageID">179060</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">5000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">50000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_CANCEL</member>
+                    <member name="messageID">179061</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_STATUS5_PR</member>
+        <member name="messageID">179059</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_STATUS5_SET</member>
+                    <member name="messageID">179060</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">24800</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">248000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_SUPPORT_CANCEL</member>
+                    <member name="messageID">179061</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP_YN</member>
+        <member name="messageID">179073</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CONFIRM</member>
+                    <member name="messageID">179074</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_WAIT</member>
+                    <member name="messageID">179075</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS1_SET</member>
+        <member name="next">EX20100701_492_STATUS1_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>146</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_STATUS1_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_MI</member>
+        <member name="messageIDs">
+            <element>179148</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_SUPPORT_CANCEL</member>
+        <member name="next">EX20100701_492_SUPPORT_PR</member>
+        <member name="messageIDs">
+            <element>179062</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS2_SET</member>
+        <member name="next">EX20100701_492_STATUS2_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>145</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_STATUS2_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS3_SET</member>
+        <member name="next">EX20100701_492_STATUS3_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>147</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_STATUS3_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS4_SET</member>
+        <member name="next">EX20100701_492_STATUS4_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>148</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_STATUS4_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS5_SET</member>
+        <member name="next">EX20100701_492_STATUS5_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="statusStacks">
+                        <pair>
+                            <key>145</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>146</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>147</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>148</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_STATUS5_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP_CONFIRM</member>
+        <member name="next">EX20100701_492_WARP_PR</member>
+        <member name="messageIDs">
+            <element>179076</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP_WAIT</member>
+        <member name="messageIDs">
+            <element>179077</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS1_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-100000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179104</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS1_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179103</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS2_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-100000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179106</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS2_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179105</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS3_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-50000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179108</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS3_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS4_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-50000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179110</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS4_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-5000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179109</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS5_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-248000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179112</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_STATUS5_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-24800</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179111</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP_PR</member>
+        <member name="messageID">179078</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP1</member>
+                    <member name="messageID">179079</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP1_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP2</member>
+                    <member name="messageID">179080</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP2_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP3</member>
+                    <member name="messageID">179081</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP3_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP4</member>
+                    <member name="messageID">179082</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP4_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP5</member>
+                    <member name="messageID">179083</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP5_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP6</member>
+                    <member name="messageID">179084</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_WARP6_BONUS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_END</member>
+                    <member name="messageID">179085</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP1</member>
+        <member name="next">EX20100701_492_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>179087</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP1_BONUS</member>
+        <member name="next">EX20100701_492_WARP1_PR</member>
+        <member name="messageIDs">
+            <element>179086</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP2</member>
+        <member name="next">EX20100701_492_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>179093</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP2_BONUS</member>
+        <member name="next">EX20100701_492_WARP2_PR</member>
+        <member name="messageIDs">
+            <element>179092</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP3</member>
+        <member name="next">EX20100701_492_WARP3_PR</member>
+        <member name="messageIDs">
+            <element>179095</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP3_BONUS</member>
+        <member name="next">EX20100701_492_WARP3_PR</member>
+        <member name="messageIDs">
+            <element>179094</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP4</member>
+        <member name="next">EX20100701_492_WARP4_PR</member>
+        <member name="messageIDs">
+            <element>179097</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP4_BONUS</member>
+        <member name="next">EX20100701_492_WARP4_PR</member>
+        <member name="messageIDs">
+            <element>179096</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP5</member>
+        <member name="next">EX20100701_492_WARP5_PR</member>
+        <member name="messageIDs">
+            <element>179099</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP5_BONUS</member>
+        <member name="next">EX20100701_492_WARP5_PR</member>
+        <member name="messageIDs">
+            <element>179098</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP6</member>
+        <member name="next">EX20100701_492_WARP6_PR</member>
+        <member name="messageIDs">
+            <element>179101</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP6_BONUS</member>
+        <member name="next">EX20100701_492_WARP6_PR</member>
+        <member name="messageIDs">
+            <element>179100</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP_END</member>
+        <member name="messageIDs">
+            <element>179102</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP1_PR</member>
+        <member name="messageID">179088</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP1_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP2_PR</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP2_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP3_PR</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP3_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP4_PR</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP4_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP5_PR</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP5_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20100701_492_WARP6_PR</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP6_END</member>
+                    <member name="messageID">179089</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">4000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20100701_492_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>201007</key>
+                                                    <value>0</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">40000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20100701_492_WARP_CANCEL</member>
+                    <member name="messageID">179090</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP1_END</member>
+        <member name="next">EX20100701_492_WARP1_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP1_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20100701_492_WARP_CANCEL</member>
+        <member name="next">EX20100701_492_WARP_PR</member>
+        <member name="messageIDs">
+            <element>179091</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP2_END</member>
+        <member name="next">EX20100701_492_WARP2_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP2_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP3_END</member>
+        <member name="next">EX20100701_492_WARP3_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP3_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP4_END</member>
+        <member name="next">EX20100701_492_WARP4_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP4_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP5_END</member>
+        <member name="next">EX20100701_492_WARP5_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP5_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20100701_492_WARP6_END</member>
+        <member name="next">EX20100701_492_WARP6_END1</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20100701_492_WARP6_END2</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>201007</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP1_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179114</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP1_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179113</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP2_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179116</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP2_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179115</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP3_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179118</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70103</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP3_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179117</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70103</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP4_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179120</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80103</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP4_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179119</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80103</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP5_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179122</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP5_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179121</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP6_END1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179124</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20100701_492_WARP6_END2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-10000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">179123</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

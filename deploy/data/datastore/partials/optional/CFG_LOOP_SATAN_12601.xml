@@ -1,0 +1,38 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">12603</member>
+        <member name="DynamicMapIDs">
+            <element>12601008</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to enable looping
+            for the final Satan fight in 終末之地　イチガヤ.
+            Change the value of 3001 to increase the number of times that the
+            events loop. An undefined value will cause it to loop indefinitely.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3000</key>
+                                        <value>1</value>
+                                    </pair>
+                                    <pair>
+                                        <key>3001</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

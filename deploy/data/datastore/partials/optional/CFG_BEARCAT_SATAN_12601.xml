@@ -1,0 +1,85 @@
+﻿<objects>
+    <object name="ServerZonePartial">
+        <member name="ID">12601</member>
+        <member name="DynamicMapIDs">
+            <element>12601004</element>
+        </member>
+        <!-- 
+            Copy this into zones\partial to enable BEARCAT mode
+            for 終末之地　イチガヤ.
+            Change key values to change Digitalize Points earned for each boss.
+            Key 5000 is for Abaddon.
+            Key 5001 is for Mother Harlot.
+            Key 5002 is for Ose and Flauros Hallel.
+            Key 5003 is for Satan.
+        -->
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_dungeonVariant</member>
+                                <member name="params">
+                                    <element>DIGITALIZE</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE_INSTANCE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>5000</key>
+                                        <value>50000</value>
+                                    </pair>
+                                    <pair>
+                                        <key>5001</key>
+                                        <value>70000</value>
+                                    </pair>
+                                    <pair>
+                                        <key>5002</key>
+                                        <value>80000</value>
+                                    </pair>
+                                    <pair>
+                                        <key>5003</key>
+                                        <value>600000</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">12602</member>
+        <member name="DynamicMapIDs">
+            <element>260101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>60000</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

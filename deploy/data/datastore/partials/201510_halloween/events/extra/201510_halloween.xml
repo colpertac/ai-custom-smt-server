@@ -1,0 +1,2053 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28</member>
+        <member name="next">EX201510_28_PR</member>
+        <member name="messageIDs">
+            <element>1194150</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_28_PROMO</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">722</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_28_PR</member>
+        <member name="messageID">1194151</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_BUY_270</member>
+                    <member name="messageID">1194152</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_SELL_270</member>
+                    <member name="messageID">1194153</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_REPAIR_270</member>
+                    <member name="messageID">1194154</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_itemDepo</member>
+                    <member name="messageID">1194155</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_demonDepo</member>
+                    <member name="messageID">1194156</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_28_BARTER</member>
+                    <member name="messageID">1194157</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_28_TALK</member>
+                    <member name="messageID">1194158</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1194159</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28_PROMO</member>
+        <member name="next">EX201510_28_PROMO_END</member>
+        <member name="messageIDs">
+            <element>1194162</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_28_PROMO_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201510_BUY_270</member>
+        <member name="menuType">175</member>
+        <member name="shopID">270</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201510_SELL_270</member>
+        <member name="menuType">176</member>
+        <member name="shopID">270</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201510_REPAIR_270</member>
+        <member name="menuType">177</member>
+        <member name="shopID">270</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28_BARTER</member>
+        <member name="next">EX201510_BARTER_342</member>
+        <member name="messageIDs">
+            <element>1194160</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28_TALK</member>
+        <member name="next">EX201510_28_PR</member>
+        <member name="messageIDs">
+            <element>1194161</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_28_PROMO_END</member>
+        <member name="next">EX201510_28_PROMO_DESC</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>7703</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">722</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28_PROMO_IF</member>
+        <member name="next">EX201510_28_PR</member>
+        <member name="messageIDs">
+            <element>1194163</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201510_BARTER_342</member>
+        <member name="menuType">808</member>
+        <member name="shopID">342</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_28_PROMO_DESC</member>
+        <member name="next">EX201510_28_PR</member>
+        <member name="messageIDs">
+            <element>1194164</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_366</member>
+        <member name="next">EX201510_366_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_366</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_366_MAIN</member>
+        <member name="next">Z241001_366_PR</member>
+        <member name="messageIDs">
+            <element>1194130</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_407</member>
+        <member name="messageIDs">
+            <element>1194180</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_607</member>
+        <member name="messageIDs">
+            <element>1194182</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_608</member>
+        <member name="messageIDs">
+            <element>1194183</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_609</member>
+        <member name="next">EX201510_609_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_609</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_609_MAIN</member>
+        <member name="next">EX201510_609_PR</member>
+        <member name="messageIDs">
+            <element>1194060</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_609_PR</member>
+        <member name="messageID">1194063</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z241001_609_TRADE</member>
+                    <member name="messageID">1194014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_609_TALK</member>
+                    <member name="messageID">1194012</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1194011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_609_TALK</member>
+        <member name="next">EX201510_609_PR</member>
+        <member name="messageIDs">
+            <element>1194062</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006</member>
+        <member name="next">EX201510_3006_PR</member>
+        <member name="messageIDs">
+            <element>1193136</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3006_PR</member>
+        <member name="messageID">1193137</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_MO</member>
+                    <member name="messageID">1193138</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3006_MO_JOIN_MI1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11316</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">45267</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3006_MO_JOIN_MI2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11316</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">7703</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3006_MO_JOIN</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11316</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_TALK</member>
+                    <member name="messageID">1193139</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO</member>
+        <member name="next">EX201510_3006_MO_PR</member>
+        <member name="messageIDs">
+            <element>1193140</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_JOIN_MI1</member>
+        <member name="messageIDs">
+            <element>1193179</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_JOIN_MI2</member>
+        <member name="messageIDs">
+            <element>1193173</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_JOIN</member>
+        <member name="next">EX201510_3006_MO_JOIN_PR</member>
+        <member name="messageIDs">
+            <element>1193166</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_TALK</member>
+        <member name="next">EX201510_3006_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1193145</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3006_MO_PR</member>
+        <member name="messageID">1193141</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_D11316_CREATE</member>
+                    <member name="messageID">1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">7703</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3006_MO_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">45267</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EV1193142_MISSING</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3006_MO_JOIN_PR</member>
+        <member name="messageID">1193167</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_D11316_JOIN</member>
+                    <member name="messageID">1193168</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3006_MO_JOIN_ERR</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INSTANCE_ACCESS</member>
+                                            <member name="value1">11316</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_MO_JOIN_CANCEL</member>
+                    <member name="messageID">1193169</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_MO_SOLO</member>
+                    <member name="messageID">1193170</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3006_TALK_PR</member>
+        <member name="messageID">1193146</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_TALK1</member>
+                    <member name="messageID">1193147</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_TALK2</member>
+                    <member name="messageID">1193148</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_TALK3</member>
+                    <member name="messageID">1193149</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_INFO</member>
+                    <member name="messageID">1193150</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_PR</member>
+                    <member name="messageID">1193151</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3006_D11316_CREATE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>7703</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1193175</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11316</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11316</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_MI</member>
+        <member name="messageIDs">
+            <element>1193143</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EV1193142_MISSING</member>
+        <member name="messageIDs">
+            <element>1193142</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3006_D11316_JOIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>7703</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1193175</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="instanceID">11316</member>
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_JOIN_ERR</member>
+        <member name="messageIDs">
+            <element>1193171</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_JOIN_CANCEL</member>
+        <member name="messageIDs">
+            <element>1193172</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_MO_SOLO</member>
+        <member name="next">EX201510_3006_D11316_CREATE</member>
+        <member name="messageIDs">
+            <element>1193174</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_TALK1</member>
+        <member name="next">EX201510_3006_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1193152</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_TALK2</member>
+        <member name="next">EX201510_3006_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1193153</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_TALK3</member>
+        <member name="next">EX201510_3006_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1193154</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_INFO</member>
+        <member name="next">EX201510_3006_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1193155</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3006_INFO_PR</member>
+        <member name="messageID">1193156</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_INFO1</member>
+                    <member name="messageID">1193157</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_INFO2</member>
+                    <member name="messageID">1193158</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_INFO3</member>
+                    <member name="messageID">1193159</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_BUY_639</member>
+                    <member name="messageID">1193160</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3006_TALK_PR</member>
+                    <member name="messageID">1193161</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_INFO1</member>
+        <member name="next">EX201510_3006_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1193162</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_INFO2</member>
+        <member name="next">EX201510_3006_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1193163</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3006_INFO3</member>
+        <member name="next">EX201510_3006_INFO_PR</member>
+        <member name="messageIDs">
+            <element>1193164</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201510_BUY_639</member>
+        <member name="menuType">175</member>
+        <member name="shopID">639</member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3010</member>
+        <member name="next">EX201510_3010_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_3010_POST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3010_MAIN</member>
+        <member name="next">EX201510_3010_MAIN_PR</member>
+        <member name="messageIDs">
+            <element>1194000</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3010_POST</member>
+        <member name="next">EX201510_3010_POST_PR</member>
+        <member name="messageIDs">
+            <element>1194001</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3010_MAIN_PR</member>
+        <member name="messageID">1194000</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3010_CONFIRM</member>
+                    <member name="messageID">350352</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3010_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3010_POST_PR</member>
+        <member name="messageID">1194001</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3010_CONFIRM</member>
+                    <member name="messageID">350352</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3010_END</member>
+                    <member name="messageID">4</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3010_CONFIRM</member>
+        <member name="next">EX201510_3010_FROM_70101</member>
+        <member name="messageIDs">
+            <element>1194002</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_3010_FROM_30101</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentZone</member>
+                                <member name="params">
+                                    <element>30101</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3010_END</member>
+        <member name="messageIDs">
+            <element>1194003</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3010_FROM_70101</member>
+        <member name="next">EX201510_TO_241001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">714</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">715</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3010_FROM_30101</member>
+        <member name="next">EX201510_TO_241001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">714</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">715</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_241001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194004</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">241001</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3201</member>
+        <member name="next">EX201510_3201_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_3201</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3201_MAIN</member>
+        <member name="next">Z241001_3201_PR</member>
+        <member name="messageIDs">
+            <element>1194100</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3201_TALK</member>
+        <member name="next">Z241001_3201_PR</member>
+        <member name="messageIDs">
+            <element>1194106</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3346</member>
+        <member name="next">EX201510_3346_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_3346</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3346_MAIN</member>
+        <member name="next">Z241001_3346_PR</member>
+        <member name="messageIDs">
+            <element>1194050</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3346_TALK</member>
+        <member name="next">Z241001_3346_PR</member>
+        <member name="messageIDs">
+            <element>1194051</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3351</member>
+        <member name="messageIDs">
+            <element>1194184</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3410</member>
+        <member name="next">EX201510_3410_PR</member>
+        <member name="messageIDs">
+            <element>1194070</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_3410_UNK</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_notUsed</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_PR</member>
+        <member name="messageID">1194089</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_WARP_30102</member>
+                    <member name="messageID">1194071</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3410_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_WARP_40110</member>
+                    <member name="messageID">1194072</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3410_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_WARP_70103</member>
+                    <member name="messageID">1194073</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3410_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_WARP_90104</member>
+                    <member name="messageID">1194074</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3410_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_WARP_110110</member>
+                    <member name="messageID">1194075</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201510_3410_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">799</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1194011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3410_UNK</member>
+        <member name="messageIDs">
+            <element>1194088</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_WARP_30102</member>
+        <member name="messageID">1194077</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_TO_30102</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3410_CANCEL</member>
+        <member name="messageIDs">
+            <element>1194076</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_WARP_40110</member>
+        <member name="messageID">1194079</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_TO_40110</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_WARP_70103</member>
+        <member name="messageID">1194081</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_TO_70103</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_WARP_90104</member>
+        <member name="messageID">1194083</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_TO_90104</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3410_WARP_110110</member>
+        <member name="messageID">1194085</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_TO_110110</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3410_PR</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_30102</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194078</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194087</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30102</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_40110</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194080</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194087</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">40110</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_70103</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194082</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194087</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">70103</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_90104</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194084</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194087</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90104</member>
+                    <member name="spotID">50100</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_TO_110110</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>799</key>
+                            <value>-1000</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194086</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1194087</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">110110</member>
+                    <member name="spotID">50000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3425A</member>
+        <member name="next">EX201510_3425A_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_3425A</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3425A_MAIN</member>
+        <member name="next">EX201510_3425A_PR</member>
+        <member name="messageIDs">
+            <element>1194030</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3425A_PR</member>
+        <member name="messageID">1194034</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z241001_3425A_SKILL</member>
+                    <member name="messageID">1194014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3425A_TALK</member>
+                    <member name="messageID">1194012</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1194011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3425A_TALK</member>
+        <member name="next">EX201510_3425A_PR</member>
+        <member name="messageIDs">
+            <element>1194032</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3425B</member>
+        <member name="next">EX201510_3425B_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_3425B</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3425B_MAIN</member>
+        <member name="next">EX201510_3425B_PR</member>
+        <member name="messageIDs">
+            <element>1194040</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201510_3425B_PR</member>
+        <member name="messageID">1194043</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z241001_3425B_SKILL</member>
+                    <member name="messageID">1194014</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201510_3425B_TALK</member>
+                    <member name="messageID">1194012</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1194011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3425B_TALK</member>
+        <member name="next">EX201510_3425B_PR</member>
+        <member name="messageIDs">
+            <element>1194042</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3426</member>
+        <member name="next">EX201510_3426_MAIN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z241001_3426</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>20151001</key>
+                                        <value>-1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3426_MAIN</member>
+        <member name="next">Z241001_3426_PR</member>
+        <member name="messageIDs">
+            <element>1194020</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3426_TALK</member>
+        <member name="next">Z241001_3426_PR</member>
+        <member name="messageIDs">
+            <element>1194022</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201510_3427</member>
+        <member name="messageIDs">
+            <element>1194181</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_LOGIN_UNUSED</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>1193193</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <!-- Post-Halloween events start automatically November 1st. Removing the condition from the branch will keep the normal events active year round. -->
+        <member name="ID">EX201510_STATE</member>
+        <member name="next">EX201510_STATE_ACTIVE</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_STATE_PASSED</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">TIMESPAN_DATETIME</member>
+                                <member name="value1">11010000</member>
+                                <member name="value2">12312359</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_STATE_ACTIVE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20151001</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_STATE_PASSED</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="flagStates">
+                        <pair>
+                            <key>20151001</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201510_3401_REWARD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_540X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5401</element>
+                                    <element>5402</element>
+                                    <element>5403</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_542X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5421</element>
+                                    <element>5423</element>
+                                    <element>5422</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_548X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5481</element>
+                                    <element>5482</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_550X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5501</element>
+                                    <element>5502</element>
+                                    <element>5503</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_552X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5521</element>
+                                    <element>5522</element>
+                                    <element>5523</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_553X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5531</element>
+                                    <element>5533</element>
+                                    <element>5535</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_620X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6201</element>
+                                    <element>6202</element>
+                                    <element>6203</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_622X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_920X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9201</element>
+                                    <element>9202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_921X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9211</element>
+                                    <element>9212</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_922X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_10901</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10901</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_10902</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10902</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201510_3401_REWARD_10903</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10903</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_540X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>9</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_542X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>12</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_548X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>13</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_550X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_552X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>13</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_553X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>30</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_620X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>15</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_622X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_920X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>15</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_921X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>19</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_922X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_10901</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>12</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_10902</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>17</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201510_3401_REWARD_10903</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>7704</element>
+                        <element>34</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

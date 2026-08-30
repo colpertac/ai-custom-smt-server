@@ -1,0 +1,82 @@
+<objects>
+    <!-- Time-limited event: 第3回クラン対抗イベント「BMR」 -->
+    <object name="ServerZonePartial">
+        <member name="ID">20080101</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 新宿バベルからの使者 -->
+                <object name="ServerNPC">
+                    <member name="ID">318</member>
+                    <member name="SpotID">60028</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX200801_318</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Mode (0 = event active, 1 = event over) -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>200801</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20080102</member>
+        <member name="DynamicMapIDs">
+            <element>20101</element>
+            <element>50101</element>
+            <element>50201</element>
+            <element>50202</element>
+            <element>50203</element>
+            <element>50204</element>
+            <element>50205</element>
+            <element>50206</element>
+            <element>50207</element>
+            <element>50208</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <!-- Room mapping (1 = H3, else babel) -->
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>50201</key>
+                                        <value>0</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

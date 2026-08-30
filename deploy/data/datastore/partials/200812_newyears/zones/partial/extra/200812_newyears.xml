@@ -1,0 +1,95 @@
+﻿<objects>
+    <!-- Time-limited event: 獅子舞フロストてんてこ舞！？ -->
+    <object name="ServerZonePartial">
+        <member name="ID">20081206</member>
+        <member name="DynamicMapIDs">
+            <element>50101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 総司令　獅子舞フロスト -->
+                <object name="ServerNPC">
+                    <member name="ID">388</member>
+                    <member name="SpotID">60049</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081202_388</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="ServerZonePartial">
+        <member name="ID">20081207</member>
+        <member name="DynamicMapIDs">
+            <element>130101</element>
+        </member>
+        <member name="NPCs">
+            <element>
+                <!-- 未熟な獅子舞フロスト -->
+                <object name="ServerNPC">
+                    <member name="ID">389</member>
+                    <member name="SpotID">60102</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081202_389</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- 獅子舞フロスト -->
+                <object name="ServerNPC">
+                    <member name="ID">390</member>
+                    <member name="SpotID">60101</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081202_390</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerNPC">
+                    <member name="ID">2017</member>
+                    <member name="SpotID">60103</member>
+                </object>
+            </element>
+        </member>
+        <member name="Triggers">
+            <!-- Set the pre/post new years state for offerings -->
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081202_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SYSTEMTIME</member>
+                    <member name="Value">0</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">EX20081202_NY</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

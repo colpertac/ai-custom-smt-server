@@ -1,0 +1,2142 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666</member>
+        <member name="next">EX201602_666_PR</member>
+        <member name="messageIDs">
+            <element>1196001</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_666_PR</member>
+        <member name="messageID">1196001</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_TALK</member>
+                    <member name="messageID">1196020</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_BARTER</member>
+                    <member name="messageID">1196021</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">784</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_PROGRESS</member>
+                    <member name="messageID">1196022</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">784</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_CD</member>
+                    <member name="messageID">1196023</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_QUEST</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_ACTIVE</member>
+                                            <member name="value1">784</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">731</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">731</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-25</member>
+                                            <member name="value2">100</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_Q784_READY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">731</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">732</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-25</member>
+                                            <member name="value2">250</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_EX_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">732</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_EX1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">732</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">733</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-25</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_EX_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">733</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_EX2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">733</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_QUEST</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="negate">true</member>
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20160201</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_END</member>
+                    <member name="messageID">1196024</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_TALK</member>
+        <member name="next">EX201602_666_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_BARTER</member>
+        <member name="next">EX201602_BARTER_407</member>
+        <member name="messageIDs">
+            <element>1196007</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_666_PROGRESS</member>
+        <member name="next">EX201602_666_PR</member>
+        <member name="messageID">1196008</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-25</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_CD</member>
+        <member name="messageIDs">
+            <element>1196015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_QUEST</member>
+        <member name="next">EX201602_666_QUEST_PR</member>
+        <member name="messageIDs">
+            <element>1196016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_LOW</member>
+        <member name="messageIDs">
+            <element>1196014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_READY</member>
+        <member name="next">EX201602_666_Q784_DONE</member>
+        <member name="queueNext">EX201602_666_Q784_FIN1</member>
+        <member name="messageIDs">
+            <element>1196009</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201602_666_Q784_NODIGI</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">-1</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_digitalizeRace</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_666_Q784_DIGIMAX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">-1</member>
+                                <member name="value2">10</member>
+                                <member name="scriptID">bool_digitalizeRaceDLv</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_666_Q784_DIGILIMIT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_digitalizeFilter</member>
+                                <member name="params">
+                                    <element>MITAMA</element>
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">-1</member>
+                                <member name="value2">5</member>
+                                <member name="scriptID">bool_digitalizeRaceDLv</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_666_EX_IF</member>
+        <member name="messageID">1196046</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-25</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_666_EX1</member>
+        <member name="next">EX201602_666_EX1_END</member>
+        <member name="messageID">1196044</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-25</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_666_EX2</member>
+        <member name="next">EX201602_666_EX2_END</member>
+        <member name="messageID">1196045</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-25</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_END</member>
+        <member name="messageIDs">
+            <element>1196017</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_666_TALK_PR</member>
+        <member name="messageID">1196002</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_TALK1</member>
+                    <member name="messageID">1196026</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_TALK2</member>
+                    <member name="messageID">1196027</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_TALK3</member>
+                    <member name="messageID">1196028</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_TALK4</member>
+                    <member name="messageID">1196029</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_PR</member>
+                    <member name="messageID">1196030</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201602_BARTER_407</member>
+        <member name="menuType">808</member>
+        <member name="shopID">407</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_666_QUEST_PR</member>
+        <member name="messageID">1196041</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_QUEST_CONFIRM</member>
+                    <member name="queueNext">EX201602_666_Q784_START</member>
+                    <member name="messageID">1196032</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201602_666_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_QUEST_CANCEL</member>
+                    <member name="messageID">1196033</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_DONE</member>
+        <member name="messageIDs">
+            <element>1196040</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_666_Q784_FIN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">DIGITALIZE_POINTS</member>
+                    <member name="value">5000000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">10000000</member>
+                    <member name="adjustable">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">784</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1196036</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">731</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20160201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_NODIGI</member>
+        <member name="next">EX201602_666_Q784_XPONLY_PR</member>
+        <member name="messageIDs">
+            <element>1196011</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_DIGIMAX</member>
+        <member name="next">EX201602_666_Q784_XPONLY_PR</member>
+        <member name="messageIDs">
+            <element>1196047</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_DIGILIMIT</member>
+        <member name="next">EX201602_666_Q784_XPONLY_PR</member>
+        <member name="messageIDs">
+            <element>1196010</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_666_EX1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12712</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">732</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_666_EX2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12712</key>
+                            <value>8</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">733</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_TALK1</member>
+        <member name="next">EX201602_666_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196003</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_TALK2</member>
+        <member name="next">EX201602_666_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196004</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_TALK3</member>
+        <member name="next">EX201602_666_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196005</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_TALK4</member>
+        <member name="next">EX201602_666_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196006</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_QUEST_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1196042</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_666_Q784_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">784</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1196035</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">731</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">732</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">733</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>-25</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_MQ</member>
+        <member name="messageIDs">
+            <element>1196018</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_QUEST_CANCEL</member>
+        <member name="messageIDs">
+            <element>1196043</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_666_Q784_XPONLY_PR</member>
+        <member name="messageID">1196012</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_Q784_FIN2</member>
+                    <member name="messageID">1196032</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_666_Q784_XPONLY_CANCEL</member>
+                    <member name="messageID">1196033</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_666_Q784_FIN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">10000000</member>
+                    <member name="adjustable">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">784</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1196037</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">731</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20160201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_666_Q784_XPONLY_CANCEL</member>
+        <member name="messageIDs">
+            <element>1196013</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358</member>
+        <member name="next">EX201602_3358_PR</member>
+        <member name="messageIDs">
+            <element>1196101</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_3358_PR</member>
+        <member name="messageID">1196101</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_TALK</member>
+                    <member name="messageID">1196120</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_BARTER</member>
+                    <member name="messageID">1196121</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">785</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_PROGRESS</member>
+                    <member name="messageID">1196122</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">785</member>
+                                <member name="compareMode">GTE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_CD</member>
+                    <member name="messageID">1196123</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_QUEST</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_ACTIVE</member>
+                                            <member name="value1">785</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">734</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">734</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-26</member>
+                                            <member name="value2">100</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_Q785_READY</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">734</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">735</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-26</member>
+                                            <member name="value2">250</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_EX_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">735</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_EX1</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">735</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_LOW</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">736</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">EVENT_COUNTER</member>
+                                            <member name="value1">-26</member>
+                                            <member name="value2">1000</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_EX_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">736</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_EX2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">736</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_QUEST</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="negate">true</member>
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20160202</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_END</member>
+                    <member name="messageID">1196124</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_TALK</member>
+        <member name="next">EX201602_3358_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196102</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_BARTER</member>
+        <member name="next">EX201602_BARTER_408</member>
+        <member name="messageIDs">
+            <element>1196107</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_3358_PROGRESS</member>
+        <member name="next">EX201602_3358_PR</member>
+        <member name="messageID">1196108</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-26</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_CD</member>
+        <member name="messageIDs">
+            <element>1196115</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_QUEST</member>
+        <member name="next">EX201602_3358_QUEST_PR</member>
+        <member name="messageIDs">
+            <element>1196116</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_LOW</member>
+        <member name="messageIDs">
+            <element>1196114</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_Q785_READY</member>
+        <member name="next">EX201602_3358_Q785_DONE</member>
+        <member name="queueNext">EX201602_3358_Q785_FIN</member>
+        <member name="messageIDs">
+            <element>1196109</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201602_3358_Q785_MP</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SUMMONED</member>
+                                <member name="compareMode">EXISTS</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3358_Q785_PD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">PARTNER_ALIVE</member>
+                                <member name="negate">true</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3358_Q785_SPMAX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">SOUL_POINTS</member>
+                                <member name="value1">100000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_3358_EX_IF</member>
+        <member name="messageID">1196146</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-26</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_3358_EX1</member>
+        <member name="next">EX201602_3358_EX1_END</member>
+        <member name="messageID">1196144</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-26</element>
+        </member>
+    </object>
+    <object name="EventExNPCMessage">
+        <member name="ID">EX201602_3358_EX2</member>
+        <member name="next">EX201602_3358_EX2_END</member>
+        <member name="messageID">1196145</member>
+        <member name="transformScriptID">transforme_counterValue</member>
+        <member name="transformScriptParams">
+            <element>-26</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_END</member>
+        <member name="messageIDs">
+            <element>1196117</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_3358_TALK_PR</member>
+        <member name="messageID">1196102</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_TALK1</member>
+                    <member name="messageID">1196126</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_TALK2</member>
+                    <member name="messageID">1196127</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_TALK3</member>
+                    <member name="messageID">1196128</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_TALK4</member>
+                    <member name="messageID">1196129</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_PR</member>
+                    <member name="messageID">1196130</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">EX201602_BARTER_408</member>
+        <member name="menuType">808</member>
+        <member name="shopID">408</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201602_3358_QUEST_PR</member>
+        <member name="messageID">1196141</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_QUEST_CONFIRM</member>
+                    <member name="queueNext">EX201602_3358_Q785_START</member>
+                    <member name="messageID">1196132</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201602_3358_MQ</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUESTS_ACTIVE</member>
+                                            <member name="value1">20</member>
+                                            <member name="compareMode">GTE</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201602_3358_QUEST_CANCEL</member>
+                    <member name="messageID">1196133</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_Q785_DONE</member>
+        <member name="messageIDs">
+            <element>1196140</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3358_Q785_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdatePoints">
+                    <member name="pointType">SOUL_POINTS</member>
+                    <member name="value">15000</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="XP">10000000</member>
+                    <member name="adjustable">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">785</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1196136</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">734</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20160202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_Q785_MP</member>
+        <member name="messageIDs">
+            <element>1196112</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_Q785_PD</member>
+        <member name="messageIDs">
+            <element>1196110</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_Q785_SPMAX</member>
+        <member name="messageIDs">
+            <element>1196111</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3358_EX1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12712</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">735</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3358_EX2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>12712</key>
+                            <value>8</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">736</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_TALK1</member>
+        <member name="next">EX201602_3358_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196103</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_TALK2</member>
+        <member name="next">EX201602_3358_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196104</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_TALK3</member>
+        <member name="next">EX201602_3358_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196105</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_TALK4</member>
+        <member name="next">EX201602_3358_TALK_PR</member>
+        <member name="messageIDs">
+            <element>1196106</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_QUEST_CONFIRM</member>
+        <member name="messageIDs">
+            <element>1196142</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3358_Q785_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">785</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1196135</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">734</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">735</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">736</member>
+                    <member name="remove">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>-26</element>
+                        <element>0</element>
+                        <element>2</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_MQ</member>
+        <member name="messageIDs">
+            <element>1196118</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201602_3358_QUEST_CANCEL</member>
+        <member name="messageIDs">
+            <element>1196143</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201602_3401_REWARD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_51XX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5101</element>
+                                    <element>5121</element>
+                                    <element>5131</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_540X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5401</element>
+                                    <element>5402</element>
+                                    <element>5403</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_542X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5421</element>
+                                    <element>5423</element>
+                                    <element>5422</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_548X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5481</element>
+                                    <element>5482</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_550X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5501</element>
+                                    <element>5502</element>
+                                    <element>5503</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_552X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5521</element>
+                                    <element>5522</element>
+                                    <element>5523</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_553X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5531</element>
+                                    <element>5533</element>
+                                    <element>5535</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_570X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5701</element>
+                                    <element>5702</element>
+                                    <element>5703</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_571X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5711</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_572X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>5721</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_620X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6201</element>
+                                    <element>6202</element>
+                                    <element>6203</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_622X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_63XXB</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6301</element>
+                                    <element>6302</element>
+                                    <element>6303</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_63XXG_F</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6304</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">ZONE_FLAGS</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2000</key>
+                                        <value>4</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_63XXG</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>6304</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_920X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9201</element>
+                                    <element>9202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_921X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9211</element>
+                                    <element>9212</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_922X</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>9221</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_10901</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10901</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_10902</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10902</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_10903</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>10903</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_117XX</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>11703</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201602_3401_REWARD_13001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_currentInstance</member>
+                                <member name="params">
+                                    <element>13001</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_51XX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>9</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_540X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>17</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_542X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>24</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_548X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>25</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_550X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>15</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_552X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>25</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_553X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>59</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_570X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>22</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_571X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>9</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_572X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_620X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>30</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_622X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>4</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_63XXB</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>25</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_63XXG</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>35</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_63XXG_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>50</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_920X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>30</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_921X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>37</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_922X</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_10901</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>24</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_10902</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>34</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_10903</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>67</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_117XX</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>10</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201602_3401_REWARD_13001</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_flagRangeSet</member>
+                    <member name="params">
+                        <element>340101</element>
+                        <element>1</element>
+                        <element>0</element>
+                        <element>38230</element>
+                        <element>8</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

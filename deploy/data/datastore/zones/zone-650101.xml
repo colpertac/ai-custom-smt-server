@@ -1,0 +1,220 @@
+<objects>
+    <!-- 富士見ミッドガルド -->
+    <object name="ServerZone">
+        <member name="ID">650101</member>
+        <member name="DynamicMapID">6501001</member>
+        <member name="Global">false</member>
+        <member name="GroupID">0</member>
+        <member name="StartingX">0</member>
+        <member name="StartingY">0</member>
+        <member name="StartingRotation">0</member>
+        <member name="NPCs">
+            <element>
+                <!-- ヤギヌマ -->
+                <object name="ServerNPC">
+                    <member name="ID">391</member>
+                    <member name="SpotID">60001</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">PVP_I6501_391</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <!-- ヤギヌマ -->
+                <object name="ServerNPC">
+                    <member name="ID">391</member>
+                    <member name="SpotID">60002</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">PVP_I6501_391</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="Objects">
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650001</member>
+                    <member name="ActorID">650001</member>
+                    <member name="SpotID">61000</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650002</member>
+                    <member name="ActorID">650002</member>
+                    <member name="SpotID">61001</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650003</member>
+                    <member name="ActorID">650003</member>
+                    <member name="SpotID">61002</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650004</member>
+                    <member name="ActorID">650004</member>
+                    <member name="SpotID">61003</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650005</member>
+                    <member name="ActorID">650005</member>
+                    <member name="SpotID">61004</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 扉 -->
+                <object name="ServerObject">
+                    <member name="ID">650006</member>
+                    <member name="ActorID">650006</member>
+                    <member name="SpotID">61005</member>
+                    <member name="Actions"/>
+                    <member name="State">0</member>
+                </object>
+            </element>
+        </member>
+        <member name="Spots">
+            <pair>
+                <key>50000</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">50000</member>
+                        <member name="MatchSpawn">PVP_RED</member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>50001</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">50001</member>
+                        <member name="MatchSpawn">PVP_BLUE</member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>70001</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">70001</member>
+                        <member name="MatchBase">10</member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_PVP_START</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650001</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650002</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650003</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650004</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650005</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionSetNPCState">
+                                <member name="actorID">650006</member>
+                                <member name="state">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_PVP_COMPLETE</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionDisplayMessage">
+                                <member name="messageIDs">
+                                    <element>156506</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>100</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">PVP_I650X_RETURN</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_PVP_BASE_CAPTURE</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">PVP_I6501_RANDOM_EVENT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

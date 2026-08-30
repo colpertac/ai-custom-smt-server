@@ -1,0 +1,1518 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="messageIDs">
+            <element>1157001</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201306_585_PR</member>
+        <member name="messageID">1157002</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_INFO1</member>
+                    <member name="messageID">1157003</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_INFO2</member>
+                    <member name="messageID">1157004</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_INFO3</member>
+                    <member name="messageID">1157005</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_TRADE</member>
+                    <member name="messageID">1157006</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ</member>
+                    <member name="messageID">1157007</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130601</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130601</member>
+                                <member name="value2">1</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130601</member>
+                                <member name="value2">2</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_END</member>
+                    <member name="messageID">1157009</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_INFO1</member>
+        <member name="next">EX201306_585_INFO1_FLAG</member>
+        <member name="messageIDs">
+            <element>1157010</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_INFO2</member>
+        <member name="next">EX201306_585_INFO2_FLAG</member>
+        <member name="messageIDs">
+            <element>1157011</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_INFO3</member>
+        <member name="next">EX201306_585_INFO3_FLAG</member>
+        <member name="messageIDs">
+            <element>1157012</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_TRADE</member>
+        <member name="next">EX201306_585_TRADE_PR</member>
+        <member name="messageIDs">
+            <element>1157030</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_QUIZ</member>
+        <member name="next">EX201306_585_QUIZ_INTRO</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>585</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>3</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_END</member>
+        <member name="messageIDs">
+            <element>1157057</element>
+        </member>
+        <member name="conditions">
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130601</member>
+                    <member name="value2">3</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventScriptCondition">
+                    <member name="value1">20130601</member>
+                    <member name="value2">4</member>
+                    <member name="negate">true</member>
+                    <member name="scriptID">bool_counterValue</member>
+                    <member name="params">
+                        <element>1</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_INFO1_FLAG</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>0</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_INFO2_FLAG</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>1</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_INFO3_FLAG</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="actions">
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>2</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201306_585_TRADE_PR</member>
+        <member name="messageID">1157032</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_TRADE_CONFIRM</member>
+                    <member name="messageID">1157033</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12936</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12937</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12938</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12939</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12940</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12941</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12942</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12943</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12944</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12945</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12946</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">ITEM</member>
+                                <member name="value1">12947</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_TRADE_CANCEL</member>
+                    <member name="messageID">1157034</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_PR</member>
+                    <member name="messageID">1157043</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_END</member>
+                    <member name="messageID">1157041</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_INTRO</member>
+        <member name="next">EX201306_585_QUIZ1</member>
+        <member name="messageIDs">
+            <element>1157013</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201306_585_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130601</member>
+                                <member name="value2">4</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_TRADE_CONFIRM</member>
+        <member name="next">EX201306_585_TRADE_DONE</member>
+        <member name="messageIDs">
+            <element>1157035</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201306_585_CF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">COMP_FREE</member>
+                                <member name="value1">1</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_TRADE_CANCEL</member>
+        <member name="messageIDs">
+            <element>1157031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ1</member>
+        <member name="next">EX201306_585_QUIZ1_PR</member>
+        <member name="messageIDs">
+            <element>1157015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_IF</member>
+        <member name="messageIDs">
+            <element>1157014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_TRADE_DONE</member>
+        <member name="messageIDs">
+            <element>1157036</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE1_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE2_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE3_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE4_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE5_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE6_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE7_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE8_END</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_TRADE9_END</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>15</element>
+            <element>15</element>
+            <element>15</element>
+            <element>13</element>
+            <element>12</element>
+            <element>11</element>
+            <element>9</element>
+            <element>6</element>
+            <element>4</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_CF</member>
+        <member name="messageIDs">
+            <element>1157037</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201306_585_QUIZ1_PR</member>
+        <member name="messageID">1157016</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ1_CORRECT</member>
+                    <member name="messageID">1157017</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ2</member>
+                    <member name="messageID">1157018</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4064</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157047</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4065</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157048</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4066</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157049</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE4_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4067</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157050</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE5_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4068</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157051</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE6_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4069</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157052</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE7_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4070</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157053</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE8_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4071</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157054</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_TRADE9_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>12944</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12936</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12937</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12938</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12939</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12940</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12941</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12942</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12943</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12945</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12946</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>12947</key>
+                            <value>-1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>4072</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157055</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">1157056</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_QUIZ1_CORRECT</member>
+        <member name="next">EX201306_585_QUIZ2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>585</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ2</member>
+        <member name="next">EX201306_585_QUIZ2_PR</member>
+        <member name="messageIDs">
+            <element>1157019</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201306_585_QUIZ2_PR</member>
+        <member name="messageID">1157020</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ3</member>
+                    <member name="messageID">1157017</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ2_CORRECT</member>
+                    <member name="messageID">1157018</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ3</member>
+        <member name="next">EX201306_585_QUIZ3_PR</member>
+        <member name="messageIDs">
+            <element>1157021</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_QUIZ2_CORRECT</member>
+        <member name="next">EX201306_585_QUIZ3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE_CHARACTER</member>
+                    <member name="setMode">INCREMENT</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>585</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201306_585_QUIZ3_PR</member>
+        <member name="messageID">1157022</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ_0PTS</member>
+                    <member name="messageID">1157017</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201306_585_QUIZ_1PTS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>585</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201306_585_QUIZ_2PTS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>585</key>
+                                                    <value>2</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201306_585_QUIZ_1PTS</member>
+                    <member name="messageID">1157018</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201306_585_QUIZ_2PTS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>585</key>
+                                                    <value>1</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201306_585_QUIZ_3PTS</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventFlagCondition">
+                                            <member name="type">ZONE_CHARACTER_FLAGS</member>
+                                            <member name="flagStates">
+                                                <pair>
+                                                    <key>585</key>
+                                                    <value>2</value>
+                                                </pair>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_0PTS</member>
+        <member name="next">EX201306_585_QUIZ_SCOLD</member>
+        <member name="messageIDs">
+            <element>1157023</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_1PTS</member>
+        <member name="next">EX201306_585_QUIZ_SCOLD</member>
+        <member name="messageIDs">
+            <element>1157024</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_2PTS</member>
+        <member name="next">EX201306_585_QUIZ_SCOLD</member>
+        <member name="messageIDs">
+            <element>1157025</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_3PTS</member>
+        <member name="next">EX201306_585_QUIZ_PERFECT</member>
+        <member name="messageIDs">
+            <element>1157026</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_SCOLD</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="messageIDs">
+            <element>1157027</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_PERFECT</member>
+        <member name="next">EX201306_585_PR</member>
+        <member name="messageIDs">
+            <element>1157028</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201306_585_QUIZ_REWARD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="value1">20130601</member>
+                                <member name="value2">4</member>
+                                <member name="negate">true</member>
+                                <member name="scriptID">bool_counterValue</member>
+                                <member name="params">
+                                    <element>1</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201306_585_QUIZ_REWARD</member>
+        <member name="messageIDs">
+            <element>1157029</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201306_585_QUIZ_REWARD_M</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201306_585_QUIZ_REWARD_F</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_gender</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_QUIZ_REWARD_M</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23624</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>4</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201306_585_QUIZ_REWARD_F</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23625</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionRunScript">
+                    <member name="scriptID">action_eventCounter</member>
+                    <member name="params">
+                        <element>20130601</element>
+                        <element>4</element>
+                        <element>3</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

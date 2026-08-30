@@ -1,0 +1,1548 @@
+<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324</member>
+        <member name="next">EX201010_324_PR</member>
+        <member name="messageIDs">
+            <element>750510</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201010_324_PR</member>
+        <member name="messageID">750511</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TALK</member>
+                    <member name="messageID">750512</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TRICK</member>
+                    <member name="messageID">750513</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TRICK_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101001</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT</member>
+                    <member name="messageID">750514</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_INFO</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">567</member>
+                                            <member name="value2">1</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_VALID_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1772</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101002</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_VALID_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1773</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101002</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_VALID_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1609</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101002</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_CD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventScriptCondition">
+                                            <member name="scriptID">bool_cooldown</member>
+                                            <member name="params">
+                                                <element>20101002</element>
+                                            </member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1772</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1773</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1609</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_END</member>
+                    <member name="messageID">750515</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z60101_324</member>
+                    <member name="messageID">202095</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_optionalEventsEnabled</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TALK</member>
+        <member name="next">EX201010_324_PR</member>
+        <member name="messageIDs">
+            <element>750518</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TRICK</member>
+        <member name="next">EX201010_324_TRICK_APPLY</member>
+        <member name="messageIDs">
+            <element>750526</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TRICK_CD</member>
+        <member name="next">EX201010_324_PR</member>
+        <member name="messageIDs">
+            <element>750525</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT</member>
+        <member name="next">EX201010_324_TREAT_PR</member>
+        <member name="messageIDs">
+            <element>750538</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_INFO</member>
+        <member name="next">EX201010_324_TREAT_INFO_END</member>
+        <member name="messageIDs">
+            <element>750531</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_VALID_CD</member>
+        <member name="messageIDs">
+            <element>750534</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_CD</member>
+        <member name="messageIDs">
+            <element>750530</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_INVALID</member>
+        <member name="messageIDs">
+            <element>750532</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_IF</member>
+        <member name="messageIDs">
+            <element>750533</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_END</member>
+        <member name="messageIDs">
+            <element>750519</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK_APPLY</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750565</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101001</member>
+                    <member name="duration">1800</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK01</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK02</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK03</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK04</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK05</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK06</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK07</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK08</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK09</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TRICK10</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>10</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201010_324_TREAT_PR</member>
+        <member name="messageID">750539</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT1</member>
+                    <member name="messageID">750540</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT2</member>
+                    <member name="messageID">750541</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT3</member>
+                    <member name="messageID">750542</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_END</member>
+                    <member name="messageID">750543</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_INFO_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750587</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK01</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>625</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK02</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>626</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK03</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>627</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK04</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>628</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK05</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101001</member>
+                    <member name="duration">3600</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">30101</member>
+                    <member name="spotID">50101</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK06</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101001</member>
+                    <member name="duration">3600</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">90101</member>
+                    <member name="spotID">50012</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK07</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20101001</member>
+                    <member name="duration">3600</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">110101</member>
+                    <member name="spotID">50101</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK08</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>4</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK09</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>12</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TRICK10</member>
+        <member name="next">EX201010_324_TRICK_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveStatus">
+                    <member name="isReplace">true</member>
+                    <member name="statusStacks">
+                        <pair>
+                            <key>19</key>
+                            <value>100</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT1</member>
+        <member name="next">EX201010_324_TREAT1_PR</member>
+        <member name="messageIDs">
+            <element>750546</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT2</member>
+        <member name="next">EX201010_324_TREAT2_PR</member>
+        <member name="messageIDs">
+            <element>750553</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT3</member>
+        <member name="next">EX201010_324_TREAT3_PR</member>
+        <member name="messageIDs">
+            <element>750556</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_END</member>
+        <member name="next">EX201010_324_PR</member>
+        <member name="messageIDs">
+            <element>750544</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TRICK_END</member>
+        <member name="messageIDs">
+            <element>750524</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201010_324_TREAT1_PR</member>
+        <member name="messageID">750547</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CONFIRM</member>
+                    <member name="queueNext">EX201010_324_TREAT1_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT1_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1772</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201010_324_TREAT2_PR</member>
+        <member name="messageID">750554</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CONFIRM</member>
+                    <member name="queueNext">EX201010_324_TREAT2_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT2_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1773</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX201010_324_TREAT3_PR</member>
+        <member name="messageID">750557</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CONFIRM</member>
+                    <member name="queueNext">EX201010_324_TREAT3_END</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT3_INVALID</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">SUMMONED</member>
+                                            <member name="value1">1609</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_PD</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_ALIVE</member>
+                                            <member name="negate">true</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX201010_324_TREAT_LOCKED</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">PARTNER_LOCKED</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX201010_324_TREAT_CANCEL</member>
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_CONFIRM</member>
+        <member name="messageIDs">
+            <element>750551</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT1_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750566</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT1054</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5692</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5693</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3083</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3084</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3085</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3086</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3089</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3090</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT9758</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23110</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT26039</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5845</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23109</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT24048</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4436</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4437</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>5</element>
+            <element>10</element>
+            <element>10</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>3</element>
+            <element>3</element>
+            <element>3</element>
+            <element>3</element>
+            <element>3</element>
+            <element>3</element>
+            <element>1</element>
+            <element>1</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT1_INVALID</member>
+        <member name="messageIDs">
+            <element>750549</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_PD</member>
+        <member name="messageIDs">
+            <element>750550</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_LOCKED</member>
+        <member name="messageIDs">
+            <element>750559</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT_CANCEL</member>
+        <member name="next">EX201010_324_TREAT_PR</member>
+        <member name="messageIDs">
+            <element>750548</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT2_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750567</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT1054</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5692</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5693</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3083</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3084</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3085</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3086</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3089</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3090</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT9758</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23110</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT26039</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5845</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23109</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT24048</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4436</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4437</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>5</element>
+            <element>3</element>
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT2_INVALID</member>
+        <member name="messageIDs">
+            <element>750555</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT3_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="removeDemons">
+                        <pair>
+                            <key>0</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750568</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT1054</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5692</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5693</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3083</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3084</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3085</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3086</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3089</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT3090</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT9758</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23110</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT26039</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT5845</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT23109</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT24048</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4436</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_324_TREAT_IT4437</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomWeighted</member>
+        <member name="branchScriptParams">
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>2</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>7</element>
+            <element>5</element>
+            <element>5</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX201010_324_TREAT3_INVALID</member>
+        <member name="messageIDs">
+            <element>750558</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT1054</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>1054</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT5692</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5692</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT5693</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5693</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3083</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3083</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3084</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3084</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3085</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3085</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3086</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3086</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3089</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3089</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT3090</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>3090</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT9758</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>9758</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT23110</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23110</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT26039</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>26039</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT5845</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5845</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT23109</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>23109</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT24048</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>24048</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT4436</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4436</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_324_TREAT_IT4437</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>4437</key>
+                            <value>0</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX201010_SP1_SPAWN</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX201010_SP1_SPAWN1</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_SP1_SPAWN2</member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX201010_SP1_SPAWN3</member>
+                </object>
+            </element>
+        </member>
+        <member name="branchScriptID">branch_randomSplit</member>
+        <member name="branchScriptParams">
+            <element>3</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_SP1_SPAWN1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750610</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_SP1_SPAWN2</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750611</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_SP1_SPAWN3</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750612</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX201010_SP1_DA</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">750613</member>
+                    <member name="includeMessage">true</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

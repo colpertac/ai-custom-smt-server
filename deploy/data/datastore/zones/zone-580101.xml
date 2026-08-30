@@ -1,0 +1,187 @@
+﻿<objects>
+    <!-- COMP-hackダンジョン 1-A -->
+    <object name="ServerZone">
+        <member name="ID">580101</member>
+        <member name="DynamicMapID">5801001</member>
+        <member name="Global">false</member>
+        <member name="GroupID">20101</member>
+        <member name="StartingX">4511.92</member>
+        <member name="StartingY">-244.23</member>
+        <member name="StartingRotation">3.14</member>
+        <member name="NPCs"/>
+        <member name="Objects">
+            <element>
+                <!-- 起動プログラム -->
+                <object name="ServerObject">
+                    <member name="ID">570171</member>
+                    <member name="ActorID">570171</member>
+                    <member name="SpotID">60001</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D58_580101_PR001</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">0</member>
+                </object>
+            </element>
+            <element>
+                <!-- 帰還プログラム -->
+                <object name="ServerObject">
+                    <member name="ID">570173</member>
+                    <member name="SpotID">60002</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D58_580101_PR002</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="State">1</member>
+                </object>
+            </element>
+        </member>
+        <member name="Spawns">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="Spawn">
+                        <member name="ID">1</member>
+                        <member name="EnemyType">1748</member>
+                        <member name="Level">2</member>
+                        <member name="TalkResist">100</member>
+                        <member name="BaseAIType">2</member>
+                        <member name="XP">80</member>
+                        <member name="DropSetIDs">
+                            <element>174800</element>
+                            <element>10000380</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">1</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>4</value>
+                            </pair>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>2</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">2</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>4</value>
+                            </pair>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="SpawnGroup">
+                        <member name="ID">3</member>
+                        <member name="Spawns">
+                            <pair>
+                                <key>1</key>
+                                <value>4</value>
+                            </pair>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="SpawnLocationGroups">
+            <pair>
+                <key>1</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">1</member>
+                        <member name="GroupIDs">
+                            <element>1</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>101</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>2</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">2</member>
+                        <member name="GroupIDs">
+                            <element>2</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>102</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+            <pair>
+                <key>3</key>
+                <value>
+                    <object name="SpawnLocationGroup">
+                        <member name="ID">3</member>
+                        <member name="GroupIDs">
+                            <element>3</element>
+                        </member>
+                        <member name="SpotIDs">
+                            <element>103</element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+        <member name="Spots">
+            <pair>
+                <key>10001</key>
+                <value>
+                    <object name="ServerZoneSpot">
+                        <member name="ID">10001</member>
+                        <member name="Actions">
+                            <element>
+                                <object name="ActionStartEvent">
+                                    <member name="eventID">D58_580101_EF000</member>
+                                </object>
+                            </element>
+                            <element>
+                                <object name="ActionSpawn">
+                                    <member name="spawnLocationGroupIDs">
+                                        <element>1</element>
+                                        <element>2</element>
+                                        <element>3</element>
+                                    </member>
+                                    <member name="mode">ONE_TIME</member>
+                                    <member name="defeatActions">
+                                        <element>
+                                            <object name="ActionStartEvent">
+                                                <member name="eventID">D58_580101_EF002</member>
+                                            </object>
+                                        </element>
+                                    </member>
+                                </object>
+                            </element>
+                        </member>
+                    </object>
+                </value>
+            </pair>
+        </member>
+    </object>
+</objects>

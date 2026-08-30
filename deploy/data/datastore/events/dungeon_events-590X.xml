@@ -1,0 +1,987 @@
+﻿<objects>
+    <!-- COC 8 -->
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_ARUKO_DEATH</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300002</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_ARUMA_DEATH</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300004</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_HARITO_DEATH</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300006</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_MIRUWA_DEATH</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300008</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_MIRUWA</member>
+        <member name="next">D5905_COC8_MIRUWA_00</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300009</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_MIRUWA_00</member>
+        <member name="messageID">166189</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_MIRUWA_01</member>
+                    <member name="messageID">166190</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_MIRUWA_01a</member>
+                    <member name="messageID">166191</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_MIRUWA_01</member>
+        <member name="next">D5905_COC8_MIRUWA_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300010</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_MIRUWA_01a</member>
+        <member name="next">D5905_COC8_MIRUWA_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300011</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_MIRUWA_02</member>
+        <member name="next">D5905_COC8_SP01</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300024</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5905_COC8_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">166206</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionPlayBGM">
+                    <member name="musicID">61</member>
+                    <member name="fadeInDelay">10</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5905_COC8_DF01</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5905_COC8_DF03</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5905_COC8_DF04</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>4</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5905_COC8_DF02</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_DF01</member>
+        <member name="next">D5905_COC8_KINA</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_DF02</member>
+        <member name="next">D5905_COC8_KINA</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300003</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_DF03</member>
+        <member name="next">D5905_COC8_KINA</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300005</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_DF04</member>
+        <member name="next">D5905_COC8_KINA</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300007</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA</member>
+        <member name="next">D5905_COC8_KINA_00</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300025</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_00</member>
+        <member name="next">D5905_COC8_KINA_01</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300012</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_01</member>
+        <member name="messageID">166223</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_02</member>
+                    <member name="messageID">166224</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_02</member>
+                    <member name="messageID">166225</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_02</member>
+        <member name="next">D5905_COC8_KINA_03</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300013</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_03</member>
+        <member name="messageID">166226</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_04</member>
+                    <member name="messageID">166229</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_07</member>
+                    <member name="messageID">166230</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_04</member>
+        <member name="next">D5905_COC8_KINA_05</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300014</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_05</member>
+        <member name="messageID">166231</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_06</member>
+                    <member name="messageID">166232</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_06a</member>
+                    <member name="messageID">166233</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_06</member>
+        <member name="next">D5905_COC8_KINA_10</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300015</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_06a</member>
+        <member name="next">D5905_COC8_KINA_10</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300018</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_07</member>
+        <member name="next">D5905_COC8_KINA_08</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300017</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_08</member>
+        <member name="messageID">166234</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_09</member>
+                    <member name="messageID">166235</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_09a</member>
+                    <member name="messageID">166236</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_09</member>
+        <member name="next">D5905_COC8_KINA_10</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300016</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_09a</member>
+        <member name="next">D5905_COC8_KINA_10</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300019</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_10</member>
+        <member name="next">D5905_COC8_KINA_11</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300020</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_11</member>
+        <member name="messageID">166237</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_12</member>
+                    <member name="messageID">166238</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_13</member>
+                    <member name="messageID">166239</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_12</member>
+        <member name="next">D5905_COC8_END</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300021</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5905_COC8_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">909</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">909</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">1200000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">80101</member>
+                    <member name="spotID">50013</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">910</member>
+                    <member name="phase">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">0</member>
+                    <member name="effectType">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_13</member>
+        <member name="next">D5905_COC8_KINA_14</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300022</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5905_COC8_KINA_14</member>
+        <member name="messageID">166241</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_15</member>
+                    <member name="messageID">166242</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5905_COC8_KINA_15</member>
+                    <member name="messageID">166243</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5905_COC8_KINA_15</member>
+        <member name="next">D5905_COC8_END</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">9300023</member>
+    </object>
+    <!-- COC 10 -->
+    <object name="EventPerformActions">
+        <member name="ID">D5906_COC10_SP01</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5906_ML001</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5906_ML001</member>
+        <member name="next">D5906_PR001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">500145</member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D5906_PR001</member>
+        <member name="messageID">167085</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5906_ML002</member>
+                    <member name="messageID">167086</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D5906_ML002a</member>
+                    <member name="messageID">167087</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5906_ML002</member>
+        <member name="next">D5906_EF001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">500146</member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5906_ML002a</member>
+        <member name="next">D5906_EF001</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">500147</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5906_EF001</member>
+        <member name="next">D5906_EF001_02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">167088</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">911</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5906_EF001_02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">200101</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- COC 11 -->
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11</member>
+        <member name="next">D5907_COC11_00</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520101</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="compareMode">LT_OR_NAN</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D5907_COC11_00</member>
+        <member name="next">D5907_COC11_SP01</member>
+        <member name="sceneID">10006</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5907_COC11_SP01</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateZoneFlags">
+                    <member name="type">ZONE</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1000</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>1</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>1</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5907_COC11_ARUMA</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>2</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>2</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5907_COC11_ARUKO</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>3</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>3</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5907_COC11_HARITO</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSpawn">
+                    <member name="spawnLocationGroupIDs">
+                        <element>4</element>
+                    </member>
+                    <member name="defeatActions">
+                        <element>
+                            <object name="ActionUpdateZoneFlags">
+                                <member name="type">ZONE</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>4</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">D5907_COC11_MIRUWA</member>
+                                <member name="sourceContext">ALL</member>
+                                <member name="location">ZONE</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11_ARUKO</member>
+        <member name="next">D5907_COC11_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520001</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11_ARUMA</member>
+        <member name="next">D5907_COC11_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520002</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11_HARITO</member>
+        <member name="next">D5907_COC11_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520003</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11_MIRUWA</member>
+        <member name="next">D5907_COC11_02</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520004</member>
+        <member name="conditions">
+            <element>
+                <object name="EventFlagCondition">
+                    <member name="type">ZONE_FLAGS</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>1</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>2</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>3</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>4</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">D5907_COC11_02</member>
+        <member name="next">D5907_COC11_03</member>
+        <member name="playerSource">true</member>
+        <member name="messageID">520102</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D5907_COC11_03</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">912</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">2500000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">20102</member>
+                    <member name="spotID">50001</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">0</member>
+                    <member name="effectType">2</member>
+                </object>
+            </element>            
+        </member>
+    </object>
+</objects>

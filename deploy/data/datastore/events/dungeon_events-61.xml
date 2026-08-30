@@ -1,0 +1,1634 @@
+<objects>
+    <!-- 610101 -->
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_BOSS_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D61_610101_BOSS_END_SCENE</member>
+        <member name="sceneID">135</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_Q313_UPDATE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">313</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_Q313_UPDATE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">150000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161467</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D61_610X01_105</member>
+        <member name="next">D61_610101_NM001</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM003</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">313</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM005</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">313</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">313</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="compareMode">LT_OR_NAN</member>
+                                <member name="value1">313</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM005</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">316</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610201_NM001</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">316</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>3</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM001</member>
+        <member name="next">D61_610101_PR001</member>
+        <member name="messageIDs">
+            <element>160970</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_PR001</member>
+        <member name="messageID">160973</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_105_50101</member>
+                    <member name="messageID">160974</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_NM002</member>
+                    <member name="messageID">160960</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_105_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">50101</member>
+                    <member name="spotID">50011</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM002</member>
+        <member name="messageIDs">
+            <element>160962</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM003</member>
+        <member name="next">D61_610101_PR002</member>
+        <member name="messageIDs">
+            <element>160971</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_PR002</member>
+        <member name="messageID">160973</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_EF001</member>
+                    <member name="messageID">160974</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D61_610201_EF001</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">316</member>
+                                            <member name="value2">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_NM004</member>
+                    <member name="messageID">160975</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_EF001</member>
+        <member name="next">D61_610101_105_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">160980</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM004</member>
+        <member name="messageIDs">
+            <element>160977</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM005</member>
+        <member name="messageIDs">
+            <element>160983</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610201_NM001</member>
+        <member name="next">D61_610101_PR002</member>
+        <member name="messageIDs">
+            <element>161464</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610201_EF001</member>
+        <member name="next">D61_610101_105_50101</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">160980</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D61_610101_120</member>
+        <member name="next">D61_610101_NM006</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0000</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">VALUABLE</member>
+                                <member name="value1">31</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM011</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">313</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM011</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM006</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">313</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM007</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">313</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_NM007</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">316</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>2</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM011</member>
+        <member name="messageIDs">
+            <element>161048</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0000</member>
+        <member name="messageIDs">
+            <element>161050</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM006</member>
+        <member name="messageIDs">
+            <element>161001</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM007</member>
+        <member name="next">D61_610101_PR003</member>
+        <member name="messageIDs">
+            <element>161004</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_PR003</member>
+        <member name="messageID">161005</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0009</member>
+                    <member name="messageID">161006</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_NM008</member>
+                    <member name="messageID">161007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM008</member>
+        <member name="next">D61_610101_PR004</member>
+        <member name="messageIDs">
+            <element>161014</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_PR004</member>
+        <member name="messageID">161015</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_NM009</member>
+                    <member name="messageID">161016</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0002</member>
+                    <member name="messageID">161017</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM009</member>
+        <member name="next">D61_610101_PR005</member>
+        <member name="messageIDs">
+            <element>161029</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_PR005</member>
+        <member name="messageID">161030</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_NM010</member>
+                    <member name="messageID">161031</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D61_610201_NM005</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">316</member>
+                                            <member name="value2">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0001</member>
+                    <member name="messageID">161032</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0001</member>
+        <member name="next">D61_610101_120_0001a</member>
+        <member name="messageIDs">
+            <element>161044</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0001b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0001a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">39</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">4000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0001b</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">53</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">4000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_NM010</member>
+        <member name="next">D61_610101_PA002</member>
+        <member name="messageIDs">
+            <element>161043</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_PA002</member>
+        <member name="next">D61_610101_120_CCC</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161053</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">34</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">PLUGIN</member>
+                    <member name="ID">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateCOMP">
+                    <member name="addDemons">
+                        <pair>
+                            <key>1819</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">D61_610101_120_CCC</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_CCC_0</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-10000</member>
+                                <member name="value2">-4000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_CCC_1</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-3999</member>
+                                <member name="value2">7999</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_CCC_0</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">5000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_CCC_1</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">8000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0002</member>
+        <member name="next">D61_610101_120_0003</member>
+        <member name="messageIDs">
+            <element>161034</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_120_0003</member>
+        <member name="messageID">161035</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0004</member>
+                    <member name="messageID">161036</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0006</member>
+                    <member name="messageID">161037</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0004</member>
+        <member name="next">D61_610101_120_0005</member>
+        <member name="messageIDs">
+            <element>161045</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0005a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0005</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">38</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">0</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0005a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">52</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">0</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0006</member>
+        <member name="next">D61_610101_120_0007</member>
+        <member name="messageIDs">
+            <element>161046</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0007a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0007</member>
+        <member name="next">D61_610101_120_0008a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">36</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0008b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-10000</member>
+                                <member name="value2">999</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0007a</member>
+        <member name="next">D61_610101_120_0008a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">51</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0008b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-10000</member>
+                                <member name="value2">999</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0008b</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-6000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0008a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-2500</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0009</member>
+        <member name="next">D61_610101_120_0010</member>
+        <member name="messageIDs">
+            <element>161009</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_120_0010</member>
+        <member name="messageID">161010</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0011</member>
+                    <member name="messageID">161011</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0018</member>
+                    <member name="messageID">161012</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0011</member>
+        <member name="next">D61_610101_120_0012</member>
+        <member name="messageIDs">
+            <element>161019</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_120_0012</member>
+        <member name="messageID">161020</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0015</member>
+                    <member name="messageID">161021</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0013</member>
+                    <member name="messageID">161022</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0013</member>
+        <member name="next">D61_610101_120_0014</member>
+        <member name="messageIDs">
+            <element>161040</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0014a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0014</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">37</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-4000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0014a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">51</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-4000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0015</member>
+        <member name="next">D61_610101_120_0016</member>
+        <member name="messageIDs">
+            <element>161039</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0016a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0016</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">35</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0017a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">4000</member>
+                                <member name="value2">10000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0017b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-7999</member>
+                                <member name="value2">3999</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0016a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">50</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0017a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">4000</member>
+                                <member name="value2">10000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0017b</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-7999</member>
+                                <member name="value2">3999</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0017b</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-8000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0017a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">-5000</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0018</member>
+        <member name="next">D61_610101_120_0019</member>
+        <member name="messageIDs">
+            <element>161024</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">D61_610101_120_0019</member>
+        <member name="messageID">161025</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0022</member>
+                    <member name="messageID">161026</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">D61_610101_120_0022a</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">316</member>
+                                            <member name="value2">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">D61_610101_120_0020</member>
+                    <member name="messageID">161027</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0020</member>
+        <member name="next">D61_610101_120_0021</member>
+        <member name="messageIDs">
+            <element>161042</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0021a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">316</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0021</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">38</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161051</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">0</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0021a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">52</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">0</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.75</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0022</member>
+        <member name="next">D61_610101_120_0023</member>
+        <member name="messageIDs">
+            <element>161041</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610101_120_0022a</member>
+        <member name="next">D61_610101_120_0023a</member>
+        <member name="messageIDs">
+            <element>161462</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0023a</member>
+        <member name="next">D61_610101_120_0024</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">53</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0024a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-10000</member>
+                                <member name="value2">-1000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0023</member>
+        <member name="next">D61_610101_120_0024</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">34</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">PLUGIN</member>
+                    <member name="ID">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161052</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">313</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D61_610101_120_0024a</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">LNC</member>
+                                <member name="value1">-10000</member>
+                                <member name="value2">-1000</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0024a</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">2500</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610101_120_0024</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateLNC">
+                    <member name="value">6000</member>
+                    <member name="isSet">true</member>
+                    <member name="transformScriptID">transforma_lncPercent</member>
+                    <member name="transformScriptParams">
+                        <element>0.5</element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <!-- 610201 -->
+    <object name="EventPerformActions">
+        <member name="ID">D61_610201_BOSS_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">1</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetNPCState">
+                    <member name="actorID">2</member>
+                    <member name="state">1</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPlayScene">
+        <member name="ID">D61_610201_BOSS_END_SCENE</member>
+        <member name="sceneID">135</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">D60_600101_Q316_UPDATE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventFlagCondition">
+                                <member name="type">QUEST_FLAGS</member>
+                                <member name="value1">316</member>
+                                <member name="flagStates">
+                                    <pair>
+                                        <key>10</key>
+                                        <value>1</value>
+                                    </pair>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D60_600101_Q316_UPDATE</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">200000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                    <member name="sourceContext">ALL</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161467</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">D61_610201_NM005</member>
+        <member name="next">D61_610201_PA002</member>
+        <member name="messageIDs">
+            <element>161463</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">D61_610201_PA002</member>
+        <member name="next">D61_610101_120_CCC</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">54</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">161461</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">316</member>
+                    <member name="flagStates">
+                        <pair>
+                            <key>10</key>
+                            <value>3</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

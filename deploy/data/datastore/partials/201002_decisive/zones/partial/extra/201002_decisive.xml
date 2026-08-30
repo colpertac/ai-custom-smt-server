@@ -1,0 +1,25 @@
+<objects>
+    <!-- Time-limited event: シンジュク大決戦 -->
+    <!-- Only enables permanently accessible post-rebalance public zone -->
+    <object name="ServerZonePartial">
+        <member name="ID">20100202</member>
+        <member name="AutoApply">true</member>
+        <member name="DynamicMapIDs">
+            <element>150101</element>
+        </member>
+        <member name="Triggers">
+            <element>
+                <object name="ServerZoneTrigger">
+                    <member name="Trigger">ON_SETUP</member>
+                    <member name="Actions">
+                        <element>
+                            <object name="ActionStartEvent">
+                                <member name="eventID">Z150101_DBATTLE_ON</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

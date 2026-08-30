@@ -1,0 +1,361 @@
+﻿<objects>
+    <object name="Event">
+        <member name="ID">Z80105_603</member>
+        <member name="next">Z80105_603_00</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">336</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">336</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z80105_603_JOIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11003</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_603_JOIN</member>
+        <member name="next">event_instanceJoin</member>
+        <member name="messageIDs">
+            <element>1211116</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_603_00</member>
+        <member name="next">Z80105_603_01</member>
+        <member name="messageIDs">
+            <element>1211119</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z80105_603_01</member>
+        <member name="messageID">1211119</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_603_02</member>
+                    <member name="messageID">1211102</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">1211104</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_603_02</member>
+        <member name="next">Z80105_603_INSTANCE_11003</member>
+        <member name="messageIDs">
+            <element>1211120</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z80105_603_INSTANCE_11003</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">11003</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                    <member name="instanceID">11003</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_613</member>
+        <member name="next">Z80105_613_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1211247</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z80105_613_MAIN_PROMPT</member>
+        <member name="messageID">43201</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_BUY_581a</member>
+                    <member name="messageID">148159</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_BARTER_2</member>
+                    <member name="messageID">203130</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_REPAIR_581</member>
+                    <member name="messageID">148160</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_613_TALK</member>
+                    <member name="messageID">148161</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">0</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_613_END</member>
+                    <member name="messageID">148162</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_BUY_581a</member>
+        <member name="next">Z80105_BUY_581</member>
+        <member name="messageIDs">
+            <element>148168</element>
+        </member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z80105_BUY_581</member>
+        <member name="menuType">175</member>
+        <member name="shopID">581</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z80105_REPAIR_581</member>
+        <member name="menuType">177</member>
+        <member name="shopID">581</member>
+    </object>
+    <object name="EventOpenMenu">
+        <member name="ID">Z80105_BARTER_2</member>
+        <member name="useNext">Z80105_613_MAIN_PROMPT</member>
+        <member name="menuType">808</member>
+        <member name="shopID">2</member>
+    </object>
+    <object name="Event">
+        <member name="ID">Z80105_613_TALK</member>
+        <member name="next">Z80105_613_TALK_01</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z80105_613_SHORTCUT_03</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">846</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_tokusei</member>
+                                <member name="params">
+                                    <element>10005</element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INSTANCE_ACCESS</member>
+                                <member name="value1">11004</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">Z80105_613_SHORTCUT</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">846</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_tokusei</member>
+                                <member name="params">
+                                    <element>10005</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_613_TALK_01</member>
+        <member name="next">Z80105_613_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>1211241</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_613_SHORTCUT</member>
+        <member name="next">Z80105_613_SHORTCUT_01</member>
+        <member name="messageIDs">
+            <element>1211242</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z80105_613_SHORTCUT_01</member>
+        <member name="messageID">1211248</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_613_SHORTCUT_02</member>
+                    <member name="messageID">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z80105_613_SHORTCUT_02</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">CREATE</member>
+                    <member name="instanceID">11004</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionZoneInstance">
+                    <member name="mode">JOIN</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_613_SHORTCUT_03</member>
+        <member name="next">Z80105_613_SHORTCUT_04</member>
+        <member name="messageIDs">
+            <element>1211243</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z80105_613_SHORTCUT_04</member>
+        <member name="messageID">1211243</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">event_instanceJoin</member>
+                    <member name="messageID">1211244</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">16</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z80105_613_END</member>
+        <member name="messageIDs">
+            <element>148171</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z80105_2000</member>
+        <member name="messageID">96</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z80105_2000_HP</member>
+                    <member name="messageID">97</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">98</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z80105_2000_HP</member>
+        <member name="actions">
+            <element>
+                <object name="ActionDisplayMessage">
+                    <member name="messageIDs">
+                        <element>99</element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionSetHomepoint">
+                    <member name="zoneID">80105</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">130160</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

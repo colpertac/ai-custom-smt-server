@@ -1,0 +1,81 @@
+<objects>
+    <object name="EventPrompt">
+        <member name="ID">Z50108_2003</member>
+        <member name="messageID">101734</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z50108_TO_140107</member>
+                    <member name="messageID">1</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z50108_2003_Q318_P2</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">318</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z50108_TO_140107</member>
+        <member name="actions">
+            <element>
+                <object name="ActionZoneChange">
+                    <member name="zoneID">140107</member>
+                    <member name="spotID">50002</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventMultitalk">
+        <member name="ID">Z50108_2003_Q318_P2</member>
+        <member name="next">Z50108_2003_Q318_FIN</member>
+        <member name="messageID">1400060</member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z50108_2003_Q318_FIN</member>
+        <member name="next">Z50108_TO_140107</member>
+        <member name="actions">
+            <element>
+                <object name="ActionGrantXP">
+                    <member name="XP">5000000</member>
+                    <member name="targetType">CHARACTER_AND_PARTNER</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">318</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">-319</member>
+                    <member name="duration">28800</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="effectType">2</member>
+                </object>
+            </element>
+        </member>
+    </object>
+</objects>

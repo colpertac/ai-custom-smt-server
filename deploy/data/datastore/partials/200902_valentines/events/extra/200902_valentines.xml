@@ -1,0 +1,3014 @@
+<objects>
+    <object name="Event">
+        <member name="ID">EX20090201_210_VDAY</member>
+        <member name="next">EX20090201_210_Q582</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">582</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">582</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20090201</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_QUEST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">582</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_DONE_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">3</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_DONE_M</member>
+                    <member name="queueNext">EX20090201_210_Q582_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">GENDER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_DONE_F</member>
+                    <member name="queueNext">EX20090201_210_Q582_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582</member>
+        <member name="next">EX20090201_210_Q582_PR</member>
+        <member name="messageIDs">
+            <element>450110</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE</member>
+        <member name="next">EX20090201_210_DONE_PR</member>
+        <member name="messageIDs">
+            <element>450102</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_INVALID</member>
+        <member name="messageIDs">
+            <element>450103</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20090201_210_Q582_CD</member>
+        <member name="next">EX20090201_210_Q582_P1_CD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_P2_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_P3_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_P4_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">4</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_210_Q582_P5_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_QUEST</member>
+        <member name="next">EX20090201_210_QUEST_PR</member>
+        <member name="messageIDs">
+            <element>450104</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450141</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_DONE_M</member>
+        <member name="messageIDs">
+            <element>450133</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5652</key>
+                            <value>20</value>
+                        </pair>
+                        <pair>
+                            <key>5653</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>790</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450149</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_DONE_F</member>
+        <member name="messageIDs">
+            <element>450134</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_210_Q582_PR</member>
+        <member name="messageID">450110</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_210_Q582_P0</member>
+                    <member name="queueNext">EX20090201_210_Q582_P1_START</member>
+                    <member name="messageID">450111</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P0_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P1</member>
+                                <member name="queueNext">EX20090201_210_Q582_P2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P2</member>
+                                <member name="queueNext">EX20090201_210_Q582_P3_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P3_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P3</member>
+                                <member name="queueNext">EX20090201_210_Q582_P4_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P4_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P4</member>
+                                <member name="queueNext">EX20090201_210_Q582_P5_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_210_Q582_P0_CANCEL</member>
+                    <member name="messageID">450112</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P1_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P2_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P3_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_Q582_P4_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">582</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_210_DONE_PR</member>
+        <member name="messageID">450137</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_210_DONE_TRADE</member>
+                    <member name="queueNext">EX20090201_210_DONE_TRADE_END</member>
+                    <member name="messageID">450135</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_DONE_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_DONE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">450136</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_DONE_END_M</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_210_DONE_END_F</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_gender</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P1_CD</member>
+        <member name="messageIDs">
+            <element>450116</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P2_CD</member>
+        <member name="messageIDs">
+            <element>450120</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P3_CD</member>
+        <member name="messageIDs">
+            <element>450124</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P4_CD</member>
+        <member name="messageIDs">
+            <element>450128</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P5_CD</member>
+        <member name="messageIDs">
+            <element>450132</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_210_QUEST_PR</member>
+        <member name="messageID">450105</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_210_QUEST_CONFIRM</member>
+                    <member name="queueNext">EX20090201_210_Q582_START</member>
+                    <member name="messageID">450106</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUESTS_ACTIVE</member>
+                                <member name="value1">20</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_210_QUEST_REJECT</member>
+                    <member name="messageID">450107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P0</member>
+        <member name="messageIDs">
+            <element>450113</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_P1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450144</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P0_MI</member>
+        <member name="messageIDs">
+            <element>450114</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P1_MI</member>
+        <member name="messageIDs">
+            <element>450118</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P1</member>
+        <member name="messageIDs">
+            <element>450117</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_P2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450145</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P2_MI</member>
+        <member name="messageIDs">
+            <element>450122</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P2</member>
+        <member name="messageIDs">
+            <element>450121</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_P3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450146</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P3_MI</member>
+        <member name="messageIDs">
+            <element>450126</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P3</member>
+        <member name="messageIDs">
+            <element>450125</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450147</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P4_MI</member>
+        <member name="messageIDs">
+            <element>450130</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P4</member>
+        <member name="messageIDs">
+            <element>450129</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_P5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450148</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090201</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P0_CANCEL</member>
+        <member name="messageIDs">
+            <element>450115</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P1_CANCEL</member>
+        <member name="messageIDs">
+            <element>450119</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P2_CANCEL</member>
+        <member name="messageIDs">
+            <element>450123</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P3_CANCEL</member>
+        <member name="messageIDs">
+            <element>450127</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_Q582_P4_CANCEL</member>
+        <member name="messageIDs">
+            <element>450131</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE_TRADE</member>
+        <member name="messageIDs">
+            <element>450138</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_DONE_TRADE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5652</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450153</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE_MI</member>
+        <member name="messageIDs">
+            <element>450150</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450142</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE_END_M</member>
+        <member name="messageIDs">
+            <element>450139</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_DONE_END_F</member>
+        <member name="messageIDs">
+            <element>450140</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_QUEST_CONFIRM</member>
+        <member name="messageIDs">
+            <element>450108</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_210_Q582_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">582</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450143</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_210_QUEST_REJECT</member>
+        <member name="messageIDs">
+            <element>450109</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20090201_12_VDAY</member>
+        <member name="next">EX20090201_12_Q583</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">583</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">583</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20090202</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_QUEST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">583</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_DONE_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">3</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_DONE_M</member>
+                    <member name="queueNext">EX20090201_12_Q583_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">GENDER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_DONE_F</member>
+                    <member name="queueNext">EX20090201_12_Q583_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583</member>
+        <member name="next">EX20090201_12_Q583_PR</member>
+        <member name="messageIDs">
+            <element>450010</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE</member>
+        <member name="next">EX20090201_12_DONE_PR</member>
+        <member name="messageIDs">
+            <element>450002</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_INVALID</member>
+        <member name="messageIDs">
+            <element>450003</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20090201_12_Q583_CD</member>
+        <member name="next">EX20090201_12_Q583_P1_CD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_P2_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_P3_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_P4_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">4</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_12_Q583_P5_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_QUEST</member>
+        <member name="next">EX20090201_12_QUEST_PR</member>
+        <member name="messageIDs">
+            <element>450004</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450041</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_DONE_M</member>
+        <member name="messageIDs">
+            <element>450033</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5652</key>
+                            <value>20</value>
+                        </pair>
+                        <pair>
+                            <key>5653</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>789</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450049</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_DONE_F</member>
+        <member name="messageIDs">
+            <element>450034</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_12_Q583_PR</member>
+        <member name="messageID">450010</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_Q583_P0</member>
+                    <member name="queueNext">EX20090201_12_Q583_P1_START</member>
+                    <member name="messageID">450011</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P0_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P1</member>
+                                <member name="queueNext">EX20090201_12_Q583_P2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P2</member>
+                                <member name="queueNext">EX20090201_12_Q583_P3_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P3_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P3</member>
+                                <member name="queueNext">EX20090201_12_Q583_P4_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P4_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P4</member>
+                                <member name="queueNext">EX20090201_12_Q583_P5_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_Q583_P0_CANCEL</member>
+                    <member name="messageID">450012</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P1_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P2_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P3_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_Q583_P4_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">583</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_12_DONE_PR</member>
+        <member name="messageID">450037</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_DONE_TRADE</member>
+                    <member name="queueNext">EX20090201_12_DONE_TRADE_END</member>
+                    <member name="messageID">450035</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_DONE_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_DONE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">450036</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_DONE_END_M</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_12_DONE_END_F</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_gender</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P1_CD</member>
+        <member name="messageIDs">
+            <element>450016</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P2_CD</member>
+        <member name="messageIDs">
+            <element>450020</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P3_CD</member>
+        <member name="messageIDs">
+            <element>450024</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P4_CD</member>
+        <member name="messageIDs">
+            <element>450028</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P5_CD</member>
+        <member name="messageIDs">
+            <element>450032</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_12_QUEST_PR</member>
+        <member name="messageID">450005</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_QUEST_CONFIRM</member>
+                    <member name="queueNext">EX20090201_12_Q583_START</member>
+                    <member name="messageID">450006</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUESTS_ACTIVE</member>
+                                <member name="value1">20</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_12_QUEST_REJECT</member>
+                    <member name="messageID">450007</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P0</member>
+        <member name="messageIDs">
+            <element>450013</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_P1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450044</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P0_MI</member>
+        <member name="messageIDs">
+            <element>450014</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P1_MI</member>
+        <member name="messageIDs">
+            <element>450018</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P1</member>
+        <member name="messageIDs">
+            <element>450017</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_P2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450045</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P2_MI</member>
+        <member name="messageIDs">
+            <element>450022</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P2</member>
+        <member name="messageIDs">
+            <element>450021</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_P3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450046</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P3_MI</member>
+        <member name="messageIDs">
+            <element>450026</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P3</member>
+        <member name="messageIDs">
+            <element>450025</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450047</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P4_MI</member>
+        <member name="messageIDs">
+            <element>450030</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P4</member>
+        <member name="messageIDs">
+            <element>450029</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_P5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450048</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090202</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P0_CANCEL</member>
+        <member name="messageIDs">
+            <element>450015</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P1_CANCEL</member>
+        <member name="messageIDs">
+            <element>450019</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P2_CANCEL</member>
+        <member name="messageIDs">
+            <element>450023</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P3_CANCEL</member>
+        <member name="messageIDs">
+            <element>450027</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_Q583_P4_CANCEL</member>
+        <member name="messageIDs">
+            <element>450031</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE_TRADE</member>
+        <member name="messageIDs">
+            <element>450038</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_DONE_TRADE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5652</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450050</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE_MI</member>
+        <member name="messageIDs">
+            <element>450051</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450042</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE_END_M</member>
+        <member name="messageIDs">
+            <element>450039</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_DONE_END_F</member>
+        <member name="messageIDs">
+            <element>450040</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_QUEST_CONFIRM</member>
+        <member name="messageIDs">
+            <element>450008</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_12_Q583_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">583</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450043</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_12_QUEST_REJECT</member>
+        <member name="messageIDs">
+            <element>450009</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20090201_16_VDAY</member>
+        <member name="next">EX20090201_16_Q584</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_DONE</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">582</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">584</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_INVALID</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">583</member>
+                                <member name="value2">1</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">584</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cooldown</member>
+                                <member name="params">
+                                    <element>20090203</element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_QUEST</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">584</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_DONE_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="value1">3</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_DONE_M</member>
+                    <member name="queueNext">EX20090201_16_Q584_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">GENDER</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_DONE_F</member>
+                    <member name="queueNext">EX20090201_16_Q584_FIN</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584</member>
+        <member name="next">EX20090201_16_Q584_PR</member>
+        <member name="messageIDs">
+            <element>450210</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE</member>
+        <member name="next">EX20090201_16_DONE_PR</member>
+        <member name="messageIDs">
+            <element>450202</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_INVALID</member>
+        <member name="messageIDs">
+            <element>450203</element>
+        </member>
+    </object>
+    <object name="Event">
+        <member name="ID">EX20090201_16_Q584_CD</member>
+        <member name="next">EX20090201_16_Q584_P1_CD</member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_P2_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_P3_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">3</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_P4_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">4</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next">EX20090201_16_Q584_P5_CD</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_PHASE</member>
+                                <member name="value1">584</member>
+                                <member name="value2">5</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_QUEST</member>
+        <member name="next">EX20090201_16_QUEST_PR</member>
+        <member name="messageIDs">
+            <element>450204</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450241</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_DONE_M</member>
+        <member name="messageIDs">
+            <element>450233</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_FIN</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>791</key>
+                            <value>1</value>
+                        </pair>
+                        <pair>
+                            <key>5652</key>
+                            <value>20</value>
+                        </pair>
+                        <pair>
+                            <key>5653</key>
+                            <value>1</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">-1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450249</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_DONE_F</member>
+        <member name="messageIDs">
+            <element>450234</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_16_Q584_PR</member>
+        <member name="messageID">450210</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_16_Q584_P0</member>
+                    <member name="queueNext">EX20090201_16_Q584_P1_START</member>
+                    <member name="messageID">450211</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P0_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P1_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P1</member>
+                                <member name="queueNext">EX20090201_16_Q584_P2_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P2_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P2</member>
+                                <member name="queueNext">EX20090201_16_Q584_P3_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P3_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P3</member>
+                                <member name="queueNext">EX20090201_16_Q584_P4_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P4_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">2</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P4</member>
+                                <member name="queueNext">EX20090201_16_Q584_P5_START</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_16_Q584_P0_CANCEL</member>
+                    <member name="messageID">450212</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P1_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">1</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P2_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">2</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P3_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">3</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_Q584_P4_CANCEL</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">QUEST_PHASE</member>
+                                            <member name="value1">584</member>
+                                            <member name="value2">4</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_16_DONE_PR</member>
+        <member name="messageID">450237</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_16_DONE_TRADE</member>
+                    <member name="queueNext">EX20090201_16_DONE_TRADE_END</member>
+                    <member name="messageID">450235</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_DONE_MI</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">ITEM</member>
+                                            <member name="value1">5655</member>
+                                            <member name="value2">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_DONE_IF</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">INVENTORY_FREE</member>
+                                            <member name="value1">1</member>
+                                            <member name="compareMode">LT</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">450236</member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_DONE_END_M</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object>
+                                <member name="next">EX20090201_16_DONE_END_F</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branchScriptID">branch_gender</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P1_CD</member>
+        <member name="messageIDs">
+            <element>450216</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P2_CD</member>
+        <member name="messageIDs">
+            <element>450220</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P3_CD</member>
+        <member name="messageIDs">
+            <element>450224</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P4_CD</member>
+        <member name="messageIDs">
+            <element>450228</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P5_CD</member>
+        <member name="messageIDs">
+            <element>450232</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">EX20090201_16_QUEST_PR</member>
+        <member name="messageID">450205</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_16_QUEST_CONFIRM</member>
+                    <member name="queueNext">EX20090201_16_Q584_START</member>
+                    <member name="messageID">450206</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUESTS_ACTIVE</member>
+                                <member name="value1">20</member>
+                                <member name="compareMode">LT</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">EX20090201_16_QUEST_REJECT</member>
+                    <member name="messageID">450207</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P0</member>
+        <member name="messageIDs">
+            <element>450213</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_P1_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">1</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450244</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090203</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P0_MI</member>
+        <member name="messageIDs">
+            <element>450214</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P1_MI</member>
+        <member name="messageIDs">
+            <element>450218</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P1</member>
+        <member name="messageIDs">
+            <element>450217</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_P2_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">2</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450245</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090203</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P2_MI</member>
+        <member name="messageIDs">
+            <element>450222</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P2</member>
+        <member name="messageIDs">
+            <element>450221</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_P3_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">3</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450246</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090203</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P3_MI</member>
+        <member name="messageIDs">
+            <element>450226</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P3</member>
+        <member name="messageIDs">
+            <element>450225</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_P4_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">4</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450247</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090203</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P4_MI</member>
+        <member name="messageIDs">
+            <element>450230</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P4</member>
+        <member name="messageIDs">
+            <element>450229</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_P5_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                    <member name="phase">5</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450248</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionDelay">
+                    <member name="type">CHARACTER_COOLDOWN</member>
+                    <member name="delayID">20090203</member>
+                    <member name="duration">72000</member>
+                    <member name="transformScriptID">transforma_flagDuration</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P0_CANCEL</member>
+        <member name="messageIDs">
+            <element>450215</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P1_CANCEL</member>
+        <member name="messageIDs">
+            <element>450219</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P2_CANCEL</member>
+        <member name="messageIDs">
+            <element>450223</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P3_CANCEL</member>
+        <member name="messageIDs">
+            <element>450227</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_Q584_P4_CANCEL</member>
+        <member name="messageIDs">
+            <element>450231</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE_TRADE</member>
+        <member name="messageIDs">
+            <element>450238</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_DONE_TRADE_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>5655</key>
+                            <value>-1</value>
+                        </pair>
+                        <pair>
+                            <key>5652</key>
+                            <value>2</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450251</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE_MI</member>
+        <member name="messageIDs">
+            <element>450250</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE_IF</member>
+        <member name="messageIDs">
+            <element>450242</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE_END_M</member>
+        <member name="messageIDs">
+            <element>450239</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_DONE_END_F</member>
+        <member name="messageIDs">
+            <element>450240</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_QUEST_CONFIRM</member>
+        <member name="messageIDs">
+            <element>450208</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">EX20090201_16_Q584_START</member>
+        <member name="actions">
+            <element>
+                <object name="ActionUpdateQuest">
+                    <member name="questID">584</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">450243</member>
+                    <member name="includeMessage">true</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">EX20090201_16_QUEST_REJECT</member>
+        <member name="messageIDs">
+            <element>450209</element>
+        </member>
+    </object>
+</objects>

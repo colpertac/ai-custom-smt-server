@@ -1,0 +1,657 @@
+﻿<objects>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529</member>
+        <member name="next">Z230109_529_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>107201</element>
+            <element>107202</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_MAIN_PROMPT</member>
+        <member name="messageID">107202</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_CULTURE</member>
+                    <member name="messageID">107215</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cultureActive</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_PICKUP</member>
+                    <member name="messageID">107211</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventScriptCondition">
+                                <member name="scriptID">bool_cultureActive</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                    <member name="branches">
+                        <element>
+                            <object>
+                                <member name="next">Z230109_529_FIRST_PICKUP</member>
+                                <member name="conditions">
+                                    <element>
+                                        <object name="EventCondition">
+                                            <member name="type">VALUABLE</member>
+                                            <member name="value1">374</member>
+                                            <member name="value2">0</member>
+                                        </object>
+                                    </element>
+                                </member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION</member>
+                    <member name="messageID">107210</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">107106</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_CULTURE</member>
+        <member name="next">Z230109_529_MAIN_PROMPT</member>
+        <member name="messageIDs">
+            <element>107216</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_PICKUP</member>
+        <member name="next">Z230109_529_PICKUP_01</member>
+        <member name="messageIDs">
+            <element>107212</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z230109_529_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">1</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_IF</member>
+        <member name="messageIDs">
+            <element>107214</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_PICKUP_01</member>
+        <member name="next">Z230109_529_PICKUP_END</member>
+        <member name="messageIDs">
+            <element>107213</element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230109_529_PICKUP_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">107217</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="mode">CULTURE_PICKUP</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_FIRST_PICKUP</member>
+        <member name="next">Z230109_529_FIRST_PICKUP_END</member>
+        <member name="messageIDs">
+            <element>107218</element>
+        </member>
+        <member name="branches">
+            <element>
+                <object>
+                    <member name="next">Z230109_529_IF</member>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">INVENTORY_FREE</member>
+                                <member name="compareMode">LT</member>
+                                <member name="value1">2</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPerformActions">
+        <member name="ID">Z230109_529_FIRST_PICKUP_END</member>
+        <member name="actions">
+            <element>
+                <object name="ActionStageEffect">
+                    <member name="messageID">107219</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionUpdateFlag">
+                    <member name="flagType">VALUABLE</member>
+                    <member name="ID">374</member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="items">
+                        <pair>
+                            <key>42031</key>
+                            <value>5</value>
+                        </pair>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object name="ActionAddRemoveItems">
+                    <member name="notify">true</member>
+                    <member name="mode">CULTURE_PICKUP</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_EXPLANATION</member>
+        <member name="messageID">107202</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_01</member>
+                    <member name="messageID">107221</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_02</member>
+                    <member name="messageID">107231</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_04</member>
+                    <member name="messageID">107241</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_06</member>
+                    <member name="messageID">107251</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPERTISE</member>
+                    <member name="messageID">107261</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_05</member>
+                    <member name="messageID">107271</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_MODDING</member>
+                    <member name="messageID">107311</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="messageID">107106</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_01</member>
+        <member name="next">Z230109_529_EXPLANATION</member>
+        <member name="messageIDs">
+            <element>107222</element>
+            <element>107223</element>
+            <element>107224</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_02</member>
+        <member name="next">Z230109_529_DR393</member>
+        <member name="messageIDs">
+            <element>107232</element>
+        </member>
+    </object>
+    <object name="EventDirection">
+        <member name="ID">Z230109_529_DR393</member>
+        <member name="next">Z230109_529_EXPLANATION_03</member>
+        <member name="direction">393</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_03</member>
+        <member name="next">Z230109_529_EXPLANATION</member>
+        <member name="messageIDs">
+            <element>107233</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_04</member>
+        <member name="next">Z230109_529_EXPLANATION</member>
+        <member name="messageIDs">
+            <element>107242</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_06</member>
+        <member name="next">Z230109_529_EXPLANATION_07</member>
+        <member name="messageIDs">
+            <element>107203</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_EXPLANATION_07</member>
+        <member name="messageID">107203</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_13</member>
+                    <member name="messageID">107226</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_18</member>
+                    <member name="messageID">107228</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_DR391</member>
+                    <member name="messageID">107235</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_09</member>
+                    <member name="messageID">107281</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_11</member>
+                    <member name="messageID">107291</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_12</member>
+                    <member name="messageID">107301</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION</member>
+                    <member name="messageID">107107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_18</member>
+        <member name="next">Z230109_529_EXPLANATION_19</member>
+        <member name="messageIDs">
+            <element>107203</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_EXPLANATION_19</member>
+        <member name="messageID">107203</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_20</member>
+                    <member name="messageID">107229</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_21</member>
+                    <member name="messageID">107245</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_07</member>
+                    <member name="messageID">107107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_20</member>
+        <member name="next">Z230109_529_EXPLANATION_19</member>
+        <member name="messageIDs">
+            <element>107230</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_21</member>
+        <member name="next">Z230109_529_EXPLANATION_19</member>
+        <member name="messageIDs">
+            <element>107246</element>
+        </member>
+    </object>
+    <object name="EventDirection">
+        <member name="ID">Z230109_529_DR391</member>
+        <member name="next">Z230109_529_EXPLANATION_08</member>
+        <member name="direction">391</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_08</member>
+        <member name="next">Z230109_529_EXPLANATION_07</member>
+        <member name="messageIDs">
+            <element>107236</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_09</member>
+        <member name="next">Z230109_529_DR392</member>
+        <member name="messageIDs">
+            <element>107282</element>
+        </member>
+    </object>
+    <object name="EventDirection">
+        <member name="ID">Z230109_529_DR392</member>
+        <member name="next">Z230109_529_EXPLANATION_10</member>
+        <member name="direction">392</member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_10</member>
+        <member name="next">Z230109_529_EXPLANATION_07</member>
+        <member name="messageIDs">
+            <element>107283</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_11</member>
+        <member name="next">Z230109_529_EXPLANATION_07</member>
+        <member name="messageIDs">
+            <element>107292</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_12</member>
+        <member name="next">Z230109_529_EXPLANATION_07</member>
+        <member name="messageIDs">
+            <element>107302</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_13</member>
+        <member name="next">Z230109_529_EXPLANATION_14</member>
+        <member name="messageIDs">
+            <element>107203</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_EXPLANATION_14</member>
+        <member name="messageID">107203</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_15</member>
+                    <member name="messageID">107321</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_16</member>
+                    <member name="messageID">107322</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_17</member>
+                    <member name="messageID">107325</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION_07</member>
+                    <member name="messageID">107107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_15</member>
+        <member name="next">Z230109_529_EXPLANATION_14</member>
+        <member name="messageIDs">
+            <element>107227</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_16</member>
+        <member name="next">Z230109_529_EXPLANATION_14</member>
+        <member name="messageIDs">
+            <element>107323</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_17</member>
+        <member name="next">Z230109_529_EXPLANATION_14</member>
+        <member name="messageIDs">
+            <element>107326</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPERTISE</member>
+        <member name="next">Z230109_529_EXPERTISE_01</member>
+        <member name="messageIDs">
+            <element>107203</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_EXPERTISE_01</member>
+        <member name="messageID">107203</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPERTISE_02</member>
+                    <member name="messageID">107267</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPERTISE_03</member>
+                    <member name="messageID">107263</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPERTISE_04</member>
+                    <member name="messageID">107265</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPERTISE_05</member>
+                    <member name="messageID">107268</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION</member>
+                    <member name="messageID">107107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPERTISE_02</member>
+        <member name="next">Z230109_529_EXPERTISE_01</member>
+        <member name="messageIDs">
+            <element>107262</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPERTISE_03</member>
+        <member name="next">Z230109_529_EXPERTISE_01</member>
+        <member name="messageIDs">
+            <element>107264</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPERTISE_04</member>
+        <member name="next">Z230109_529_EXPERTISE_01</member>
+        <member name="messageIDs">
+            <element>107266</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPERTISE_05</member>
+        <member name="next">Z230109_529_EXPERTISE_01</member>
+        <member name="messageIDs">
+            <element>107269</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_EXPLANATION_05</member>
+        <member name="next">Z230109_529_EXPLANATION</member>
+        <member name="messageIDs">
+            <element>107272</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_MODDING</member>
+        <member name="next">Z230109_529_MODDING_01</member>
+        <member name="messageIDs">
+            <element>107203</element>
+        </member>
+    </object>
+    <object name="EventPrompt">
+        <member name="ID">Z230109_529_MODDING_01</member>
+        <member name="messageID">107203</member>
+        <member name="choices">
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_MODDING_02</member>
+                    <member name="messageID">107312</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_MODDING_03</member>
+                    <member name="messageID">107314</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_MODDING_04</member>
+                    <member name="messageID">107316</member>
+                </object>
+            </element>
+            <element>
+                <object name="EventChoice">
+                    <member name="next">Z230109_529_EXPLANATION</member>
+                    <member name="messageID">107107</member>
+                </object>
+            </element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_MODDING_02</member>
+        <member name="next">Z230109_529_MODDING_01</member>
+        <member name="messageIDs">
+            <element>107313</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_MODDING_03</member>
+        <member name="next">Z230109_529_MODDING_01</member>
+        <member name="messageIDs">
+            <element>107315</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_529_MODDING_04</member>
+        <member name="next">Z230109_529_MODDING_01</member>
+        <member name="messageIDs">
+            <element>107317</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_530A</member>
+        <member name="messageIDs">
+            <element>107400</element>
+            <element>107406</element>
+            <element>107407</element>
+            <element>107401</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_530B</member>
+        <member name="messageIDs">
+            <element>107400</element>
+            <element>107406</element>
+            <element>107407</element>
+            <element>107402</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_530C</member>
+        <member name="messageIDs">
+            <element>107400</element>
+            <element>107406</element>
+            <element>107407</element>
+            <element>107403</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_530D</member>
+        <member name="messageIDs">
+            <element>107400</element>
+            <element>107406</element>
+            <element>107407</element>
+            <element>107404</element>
+        </member>
+    </object>
+    <object name="EventNPCMessage">
+        <member name="ID">Z230109_530E</member>
+        <member name="messageIDs">
+            <element>107400</element>
+            <element>107406</element>
+            <element>107407</element>
+            <element>107405</element>
+        </member>
+    </object>
+</objects>
