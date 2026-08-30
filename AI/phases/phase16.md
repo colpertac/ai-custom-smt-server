@@ -35,6 +35,19 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `/admin/import` | Account export XML import (proxies lobby `POST /import`) |
 | `/admin/shops` | COMP shop working-copy editor + XML/zip export |
 | `/admin/payouts` | Dungeon payout editor + Event/DropSet package export |
+| `/admin/config` | Server config editor (lobby/world/channel + siblings) |
+| `GET /api/admin/ops/health` | 16I ops sidecar proxy (`userLevel >= 1000`) |
+| `POST /api/admin/ops/restart/channel` | Restart comp_channel (native or docker) |
+| `POST /api/admin/ops/publish/lane-a` | Lane A one-shot validate+apply+restart |
+| `POST /api/admin/ops/publish/lane-a/validate` | Build candidate release only |
+| `POST /api/admin/ops/publish/lane-a/apply` | Snapshot + apply release + restart |
+| `POST /api/admin/ops/publish/lane-a/rollback` | Restore previous snapshot + restart |
+| `POST /api/admin/ops/publish/lane-a-config/validate` | Stage config XML candidate |
+| `POST /api/admin/ops/publish/lane-a-config/apply` | Apply config release + restart services |
+| `POST /api/admin/ops/publish/lane-a-config/rollback` | Restore previous config snapshot |
+| `POST /api/admin/ops/ingest/zip` | Zip ingest (BinaryData/maps/packages/overlay/content/release) |
+| `POST /api/admin/ops/publish/lane-b` | Overlay `comp_rehash` (Lane B) |
+| `POST /api/admin/ops/publish/lane-c` | Docker pull + recreate (Lane C) |
 | `/armory` | Public character name search |
 | `/armory/[name]` | Public character profile (gear / stats / clan) |
 | `/armory/[name]/demons` | COMP + account-shared demon storage |
@@ -52,6 +65,7 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `COMP_SHOPS_DIR` | Working-copy COMP shops (default `../server-content/shops`) |
 | `SHOP_PRODUCTS_PATH` | Optional override for `shop-products.json` |
 | `COMP_PAYOUTS_DIR` | Working-copy dungeon payouts (default `../server-content/payouts`) |
+| `OPS_URL` / `OPS_TOKEN` | 16I ops sidecar (default `http://127.0.0.1:14710`; token required) |
 | `COMP_WORLD_DB` | Read-only world SQLite for armory (default `../../comp_hack/runtime/database/world.sqlite3` from website) |
 | `WEBSITE_DATA_DIR` | Website sqlite (password reset + `portraits.db` job queue; default `website/data`) |
 
@@ -140,3 +154,43 @@ equipped item types — never account username, friends, bags, or logout data.
 ### 16F
 
 Not started. AI help (ideas D6).
+
+### 16I — Admin apply / restart (step 1 done)
+
+AMP-like three lanes: **A** datastore/config → restart channel (players log
+back in); **B** client overlay (new item/demon art) → ImagineUpdate; **C**
+code → image rebuild. First boot: `bundle.zip` + `setup.sh` on the VM, then
+web UI **Start** + zip upload for BinaryData/maps (browsers cannot upload
+folders). Disk unpack lives in an ops sidecar (not C# unless we choose it).
+Full writeup: [IDEA_ROADMAP.md](../../IDEA_ROADMAP.md) § 16I.
+
+**Step 1 (skeleton):** `ops/sidecar.py` listens on `127.0.0.1:14710`, token
+`OPS_TOKEN`, allowlist + audit log. Website BFF `GET /api/admin/ops/health`.
+
+**Step 2 (restart channel):** `POST /restart/channel` → native
+`comp_hack/scripts/restart-channel.sh` or docker `compose restart channel`.
+Admin `POST /api/admin/ops/restart/channel` + button on `/admin`.
+
+**Step 3 (lane A publish):** `POST /publish/lane-a` → copy
+`server-content/shops/*.xml` + build `zzz_ai_custom_payouts_admin.zip` from
+payout JSON → `runtime/datastore/` → restart channel. Admin
+`POST /api/admin/ops/publish/lane-a` + **Publish lane A** on `/admin`.
+
+**Step 4 (stage + rollback):** Validate builds
+`runtime/releases/lane-a/<id>/candidate/` (live untouched). Apply snapshots
+live → `previous/`, copies candidate → live, keeps last 5 releases. Admin:
+`POST …/validate`, `…/apply`, `…/rollback` with UI phases Validating →
+Applying → Restarting.
+
+**Step 6 (zip ingest):** `POST /ingest/zip?kind=` raw zip → allowlisted
+paths under `OPS_RUNTIME` / `OPS_UPDATER_ROOT`. Zip-slip + symlink + disk
+checks. Admin multipart `POST /api/admin/ops/ingest/zip` + **Zip ingest**
+panel.
+
+**Step 7 (first boot):** Health `firstBoot` detects empty BinaryData/maps
+(and reports optional empty overlay). Admin **First boot** panel + Start
+blocked until `Shield/ItemData.sbin` and Map files exist.
+
+**Step 8 (Lane B):** Overlay/release zip ingest + `comp_rehash`. Folded into
+admin **Content zip** (not a second panel). Players run ImagineUpdate.
+Channel restart only if the zip wrote datastore (`server/`).

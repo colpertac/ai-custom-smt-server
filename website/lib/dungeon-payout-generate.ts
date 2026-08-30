@@ -2,7 +2,7 @@ import type {
   DungeonPayout,
   PayoutClearItem,
   PayoutCrateDrop,
-} from "@/lib/dungeon-payout-types"
+} from "./dungeon-payout-types"
 
 function esc(s: string): string {
   return s

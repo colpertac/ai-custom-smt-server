@@ -8,6 +8,7 @@ portrait tools.
 | Dir / files | Purpose |
 | ----------- | ------- |
 | [`portrait/`](portrait/) | Armory Path 1: orch, worker, login, watchdog, crop, launch, cli |
+| [`../ops/`](../ops/) | Phase 16I localhost ops sidecar (health; later start/restart) |
 | `docker-*.sh`, `make-deploy-bundle.sh`, `stage-proxmox-bundle.sh`, … | Image/deploy packaging |
 | `build-*-overlay.sh`, `apply-client-overlay.sh`, … | Client / updater overlays |
 | `package-phase*.sh`, `install-*.sh` | Historical phase packaging |

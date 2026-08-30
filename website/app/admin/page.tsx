@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { AdminAccountsPanel } from "@/features/admin/components/AdminAccountsPanel"
+import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
+import { AdminOpsHealth } from "@/features/admin/components/AdminOpsHealth"
+import { AdminOpsIngest } from "@/features/admin/components/AdminOpsIngest"
 import { requireAdmin } from "@/features/auth/server"
 import { ADMIN_USER_LEVEL } from "@/lib/admin-level"
 
@@ -25,6 +28,31 @@ export default async function AdminPage() {
       </p>
 
       <AdminAccountsPanel />
+
+      <AdminOpsFirstBoot />
+
+      <AdminOpsHealth />
+
+      <AdminOpsIngest />
+
+      <section className="mt-12">
+        <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
+          Server config
+        </h2>
+        <div className="gold-rule mt-2 max-w-[12rem]" />
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+          Edit lobby / world / channel XML (and setup, constants, new character)
+          with schema-driven fields; apply staged to live config and restart.
+        </p>
+        <p className="mt-3 text-sm">
+          <Link
+            href="/admin/config"
+            className="underline underline-offset-2 hover:text-gold-dim"
+          >
+            Open server config editor
+          </Link>
+        </p>
+      </section>
 
       <section className="mt-12">
         <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">

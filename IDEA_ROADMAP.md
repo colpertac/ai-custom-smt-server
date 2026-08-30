@@ -295,6 +295,162 @@ Lobby already strips **UserLevel → 0** and **CP → 0** when
 - [ ] Prefer admin-only path in ops notes; keep `:10999` `/import` private
   (no auth on lobby handler).
 
+### 16I — Admin apply / restart (AMP-like, three lanes)
+
+**Status:** Lanes A–C done for admin/ops — shops/payouts/config, content zip +
+rehash, and Docker image pull/recreate (Lane C).
+
+Do **not** put the Docker socket on the public website container. Use an
+allowlisted localhost **ops sidecar** (start/stop/restart named compose
+services, unpack zips into mounted volumes, audit log). Confirm dialogs:
+channel restart kicks everyone in that channel.
+
+Three lanes — pick by **what the player must do**, not by which editor you used:
+
+| Lane | What changed | Player | Apply |
+| --- | --- | --- | --- |
+| **A — server config** | COMP shops, CP payouts, `channel.xml` / `world.xml` / `lobby.xml`, other stock-client-understood server config | Log back in (updater **not** involved) | Write live config / shops / payout package → **restart** the affected process (usually channel; world/lobby when their XML changed) |
+| **B — client content** | New item/demon **records + art**, BinaryData, textures, maps, anything ImagineUpdate must ship | Run the **game updater**, then log in | Publish `updater/overlay/` + rehash; if Shield/datastore also changed, **also** touch the matching server trees (content zip `server/`) and restart channel |
+| **C — code** | Damage multiplier, GM commands, lobby/channel C++ | Whatever that build needs (often just log back in after recreate) | Rebuild/push `smt-comp` (and website if needed) → `compose pull` + recreate. **Not** the upload-zip path |
+
+**Lane A scope (config, not content packages):**
+
+- **Done:** `/admin/shops` + `/admin/payouts` → **Publish lane A** (full shop
+  mirror + admin payout zip under `datastore/packages/`, staged rollback).
+- **Done:** `/admin/config` — Palworld-style **server config editor** (tabs for
+  `lobby.xml` / `world.xml` / `channel.xml`, plus `setup.xml`,
+  `constants.xml`, `newcharacter.xml`) driven by COMP objgen schemas;
+  validate → stage → apply → restart (lobby/world/channel as needed).
+- **Not Lane A:** zone/event packages, BinaryData, maps — those are **Content
+  zip** ingest. Custom zones stay package zips, not the shops/payouts
+  Publish button.
+
+Lane B is often paired with server Shield/datastore copies of the same
+records. Channel restart does not push textures; ImagineUpdate does.
+
+Dev-PC “I built a demon texture / new item” is an uploaded **release zip**
+(`client/` + `server/`) via **Content zip**. Browsers cannot upload a folder;
+**zip is the unit**.
+
+#### First boot (abstract setup)
+
+SSH only once, for the empty VM + Docker engine:
+
+1. Copy `bundle.zip` (compose + images or pull-from-Hub + `setup.sh`) onto
+   the VM, unzip, run `setup.sh` — pulls `smt-comp` / `smt-website`, creates
+   empty `data/` + `updater/` volumes, starts **website + ops sidecar**
+   (game processes may stay down until content exists).
+2. Open `/admin` → **Upload content zips** (BinaryData, maps/Shield, optional
+   datastore packages) → agent unpacks to the right trees + rehash overlay.
+3. **Start server** in the web UI (lobby → world → channel). Later visits are
+   Start / Stop / Restart only.
+
+Proprietary 1.666 BinaryData and map files never live in git or the Hub
+image; they always arrive as admin uploads.
+
+#### Disk / ops agent
+
+Someone has to own unzip, path allowlists, disk space, and compose. That is
+the **ops sidecar**, not the Next.js request handler (upload size, timeouts,
+and a compromised website must not equal root-on-disk).
+
+AMP does this in C# because AMP *is* C#. This repo does not need a new C#
+stack unless we want one: Node, Python, or Go is enough and matches Docker
++ bash. If a C# agent is chosen later, it is still this sidecar (listen
+localhost, allowlisted verbs), not a second control plane.
+
+#### Implementation order
+
+Do **not** start with first-boot zip UI. Prove copy+restart on this PC
+(`OPS_BACKEND=native`, `pnpm run dev` + `comp_hack/scripts`) before Docker
+verbs or BinaryData uploads.
+
+1. **Sidecar skeleton** — localhost API, admin BFF proxy, allowlist, audit
+   log. Health only. Same process will later own disk + compose; no C#
+   required.
+
+2. **Restart channel** — one button. Native: `stop.sh`/`start.sh` (or
+   channel-only). Docker backend can wait until this works natively.
+3. **Lane A Publish** — shops/payouts generate XML already; copy into
+   `runtime/datastore/` (later `data/datastore/`) + restart from (2).
+   Everyday value; **no zip ingest yet**. Later: same pipeline for
+   `channel.xml` / `world.xml` / `lobby.xml`.
+4. **Staging + rollback** — `releases/<id>/` before overwrite. Cheap once
+   copy exists; painful to retrofit after first-boot unpack.
+5. **Start / Stop full stack** — lobby → world → channel. Needed before
+   “empty VM then Start.”
+6. **Zip ingest (disk agent)** — allowlisted unpack, zip-slip reject,
+   disk-space check. Shared by first boot and lane B.
+7. **First boot** — empty-content detect, prompt BinaryData/maps zips, then
+   Start. `setup.sh` still creates empty volumes + website + sidecar.
+8. **Lane B** — smaller overlay/release zips + `comp_rehash`. Reuses (6).
+   Channel restart only if `server/` is in the zip.
+9. **Lane C last** — pull image + recreate. Rare, easy to brick the VM;
+   keep off the content-upload screen.
+
+Dev PC: steps 1–4 (native). VPS: add Docker backend for 2/5, then 6–8.
+Step 9 only after Hub pulls are routine.
+
+- [x] 1. Ops sidecar skeleton (health, allowlist, audit).
+      `ops/sidecar.py` + `GET /api/admin/ops/health`; loopback + `OPS_TOKEN`.
+- [x] 2. Admin **Restart channel** (native first, Docker later).
+      `comp_hack/scripts/restart-channel.sh` + `POST /restart/channel`.
+- [x] 3. Lane A: **Publish** shops / payouts → datastore + restart.
+- [x] 3b. Lane A: **Server config editor** (Palworld-style field UI + shadcn
+      tabs), then staged apply + restart. Source of truth is COMP objgen
+      schemas + what the binaries load — not a guessed file list.
+
+      **Process configs (required to run):**
+      - `lobby.xml` → `LobbyConfig` (`server/lobby/schema/lobbyconfig.xml`)
+      - `world.xml` → `WorldConfig` + nested `WorldSharedConfig`
+        (`server/world/schema/worldconfig.xml`, shared knobs in
+        `libcomp/.../serverconfig.xml`)
+      - `channel.xml` → `ChannelConfig` (+ often a `WorldSharedConfig`
+        copy) (`server/channel/schema/channelconfig.xml`)
+      Defaults: argv path, else Linux `/etc/comp_hack/{lobby,world,channel}.xml`
+      / Windows cwd; our native layout is `runtime/config/`.
+
+      **Sibling files next to those (same config dir):**
+      - `setup.xml` — lobby first-boot seed Accounts (`LobbyServer::Setup`);
+        optional after the DB already has accounts
+      - `constants.xml` — loaded by every BaseServer (or
+        `ServerConstantsPath` override)
+      - `newcharacter.xml` — channel starter kits; optional (empty start
+        if missing)
+
+      **Not COMP stock / not this editor:** `party_scaling_rewards.xml`
+      (seen on other private servers; no references in this `comp_hack`).
+      Zone/event packages stay Content zip.
+
+      **UI:** `/admin/config` tabs per file; fields from schema (type,
+      default, required vs optional); Publish stages under
+      `releases/lane-a-config/` then restarts lobby/world/channel as needed.
+- [x] 4. Stage under `data/releases/<id>/` (keep last N for rollback).
+      Validate → candidate → snapshot previous → apply → restart; Rollback
+      button restores previous. (Shops/payouts today; reuse for config XML.)
+- [x] 5. Admin **Start / Stop** full stack (lobby → world → channel).
+- [x] 6. Zip ingest: BinaryData / maps / packages → allowlisted paths;
+      reject zip-slip. Mount live `data/` + updater root.
+      `POST /ingest/zip?kind=` + admin **Zip ingest** panel.
+- [x] 7. First-boot UI: empty overlay detect; zip prompt; then Start.
+      Health reports `firstBoot`; Start blocked until BinaryData + maps
+      exist (`Shield/ItemData.sbin` + Map files). Overlay optional (step 8).
+- [x] 8. Lane B: overlay / release zip (reuse ingest + rehash).
+      `POST /publish/lane-b` runs `comp_rehash` on `updater/overlay/`.
+      Kind `release` maps `client/` → overlay and `server/` → datastore;
+      overlay dests auto-rehash unless `rehash=0`. Channel restart only
+      when server/ (BinaryData/Map/packages) is in the zip. Admin UI: one
+      **Content zip** panel (ingest + rehash); no separate Lane B screen.
+- [x] 9. Lane C: pull game image and recreate — separate button.
+      `POST /publish/lane-c` with `{"confirm": true}` (optional
+      `includeWebsite`). Docker backend only; native returns
+      `lane_c_docker_only`. Admin: **Pull & recreate images** under Ops.
+
+**Done when:** A human can unzip a deploy bundle on a fresh VM, run setup,
+open the web UI, upload BinaryData/maps as zips, press Start, publish
+shops/payouts or config XML, and ship overlay/release zips — without SSH
+after that first setup.
+
 ### 16G — Paid account services (CP shop)
 
 WoW-style paid character services on the website, charged against **account CP**
@@ -435,6 +591,8 @@ depending on undocumented local files.
 - Phase 10 `comp_client.dll` source recovery or reverse engineering.
 - Armory portrait: client screenshot cache (see AI/armory-character-render.md);
   interactive in-browser 3D after that.
+- Phase 16I AMP-like admin apply (lane A/B/C): after 16A HTTPS; not the
+  current primary milestone.
 - Launcher clan chat or cross-realm messaging.
 
 ## Next action
