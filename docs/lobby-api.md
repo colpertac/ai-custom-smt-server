@@ -64,6 +64,7 @@ Require `user_level >= 1000` (plus per-route level constants).
 | `/api/admin/update_account` | Fields: `password`, `disp_name`, `email`, `cp`, `ticket_count`, `user_level`, `enabled`, `ban_reason`, `ban_initiator` |
 | `/api/admin/delete_account` | Delete by `username` |
 | `/api/admin/online` | Aggregate online counts (`total`, per-world `character_count`); optional `targets` for account/character lookup |
+| `/api/admin/message_world` | World-wide ticker (`type: "ticker"`, `mode` 0–4 like `@announce`) or console chat (`type: "console"`). Requires `world_id` + `message`. Wired in website Admin overview → Announce. |
 | `/api/admin/kick_player`, … | Other tools (not wired in website yet) |
 
 Updating/deleting the session’s own account clears the COMP API session.

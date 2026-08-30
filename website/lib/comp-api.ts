@@ -243,6 +243,36 @@ export async function adminGetOnline(
   }
 }
 
+/**
+ * Lobby `/admin/message_world` — world-wide ticker or console chat.
+ * Ticker `mode` matches in-game `@announce` color (0–4).
+ */
+export async function adminMessageWorld(
+  auth: CompAuthState,
+  payload: {
+    worldId: number
+    message: string
+    type: "ticker" | "console"
+    mode?: number
+    subMode?: number
+    from?: string
+  }
+): Promise<{ error: string }> {
+  const body: JsonObject = {
+    world_id: payload.worldId,
+    message: payload.message,
+    type: payload.type,
+  }
+  if (payload.type === "ticker") {
+    if (payload.mode !== undefined) body.mode = payload.mode
+    if (payload.subMode !== undefined) body.sub_mode = payload.subMode
+  } else if (payload.from !== undefined) {
+    body.from = payload.from
+  }
+  const data = await authenticatedRequest(auth, "/admin/message_world", body)
+  return { error: String(data.error ?? "Unknown error") }
+}
+
 export async function adminUpdateAccount(
   auth: CompAuthState,
   payload: {

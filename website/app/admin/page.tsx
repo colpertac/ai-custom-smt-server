@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { AdminAnnouncePanel } from "@/features/admin/components/AdminAnnouncePanel"
 import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
 import { AdminOpsHealth } from "@/features/admin/components/AdminOpsHealth"
 import { requireAdmin } from "@/features/auth/server"
@@ -16,13 +17,15 @@ export default async function AdminPage() {
       <p className="text-xs text-muted-foreground">
         Signed in as{" "}
         <span className="text-foreground">{session.username}</span>. Check
-        status, start or stop the game servers, and publish shops &amp; rewards
+        status, start or stop the game servers, and publish shops &amp; payouts
         from here.
       </p>
 
       <AdminOpsFirstBoot />
 
       <AdminOpsHealth />
+
+      <AdminAnnouncePanel />
     </div>
   )
 }
