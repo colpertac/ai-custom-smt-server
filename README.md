@@ -26,6 +26,8 @@ The frozen Phase 0 state and recovery procedure are in
 in [docs/ids.md](docs/ids.md). Phase 1 encounter package notes are in
 [docs/phase1.md](docs/phase1.md). Practical walkthroughs and XML syntax
 references are indexed under [guides/](guides/README.md).
+Phase 7 website notes: [docs/phase7.md](docs/phase7.md),
+[docs/lobby-api.md](docs/lobby-api.md), app in [`website/`](website/).
 
 ## Intended layout
 
@@ -40,7 +42,7 @@ ai_custom_smt_server/
 ├── server-patches/       # Patches applied to a COMP_hack fork
 ├── client-overlay/       # Only files that replace/add client files
 ├── translation/          # Human-editable translation source and tooling
-└── website/              # Modern website source
+└── website/              # Modern website source (Phase 7)
 ```
 
 ## Ground rules

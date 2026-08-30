@@ -26,6 +26,7 @@ Useful GM commands:
 - `@zone ID [DynamicMapID] [X Y]`
 - `@instance INSTANCE_ID [VARIANT_ID]`
 - `@item ID COUNT` — also exercises inventory add/compress paths
+- `@invuln` / `@god` — session HP invulnerability (Phase 10; `UserLevel` ≥ 200)
 
 ## Currency compression
 
@@ -77,12 +78,13 @@ Useful GM commands:
   from `constants.xml`.
 - Client XML alone cannot implement invulnerability.
 
-## Tools still needed
+## Tools
 
-Not currently present in `build-current/bin`:
+Present under `comp_hack/build-current/bin/` (built for Phase 2+):
 
-- `comp_bdpatch`
-- `comp_verify`
-- `comp_translator`
+- `comp_bdpatch`, `comp_encrypt`, `comp_decrypt`
+- `comp_translator`, `comp_verify`, `comp_cathedral`
 
-Build them before Phase 2+.
+Phase 8 translation workspace: `translation/` (inventory + glossary + extract
+scripts). Prefer `comp_bdpatch` for single-table loops; keep Reimagine
+`translation.xml` as a separate address-tied track.

@@ -32,8 +32,13 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `/news` | Static posts from `website/content/news.ts` |
 | `/download` | Client / updater / portal links from env |
 | `/admin` | Account list + edit/delete (`userLevel >= 1000`) |
+| `/admin/import` | Account export XML import (proxies lobby `POST /import`) |
 | `/admin/shops` | COMP shop working-copy editor + XML/zip export |
 | `/admin/payouts` | Dungeon payout editor + Event/DropSet package export |
+| `/armory` | Public character name search |
+| `/armory/[name]` | Public character profile (gear / stats / clan) |
+| `/armory/[name]/demons` | COMP + account-shared demon storage |
+| `/armory/demon/[id]` | Single demon profile (reunion, Tarot/Soul gear, force) |
 | `/account` | Details + display name / email / password forms |
 
 ### Env (website)
@@ -47,6 +52,8 @@ Started 2026-07-25. Builds on Phase 7 account BFF
 | `COMP_SHOPS_DIR` | Working-copy COMP shops (default `../server-content/shops`) |
 | `SHOP_PRODUCTS_PATH` | Optional override for `shop-products.json` |
 | `COMP_PAYOUTS_DIR` | Working-copy dungeon payouts (default `../server-content/payouts`) |
+| `COMP_WORLD_DB` | Read-only world SQLite for armory (default `../../comp_hack/runtime/database/world.sqlite3` from website) |
+| `WEBSITE_DATA_DIR` | Website sqlite (password reset + `portraits.db` job queue; default `website/data`) |
 
 ### HTTPS (ops)
 
@@ -106,6 +113,30 @@ Export downloads a zip of generated Event + DropSet XML — no live mutation.
 `datastore/packages/` (or merge `events/` + `data/dropset/`). Stock loot events
 must still `next` into the payout’s `AFTER_*` hook IDs.
 
-### 16E–F
+### 16E — Character armory (MVP done)
 
-Not started. Armory, AI help (ideas D6).
+Public exact-name lookup against **world SQLite** (BFF read-only; no new COMP
+lobby HTTP). Privacy: show name, level, stats, appearance fields, clan, and
+equipped item types — never account username, friends, bags, or logout data.
+
+| Item | Status |
+| --- | --- |
+| World DB reader (`COMP_WORLD_DB`) | Done |
+| `GET /api/armory/[name]` (+ rate limit) | Done |
+| `/armory` search + `/armory/[name]` profile | Done |
+| WoW-like gear columns + CSS 3D name hero stub | Done (no three.js) |
+| `/armory/[name]/demons` (COMP + account demon storage) | Done |
+| `/armory/demon/[id]` detail (reunion + Tarot/Soul gear) | Done |
+| `GET /api/armory/[name]/demons` | Done |
+| DevilData name/icon extract | Done (names via `content/armory/devils.json`) |
+| Combat stats / HP-MP / equip Tarot-Soul | Done |
+| Expertises + active demon on character | Done |
+| Demon inherited skills + combat stats | Done |
+| Skill display-name catalog | Follow-up (IDs only; not in Shield SkillData) |
+| Title / achievement catalogs | Follow-up |
+| Portrait render (client screenshot cache) | Fingerprint + sqlite queue; first PNG on `/armory/cat2` — [armory-character-render.md](armory-character-render.md) |
+| Rich interactive 3D in-browser | Deferred (after static portrait) |
+
+### 16F
+
+Not started. AI help (ideas D6).

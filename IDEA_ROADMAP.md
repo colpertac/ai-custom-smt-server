@@ -249,11 +249,51 @@ Build in this order:
 
 ### 16E — Character armory
 
-- [ ] Add narrow read-only COMP APIs for public character data.
-- [ ] Search by character name.
-- [ ] Display stats, equipment/model representation, and achievements where
-  available.
-- [ ] Define privacy rules before exposing account/social data.
+**Status:** MVP done — public `/armory` lookup via world SQLite BFF.
+
+- [x] Narrow read-only public character data (world DB; not COMP lobby HTTP).
+- [x] Search by exact character name.
+- [x] Display stats, equipment, clan; CSS 3D name placeholder for model.
+- [x] Privacy: public profile fields only (no account login / friends / bags).
+- [x] COMP + account demon storage under `/armory/[name]/demons`.
+- [x] Demon detail `/armory/demon/[id]` (reunion ranks, Tarot/Soul gear, force).
+- [ ] DevilData name catalog for demon labels.
+- [ ] Title/achievement name catalogs.
+- [ ] **Gear-aware stats** — world `EntityStats` is unequipped base only.
+  Replicate channel `CharacterState::RecalculateStats` offline: ItemData
+  CorrectTbl (via BasicEffect) + FuseBonuses + Tarot/Soul/SpecialEffect
+  tokusei (`SItem` / Enchant / `data/tokusei`) + dependent CLSR/SPELL/etc.
+  UI should match client `Total (Base + Bonus)` with green gear delta.
+  **Pinned with portrait render** — same appearance fingerprint / async
+  worker story (see below); do not block armory MVP on either.
+- [ ] **Portrait render (WoW-style cache)** — preferred path documented in
+  [docs/armory-character-render.md](docs/armory-character-render.md):
+  (1) drive real Imagine client → screenshot → cache by fingerprint;
+  (2) light client hook if automation fails; (3) full headless RE only
+  last resort. **Ditch** Blender / NifSkope / website NIF assembly (PoC
+  under `work/armory-render-poc/` is reference-only).
+- [ ] Rich interactive 3D in-browser (deferred; after static portrait works).
+
+### 16H — Account / character import
+
+**Status:** Wired — `/admin/import` → lobby `POST /import`; vanilla
+`webroot/accountmanager/import.html`. See [docs/account-import.md](docs/account-import.md).
+
+Lobby already strips **UserLevel → 0** and **CP → 0** when
+`ImportStripUserLevel` / `ImportStripCP` are true (defaults + our configs).
+
+- [x] Bake import into lobby config + contrib webroot + admin BFF UI.
+- [ ] **Harden import sanitization** (do not trust dump privilege fields):
+  - Confirm strip always runs for admin-proxied imports (fail closed if
+    strip flags ever disabled).
+  - Reset / clamp other account fields: `TicketCount`, `Enabled`,
+    `APIOnly`, clear `BanReason` / `BanInitiator`.
+  - Decide policy for password/salt in dump (force reset vs keep hash).
+  - Audit character/world objects for GM-only or economy abuse
+    (optional caps later).
+  - Document the sanitize matrix in `docs/account-import.md`.
+- [ ] Prefer admin-only path in ops notes; keep `:10999` `/import` private
+  (no auth on lobby handler).
 
 ### 16G — Paid account services (CP shop)
 
@@ -393,7 +433,8 @@ depending on undocumented local files.
 
 - Phase 9 full clean-install updater mirror and interruption/rollback tests.
 - Phase 10 `comp_client.dll` source recovery or reverse engineering.
-- Rich 3D character rendering in the armory.
+- Armory portrait: client screenshot cache (see docs/armory-character-render.md);
+  interactive in-browser 3D after that.
 - Launcher clan chat or cross-realm messaging.
 
 ## Next action
