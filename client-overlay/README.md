@@ -11,4 +11,5 @@ client tree. Proprietary bins are gitignored; rebuild from `client-source/`.
 ```
 
 See [the BinaryData guides](../guides/binarydata/README.md).
-Phase notes: [phase3](../docs/phase3.md), [phase4](../docs/phase4.md).
+Phase notes: [phase3](../docs/phase3.md), [phase4](../docs/phase4.md),
+[phase5](../docs/phase5.md).
