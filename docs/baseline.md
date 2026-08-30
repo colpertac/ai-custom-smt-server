@@ -48,6 +48,25 @@ Linux build/setup/start/systemd helper scripts.
 All runtime paths are currently owned by local user `cat`. No systemd units or
 dedicated service account are installed.
 
+### `newcharacter.xml` (post-baseline fix)
+
+The original Linux `setup.sh` installed lobby/world/channel/setup/constants but
+omitted `newcharacter.xml`. Without that file, channel logs:
+
+```text
+No default character file loaded. New characters will start with nothing but
+chosen equipment and base expertise skills.
+```
+
+and new characters lack Rest, Summon, Basic Attack, and related starting skills.
+
+The Phase 0 backup at
+`/home/cat/backups/ai-custom-smt/phase0-2026-07-18/runtime/etc-comp_hack/`
+also lacked `newcharacter.xml`. Current `setup.sh` installs
+`contrib/winconfig/newcharacter.xml` into `/etc/comp_hack/newcharacter.xml`.
+After a Phase 0 restore, re-run `setup.sh` or copy that file before creating
+characters.
+
 The baseline was rebuilt successfully after removing all remotes. Its startup
 banner reports `URL: local-only`.
 
