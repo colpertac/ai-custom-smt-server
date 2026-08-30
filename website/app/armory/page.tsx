@@ -69,7 +69,7 @@ export default async function ArmoryPage({ searchParams }: Props) {
             page={page}
             pageHref={armoryBrowsePageHref}
             summary={`${list.total.toLocaleString()} character${list.total === 1 ? "" : "s"}`}
-            emptyMessage="No characters in the world database yet."
+            emptyMessage="No characters found yet."
           />
         ) : null}
       </div>

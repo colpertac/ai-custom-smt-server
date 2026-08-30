@@ -33,8 +33,7 @@ export default async function LoginPage({
             Sign in
           </CardTitle>
           <CardDescription>
-            Uses the COMP lobby challenge-response API through this site&apos;s
-            BFF — never from the browser.
+            Sign in with the username and password for this realm.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">

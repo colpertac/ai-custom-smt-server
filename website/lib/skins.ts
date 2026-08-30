@@ -1,4 +1,4 @@
-/** Visual skins from /test1–/test5 — same layout, different token packs. */
+/** Site theme skins — same layout, different color token packs. */
 export const SKINS = [
   {
     id: "stage",

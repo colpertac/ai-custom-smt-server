@@ -209,9 +209,10 @@ export function CombatBonusesStrip({
             <DialogHeader>
               <DialogTitle>Combat bonus caps</DialogTitle>
               <DialogDescription>
-                Live totals stack gear, crystals, sets, and tokusei the same way
-                the channel does. Highlighted values on your profile have hit a
-                practical cap — stacking further on that stat does not help.
+                Live totals combine gear, crystals, sets, and passive bonuses
+                the same way the game does. Highlighted values on your profile
+                have hit a practical cap — stacking further on that stat does
+                not help.
               </DialogDescription>
             </DialogHeader>
             <div className="max-h-[min(60vh,24rem)] overflow-auto border border-border/80">
@@ -248,8 +249,7 @@ export function CombatBonusesStrip({
       </div>
       {!live ? (
         <p className="text-[10px] leading-relaxed text-muted-foreground">
-          Log in on channel for live totals (Crit, FCC, LBC, TAC, PC, Incant,
-          CD, etc.) from gear and tokusei.
+          Log in as this character for live combat bonuses from gear and skills.
         </p>
       ) : null}
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs tracking-wide uppercase">

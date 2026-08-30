@@ -92,13 +92,13 @@ export default async function HomePage() {
             },
             {
               t: "Updater",
-              d: "Point ImagineUpdate at our BaseURL — hashlist served from the host.",
+              d: "Download the client, then run the updater so patches stay current.",
               href: "/download",
               link: "Setup guide →",
             },
             {
               t: "Status",
-              d: "Lobby and channel probes from the website BFF. World stays internal.",
+              d: "See if login, the world, or your play session is down — or if it is just your connection.",
               href: "/status",
               link: "Live status →",
             },

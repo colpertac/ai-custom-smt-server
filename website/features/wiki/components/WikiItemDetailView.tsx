@@ -107,7 +107,7 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
               <WikiFeatureBox
                 title="Basic features"
                 tag="S2"
-                hint="Core combat stats from this item's BinaryData row."
+                hint="Core combat stats from the game data for this item."
                 stats={basicFeatures}
               />
               <WikiFeatureBox
@@ -173,7 +173,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
 
             <MetaPanel title="Shop values">
               <p className="mb-3 text-xs text-muted-foreground">
-                Base buy/sell from BinaryData — not live COMP shop prices.
+                Default NPC buy/sell values from the client — not live shop
+                prices on this server.
               </p>
               <MetaRow label="Buy">
                 {item.buyPrice > 0
@@ -191,8 +192,10 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Data from {wikiCatalog.source}
-        {wikiCatalog.iconsSource ? ` · Icons: ${wikiCatalog.iconsSource}` : null}
+        Item data exported from the game client
+        {wikiCatalog.generatedAt
+          ? ` · updated ${new Date(wikiCatalog.generatedAt).toLocaleDateString()}`
+          : null}
       </p>
     </div>
   )

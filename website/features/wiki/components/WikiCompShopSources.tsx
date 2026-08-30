@@ -43,7 +43,7 @@ function CompShopFlowRow({ row }: { row: WikiCompShopListing }) {
   return (
     <li className="border border-border/70 bg-muted/10 p-3 sm:p-4">
       <div className="flex items-stretch gap-0">
-        <FlowBox label="COMP shop">
+        <FlowBox label="Shop">
           <p>{row.shopName}</p>
           <p className="mt-0.5 font-mono text-[0.65rem] font-normal text-muted-foreground">
             #{row.shopId}
@@ -75,7 +75,7 @@ export function WikiCompShopSources({
         Where to get
       </h2>
       <p className="mt-2 text-xs text-muted-foreground">
-        Managed COMP shops only — not world NPC locations, drops, or quests.
+        In-game shops on this server — not world NPC vendors, drops, or quests.
       </p>
       <ul className="mt-4 space-y-3">
         {listings.map((row) => (

@@ -19,8 +19,8 @@ export default function NotFound() {
       </h1>
       <div className="gold-rule mt-4 max-w-xs" />
       <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-        The COMP returned no data for this path. The node may have been
-        deleted, or the link never existed on this realm.
+        That page does not exist on this realm — the link may be wrong or
+        something was removed.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <Link

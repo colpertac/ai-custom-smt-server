@@ -19,10 +19,10 @@ export function DemonBoostIndicator({ summoned }: DemonBoostIndicatorProps) {
 
   const tooltip =
     summoned === true
-      ? "Stats include bonuses from your summoned partner demon (summon sync and related tokusei)."
+      ? "Stats include bonuses from your summoned partner demon."
       : summoned === false
         ? "Partner demon is not summoned — stats shown without summon bonuses."
-        : "Summon state unknown offline. Log in on channel for live partner status."
+        : "Summon status unknown while offline. Play in-game for the live state."
 
   const ariaLabel =
     summoned === true

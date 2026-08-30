@@ -156,19 +156,17 @@ function StatStrip({
       <p className="text-[10px] leading-relaxed text-muted-foreground">
         {profile.statsSource === "live" ? (
           <>
-            Stats from the live channel server
+            Live stats while this character is online in-game
             {profile.statsDigitalized ? " (digitalized)" : ""}. Snapshot at{" "}
             {profile.statsFetchedAt
               ? new Date(profile.statsFetchedAt).toLocaleString()
               : "now"}
-            ; may be stale if gear, buffs, or digitalize changed since then.
+            — numbers can change if gear or buffs changed since then.
           </>
         ) : (
           <>
-            Offline estimate from DB + gear, mod slots, compendium, partner
-            digitalize (~30% while transformed), quest/title bonuses, and
-            session buffs are not included in the offline estimate. Log in on
-            channel for live stats when available.
+            Estimated from saved character data and gear. Buffs, some bonuses,
+            and exact summon state may differ until they log in again.
           </>
         )}
       </p>
@@ -255,12 +253,12 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
           </p>
         ) : profile.activeDemon ? (
           <p className="mt-2 text-xs text-muted-foreground">
-            Partner assigned in COMP (
+            Partner assigned to this character (
             {profile.activeDemon.name}
             {profile.activeDemon.level != null
               ? ` Lv ${profile.activeDemon.level}`
               : ""}
-            ); summon state unknown offline.
+            ) — whether they are summoned is unknown while offline.
           </p>
         ) : null}
         {profile.stats ? (

@@ -24,7 +24,7 @@ export default async function RegisterPage() {
             Create account
           </CardTitle>
           <CardDescription>
-            Username and password rules match the COMP lobby API.
+            Pick a username and password that meet the rules shown below.
           </CardDescription>
         </CardHeader>
         <CardContent>

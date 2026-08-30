@@ -53,7 +53,7 @@ export function ArmoryHero({
         <span className="armory-hero-name">{name}</span>
       </div>
       <p className="absolute right-2 bottom-2 left-2 text-center text-[10px] tracking-wide text-muted-foreground uppercase">
-        Portrait queued — CSS placeholder
+        Portrait loading…
       </p>
     </div>
   )

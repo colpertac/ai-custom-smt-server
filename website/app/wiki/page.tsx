@@ -17,7 +17,7 @@ export default function WikiIndexPage() {
     <div className="space-y-10">
       <WikiPageHeader
         title="Item wiki"
-        description={`Browse ${total.toLocaleString()} items from game BinaryData — gear stats, slots, and descriptions. Shop prices on the COMP are separate.`}
+        description={`Browse ${total.toLocaleString()} items from the game client — gear stats, slots, and descriptions. In-game shop prices may differ.`}
       />
 
       <div className="border-2 border-border bg-card/60 p-5">

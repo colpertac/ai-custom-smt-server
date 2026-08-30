@@ -49,8 +49,8 @@ export default function DownloadPage() {
             </>
           ) : (
             <p className="mt-3 text-muted-foreground">
-              No public client link yet. The server owner sets it under Admin →
-              Download after uploading their prepared client zip.
+              No public download link yet. Check back later or ask on the
+              server&apos;s Discord or news page.
             </p>
           )}
         </div>

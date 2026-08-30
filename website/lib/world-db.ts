@@ -45,8 +45,10 @@ export function resetWorldDbCache(): void {
 }
 
 export class WorldDbMissingError extends Error {
-  constructor(dbPath: string) {
-    super(`World database not found at ${dbPath}`)
+  constructor(_dbPath: string) {
+    super(
+      "Character listings are not available right now. Please try again later."
+    )
     this.name = "WorldDbMissingError"
   }
 }
