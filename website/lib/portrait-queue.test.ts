@@ -102,6 +102,20 @@ describe("portrait-queue", () => {
     expect(() => q.completePortraitJob(fingerprint)).toThrow(/No portraits/)
   })
 
+  it("ingests PNG bytes and marks ready", async () => {
+    const q = await load()
+    const { fingerprint } = q.enqueuePortraitJob("cat2", sample())
+    q.claimPortraitJob()
+    // Minimal header our ingest checks (not a full decode).
+    const png = Buffer.from([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 1, 2, 3,
+    ])
+    const result = q.ingestPortraitBytes(png, fingerprint)
+    expect(result.fingerprint).toBe(fingerprint)
+    expect(result.url).toContain(fingerprint)
+    expect(q.getPortraitJob(fingerprint)?.status).toBe("ready")
+  })
+
   it("prints mannequin GM dress lines", async () => {
     const q = await load()
     const payload = q.buildPortraitJobPayload(

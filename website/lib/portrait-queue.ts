@@ -347,10 +347,29 @@ export function ingestPortraitFile(
   if (!fs.existsSync(src)) {
     throw new Error(`Capture not found: ${src}`)
   }
+  return ingestPortraitBytes(fs.readFileSync(src), fingerprint)
+}
+
+/** Same as ingestPortraitFile but from an in-memory PNG (HTTP worker upload). */
+export function ingestPortraitBytes(
+  png: Buffer | Uint8Array,
+  fingerprint: string
+): { fingerprint: string; url: string } {
+  if (!/^[0-9a-f]{16}$/.test(fingerprint)) {
+    throw new Error(`Invalid fingerprint '${fingerprint}' (want 16 hex)`)
+  }
+  if (!png || png.byteLength < 8) {
+    throw new Error("Capture is empty or too small")
+  }
+  // PNG magic
+  const b = Buffer.isBuffer(png) ? png : Buffer.from(png)
+  if (b[0] !== 0x89 || b[1] !== 0x50 || b[2] !== 0x4e || b[3] !== 0x47) {
+    throw new Error("Capture is not a PNG")
+  }
   const dir = portraitsDir()
   fs.mkdirSync(dir, { recursive: true })
   const dest = path.join(dir, `${fingerprint}.png`)
-  fs.copyFileSync(src, dest)
+  fs.writeFileSync(dest, b)
   const job = getPortraitJob(fingerprint)
   if (job && job.status !== "ready") {
     completePortraitJob(fingerprint)

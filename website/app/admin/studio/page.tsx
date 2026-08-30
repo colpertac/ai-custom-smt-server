@@ -23,10 +23,12 @@ export default async function AdminStudioPage() {
       </h1>
       <div className="gold-rule mt-3 max-w-xs" />
       <p className="mt-4 text-sm text-muted-foreground">
-        Dress online mannequins (<code className="text-foreground">vam1</code> /{" "}
-        <code className="text-foreground">vaf1</code>), snap remote previews, and
-        repair blank char names on init. The website BFF holds the studio token
-        and must run on the studio host for window grabs.
+        Dress mannequins that are <strong>logged into the game world</strong>{" "}
+        on the channel (<code className="text-foreground">vam1</code> /{" "}
+        <code className="text-foreground">vaf1</code>). Offline here means the
+        character is not in-world yet — not that the Wine PC is unreachable.
+        Snap uses <code className="text-foreground">PORTRAIT_PREVIEW_URL</code>{" "}
+        (homelab preview agent) when clients are not on this machine.
       </p>
       <StudioDressPanel />
     </section>

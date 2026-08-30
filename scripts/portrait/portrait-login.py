@@ -3,11 +3,11 @@
 
 Flow (as on your PC):
   1. Optional: launch client via PORTRAIT_CLIENT_CMD
-  2. Esc — skip splash / intro
+  2. Esc (×N) — skip splash / intro (cave, ATLUS, …)
   3. Shift+Tab — username field (client may remember last user)
   4. Ctrl+A, type username, Tab, type password, Enter
   5. Wait for char-select (black screen)
-  6. Click bottom-left "Start Game"
+  6. Spam-click bottom-left "Start Game" (cluster around the button)
 
 Credentials via env (do not commit passwords):
   PORTRAIT_LOGIN_USER / PORTRAIT_LOGIN_PASS
@@ -41,6 +41,14 @@ START_Y_FRAC = float(os.environ.get("PORTRAIT_START_Y_FRAC", "0.936719"))
 AFTER_ENTER_SEC = float(os.environ.get("PORTRAIT_LOGIN_AFTER_ENTER_SEC", "8.0"))
 AFTER_LAUNCH_SEC = float(os.environ.get("PORTRAIT_LOGIN_AFTER_LAUNCH_SEC", "8.0"))
 TYPE_DELAY_MS = int(os.environ.get("PORTRAIT_LOGIN_TYPE_DELAY_MS", "25"))
+# Splash (cave/ATLUS) — Esc skips; may need several presses + settle time.
+SPLASH_ESC_COUNT = int(os.environ.get("PORTRAIT_LOGIN_SPLASH_ESC", "3"))
+SPLASH_ESC_GAP_SEC = float(os.environ.get("PORTRAIT_LOGIN_SPLASH_ESC_GAP", "0.6"))
+SPLASH_SETTLE_SEC = float(os.environ.get("PORTRAIT_LOGIN_SPLASH_SETTLE", "2.0"))
+# Char-select Start Game — spam-click a small cluster (Wine/Xvfb often drops one).
+START_CLICK_COUNT = int(os.environ.get("PORTRAIT_LOGIN_START_CLICKS", "8"))
+START_CLICK_GAP_SEC = float(os.environ.get("PORTRAIT_LOGIN_START_CLICK_GAP", "0.25"))
+START_CLICK_JITTER_PX = int(os.environ.get("PORTRAIT_LOGIN_START_JITTER", "12"))
 
 ROLE_ENV = {
     "vam1": ("PORTRAIT_VAM1_USER", "PORTRAIT_VAM1_PASS", "vam1"),
@@ -86,11 +94,10 @@ def find_window(explicit: str | None = None, role: str | None = None) -> str:
 
 
 def focus(wid: str) -> None:
-    subprocess.run(["wmctrl", "-i", "-a", wid], check=False)
-    subprocess.run(
-        ["xdotool", "windowactivate", "--sync", wid], check=False
-    )
-    time.sleep(0.3)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import focus_x_window
+
+    focus_x_window(wid)
 
 
 def xdo(*args: str, check: bool = True) -> None:
@@ -142,15 +149,43 @@ def window_size(wid: str) -> tuple[int, int]:
     return w, h
 
 
-def click_frac(wid: str, fx: float, fy: float) -> None:
+def click_start_game(wid: str) -> None:
+    """Spam-click Start Game (and nearby pixels) — only mouse step in login."""
     w, h = window_size(wid)
-    x = max(1, min(w - 2, int(w * fx)))
-    y = max(1, min(h - 2, int(h * fy)))
-    print(f"click Start Game @ ({x},{y}) in {w}x{h} (frac {fx},{fy})")
-    # mousemove --window is relative to the window client area.
-    xdo("mousemove", "--window", wid, str(x), str(y))
-    time.sleep(0.15)
-    xdo("click", "--window", wid, "1")
+    cx = max(1, min(w - 2, int(w * START_X_FRAC)))
+    cy = max(1, min(h - 2, int(h * START_Y_FRAC)))
+    n = max(1, START_CLICK_COUNT)
+    j = max(0, START_CLICK_JITTER_PX)
+    # Center + ring of offsets so a slightly-off frac still hits the button.
+    offsets = [(0, 0)]
+    if j > 0:
+        offsets.extend(
+            [
+                (j, 0),
+                (-j, 0),
+                (0, j),
+                (0, -j),
+                (j, j),
+                (-j, j),
+                (j, -j),
+                (-j, -j),
+                (j // 2, -j),
+                (-j // 2, -j),
+            ]
+        )
+    print(
+        f"click Start Game ×{n} around ({cx},{cy}) "
+        f"in {w}x{h} (frac {START_X_FRAC},{START_Y_FRAC}, jitter ±{j}px)"
+    )
+    focus(wid)
+    for i in range(n):
+        dx, dy = offsets[i % len(offsets)]
+        x = max(1, min(w - 2, cx + dx))
+        y = max(1, min(h - 2, cy + dy))
+        xdo("mousemove", "--window", wid, str(x), str(y))
+        time.sleep(0.05)
+        xdo("click", "--window", wid, "1")
+        time.sleep(START_CLICK_GAP_SEC)
 
 
 def resolve_creds(role: str) -> tuple[str, str]:
@@ -198,7 +233,29 @@ def launch_client() -> None:
     die("client window never appeared")
 
 
-def login(role: str, *, do_launch: bool, window: str | None = None) -> None:
+def skip_splash(wid: str) -> None:
+    """Press Esc to skip cave/ATLUS (and similar) splash screens."""
+    focus(wid)
+    if SPLASH_SETTLE_SEC > 0:
+        print(f"settle {SPLASH_SETTLE_SEC:.1f}s for splash…")
+        time.sleep(SPLASH_SETTLE_SEC)
+    n = max(1, SPLASH_ESC_COUNT)
+    print(f"skip splash: Esc ×{n}")
+    for i in range(n):
+        focus(wid)
+        key_focus("Escape")
+        time.sleep(SPLASH_ESC_GAP_SEC)
+    focus(wid)
+    time.sleep(0.4)
+
+
+def login(
+    role: str,
+    *,
+    do_launch: bool,
+    window: str | None = None,
+    credentials_only: bool = False,
+) -> None:
     need_xdotool()
     user, password = resolve_creds(role)
     if do_launch:
@@ -207,10 +264,7 @@ def login(role: str, *, do_launch: bool, window: str | None = None) -> None:
     focus(wid)
     print(f"login as {user} (window {wid})")
 
-    # Skip splash / intro
-    key_focus("Escape")
-    time.sleep(0.8)
-    focus(wid)
+    skip_splash(wid)
 
     # Default focus is the password field. Back-tab → username.
     shift_tab()
@@ -231,16 +285,23 @@ def login(role: str, *, do_launch: bool, window: str | None = None) -> None:
     print(f"submitted login; waiting {AFTER_ENTER_SEC}s for char select…")
     time.sleep(AFTER_ENTER_SEC)
 
-    focus(wid)
-    click_frac(wid, START_X_FRAC, START_Y_FRAC)
-    print(
-        "Start Game clicked. When in-world, run:\n"
-        f"  npm run portrait-worker -- reset-camera {role}\n"
-        f"  npm run portrait-worker -- init-camera {role}"
-    )
+    if not credentials_only:
+        focus(wid)
+        click_start_game(wid)
+        print(
+            "Start Game clicked. When in-world, run:\n"
+            f"  npm run portrait-worker -- reset-camera {role}\n"
+            f"  npm run portrait-worker -- init-camera {role}"
+        )
+    else:
+        print("credentials submitted (--credentials-only; Start Game skipped)")
 
 
 def main() -> None:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import load_portrait_env
+
+    load_portrait_env()
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "role",
@@ -269,6 +330,11 @@ def main() -> None:
         help="Only click Start Game (already on char select)",
     )
     ap.add_argument(
+        "--credentials-only",
+        action="store_true",
+        help="Type user/pass + Enter only (skip Start Game; orch uses this)",
+    )
+    ap.add_argument(
         "--measure-mask",
         metavar="PNG",
         help="Find black rect center in a white-canvas mask PNG; print fracs and exit",
@@ -278,14 +344,21 @@ def main() -> None:
         measure_mask(args.measure_mask)
         return
     role = args.role.strip().lower()
+    if args.start_only and args.credentials_only:
+        die("use only one of --start-only / --credentials-only")
     if args.start_only:
         need_xdotool()
         wid = find_window(explicit=args.window, role=role)
         focus(wid)
-        click_frac(wid, START_X_FRAC, START_Y_FRAC)
+        click_start_game(wid)
         return
     do_launch = bool(args.launch) and not args.no_launch
-    login(role, do_launch=do_launch, window=args.window)
+    login(
+        role,
+        do_launch=do_launch,
+        window=args.window,
+        credentials_only=args.credentials_only,
+    )
 
 
 def measure_mask(path: str) -> None:

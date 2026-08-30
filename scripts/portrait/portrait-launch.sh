@@ -6,6 +6,7 @@
 #   ./scripts/portrait/portrait-launch.sh --second  # 2nd process (same install)
 #
 # Env overrides:
+#   Prefer scripts/portrait/.env (see .env.example) via portrait-cli / orch.
 #   PORTRAIT_CLIENT_DIR   default /home/cat/software/smt/game/reimagine
 #   PORTRAIT_CLIENT_EXE   default ImagineClient.exe
 #   PORTRAIT_WINE         default wine
@@ -21,6 +22,11 @@ set -euo pipefail
 CLIENT_DIR="${PORTRAIT_CLIENT_DIR:-/home/cat/software/smt/game/reimagine}"
 CLIENT_EXE="${PORTRAIT_CLIENT_EXE:-ImagineClient.exe}"
 WINE_BIN="${PORTRAIT_WINE:-wine}"
+
+if [[ -z "${DISPLAY:-}" ]]; then
+  echo "error: DISPLAY is unset (Wine needs X11). Use portrait-orch/cli (starts Xvfb) or export DISPLAY=:99" >&2
+  exit 1
+fi
 
 if [[ ! -d "$CLIENT_DIR" ]]; then
   echo "error: client dir not found: $CLIENT_DIR" >&2

@@ -63,22 +63,11 @@ def die(msg: str, code: int = 1) -> None:
 
 
 def load_dotenv_local() -> None:
-    """Pull PORTRAIT_* from website/.env.local if not already in environ."""
-    env_path = Path(__file__).resolve().parents[2] / "website" / ".env.local"
-    if not env_path.is_file():
-        return
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, _, val = line.partition("=")
-        key = key.strip()
-        if not key.startswith("PORTRAIT_"):
-            continue
-        if key in os.environ and os.environ[key].strip():
-            continue
-        val = val.strip().strip("'").strip('"')
-        os.environ[key] = val
+    """Load scripts/portrait/.env (and optional website/.env.local)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import load_portrait_env
+
+    load_portrait_env()
 
 
 @dataclass

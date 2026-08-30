@@ -7,7 +7,7 @@ portrait tools.
 
 | Dir / files | Purpose |
 | ----------- | ------- |
-| [`portrait/`](portrait/) | Armory Path 1: orch, worker, login, watchdog, crop, launch |
+| [`portrait/`](portrait/) | Armory Path 1: orch, worker, login, watchdog, crop, launch, cli |
 | `docker-*.sh`, `make-deploy-bundle.sh`, `stage-proxmox-bundle.sh`, … | Image/deploy packaging |
 | `build-*-overlay.sh`, `apply-client-overlay.sh`, … | Client / updater overlays |
 | `package-phase*.sh`, `install-*.sh` | Historical phase packaging |
@@ -15,10 +15,20 @@ portrait tools.
 | `translation-*.sh` | Translation extract/inventory |
 | `serve-updater-local.py` | Local updater HTTP |
 
-Portrait (from `website/`):
+Portrait tools live under `scripts/portrait/` with **uv** + `.env`
+(no `website/` tree required on the homelab):
 
 ```bash
-npm run portrait-worker -- once
-npm run portrait-login -- vam1
-npm run portrait-watchdog -- --test
+cd ai_custom_smt_server/scripts/portrait
+cp .env.example .env          # set PORTRAIT_CLIENT_DIR + vam1/vaf1 passwords
+uv sync
+./portrait-cli                # interactive menu (uv run)
+./portrait-cli status
+```
+
+Monorepo convenience (optional):
+
+```bash
+npm run portrait-cli
+npm run portrait-cli -- status
 ```

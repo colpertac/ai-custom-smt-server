@@ -13,15 +13,15 @@ Camera zoom/pitch/facing are sticky until mannequin relog. After relog:
   reset-camera → init-camera (or portrait-orch up).
 
 Prereqs:
-  - channel Studio API on 127.0.0.1 (StudioHttpPort / StudioToken)
-  - mannequin account logged in (vam1 male / vaf1 female — separate accounts)
-  - website queue tools (npm run portrait-queue / portrait-fingerprint)
+  - channel Studio API (PORTRAIT_STUDIO_URL / PORTRAIT_STUDIO_TOKEN)
+  - mannequin account logged in (vam1 male / vaf1 female)
+  - website queue HTTP (PORTRAIT_QUEUE_URL + PORTRAIT_WORKER_TOKEN)
   - xdotool (for init-camera keys)
 
 Examples:
-  python3 scripts/portrait/portrait-worker.py init-camera vam1
-  python3 scripts/portrait/portrait-worker.py once
-  python3 scripts/portrait/portrait-worker.py loop --interval 10
+  python3 portrait-worker.py init-camera vam1
+  python3 portrait-worker.py once
+  python3 portrait-worker.py loop --interval 10
 """
 
 from __future__ import annotations
@@ -35,10 +35,20 @@ import sys
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-WEBSITE = ROOT / "website"
-CROP_SCRIPT = ROOT / "scripts" / "portrait" / "portrait-crop-worker.py"
-DEFAULT_OUT = ROOT / "work" / "portrait-captures"
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+
+# Homelab = this folder only; monorepo may still have ../work under repo root.
+try:
+    from portrait_common import WORK_DIR as _WORK
+
+    DEFAULT_OUT = Path(os.environ.get("PORTRAIT_OUT_DIR", str(_WORK / "captures")))
+except Exception:
+    DEFAULT_OUT = Path(
+        os.environ.get("PORTRAIT_OUT_DIR", str(HERE / "work" / "captures"))
+    )
+
+CROP_SCRIPT = HERE / "portrait-crop-worker.py"
 
 STUDIO_URL = os.environ.get("PORTRAIT_STUDIO_URL", "http://127.0.0.1:14700")
 STUDIO_TOKEN = os.environ.get(
@@ -59,7 +69,6 @@ SKIP_INIT_POSE = os.environ.get("PORTRAIT_SKIP_INIT_POSE", "").strip() in (
     "yes",
 )
 # Camera zoom/pitch is sticky until relog. Persist across `once` runs
-# (each npm invocation is a new process). See docs § Camera.
 CAM_HOME_SEC = float(os.environ.get("PORTRAIT_CAM_HOME_SEC", "1.1"))
 CAM_PGUP_SEC = float(os.environ.get("PORTRAIT_CAM_PGUP_SEC", "0.5"))
 # After activating the Imagine window, wait before Home/PageUp (esp. 2nd client).
@@ -79,9 +88,44 @@ sys.stdout.reconfigure(line_buffering=True)
 sys.stderr.reconfigure(line_buffering=True)
 
 
+def refresh_env_constants() -> None:
+    """Re-read URLs/tokens after load_portrait_env()."""
+    global STUDIO_URL, STUDIO_TOKEN, WINDOW_TITLE, CROP_PRESET
+    global MANNEQUIN_M, MANNEQUIN_F, CAMERA_STATE_PATH, DEFAULT_OUT
+    STUDIO_URL = os.environ.get("PORTRAIT_STUDIO_URL", STUDIO_URL)
+    STUDIO_TOKEN = os.environ.get("PORTRAIT_STUDIO_TOKEN", STUDIO_TOKEN)
+    WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", WINDOW_TITLE)
+    CROP_PRESET = os.environ.get("PORTRAIT_CROP_PRESET", CROP_PRESET)
+    MANNEQUIN_M = os.environ.get("PORTRAIT_MANNEQUIN_M", MANNEQUIN_M)
+    MANNEQUIN_F = os.environ.get("PORTRAIT_MANNEQUIN_F", MANNEQUIN_F)
+    if os.environ.get("PORTRAIT_OUT_DIR", "").strip():
+        DEFAULT_OUT = Path(os.environ["PORTRAIT_OUT_DIR"].strip())
+    CAMERA_STATE_PATH = Path(
+        os.environ.get(
+            "PORTRAIT_CAMERA_STATE",
+            str(DEFAULT_OUT / "camera-ready.json"),
+        )
+    )
+
+
 def die(msg: str, code: int = 1) -> None:
     print(f"error: {msg}", file=sys.stderr)
     raise SystemExit(code)
+
+
+def queue_base() -> str:
+    return (
+        os.environ.get("PORTRAIT_QUEUE_URL", "").strip()
+        or os.environ.get("PORTRAIT_WEBSITE_URL", "").strip()
+        or "http://127.0.0.1:3500"
+    ).rstrip("/")
+
+
+def worker_token() -> str:
+    return (
+        os.environ.get("PORTRAIT_WORKER_TOKEN", "").strip()
+        or os.environ.get("PORTRAIT_STUDIO_TOKEN", "").strip()
+    )
 
 
 def curl_json(method: str, path: str, body: dict | None = None) -> dict:
@@ -100,46 +144,126 @@ def curl_json(method: str, path: str, body: dict | None = None) -> dict:
         die(f"studio non-JSON response: {out[:200]}")
 
 
-def npm_portrait_queue(*args: str) -> str:
-    cmd = ["npm", "run", "portrait-queue", "--", *args]
+def queue_json(
+    method: str,
+    path: str,
+    *,
+    body: dict | None = None,
+) -> dict:
+    """Call website /api/portrait/queue/* (apiOk envelope)."""
+    token = worker_token()
+    if not token:
+        die("set PORTRAIT_WORKER_TOKEN or PORTRAIT_STUDIO_TOKEN for queue HTTP")
+    url = f"{queue_base()}{path}"
+    cmd = [
+        "curl",
+        "-sS",
+        "-X",
+        method,
+        "-H",
+        f"X-Portrait-Worker-Token: {token}",
+        "-w",
+        "\n%{http_code}",
+    ]
+    if body is not None:
+        cmd += ["-H", "Content-Type: application/json", "-d", json.dumps(body)]
+    cmd.append(url)
     try:
-        return subprocess.check_output(
-            cmd, cwd=str(WEBSITE), text=True, stderr=subprocess.STDOUT
-        )
+        out = subprocess.check_output(cmd, text=True)
     except subprocess.CalledProcessError as e:
-        die(f"portrait-queue {' '.join(args)} failed:\n{e.output}")
+        die(f"queue HTTP failed: {e}")
+    lines = out.rsplit("\n", 1)
+    raw = lines[0] if len(lines) == 2 else out
+    code_s = lines[1] if len(lines) == 2 else "0"
+    try:
+        code = int(code_s.strip())
+    except ValueError:
+        code = 0
+    try:
+        payload = json.loads(raw) if raw.strip() else {}
+    except json.JSONDecodeError:
+        die(f"queue non-JSON (HTTP {code}): {raw[:300]}")
+    if code >= 400 or not payload.get("success"):
+        msg = payload.get("message") or payload.get("error") or raw[:300]
+        die(f"queue {method} {path} HTTP {code}: {msg}")
+    data = payload.get("data")
+    return data if isinstance(data, dict) else {}
 
 
 def claim_job() -> dict | None:
-    out = npm_portrait_queue("claim")
-    if "Queue empty" in out:
+    data = queue_json("POST", "/api/portrait/queue/claim")
+    if data.get("empty") or not data.get("job"):
         return None
-    job: dict = {}
-    for line in out.splitlines():
-        line = line.strip()
-        if line.startswith("fingerprint"):
-            job["fingerprint"] = line.split(None, 1)[1].strip()
-        elif line.startswith("character"):
-            job["characterName"] = line.split(None, 1)[1].strip()
-        elif line.startswith("canonical"):
-            job["canonical"] = line.split(None, 1)[1].strip()
-    if "fingerprint" not in job or "characterName" not in job:
-        die(f"could not parse claim output:\n{out}")
-    gender = 0
-    canon = job.get("canonical", "")
-    for part in canon.split("|"):
-        if part.startswith("g="):
-            try:
-                gender = int(part[2:])
-            except ValueError:
-                pass
-    job["gender"] = gender
-    job["mannequin"] = MANNEQUIN_F if gender == 1 else MANNEQUIN_M
-    return job
+    job_raw = data["job"]
+    if not isinstance(job_raw, dict):
+        die(f"claim: unexpected job payload: {job_raw!r}")
+    fp = str(job_raw.get("fingerprint", "")).strip()
+    name = str(job_raw.get("characterName", "")).strip()
+    if not fp or not name:
+        die(f"claim: missing fingerprint/characterName: {job_raw}")
+    gender = int(job_raw.get("gender") or 0)
+    hint = str(job_raw.get("mannequinHint") or "").strip().lower()
+    mannequin = hint if hint in {MANNEQUIN_M.lower(), MANNEQUIN_F.lower(), "vam1", "vaf1"} else (
+        MANNEQUIN_F if gender == 1 else MANNEQUIN_M
+    )
+    return {
+        "fingerprint": fp,
+        "characterName": name,
+        "canonical": job_raw.get("canonical") or "",
+        "gender": gender,
+        "mannequin": mannequin,
+        "payload": job_raw.get("payload"),
+    }
 
 
 def fail_job(fingerprint: str, reason: str) -> None:
-    npm_portrait_queue("fail", fingerprint, reason)
+    queue_json(
+        "POST",
+        "/api/portrait/queue/fail",
+        body={"fingerprint": fingerprint, "error": reason[:500]},
+    )
+    print(f"failed {fingerprint}: {reason[:120]}")
+
+
+def ingest(crop: Path, fingerprint: str) -> None:
+    token = worker_token()
+    if not token:
+        die("set PORTRAIT_WORKER_TOKEN or PORTRAIT_STUDIO_TOKEN for queue HTTP")
+    url = f"{queue_base()}/api/portrait/queue/ingest"
+    cmd = [
+        "curl",
+        "-sS",
+        "-X",
+        "POST",
+        "-H",
+        f"X-Portrait-Worker-Token: {token}",
+        "-F",
+        f"fingerprint={fingerprint}",
+        "-F",
+        f"file=@{crop};type=image/png",
+        "-w",
+        "\n%{http_code}",
+        url,
+    ]
+    try:
+        out = subprocess.check_output(cmd, text=True)
+    except subprocess.CalledProcessError as e:
+        die(f"ingest failed: {e}")
+    lines = out.rsplit("\n", 1)
+    raw = lines[0] if len(lines) == 2 else out
+    code_s = lines[1] if len(lines) == 2 else "0"
+    try:
+        code = int(code_s.strip())
+    except ValueError:
+        code = 0
+    try:
+        payload = json.loads(raw) if raw.strip() else {}
+    except json.JSONDecodeError:
+        die(f"ingest non-JSON (HTTP {code}): {raw[:300]}")
+    if code >= 400 or not payload.get("success"):
+        msg = payload.get("message") or payload.get("error") or raw[:300]
+        die(f"ingest HTTP {code}: {msg}")
+    print(json.dumps(payload.get("data") or payload, indent=2))
 
 
 def find_windows() -> list[tuple[str, str]]:
@@ -184,34 +308,106 @@ def resolve_window(mannequin: str) -> str:
 
 
 def focus_window(wid: str) -> None:
-    if shutil.which("wmctrl"):
-        subprocess.run(["wmctrl", "-i", "-a", wid], check=False)
-        time.sleep(0.25)
-    if shutil.which("xdotool"):
-        subprocess.run(["xdotool", "windowactivate", "--sync", wid], check=False)
-        time.sleep(0.15)
+    """Focus target client; minimize the other so keys don't go astray."""
+    from portrait_common import focus_only_window
+
+    focus_only_window(wid)
+
+
+def _window_size(wid: str) -> tuple[int, int] | None:
+    if not shutil.which("xdotool"):
+        return None
+    try:
+        geom = subprocess.check_output(
+            ["xdotool", "getwindowgeometry", "--shell", wid],
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    w = h = 0
+    for line in geom.splitlines():
+        if line.startswith("WIDTH="):
+            w = int(line.split("=", 1)[1])
+        elif line.startswith("HEIGHT="):
+            h = int(line.split("=", 1)[1])
+    if w <= 0 or h <= 0:
+        return None
+    return w, h
+
+
+def click_void(wid: str) -> None:
+    """Left-click empty studio void (not the character).
+
+    A center click selects the mannequin and shows the self HP bar in the
+    portrait. Corner of the client is empty void after pose.
+    """
+    size = _window_size(wid)
+    if not size or not shutil.which("xdotool"):
+        return
+    w, h = size
+    # Upper-left void — away from centered mannequin and bottom HUD.
+    x = max(8, int(w * 0.06))
+    y = max(8, int(h * 0.10))
+    subprocess.run(
+        [
+            "xdotool",
+            "mousemove",
+            "--window",
+            wid,
+            str(x),
+            str(y),
+            "click",
+            "1",
+        ],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    time.sleep(0.12)
 
 
 def hold_key(key: str, seconds: float, wid: str | None = None) -> None:
-    """Hold an xdotool key name (e.g. s, Home, Prior) for seconds."""
+    """Hold a key for in-game camera/movement.
+
+    Prefer Wine ``SendInput`` (DirectInput sees it). xdotool XTEST often
+    reaches login UI but not in-world DI — keep it only as fallback.
+    """
+    if wid:
+        focus_window(wid)
+        time.sleep(0.25)
+        # Focus click must not hit the character (that shows the HP bar).
+        click_void(wid)
+
+    from portrait_common import wine_hold_key
+
+    if wine_hold_key(key, seconds):
+        return
+
+    # Fallback: XTEST (often ignored by DirectInput).
     if not shutil.which("xdotool"):
         print(
-            f"warning: no xdotool — skip hold {key} "
-            "(sudo apt install xdotool)",
+            f"warning: no wine sendinput exe and no xdotool — skip hold {key}",
             file=sys.stderr,
         )
         time.sleep(min(seconds, 0.3))
         return
-    cmd_down = ["xdotool", "keydown"]
-    cmd_up = ["xdotool", "keyup"]
-    if wid:
-        cmd_down += ["--window", wid]
-        cmd_up += ["--window", wid]
-    cmd_down.append(key)
-    cmd_up.append(key)
-    subprocess.run(cmd_down, check=False)
-    time.sleep(seconds)
-    subprocess.run(cmd_up, check=False)
+    print(
+        f"warning: wine sendinput unavailable — xdotool fallback for {key}",
+        file=sys.stderr,
+    )
+    subprocess.run(
+        ["xdotool", "keydown", "--clearmodifiers", key],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    time.sleep(max(0.05, seconds))
+    subprocess.run(
+        ["xdotool", "keyup", "--clearmodifiers", key],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
 
 
 def load_camera_ready() -> set[str]:
@@ -310,6 +506,8 @@ def init_camera(
     time.sleep(0.3)
     hold_s(HOLD_S_SEC, wid)
     time.sleep(AFTER_S_SEC)
+    # Deselect if a prior center-click left the self HP bar up.
+    click_void(wid)
     mark_camera_ready(mannequin)
     print(f"camera init {mannequin}: marked ready in {CAMERA_STATE_PATH}")
 
@@ -405,25 +603,6 @@ def crop_one(src: Path, out_dir: Path, preset: str) -> Path:
         die(f"no crop candidates for {src}")
     print(f"warning: using first crop {matches[0].name}", file=sys.stderr)
     return matches[0]
-
-
-def ingest(crop: Path, fingerprint: str) -> None:
-    cmd = [
-        "npm",
-        "run",
-        "portrait-queue",
-        "--",
-        "ingest",
-        str(crop),
-        fingerprint,
-    ]
-    try:
-        out = subprocess.check_output(
-            cmd, cwd=str(WEBSITE), text=True, stderr=subprocess.STDOUT
-        )
-    except subprocess.CalledProcessError as e:
-        die(f"ingest failed:\n{e.output}")
-    print(out.strip())
 
 
 def cmd_health(_: argparse.Namespace) -> None:
@@ -563,6 +742,8 @@ def process_job(
             time.sleep(AFTER_S_SEC)
         else:
             time.sleep(0.2)
+        # Clear target UI (self HP bar) before the portrait shot.
+        click_void(wid)
 
         raw = out_dir / f"{fp}_raw.png"
         screenshot_window(wid, raw)
@@ -594,7 +775,7 @@ def cmd_loop(args: argparse.Namespace) -> None:
     out = Path(args.out)
     hold = not args.skip_keys
     print(
-        f"loop studio={STUDIO_URL} crop={CROP_PRESET} "
+        f"loop studio={STUDIO_URL} queue={queue_base()} crop={CROP_PRESET} "
         f"m={MANNEQUIN_M}/f={MANNEQUIN_F} interval={args.interval}s "
         f"job=dress+{'S' if hold else 'no-S'} (no re-pose)"
     )
@@ -715,6 +896,16 @@ def main() -> None:
     p_l.set_defaults(func=cmd_loop)
 
     args = ap.parse_args()
+    # Load .env before handlers (studio URL/token, hold-S knobs, etc.).
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import ensure_display, load_portrait_env
+
+    load_portrait_env()
+    refresh_env_constants()
+    try:
+        ensure_display()
+    except SystemExit:
+        pass
     args.func(args)
 
 

@@ -194,8 +194,8 @@ export function StudioDressPanel() {
   }
 
   function onlineLabel(name: string, online?: boolean) {
-    if (online === true) return `${name}: online`
-    if (online === false) return `${name}: offline`
+    if (online === true) return `${name}: in-world`
+    if (online === false) return `${name}: not in-world`
     return `${name}: ?`
   }
 

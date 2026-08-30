@@ -34,16 +34,24 @@ Still MVP:
       mannequins offline longer than N seconds (dedupe + recover notify).
       `scripts/portrait/portrait-watchdog.py` / `npm run portrait-watchdog`.
       Set `PORTRAIT_DISCORD_WEBHOOK` in `website/.env.local` (gitignored).
-- [ ] Soak `portrait-worker loop` on PC (male + nameplate restore stable)
-- [ ] Dual mannequin ops: `vaf1` client up; pin `PORTRAIT_WINDOW_VAM1` /
+- [x] Soak `portrait-worker loop` on PC (male + nameplate restore stable)
+- [x] Dual mannequin ops: `vaf1` client up; pin `PORTRAIT_WINDOW_VAM1` /
       `PORTRAIT_WINDOW_VAF1` when two windows share a display
 - [x] Dedicated `portrait-launch` + **`portrait-orch`** (launch two clients,
       auto-pin windows to vam1/vaf1 in `windows.json`, login, init-camera).
       No manual `wmctrl` / `PORTRAIT_WINDOW_*` exports.
 - [x] Clear cache for QA: `npm run portrait-queue -- clear` (hash PNGs +
       queue DB; `--stubs` also removes `cat2.png`-style files).
-- [ ] Homelab headless: Xvfb + client + worker; channel studio reachable
-      (same box or locked-down studio bind); confirm crop fracs at that res
+- [x] Homelab headless: Xvfb (+ optional openbox) + Wine clients + worker;
+      Wine `SendInput` helper for hold-S / Home / PageUp; studio on LAN.
+- [x] Website queue HTTP for remote workers (`/api/portrait/queue/*` +
+      `X-Portrait-Worker-Token` / `PORTRAIT_WORKER_TOKEN`)
+- [x] Homelab worker uses queue HTTP (no local `website/` sqlite); CLI menu
+      (`portrait-cli` / uv + `.env`)
+- [ ] **Deploy gate — Tailscale:** website on VPS + worker/studio on
+      homelab. Confirm claim → dress → hold S → ingest over Tailscale
+      (`PORTRAIT_QUEUE_URL` / `PORTRAIT_STUDIO_URL` / tokens). LAN soak
+      done; VPS path **not** verified yet.
 - [ ] Boot/systemd (or equivalent): launch → login → init-camera → worker
       loop; restart on crash
 
@@ -52,7 +60,7 @@ Still MVP:
 - [ ] Admin remote kill/restart (Wine client / worker / orch) once processes
       are systemd-unit shaped — not from website until then
 - [ ] Auto-relogin when health goes false (launch + login + reset-camera)
-- [ ] Female path soak + always-on `vaf1` beside `vam1`
+- [x] Female path soak + always-on `vaf1` beside `vam1`
 - [ ] Queue polish (Redis/BullMQ only if multi-worker / multi-host needs it)
 - [ ] WebP (or smaller) portraits; CDN/object storage if files grow
 - [ ] Armory UI: clearer queued/missing states, optional poll/revalidate
@@ -535,7 +543,13 @@ volume. Phase 16 already deferred Redis for rate limits; same rule here.
 1. BFF computes fingerprint when serving `/api/armory/[name]`.
 2. If `portraits/{fingerprint}.webp` exists → URL on the profile.
 3. Else insert job `pending` in `data/portraits.db`; return `portraitStatus: "queued"`.
-   Claim with `npm run portrait-queue -- claim` (prints `@copylook` / `@dummyweapon`).
+   Local CLI: `npm run portrait-queue -- claim` / `ingest`.
+   Remote worker HTTP (token `X-Portrait-Worker-Token`):
+   - `GET  /api/portrait/queue/health`
+   - `POST /api/portrait/queue/claim`
+   - `POST /api/portrait/queue/fail` JSON `{ fingerprint, error? }`
+   - `POST /api/portrait/queue/ingest` multipart `fingerprint` + `file`
+   - `GET  /api/portrait/queue/{fingerprint}`
    Ingest: `npm run portrait-queue -- ingest crop.png <fingerprint>`.
 4. Worker claims job → client capture → write object + mark `ready`.
 5. UI: CSS bust placeholder until `ready` (poll or revalidate).

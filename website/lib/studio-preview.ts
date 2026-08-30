@@ -1,6 +1,9 @@
 /**
- * Admin mannequin preview shots — spawn portrait-worker on the studio host.
- * Website must share DISPLAY / windows.json with the Wine clients.
+ * Admin mannequin preview shots.
+ *
+ * Split deploy: set PORTRAIT_PREVIEW_URL to the homelab agent
+ * (portrait-preview-agent.py) that shares DISPLAY with Wine clients.
+ * Same-host/dev: omit it and spawn portrait-worker locally.
  */
 
 import { spawn } from "node:child_process"
@@ -67,6 +70,18 @@ function workerScript(): string {
   )
 }
 
+function previewAgentUrl(): string {
+  return (process.env.PORTRAIT_PREVIEW_URL || "").trim().replace(/\/$/, "")
+}
+
+function workerToken(): string {
+  return (
+    process.env.PORTRAIT_WORKER_TOKEN?.trim() ||
+    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
+    ""
+  )
+}
+
 export async function captureStudioPreview(
   mannequinRaw: string
 ): Promise<{
@@ -93,23 +108,11 @@ export async function captureStudioPreview(
   const outDir = previewCapturesDir()
   fs.mkdirSync(outDir, { recursive: true })
 
-  const script = workerScript()
-  if (!fs.existsSync(script)) {
-    throw new PreviewError(`portrait-worker missing at ${script}`, 500)
-  }
-
-  const args = [
-    script,
-    "preview",
-    mannequin,
-    "--out",
-    outDir,
-  ]
-
-  const { code, stdout, stderr } = await runPython(args, CAPTURE_TIMEOUT_MS)
-  if (code !== 0) {
-    const detail = (stderr || stdout || `exit ${code}`).trim().slice(0, 400)
-    throw new PreviewError(`preview capture failed: ${detail}`, 502)
+  const remote = previewAgentUrl()
+  if (remote) {
+    await captureViaAgent(remote, mannequin, outDir)
+  } else {
+    await captureLocal(mannequin, outDir)
   }
 
   const img = previewImagePath(mannequin)
@@ -124,6 +127,98 @@ export async function captureStudioPreview(
     iso: meta?.iso,
     ts: meta?.ts,
     cooldownMs: COOLDOWN_MS,
+  }
+}
+
+async function captureViaAgent(
+  baseUrl: string,
+  mannequin: string,
+  outDir: string
+): Promise<void> {
+  const token = workerToken()
+  if (!token) {
+    throw new PreviewError(
+      "PORTRAIT_PREVIEW_URL set but PORTRAIT_WORKER_TOKEN / PORTRAIT_STUDIO_TOKEN missing",
+      500
+    )
+  }
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), CAPTURE_TIMEOUT_MS)
+  try {
+    const res = await fetch(`${baseUrl}/preview`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Portrait-Worker-Token": token,
+      },
+      body: JSON.stringify({ mannequin }),
+      signal: ctrl.signal,
+    })
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`
+      try {
+        const j = (await res.json()) as { error?: string }
+        if (j.error) detail = j.error
+      } catch {
+        detail = (await res.text()).slice(0, 400) || detail
+      }
+      throw new PreviewError(`preview agent failed: ${detail}`, 502)
+    }
+    const buf = Buffer.from(await res.arrayBuffer())
+    if (buf.length < 32) {
+      throw new PreviewError("preview agent returned empty image", 502)
+    }
+    const img = path.join(outDir, `preview-${mannequin}.png`)
+    fs.writeFileSync(img, buf)
+    const metaHdr = res.headers.get("X-Portrait-Preview-Meta")
+    let meta: PreviewMeta = {
+      mannequin,
+      ts: Date.now() / 1000,
+      iso: new Date().toISOString(),
+      path: img,
+    }
+    if (metaHdr) {
+      try {
+        meta = { ...meta, ...(JSON.parse(metaHdr) as PreviewMeta) }
+      } catch {
+        /* keep defaults */
+      }
+    }
+    fs.writeFileSync(
+      path.join(outDir, `preview-${mannequin}.json`),
+      JSON.stringify(meta, null, 2) + "\n"
+    )
+  } catch (e) {
+    if (e instanceof PreviewError) throw e
+    const msg = e instanceof Error ? e.message : String(e)
+    throw new PreviewError(
+      `preview agent unreachable (${baseUrl}): ${msg}. ` +
+        `On the Wine host run: ./portrait-cli preview-server`,
+      502
+    )
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+async function captureLocal(mannequin: string, outDir: string): Promise<void> {
+  const script = workerScript()
+  if (!fs.existsSync(script)) {
+    throw new PreviewError(
+      `portrait-worker missing at ${script}. ` +
+        `For split deploy set PORTRAIT_PREVIEW_URL to the homelab agent.`,
+      500
+    )
+  }
+  const args = [script, "preview", mannequin, "--out", outDir]
+  const { code, stdout, stderr } = await runPython(args, CAPTURE_TIMEOUT_MS)
+  if (code !== 0) {
+    const detail = (stderr || stdout || `exit ${code}`).trim().slice(0, 400)
+    throw new PreviewError(
+      `preview capture failed: ${detail}. ` +
+        `Wine clients are on another host? Set PORTRAIT_PREVIEW_URL.`,
+      502
+    )
   }
 }
 
