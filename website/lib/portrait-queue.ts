@@ -284,12 +284,15 @@ export function listPortraitJobs(status?: PortraitJobStatus): PortraitJob[] {
 export function gmDressCommands(payload: PortraitJobPayload): string[] {
   const lines = [
     `# ${payload.characterName}  ${payload.fingerprint}`,
-    `# do not dress live cat/catm — mannequin only`,
+    `# do not dress live cat/catm — mannequin only (vam/vaf accounts)`,
+    `# preferred: curl studio API / npm run portrait-worker -- once`,
     `@copylook ${payload.characterName}`,
     `@dummyweapon`,
     `@zone 10105`,
+    `# vam: @pos 50000 50000 — vaf: @pos -50000 -50000`,
     `@pos 50000 50000`,
-    `# tap W if demon faces away, then hold S ~2s`,
+    `# dismiss partner if summoned — portraits are character-only`,
+    `# hold S ~2s so the character faces the camera (centered)`,
   ]
   return lines
 }
@@ -327,4 +330,28 @@ export function resetPortraitQueueForTests(): void {
   }
   const file = dbPath()
   if (fs.existsSync(file)) fs.unlinkSync(file)
+}
+
+/**
+ * Wipe cached portrait images + queue so armory misses and re-enqueues.
+ * Keeps name-keyed stubs like `cat2.png` (not 16-hex fingerprints) unless
+ * `includeStubs` is true.
+ */
+export function clearPortraitCache(opts?: {
+  includeStubs?: boolean
+}): { removedFiles: string[]; queueReset: boolean } {
+  const dir = portraitsDir()
+  const removedFiles: string[] = []
+  if (fs.existsSync(dir)) {
+    for (const name of fs.readdirSync(dir)) {
+      const isHash = /^[0-9a-f]{16}\.(png|webp)$/i.test(name)
+      const isStub = /\.(png|webp)$/i.test(name) && !isHash
+      if (isHash || (opts?.includeStubs && isStub)) {
+        fs.unlinkSync(path.join(dir, name))
+        removedFiles.push(name)
+      }
+    }
+  }
+  resetPortraitQueueForTests()
+  return { removedFiles, queueReset: true }
 }

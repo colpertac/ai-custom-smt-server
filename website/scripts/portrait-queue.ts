@@ -7,9 +7,12 @@
  *   npm run portrait-queue -- complete <fingerprint>
  *   npm run portrait-queue -- ingest <png> <fingerprint>
  *   npm run portrait-queue -- fail <fingerprint> <reason>
+ *   npm run portrait-queue -- clear          # wipe hash PNGs + queue DB
+ *   npm run portrait-queue -- clear --stubs  # also delete cat2.png-style stubs
  */
 import {
   claimPortraitJob,
+  clearPortraitCache,
   completePortraitJob,
   failPortraitJob,
   gmDressCommands,
@@ -76,9 +79,25 @@ if (cmd === "list") {
   }
   const job = failPortraitJob(arg, rest.join(" ") || "failed")
   console.log(`failed  ${job.fingerprint}  ${job.error}`)
+} else if (cmd === "clear") {
+  const includeStubs = arg === "--stubs" || rest.includes("--stubs")
+  const result = clearPortraitCache({ includeStubs })
+  console.log(
+    `cleared ${result.removedFiles.length} portrait file(s); queue DB reset`
+  )
+  for (const name of result.removedFiles) {
+    console.log(`  - ${name}`)
+  }
+  if (!includeStubs) {
+    console.log("(name stubs like cat2.png kept; pass --stubs to remove)")
+  }
+  console.log(
+    "Also reset camera if clients will relog:\n" +
+      "  npm run portrait-worker -- reset-camera"
+  )
 } else {
   console.error(
-    "usage: portrait-queue [list|claim|complete|ingest|fail]"
+    "usage: portrait-queue [list|claim|complete|ingest|fail|clear]"
   )
   process.exit(1)
 }

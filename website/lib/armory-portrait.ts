@@ -23,7 +23,10 @@ export type PortraitFingerprintInput = {
   equippedVA: EquippedVAEntry[]
   /** Real weapon item Type (slot 13); 0 if empty. VA guns need a matching class. */
   weaponType: number
-  /** Active partner devil Type; 0 if none. Captures include the demon. */
+  /**
+   * Kept for API compatibility; portraits are character-only (no summon).
+   * Ignored in the hash so COMP / summon state does not bust the cache.
+   */
   demonType: number
 }
 
@@ -82,7 +85,8 @@ export function portraitFingerprintCanonical(
     `title=${input.title}`,
     `va=${va}`,
     `w=${input.weaponType}`,
-    `d=${input.demonType}`,
+    // Always 0: armory PNGs never include the partner demon.
+    `d=0`,
   ].join("|")
 }
 

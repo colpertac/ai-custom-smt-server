@@ -66,6 +66,25 @@ export default async function AdminPage() {
 
       <section className="mt-12">
         <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
+          Portrait studio
+        </h2>
+        <div className="gold-rule mt-2 max-w-[12rem]" />
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+          Dress online mannequins (vam / vaf) from a source character for
+          armory portrait captures.
+        </p>
+        <p className="mt-3 text-sm">
+          <Link
+            href="/admin/studio"
+            className="underline underline-offset-2 hover:text-gold-dim"
+          >
+            Open portrait studio
+          </Link>
+        </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
           Account import
         </h2>
         <div className="gold-rule mt-2 max-w-[12rem]" />

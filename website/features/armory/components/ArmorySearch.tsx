@@ -9,8 +9,10 @@ import { Input } from "@/components/ui/input"
 
 export function ArmorySearch({
   initialName = "",
+  autoFocus = false,
 }: {
   initialName?: string
+  autoFocus?: boolean
 }) {
   const router = useRouter()
   const [name, setName] = useState(initialName)
@@ -34,7 +36,7 @@ export function ArmorySearch({
           placeholder="Exact name…"
           maxLength={32}
           autoComplete="off"
-          autoFocus
+          autoFocus={autoFocus}
         />
       </Field>
       <Button type="submit" size="sm">

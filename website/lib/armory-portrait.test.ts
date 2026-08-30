@@ -71,13 +71,14 @@ describe("appearanceFingerprint", () => {
     expect(appearanceFingerprint(a)).toBe(appearanceFingerprint(b))
   })
 
-  it("changes when VA, weapon, demon, or hair color changes", () => {
+  it("changes when VA, weapon, or hair color changes (not demon)", () => {
     const base = appearanceFingerprint(sample())
     expect(
       appearanceFingerprint(sample({ equippedVA: [{ slot: 3, itemType: 1 }] }))
     ).not.toBe(base)
     expect(appearanceFingerprint(sample({ weaponType: 2001 }))).not.toBe(base)
-    expect(appearanceFingerprint(sample({ demonType: 99 }))).not.toBe(base)
+    // Partner demon is not in portraits — summon state must not change the hash.
+    expect(appearanceFingerprint(sample({ demonType: 99 }))).toBe(base)
     expect(
       appearanceFingerprint(
         sample({

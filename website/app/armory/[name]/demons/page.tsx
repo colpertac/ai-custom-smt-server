@@ -39,6 +39,10 @@ export default async function ArmoryDemonsPage({ params }: Props) {
 
   return (
     <section className="site-atmosphere mx-auto max-w-5xl px-4 py-8">
+      <div className="mb-6 border-2 border-border bg-card/60 p-4">
+        <ArmorySearch />
+      </div>
+
       <p className="mb-4 text-xs">
         <Link href="/armory" className="hover:text-gold-dim">
           ← Armory search
@@ -58,13 +62,6 @@ export default async function ArmoryDemonsPage({ params }: Props) {
         ) : data ? (
           <ArmoryDemonsView data={data} />
         ) : null}
-      </div>
-
-      <div className="mt-10 border-t border-border pt-6">
-        <p className="mb-3 text-xs tracking-wide text-muted-foreground uppercase">
-          Search another
-        </p>
-        <ArmorySearch />
       </div>
     </section>
   )

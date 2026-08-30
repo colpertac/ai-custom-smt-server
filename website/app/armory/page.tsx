@@ -18,7 +18,7 @@ export default function ArmoryPage() {
         equipped gear. Account login names and bags stay private.
       </p>
       <div className="mt-8 border-2 border-border bg-card/60 p-4">
-        <ArmorySearch />
+        <ArmorySearch autoFocus />
       </div>
     </section>
   )
