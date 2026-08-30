@@ -38,15 +38,18 @@ See [docs/phase1.md](docs/phase1.md) for install/test/remove details.
 **Purpose:** Prove that client data can be extracted, edited, rebuilt, and
 restored before creating custom records.
 
-- [ ] Build `comp_bdpatch`, `comp_encrypt`, `comp_decrypt`, `comp_translator`,
+- [x] Build `comp_bdpatch`, `comp_encrypt`, `comp_decrypt`, `comp_translator`,
   `comp_verify`, and Cathedral of Content.
-- [ ] Round-trip one harmless client-facing record through XML.
-- [ ] Document every command and input/output file.
-- [ ] Compare rebuilt output and test it in a disposable client copy.
-- [ ] Establish `client-overlay/` as the only client distribution output.
+- [x] Round-trip one harmless client-facing record through XML.
+- [x] Document every command and input/output file.
+- [x] Compare rebuilt output and test it in a disposable client copy.
+- [x] Establish `client-overlay/` as the only client distribution output.
 
 **Done when:** A small text change is visible in-game and rebuilding it is
 repeatable from human-editable source.
+
+See [docs/phase2.md](docs/phase2.md) and
+[guides/client-binarydata.md](guides/client-binarydata.md).
 
 ## Phase 3 — Add one custom item
 
