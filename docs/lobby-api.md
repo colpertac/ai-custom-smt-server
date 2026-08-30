@@ -65,6 +65,9 @@ Require `user_level >= 1000` (plus per-route level constants).
 | `/api/admin/delete_account` | Delete by `username` |
 | `/api/admin/online` | Aggregate online counts (`total`, per-world `character_count`); optional `targets` for account/character lookup |
 | `/api/admin/message_world` | World-wide ticker (`type: "ticker"`, `mode` 0–4 like `@announce`) or console chat (`type: "console"`). Requires `world_id` + `message`. Wired in website Admin overview → Announce. |
+| `/api/admin/list_chat_logs` | World DB chat log (`character_name`, `since`/`until`, `limit`≤200). Channel persists say/shout/tell/party/clan/team/versus (not SELF); **14-day** prune. Wired in Admin → Chat logs. |
+| `/api/admin/list_reports` | Unresolved/resolved `ReportedPlayer` rows (`resolved`, optional `player_name`). Wired in Admin → Reports (detail pulls chat for 30m before `report_time`). |
+| `/api/admin/resolve_report` | Mark report resolved by `uid` (+ `world_id`). |
 | `/api/admin/get_promos` | List promos (`code`, `startTime`, `endTime`, `useLimit`, `limitType`, `items` as shop product IDs). Wired in website Admin → Promos. |
 | `/api/admin/create_promo` | Create promo: `code` (exactly 16 letters A–Z; client Promotion Code field), `startTime`, `endTime`, `useLimit` (0–255; 0 = unlimited), `limitType` (`account`\|`character`\|`world`), `items` (non-empty shop product IDs). |
 | `/api/admin/delete_promo` | Delete all promos with `code`. |

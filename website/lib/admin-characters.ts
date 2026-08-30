@@ -42,3 +42,15 @@ export function listCharactersByUsername(
     lastLogin: r.LastLogin ?? 0,
   }))
 }
+
+/** All character names on the world (for admin autocomplete). */
+export function listAllCharacterNames(): string[] {
+  const rows = getWorldDb()
+    .prepare(
+      `SELECT Name FROM Character WHERE Name IS NOT NULL AND Name != ''
+       ORDER BY Name COLLATE NOCASE ASC`
+    )
+    .all() as { Name: string }[]
+
+  return rows.map((r) => r.Name).filter(Boolean)
+}

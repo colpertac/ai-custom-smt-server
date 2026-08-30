@@ -273,6 +273,124 @@ export async function adminMessageWorld(
   return { error: String(data.error ?? "Unknown error") }
 }
 
+export type AdminChatLogEntry = {
+  uid: string
+  characterName: string
+  chatType: number
+  targetName: string
+  message: string
+  zoneId: number
+  channelId: number
+  timestamp: number
+}
+
+/** Lobby `/admin/list_chat_logs` */
+export async function adminListChatLogs(
+  auth: CompAuthState,
+  payload: {
+    worldId: number
+    characterName?: string
+    since?: number
+    until?: number
+    limit?: number
+  }
+): Promise<AdminChatLogEntry[]> {
+  const body: JsonObject = { world_id: payload.worldId }
+  if (payload.characterName) body.character_name = payload.characterName
+  if (payload.since !== undefined) body.since = payload.since
+  if (payload.until !== undefined) body.until = payload.until
+  if (payload.limit !== undefined) body.limit = payload.limit
+
+  const data = await authenticatedRequest(auth, "/admin/list_chat_logs", body)
+  if (data.error && data.error !== "Success") {
+    throw new CompApiError(String(data.error), 502, data)
+  }
+  const raw = Array.isArray(data.logs) ? data.logs : []
+  const logs: AdminChatLogEntry[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as JsonObject
+    logs.push({
+      uid: String(o.uid ?? ""),
+      characterName: String(o.character_name ?? ""),
+      chatType: Number(o.chat_type ?? 0),
+      targetName: String(o.target_name ?? ""),
+      message: String(o.message ?? ""),
+      zoneId: Number(o.zone_id ?? 0),
+      channelId: Number(o.channel_id ?? 0),
+      timestamp: Number(o.timestamp ?? 0),
+    })
+  }
+  return logs
+}
+
+export type AdminReport = {
+  uid: string
+  playerName: string
+  location: string
+  comment: string
+  subject: number
+  resolved: boolean
+  reportTime: number
+  resolveTime: number
+  reporterUsername: string
+  resolverUsername: string
+}
+
+/** Lobby `/admin/list_reports` */
+export async function adminListReports(
+  auth: CompAuthState,
+  payload: {
+    worldId: number
+    resolved?: boolean
+    playerName?: string
+    limit?: number
+  }
+): Promise<AdminReport[]> {
+  const body: JsonObject = {
+    world_id: payload.worldId,
+    resolved: payload.resolved ?? false,
+  }
+  if (payload.playerName) body.player_name = payload.playerName
+  if (payload.limit !== undefined) body.limit = payload.limit
+
+  const data = await authenticatedRequest(auth, "/admin/list_reports", body)
+  if (data.error && data.error !== "Success") {
+    throw new CompApiError(String(data.error), 502, data)
+  }
+  const raw = Array.isArray(data.reports) ? data.reports : []
+  const reports: AdminReport[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as JsonObject
+    reports.push({
+      uid: String(o.uid ?? ""),
+      playerName: String(o.player_name ?? ""),
+      location: String(o.location ?? ""),
+      comment: String(o.comment ?? ""),
+      subject: Number(o.subject ?? 0),
+      resolved: Boolean(o.resolved),
+      reportTime: Number(o.report_time ?? 0),
+      resolveTime: Number(o.resolve_time ?? 0),
+      reporterUsername: String(o.reporter_username ?? ""),
+      resolverUsername: String(o.resolver_username ?? ""),
+    })
+  }
+  return reports
+}
+
+/** Lobby `/admin/resolve_report` */
+export async function adminResolveReport(
+  auth: CompAuthState,
+  payload: { worldId: number; uid: string }
+): Promise<{ error: string }> {
+  const data = await authenticatedRequest(auth, "/admin/resolve_report", {
+    world_id: payload.worldId,
+    uid: payload.uid,
+  })
+  return { error: String(data.error ?? "Unknown error") }
+}
+
 export type PromoLimitType = "character" | "world" | "account"
 
 export type AdminPromo = {

@@ -1,4 +1,4 @@
-import { adminMessageWorld } from "@/lib/comp-api"
+import { adminResolveReport } from "@/lib/comp-api"
 import { compApiFailMessage, DEFAULT_WORLD_ID } from "@/lib/comp-api-errors"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
@@ -10,17 +10,13 @@ import {
 } from "@/lib/web-session"
 import { z } from "zod"
 
-const announceSchema = z.object({
-  message: z.string().trim().min(1, "Message is required").max(512),
-  /** Ticker color — same ints as in-game `@announce` (0–4). */
-  mode: z.number().int().min(0).max(4).default(0),
+const resolveSchema = z.object({
+  uid: z.string().trim().min(1),
   worldId: z.number().int().min(0).optional(),
-  /** Also broadcast CHAT_SELF like `@announce` does. */
-  alsoConsole: z.boolean().default(true),
 })
 
 export async function POST(request: Request) {
-  const blocked = await guardApiMutation("admin-announce", 20, 60_000)
+  const blocked = await guardApiMutation("admin-reports-resolve", 30, 60_000)
   if (blocked) return blocked
 
   const gate = await requireWebSession()
@@ -36,7 +32,7 @@ export async function POST(request: Request) {
     return apiFail("Invalid JSON", 400, "BAD_REQUEST")
   }
 
-  const parsed = announceSchema.safeParse(body)
+  const parsed = resolveSchema.safeParse(body)
   if (!parsed.success) {
     return apiFail(
       parsed.error.issues[0]?.message ?? "Invalid input",
@@ -45,40 +41,23 @@ export async function POST(request: Request) {
     )
   }
 
-  const { message, mode, alsoConsole } = parsed.data
   const worldId = parsed.data.worldId ?? DEFAULT_WORLD_ID
 
   try {
     return await withCompSession(async (session) => {
-      const ticker = await adminMessageWorld(session, {
+      const result = await adminResolveReport(session, {
         worldId,
-        message,
-        type: "ticker",
-        mode,
-        subMode: 0,
+        uid: parsed.data.uid,
       })
-      if (ticker.error !== "Success") {
-        return apiFail(ticker.error, 400, "ANNOUNCE")
+      if (result.error !== "Success") {
+        return apiFail(result.error, 400, "RESOLVE")
       }
-
-      if (alsoConsole) {
-        const consoleMsg = await adminMessageWorld(session, {
-          worldId,
-          message,
-          type: "console",
-          from: "",
-        })
-        if (consoleMsg.error !== "Success") {
-          return apiFail(consoleMsg.error, 400, "ANNOUNCE_CONSOLE")
-        }
-      }
-
-      return apiOk({ worldId, mode, alsoConsole }, "Announcement sent")
+      return apiOk({ uid: parsed.data.uid, worldId }, "Report resolved")
     })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {
       return apiFail("Unauthorized", 401, "UNAUTHORIZED")
     }
-    return apiFail(compApiFailMessage(error, "Announce failed"), 502, "COMP")
+    return apiFail(compApiFailMessage(error, "Resolve failed"), 502, "COMP")
   }
 }

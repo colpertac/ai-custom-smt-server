@@ -1,4 +1,4 @@
-import { adminMessageWorld } from "@/lib/comp-api"
+import { adminListChatLogs } from "@/lib/comp-api"
 import { compApiFailMessage, DEFAULT_WORLD_ID } from "@/lib/comp-api-errors"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
@@ -10,17 +10,15 @@ import {
 } from "@/lib/web-session"
 import { z } from "zod"
 
-const announceSchema = z.object({
-  message: z.string().trim().min(1, "Message is required").max(512),
-  /** Ticker color — same ints as in-game `@announce` (0–4). */
-  mode: z.number().int().min(0).max(4).default(0),
+const evidenceSchema = z.object({
+  playerName: z.string().trim().min(1).max(32),
+  reportTime: z.number().int().min(0),
   worldId: z.number().int().min(0).optional(),
-  /** Also broadcast CHAT_SELF like `@announce` does. */
-  alsoConsole: z.boolean().default(true),
+  windowSeconds: z.number().int().min(60).max(86_400).optional(),
 })
 
 export async function POST(request: Request) {
-  const blocked = await guardApiMutation("admin-announce", 20, 60_000)
+  const blocked = await guardApiMutation("admin-reports-evidence", 60, 60_000)
   if (blocked) return blocked
 
   const gate = await requireWebSession()
@@ -36,7 +34,7 @@ export async function POST(request: Request) {
     return apiFail("Invalid JSON", 400, "BAD_REQUEST")
   }
 
-  const parsed = announceSchema.safeParse(body)
+  const parsed = evidenceSchema.safeParse(body)
   if (!parsed.success) {
     return apiFail(
       parsed.error.issues[0]?.message ?? "Invalid input",
@@ -45,40 +43,30 @@ export async function POST(request: Request) {
     )
   }
 
-  const { message, mode, alsoConsole } = parsed.data
+  const windowSec = parsed.data.windowSeconds ?? 30 * 60
+  const until = parsed.data.reportTime
+  const since = until > windowSec ? until - windowSec : 0
   const worldId = parsed.data.worldId ?? DEFAULT_WORLD_ID
 
   try {
     return await withCompSession(async (session) => {
-      const ticker = await adminMessageWorld(session, {
+      const logs = await adminListChatLogs(session, {
         worldId,
-        message,
-        type: "ticker",
-        mode,
-        subMode: 0,
+        characterName: parsed.data.playerName,
+        since,
+        until,
+        limit: 100,
       })
-      if (ticker.error !== "Success") {
-        return apiFail(ticker.error, 400, "ANNOUNCE")
-      }
-
-      if (alsoConsole) {
-        const consoleMsg = await adminMessageWorld(session, {
-          worldId,
-          message,
-          type: "console",
-          from: "",
-        })
-        if (consoleMsg.error !== "Success") {
-          return apiFail(consoleMsg.error, 400, "ANNOUNCE_CONSOLE")
-        }
-      }
-
-      return apiOk({ worldId, mode, alsoConsole }, "Announcement sent")
+      return apiOk({ worldId, since, until, logs: [...logs].reverse() })
     })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {
       return apiFail("Unauthorized", 401, "UNAUTHORIZED")
     }
-    return apiFail(compApiFailMessage(error, "Announce failed"), 502, "COMP")
+    return apiFail(
+      compApiFailMessage(error, "Evidence lookup failed"),
+      502,
+      "COMP"
+    )
   }
 }

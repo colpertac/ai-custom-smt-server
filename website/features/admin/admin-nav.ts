@@ -2,9 +2,11 @@ import type { LucideIcon } from "lucide-react"
 import {
   Coins,
   Download,
+  Flag,
   FolderArchive,
   LayoutDashboard,
   Mail,
+  MessageSquareText,
   Newspaper,
   Palette,
   Settings,
@@ -25,6 +27,13 @@ export type AdminNavItem = {
 export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
   { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
+  { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
+  {
+    href: "/admin/chat-logs",
+    label: "Chat logs",
+    icon: MessageSquareText,
+    match: "prefix",
+  },
   { href: "/admin/news", label: "News", icon: Newspaper, match: "prefix" },
   { href: "/admin/download", label: "Download", icon: Download, match: "prefix" },
   { href: "/admin/email", label: "Email", icon: Mail, match: "prefix" },
@@ -45,6 +54,8 @@ export const ADMIN_NAV: AdminNavItem[] = [
 export function adminPageTitle(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Overview"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
+  if (pathname.startsWith("/admin/reports")) return "Reports"
+  if (pathname.startsWith("/admin/chat-logs")) return "Chat logs"
   if (pathname.startsWith("/admin/news")) return "News"
   if (pathname.startsWith("/admin/download")) return "Download"
   if (pathname.startsWith("/admin/email")) return "Email"
