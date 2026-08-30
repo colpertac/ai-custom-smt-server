@@ -23,26 +23,36 @@ Usage:
 Options:
   --ip IP            Public IP or hostname clients use (required)
   --domain HOST      Optional DNS name for SITE_URL / PUBLIC_UPDATER_URL
-  --dir PATH         Install / compose directory (default: this script's dir)
+  --prefix PATH      Install root (default: /opt/smt → deploy/ + ops/ under it)
+  --dir PATH         Use this deploy/ directly (skip prefix prompt / copy)
   --website-port N   Host port for website (default: 3000)
   --non-interactive  Do not prompt; fail if --ip missing
   -h, --help         Show this help
 
 Does not install Docker, open cloud firewalls, or run certbot.
 
-You must copy the whole deploy/ folder plus sibling ops/ (not only this script):
-  scp -r deploy ops user@host:~/smt/
-  cd ~/smt/deploy && ./install.sh --ip YOUR.PUBLIC.IP
+Interactive install copies this script's deploy/ + sibling ops/ into PREFIX
+(default /opt/smt). If PREFIX is not writable, the script stops and tells you
+to create it with sudo or pick a path under your home directory.
+
+You can also unpack anywhere and run once:
+  scp -r deploy ops user@host:~/
+  cd ~/deploy && ./install.sh --ip YOUR.PUBLIC.IP
+  # prompts: Install to [/opt/smt]:
 EOF
 }
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
+SOURCE_OPS_DIR="$(cd "$SCRIPT_DIR/.." && pwd)/ops"
+DEFAULT_PREFIX="/opt/smt"
 DEPLOY_DIR=""
+INSTALL_PREFIX=""
 EXTERNAL_IP=""
 DOMAIN=""
 WEBSITE_PORT="3000"
 NON_INTERACTIVE=0
 DIR_SET=0
+PREFIX_SET=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -52,6 +62,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     --domain)
       DOMAIN="${2:-}"
+      shift 2
+      ;;
+    --prefix)
+      INSTALL_PREFIX="${2:-}"
+      PREFIX_SET=1
       shift 2
       ;;
     --dir)
@@ -77,55 +92,109 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Resolve deploy/ (needs docker-compose.yml + sibling ../ops). install.sh alone in ~ is not enough.
-resolve_deploy_dir() {
-  local cand
-  for cand in \
-    "$SCRIPT_DIR" \
-    "$SCRIPT_DIR/deploy" \
-    "$HOME/smt/deploy" \
-    "$HOME/smt/ai_custom_smt_server/deploy" \
-    "$(pwd)/deploy" \
-    "$(pwd)"
-  do
-    if [[ -f "$cand/docker-compose.yml" && -d "$cand/../ops" ]]; then
-      (cd "$cand" && pwd)
-      return 0
-    fi
-  done
-  return 1
+assert_source_bundle() {
+  [[ -f "$SCRIPT_DIR/docker-compose.yml" ]] || die "docker-compose.yml not found in $SCRIPT_DIR"
+  [[ -d "$SOURCE_OPS_DIR" ]] || die "ops/ not found at $SOURCE_OPS_DIR — copy deploy/ and ops/ together"
 }
 
-explain_missing_deploy() {
-  echo "Could not find a valid deploy directory." >&2
-  echo >&2
-  if [[ -f "$SCRIPT_DIR/docker-compose.yml" && ! -d "$SCRIPT_DIR/../ops" ]]; then
-    echo "Found docker-compose.yml in $SCRIPT_DIR" >&2
-    echo "but sibling ops/ is missing at $(cd "$SCRIPT_DIR/.." && pwd)/ops" >&2
-    echo >&2
-    echo "Copy BOTH folders (same parent):" >&2
-    echo "  scp -r deploy ops smt@host:~/" >&2
-    echo "  # results in ~/deploy and ~/ops" >&2
-    echo "  cd ~/deploy && ./install.sh --ip YOUR.LAN.OR.PUBLIC.IP" >&2
-  else
-    echo "You need the full tree, e.g.:" >&2
-    echo "  scp -r deploy ops smt@host:~/smt/" >&2
-    echo "  cd ~/smt/deploy && ./install.sh --ip YOUR.LAN.OR.PUBLIC.IP" >&2
+assert_writable_prefix() {
+  local prefix="$1"
+  local parent probe
+  prefix="$(cd "$(dirname "$prefix")" 2>/dev/null && pwd)/$(basename "$prefix")" || prefix="$1"
+
+  if [[ -e "$prefix" && ! -d "$prefix" ]]; then
+    die "$prefix exists but is not a directory"
   fi
-  echo >&2
-  echo "Do not use --ip 0.0.0.0 — use the VM address clients dial (e.g. 192.168.122.143)." >&2
+
+  if [[ -d "$prefix" ]]; then
+    [[ -w "$prefix" ]] || die_writable "$prefix"
+    probe="$prefix/.smt-install-write-test"
+    if ! mkdir "$probe" 2>/dev/null; then
+      die_writable "$prefix"
+    fi
+    rmdir "$probe"
+    return 0
+  fi
+
+  parent="$(dirname "$prefix")"
+  while [[ ! -d "$parent" && "$parent" != "/" ]]; do
+    parent="$(dirname "$parent")"
+  done
+  [[ -w "$parent" ]] || die_writable "$prefix"
+  probe="$parent/.smt-install-write-test"
+  if ! mkdir "$probe" 2>/dev/null; then
+    die_writable "$prefix"
+  fi
+  rmdir "$probe"
 }
+
+die_writable() {
+  local prefix="$1"
+  echo "error: cannot write to $prefix" >&2
+  echo >&2
+  echo "Create it and give your user ownership, for example:" >&2
+  echo "  sudo mkdir -p $prefix" >&2
+  echo "  sudo chown \"\$USER:\$USER\" $prefix" >&2
+  echo "  ./install.sh --ip … --prefix $prefix" >&2
+  echo >&2
+  echo "Or install under your home directory (no sudo):" >&2
+  echo "  ./install.sh --ip … --prefix \"\$HOME/smt\"" >&2
+  exit 1
+}
+
+copy_install_tree() {
+  local dest_prefix="$1"
+  local dest_deploy="$dest_prefix/deploy"
+  local dest_ops="$dest_prefix/ops"
+  echo "Installing to $dest_prefix …"
+  mkdir -p "$dest_prefix"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a \
+      --exclude data --exclude updater --exclude website-data \
+      --exclude .env --exclude ops-tools \
+      "$SCRIPT_DIR/" "$dest_deploy/"
+    rsync -a --exclude audit.log "$SOURCE_OPS_DIR/" "$dest_ops/"
+  else
+    mkdir -p "$dest_deploy" "$dest_ops"
+    cp -a "$SCRIPT_DIR/." "$dest_deploy/"
+    cp -a "$SOURCE_OPS_DIR/." "$dest_ops/"
+  fi
+  echo "Copied deploy/ and ops/ → $dest_prefix"
+}
+
+resolve_install_paths() {
+  assert_source_bundle
+
+  if [[ "$DIR_SET" -eq 1 ]]; then
+    [[ -f "$DEPLOY_DIR/docker-compose.yml" ]] || die "docker-compose.yml not found in $DEPLOY_DIR"
+    [[ -d "$DEPLOY_DIR/../ops" ]] || die "ops/ not found next to deploy/ (expected $DEPLOY_DIR/../ops). scp -r deploy ops …"
+    return 0
+  fi
+
+  if [[ "$PREFIX_SET" -eq 0 && "$NON_INTERACTIVE" -eq 0 ]]; then
+    read -r -p "Install to [$DEFAULT_PREFIX]: " INSTALL_PREFIX
+    INSTALL_PREFIX="${INSTALL_PREFIX:-$DEFAULT_PREFIX}"
+  elif [[ "$PREFIX_SET" -eq 0 ]]; then
+    INSTALL_PREFIX="$DEFAULT_PREFIX"
+  fi
+
+  INSTALL_PREFIX="$(realpath -m "$INSTALL_PREFIX")"
+  DEPLOY_DIR="$INSTALL_PREFIX/deploy"
+
+  if [[ "$(realpath "$SCRIPT_DIR")" == "$(realpath "$DEPLOY_DIR")" ]]; then
+    echo "Using existing install at $DEPLOY_DIR"
+    return 0
+  fi
+
+  assert_writable_prefix "$INSTALL_PREFIX"
+  copy_install_tree "$INSTALL_PREFIX"
+}
+
+resolve_install_paths
 
 if [[ "$DIR_SET" -eq 0 ]]; then
-  DEPLOY_DIR="$(resolve_deploy_dir)" || {
-    explain_missing_deploy
-    exit 1
-  }
-fi
-
-if [[ "$DIR_SET" -eq 1 ]]; then
   [[ -f "$DEPLOY_DIR/docker-compose.yml" ]] || die "docker-compose.yml not found in $DEPLOY_DIR"
-  [[ -d "$DEPLOY_DIR/../ops" ]] || die "ops/ not found next to deploy/ (expected $DEPLOY_DIR/../ops). scp -r deploy ops …"
+  [[ -d "$DEPLOY_DIR/../ops" ]] || die "ops/ not found at $DEPLOY_DIR/../ops"
 fi
 
 if [[ -z "$EXTERNAL_IP" && "$NON_INTERACTIVE" -eq 0 ]]; then

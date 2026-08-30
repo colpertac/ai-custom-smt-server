@@ -6,7 +6,7 @@
 .EXAMPLE
   .\install.ps1 -Ip 203.0.113.10
   .\install.ps1 -Ip 203.0.113.10 -Domain play.example.com
-  .\install.ps1 -Ip 127.0.0.1 -NonInteractive
+  .\install.ps1 -Ip 127.0.0.1 -Prefix C:\smt -NonInteractive
 #>
 [CmdletBinding()]
 param(
@@ -15,6 +15,9 @@ param(
 
   [Parameter(Mandatory = $false)]
   [string] $Domain = "",
+
+  [Parameter(Mandatory = $false)]
+  [string] $Prefix = "",
 
   [Parameter(Mandatory = $false)]
   [string] $Dir = "",
@@ -27,10 +30,98 @@ param(
 
 $ErrorActionPreference = "Stop"
 $DockerInstallUrl = "https://docs.docker.com/desktop/setup/install/windows-install/"
+$DefaultPrefix = "C:\smt"
+$ScriptRoot = $PSScriptRoot
+$SourceOpsDir = Join-Path (Split-Path $ScriptRoot -Parent) "ops"
 
 function Die([string] $Message) {
   Write-Error "error: $Message"
   exit 1
+}
+
+function Die-Writable([string] $Prefix) {
+  Write-Host "error: cannot write to $Prefix" -ForegroundColor Red
+  Write-Host ""
+  Write-Host "On Windows, either:"
+  Write-Host "  • Run PowerShell as Administrator, then re-run this script"
+  Write-Host "  • Or install under your profile (no admin):"
+  Write-Host "      .\install.ps1 -Ip … -Prefix `"$env:USERPROFILE\smt`""
+  exit 1
+}
+
+function Test-WritablePrefix([string] $Prefix) {
+  if (Test-Path $Prefix -PathType Leaf) {
+    Die "$Prefix exists but is not a directory"
+  }
+  $probe = Join-Path $Prefix ".smt-install-write-test"
+  try {
+    if (-not (Test-Path $Prefix)) {
+      $parent = Split-Path $Prefix -Parent
+      if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Force -Path $parent | Out-Null
+      }
+    }
+    New-Item -ItemType Directory -Force -Path $probe | Out-Null
+    Remove-Item -Force -Recurse $probe
+  } catch {
+    Die-Writable $Prefix
+  }
+}
+
+function Copy-InstallTree([string] $DestPrefix) {
+  $destDeploy = Join-Path $DestPrefix "deploy"
+  $destOps = Join-Path $DestPrefix "ops"
+  Write-Host "Installing to $DestPrefix …"
+  New-Item -ItemType Directory -Force -Path $DestPrefix | Out-Null
+
+  $excludeDeploy = @("data", "updater", "website-data", ".env", "ops-tools")
+  robocopy $ScriptRoot $destDeploy /E /NFL /NDL /NJH /NJS /nc /ns /np `
+    /XD $excludeDeploy 2>$null | Out-Null
+  if ($LASTEXITCODE -ge 8) {
+    Die "Failed to copy deploy/ to $destDeploy (robocopy exit $LASTEXITCODE)"
+  }
+
+  robocopy $SourceOpsDir $destOps /E /NFL /NDL /NJH /NJS /nc /ns /np `
+    /XF audit.log 2>$null | Out-Null
+  if ($LASTEXITCODE -ge 8) {
+    Die "Failed to copy ops/ to $destOps (robocopy exit $LASTEXITCODE)"
+  }
+  Write-Host "Copied deploy/ and ops/ → $DestPrefix"
+}
+
+function Resolve-InstallPaths {
+  if (-not (Test-Path (Join-Path $ScriptRoot "docker-compose.yml"))) {
+    Die "docker-compose.yml not found in $ScriptRoot"
+  }
+  if (-not (Test-Path $SourceOpsDir)) {
+    Die "ops/ not found at $SourceOpsDir — copy deploy/ and ops/ together"
+  }
+
+  if ($Dir) {
+    return (Resolve-Path $Dir).Path
+  }
+
+  $installPrefix = $Prefix
+  if (-not $installPrefix -and -not $NonInteractive) {
+    $installPrefix = Read-Host "Install to [$DefaultPrefix]"
+    if (-not $installPrefix) { $installPrefix = $DefaultPrefix }
+  } elseif (-not $installPrefix) {
+    $installPrefix = $DefaultPrefix
+  }
+
+  $installPrefix = [System.IO.Path]::GetFullPath($installPrefix)
+  $deployDir = Join-Path $installPrefix "deploy"
+
+  $scriptNorm = [System.IO.Path]::GetFullPath($ScriptRoot).TrimEnd('\')
+  $deployNorm = [System.IO.Path]::GetFullPath($deployDir).TrimEnd('\')
+  if ($scriptNorm -eq $deployNorm) {
+    Write-Host "Using existing install at $deployDir"
+    return $deployDir
+  }
+
+  Test-WritablePrefix $installPrefix
+  Copy-InstallTree $installPrefix
+  return $deployDir
 }
 
 if (-not $Ip) {
@@ -43,11 +134,7 @@ if (-not $Ip) {
   Die "-Ip is required (client-facing address)"
 }
 
-$DeployDir = if ($Dir) {
-  (Resolve-Path $Dir).Path
-} else {
-  $PSScriptRoot
-}
+$DeployDir = Resolve-InstallPaths
 
 function Test-Docker {
   if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {

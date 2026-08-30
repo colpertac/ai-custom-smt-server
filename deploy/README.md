@@ -12,12 +12,17 @@ Hub images:
 **Quick start (Docker already installed):**
 
 ```bash
-# Linux / mac
+# Linux / mac — prompts for install path (default /opt/smt), copies deploy+ops there
 ./install.sh --ip YOUR.PUBLIC.IP
+./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt   # non-interactive path
 
-# Windows PowerShell (Docker Desktop)
+# Windows PowerShell (Docker Desktop) — default C:\smt
 .\install.ps1 -Ip YOUR.PUBLIC.IP
+.\install.ps1 -Ip YOUR.PUBLIC.IP -Prefix "$env:USERPROFILE\smt"   # no admin needed
 ```
+
+If the default path is not writable, the script stops with instructions (Linux:
+`sudo mkdir` + `chown`; Windows: run as Administrator or use a folder under your profile).
 
 See [youtube-1.0-setup.md](../docs/youtube-1.0-setup.md) for the recording checklist.
 
