@@ -6,6 +6,11 @@ server.
 ## Walkthroughs
 
 - [Custom encounter on an existing zone](custom-zone.md)
+- [Custom dungeon on an existing map](custom-dungeon.md)
+- [Resource compressors (Macca/Mag/Golden Apple)](resource-compressors.md)
+- [Client translation workflow](translation.md)
+- [Client updater overlay (HTTP distribute)](updater.md)
+- [Translation lingo / terminology](../translation/glossary/lingo.md)
 - [Client BinaryData guides](binarydata/README.md)
   - [Extract, edit, and rebuild a table](binarydata/round-trip.md)
   - [Create a custom item](binarydata/custom-item.md)

@@ -29,8 +29,10 @@ generated `.bin` or `.sbin` files there.
 
 | Location | Encryption | Typical role |
 | --- | --- | --- |
-| `BinaryData/Client/*.bin` | None | Client-only messages and presentation |
+| `BinaryData/Client/*.bin` | None | Client messages/presentation |
 | `BinaryData/Shield/*.sbin` | Shield-encrypted | Shared gameplay/display definitions |
+
+Phase 5 dungeon POC needs Shield `DevilData` only; no DynamicMap edit.
 
 `comp_bdpatch` reads and writes plaintext BinaryData. Shield files must be
 decrypted before loading and encrypted after saving.

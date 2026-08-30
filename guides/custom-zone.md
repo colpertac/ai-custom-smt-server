@@ -68,6 +68,10 @@ Because it is global, a GM can enter it directly:
 @zone 90102
 ```
 
+For a **private** copy of the same map (instance dungeon), see
+[custom-dungeon.md](custom-dungeon.md). Do not flip this zone to
+`Global=false` or Phase 1 `@zone` breaks.
+
 Do not substitute an arbitrary new Zone/DynamicMap ID. It must already exist
 in the loaded client/server BinaryData. See
 [syntax/server-zone.md](syntax/server-zone.md) for those distinctions.
