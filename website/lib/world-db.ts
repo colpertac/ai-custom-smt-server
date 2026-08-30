@@ -2,7 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { DatabaseSync } from "./node-sqlite"
+import { DatabaseSync } from "./node-sqlite.ts"
 
 export function getWorldDbPath(): string {
   const custom = process.env.COMP_WORLD_DB?.trim()

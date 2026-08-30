@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 
-import { DatabaseSync } from "./node-sqlite"
+import { DatabaseSync } from "./node-sqlite.ts"
 
 const DEFAULT_TTL_MS = 60 * 60 * 1000
 
