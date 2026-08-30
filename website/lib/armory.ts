@@ -14,10 +14,16 @@ import {
   resolveArmoryPortrait,
   type PortraitFingerprintInput,
 } from "@/lib/armory-portrait"
+import {
+  computeArmoryTotalStats,
+  decodeLearnedSkillIds,
+  type ArmoryComputedStats,
+} from "@/lib/armory-stats"
 import { enqueuePortraitJob } from "@/lib/portrait-queue"
 import { getWorldDb, WorldDbMissingError } from "@/lib/world-db"
 
 export { WorldDbMissingError }
+export type { ArmoryComputedStats }
 
 /** MiItemBasicData.equipType indices used as EquippedItems array slots. */
 export const EQUIP_SLOTS = [
@@ -129,6 +135,8 @@ export type ArmoryProfile = {
   title: number
   appearance: ArmoryAppearance
   stats: ArmoryStats | null
+  /** Base EntityStats + gear, fusion, tokusei, and passive expertise skills. */
+  computedStats: ArmoryComputedStats | null
   clan: ArmoryClan | null
   equipment: ArmoryEquipmentSlot[]
   expertises: ArmoryExpertise[]
@@ -196,6 +204,7 @@ type CharacterRow = {
   ActiveDemon: string
   EquippedItems: Uint8Array | Buffer | null
   EquippedVA: Uint8Array | Buffer | null
+  LearnedSkills: Uint8Array | Buffer | null
   Level: number | null
   XP: number | null
   HP: number | null
@@ -224,6 +233,19 @@ type ItemRow = {
   BasicEffect: number
   SpecialEffect: number
   ModSlots: Uint8Array | Buffer | null
+  FuseBonuses: Uint8Array | Buffer | null
+}
+
+function decodeS8Array(
+  blob: Uint8Array | Buffer | null | undefined,
+  count: number
+): number[] {
+  const out = Array.from({ length: count }, () => 0)
+  if (!blob) return out
+  const buf = Buffer.isBuffer(blob) ? blob : Buffer.from(blob)
+  const n = Math.min(count, buf.length)
+  for (let i = 0; i < n; i++) out[i] = buf.readInt8(i)
+  return out
 }
 
 function statsFromRow(row: CharacterRow): ArmoryStats | null {
@@ -264,7 +286,7 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
       `SELECT
          c.UID, c.Name, c.Gender, c.SkinType, c.HairType, c.FaceType, c.EyeType,
          c.HairColor, c.LeftEyeColor, c.RightEyeColor, c.LNC, c.CurrentTitle,
-         c.Clan, c.ActiveDemon, c.EquippedItems, c.EquippedVA,
+         c.Clan, c.ActiveDemon, c.EquippedItems, c.EquippedVA, c.LearnedSkills,
          e.Level, e.XP, e.HP, e.MP, e.MaxHP, e.MaxMP,
          e.STR, e.MAGIC, e.VIT, e.INTEL, e.SPEED, e.LUCK,
          e.CLSR, e.LNGR, e.SPELL, e.SUPPORT, e.PDEF, e.MDEF
@@ -283,18 +305,22 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
     const placeholders = present.map(() => "?").join(",")
     const rows = db
       .prepare(
-        `SELECT UID, Type, Tarot, Soul, BasicEffect, SpecialEffect, ModSlots
+        `SELECT UID, Type, Tarot, Soul, BasicEffect, SpecialEffect, ModSlots, FuseBonuses
          FROM Item WHERE UID IN (${placeholders})`
       )
       .all(...present) as ItemRow[]
     for (const it of rows) items.set(it.UID, it)
   }
 
+  const fuseBySlot = new Map<string, number[]>()
   const equipment: ArmoryEquipmentSlot[] = EQUIP_SLOTS.map((slot) => {
     const uid = equipUids[slot.index]
     const it = uid != null ? items.get(uid) : undefined
     const itemType = it?.Type ?? null
     const wiki = itemType != null ? getWikiItem(itemType) : undefined
+    if (it) {
+      fuseBySlot.set(slot.key, decodeS8Array(it.FuseBonuses, 3))
+    }
     return {
       slot: slot.key,
       label: slot.label,
@@ -334,6 +360,28 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
     if (getExpertiseMeta(e.ExpertiseID).isChain) continue
     basePoints.set(e.ExpertiseID, e.Points)
   }
+
+  const expertisePoints = new Map<number, number>(basePoints)
+  for (const chainId of listChainExpertiseIds()) {
+    const meta = getExpertiseMeta(chainId)
+    if (meta.implemented === false) continue
+    const points = computeChainExpertisePoints(chainId, basePoints)
+    if (points > 0) expertisePoints.set(chainId, points)
+  }
+
+  const learnedSkills = decodeLearnedSkillIds(row.LearnedSkills)
+  const baseStats = statsFromRow(row)
+  const computedStats =
+    baseStats != null
+      ? computeArmoryTotalStats({
+          base: baseStats,
+          equipment,
+          learnedSkills,
+          expertisePoints,
+          fuseBySlot,
+          lnc: row.LNC,
+        })
+      : null
 
   function toArmoryExpertise(
     id: number,
@@ -437,7 +485,8 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
     lnc: row.LNC,
     title: row.CurrentTitle,
     appearance,
-    stats: statsFromRow(row),
+    stats: baseStats,
+    computedStats,
     clan,
     equipment,
     expertises,

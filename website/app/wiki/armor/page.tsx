@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
 
-import { WikiItemCategoryList } from "@/features/wiki/components/WikiItemCategoryList"
+import { countWikiItems } from "@/content/wiki"
+import { WikiBrowsePanel } from "@/features/wiki/components/WikiBrowsePanel"
 
 export const metadata: Metadata = {
-  title: "Armor — Item DB",
+  title: "Armor — Item wiki",
 }
 
 export default function WikiArmorPage() {
-  return <WikiItemCategoryList category="armor" />
+  return (
+    <WikiBrowsePanel category="armor" totalCount={countWikiItems("armor")} />
+  )
 }

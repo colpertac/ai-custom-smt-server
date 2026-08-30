@@ -1,78 +1,9 @@
 import Link from "next/link"
 
+import { ArmoryEquipSlot } from "@/features/armory/components/ArmoryEquipSlot"
 import { ArmoryHero } from "@/features/armory/components/ArmoryHero"
-import type { ArmoryDemonDetail, ArmoryDemonGear } from "@/lib/armory-demons"
+import type { ArmoryDemonDetail } from "@/lib/armory-demons"
 import { cn } from "@/lib/utils"
-
-function EquipPanel({
-  slot,
-  align,
-}: {
-  slot: ArmoryDemonGear
-  align: "left" | "right"
-}) {
-  const empty = slot.itemType == null
-  const enchants: string[] = []
-  if (slot.tarot) enchants.push(`Tarot ${slot.tarot}`)
-  if (slot.soul) enchants.push(`Soul ${slot.soul}`)
-  if (slot.basicEffect) enchants.push(`Basic ${slot.basicEffect}`)
-  if (slot.specialEffect) enchants.push(`Special ${slot.specialEffect}`)
-  if (slot.modSlots.length) {
-    enchants.push(`Mods ${slot.modSlots.join("/")}`)
-  }
-
-  const body = (
-    <>
-      <span
-        className="inline-block size-9 shrink-0 border border-border bg-muted/50"
-        aria-hidden
-      />
-      <span className="min-w-0 flex-1">
-        <span className="block text-[10px] tracking-wide text-muted-foreground uppercase">
-          {slot.label}
-        </span>
-        {empty ? (
-          <span className="block truncate text-xs text-muted-foreground/70">
-            Empty
-          </span>
-        ) : (
-          <>
-            <span className="block truncate text-sm text-[#c9a0ff]">
-              {slot.name}
-            </span>
-            {enchants.length ? (
-              <span className="block text-[11px] text-[#7dcea0]">
-                {enchants.join(" · ")}
-              </span>
-            ) : (
-              <span className="block text-[11px] text-muted-foreground">
-                No crystal / mods
-              </span>
-            )}
-          </>
-        )}
-      </span>
-    </>
-  )
-
-  const rowClass = cn(
-    "flex items-center gap-2 border border-border/80 bg-background/40 px-2 py-1.5",
-    empty && "opacity-45",
-    align === "right" && "flex-row-reverse text-right"
-  )
-
-  if (!empty && slot.itemType != null) {
-    return (
-      <Link
-        href={`/wiki/items/${slot.itemType}`}
-        className={cn(rowClass, "no-underline hover:border-gold-dim")}
-      >
-        {body}
-      </Link>
-    )
-  }
-  return <div className={rowClass}>{body}</div>
-}
 
 function StatStrip({
   stats,
@@ -197,7 +128,7 @@ export function ArmoryDemonProfileView({
       <div className="grid gap-3 lg:grid-cols-[minmax(12rem,0.9fr)_minmax(14rem,1.2fr)_minmax(12rem,0.9fr)]">
         <div className="flex flex-col gap-1.5">
           {left.map((s) => (
-            <EquipPanel key={s.slot} slot={s} align="left" />
+            <ArmoryEquipSlot key={s.slot} slot={s} align="left" />
           ))}
         </div>
 
@@ -208,7 +139,7 @@ export function ArmoryDemonProfileView({
 
         <div className="flex flex-col gap-1.5">
           {right.map((s) => (
-            <EquipPanel key={s.slot} slot={s} align="right" />
+            <ArmoryEquipSlot key={s.slot} slot={s} align="right" />
           ))}
         </div>
       </div>

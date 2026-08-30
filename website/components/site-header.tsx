@@ -10,7 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navClass =
-  "text-xs uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline tracking-[var(--density-nav-tracking)]"
+  "shrink-0 text-xs uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline tracking-[var(--density-nav-tracking)]"
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -24,9 +24,11 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-chrome-border bg-chrome">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-(--density-header-y)">
-        <Link href="/" className="group no-underline">
-          <p className="font-heading text-lg tracking-[0.2em] text-accent-foreground uppercase">
+      <div
+        className="flex w-full items-center justify-between gap-2 px-3 py-(--density-header-y) sm:gap-3 sm:px-4 lg:px-5"
+      >
+        <Link href="/" className="group shrink-0 no-underline">
+          <p className="font-heading text-base tracking-[0.16em] text-accent-foreground uppercase sm:text-lg sm:tracking-[0.2em]">
             Imagine{" "}
             <span className="text-gold transition-colors group-hover:text-gold-hot">
               Private
@@ -36,7 +38,7 @@ export function SiteHeader() {
 
         <nav
           aria-label="Primary"
-          className="flex flex-wrap items-center gap-x-4 gap-y-2"
+          className="flex shrink min-w-0 items-center gap-x-2 overflow-x-auto sm:gap-x-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <Link
             href="/news"
@@ -71,6 +73,15 @@ export function SiteHeader() {
           >
             Armory
           </Link>
+          <Link
+            href="/wiki"
+            className={cn(
+              navClass,
+              pathname.startsWith("/wiki") && "text-gold"
+            )}
+          >
+            Wiki
+          </Link>
           {admin ? (
             <Link
               href="/admin"
@@ -89,7 +100,7 @@ export function SiteHeader() {
                 href="/account"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "sm" }),
-                  "uppercase tracking-wider",
+                  "shrink-0 uppercase tracking-wider",
                   pathname.startsWith("/account") && "border-gold-dim text-gold"
                 )}
               >
@@ -99,7 +110,7 @@ export function SiteHeader() {
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="uppercase tracking-wider text-nav-muted"
+                className="shrink-0 uppercase tracking-wider text-nav-muted"
                 disabled={logoutMutation.isPending}
                 onClick={() => {
                   logoutMutation.mutate(undefined, {
@@ -125,14 +136,14 @@ export function SiteHeader() {
                 href={playHref}
                 className={cn(
                   buttonVariants({ size: "sm" }),
-                  "uppercase tracking-wider"
+                  "shrink-0 uppercase tracking-wider"
                 )}
               >
                 {playLabel}
               </Link>
             </>
           )}
-          <SkinSwitcher className="ml-1" />
+          <SkinSwitcher className="ml-0.5 shrink-0 sm:ml-1" />
         </nav>
       </div>
     </header>

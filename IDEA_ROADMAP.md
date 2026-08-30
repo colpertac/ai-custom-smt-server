@@ -223,7 +223,9 @@ Build in this order:
 - [ ] Plan full catalog extraction pipeline (BinaryData → stable JSON/SQLite).
 - [ ] Export stable searchable item/armor data from BinaryData (full catalog).
 - [ ] Add item pages, filters, icons, stats, and source/version metadata.
+- [x] COMP shop “where to get” on item pages (managed `compshop-*.xml` only).
 - [ ] Regenerate wiki data as part of the content build.
+- [ ] **Post-MVP:** item acquisition analyzer — scan drops, quests, zone loot tables, and world NPC shops to show non-COMP sources (fancy scraper / cross-file analyzer).
 
 ### 16C — COMP shop editor
 
@@ -259,13 +261,12 @@ Build in this order:
 - [x] Demon detail `/armory/demon/[id]` (reunion ranks, Tarot/Soul gear, force).
 - [ ] DevilData name catalog for demon labels.
 - [ ] Title/achievement name catalogs.
-- [ ] **Gear-aware stats** — world `EntityStats` is unequipped base only.
-  Replicate channel `CharacterState::RecalculateStats` offline: ItemData
-  CorrectTbl (via BasicEffect) + FuseBonuses + Tarot/Soul/SpecialEffect
-  tokusei (`SItem` / Enchant / `data/tokusei`) + dependent CLSR/SPELL/etc.
-  UI should match client `Total (Base + Bonus)` with green gear delta.
-  **Pinned with portrait render** — same appearance fingerprint / async
-  worker story (see below); do not block armory MVP on either.
+- [ ] **Gear-aware stats** — offline `computeArmoryTotalStats()` applies gear
+  CorrectTbl, fuse bonuses, Tarot/Soul tokusei (incl. LNC/level conditions),
+  equipment/enchant sets, SItem tokusei, expertise passives, and learned
+  switch skills (assumed on). Still missing: digitalize (~27% of partner demon
+  MAG can explain remaining gap vs in-game), session buffs/status, quest
+  bonuses, compendium, mod slots. UI: green `(base +bonus)` on `/armory/[name]`.
 - [ ] **Portrait render (WoW-style cache)** — preferred path documented in
   [AI/armory-character-render.md](AI/armory-character-render.md):
   (1) drive real Imagine client → screenshot → cache by fingerprint;

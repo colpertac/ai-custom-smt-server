@@ -16,12 +16,15 @@ export function WikiItemIcon({
     return (
       <span
         className={cn(
-          "inline-block border border-border bg-muted/60",
+          "inline-flex shrink-0 items-center justify-center border border-border bg-muted/60 font-mono font-semibold uppercase tracking-wide text-muted-foreground",
           className
         )}
-        style={{ width: size, height: size }}
-        aria-hidden
-      />
+        style={{ width: size, height: size, fontSize: Math.max(9, Math.round(size * 0.28)) }}
+        aria-label="Icon not available"
+        title="Icon not available"
+      >
+        NA
+      </span>
     )
   }
 

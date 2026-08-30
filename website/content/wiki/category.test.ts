@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest"
 
 import {
   getWikiItemCategory,
-  listWikiItems,
+  searchWikiCatalog,
   type WikiItem,
 } from "@/content/wiki"
 
-function stub(partial: Partial<WikiItem> & Pick<WikiItem, "id" | "equipType">): WikiItem {
+function stub(
+  partial: Partial<WikiItem> & Pick<WikiItem, "id" | "equipType">
+): WikiItem {
   return {
     name: "x",
     description: "",
@@ -51,12 +53,24 @@ describe("getWikiItemCategory", () => {
   })
 })
 
-describe("listWikiItems sample buckets", () => {
-  it("splits the prototype sample across three categories", () => {
-    expect(listWikiItems("weapons").every((i) => i.equipType.includes("WEAPON"))).toBe(
+describe("searchWikiCatalog", () => {
+  it("filters by name and caps results", () => {
+    const { total, items } = searchWikiCatalog("ointment", {
+      category: "items",
+      limit: 5,
+    })
+    expect(total).toBeGreaterThan(0)
+    expect(items.length).toBeLessThanOrEqual(5)
+    expect(items.every((i) => i.name.toLowerCase().includes("ointment"))).toBe(
       true
     )
-    expect(listWikiItems("armor").length).toBeGreaterThan(0)
-    expect(listWikiItems("items").length).toBeGreaterThan(0)
+  })
+
+  it("paginates with offset", () => {
+    const page0 = searchWikiCatalog("", { category: "weapons", limit: 10, offset: 0 })
+    const page1 = searchWikiCatalog("", { category: "weapons", limit: 10, offset: 10 })
+    expect(page0.items.length).toBe(10)
+    expect(page1.items.length).toBe(10)
+    expect(page0.items[0]?.id).not.toBe(page1.items[0]?.id)
   })
 })

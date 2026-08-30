@@ -18,6 +18,8 @@ export type ArmoryDemonGear = {
   label: string
   itemType: number | null
   name: string | null
+  level: number | null
+  iconSrc: string | null
   /** Tarot crystal enchant id (0 = none). */
   tarot: number
   /** Soul crystal enchant id (0 = none). */
@@ -254,6 +256,8 @@ function equipmentFromSlots(
       label: DEMON_EQUIP_LABELS[i] ?? `Equip ${i + 1}`,
       itemType,
       name: wiki?.name ?? (itemType != null ? `Item ${itemType}` : null),
+      level: wiki?.level ?? null,
+      iconSrc: wiki?.iconSrc ?? null,
       tarot: row?.Tarot ?? 0,
       soul: row?.Soul ?? 0,
       basicEffect: row?.BasicEffect ?? 0,

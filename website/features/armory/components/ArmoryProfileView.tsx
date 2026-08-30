@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
+import { ArmoryEquipSlot } from "@/features/armory/components/ArmoryEquipSlot"
 import { ArmoryHero } from "@/features/armory/components/ArmoryHero"
 import { ArmoryLncGauge } from "@/features/armory/components/ArmoryLncGauge"
 import type {
@@ -9,6 +10,7 @@ import type {
   ArmoryProfile,
   ArmoryStats,
 } from "@/lib/armory"
+import type { ArmoryComputedStats } from "@/lib/armory-stats"
 import { cn } from "@/lib/utils"
 
 const LEFT_SLOTS = new Set([
@@ -31,85 +33,6 @@ const RIGHT_SLOTS = new Set([
   "weapon",
   "bullets",
 ])
-
-function EquipRow({
-  slot,
-  align,
-}: {
-  slot: ArmoryEquipmentSlot
-  align: "left" | "right"
-}) {
-  const empty = slot.itemType == null
-  const enchants: string[] = []
-  if (slot.tarot) enchants.push(`Tarot ${slot.tarot}`)
-  if (slot.soul) enchants.push(`Soul ${slot.soul}`)
-  if (slot.basicEffect) enchants.push(`Basic ${slot.basicEffect}`)
-  if (slot.specialEffect) enchants.push(`Special ${slot.specialEffect}`)
-  if (slot.modSlots.length) enchants.push(`Mods ${slot.modSlots.join("/")}`)
-
-  const body = (
-    <>
-      {slot.iconSrc ? (
-        <Image
-          src={slot.iconSrc}
-          alt=""
-          width={36}
-          height={36}
-          className="pixelated shrink-0 border border-border bg-black/40"
-          unoptimized
-        />
-      ) : (
-        <span
-          className="inline-block size-9 shrink-0 border border-border bg-muted/50"
-          aria-hidden
-        />
-      )}
-      <span className="min-w-0 flex-1">
-        <span className="block text-[10px] tracking-wide text-muted-foreground uppercase">
-          {slot.label}
-        </span>
-        {empty ? (
-          <span className="block truncate text-xs text-muted-foreground/70">
-            Empty
-          </span>
-        ) : (
-          <>
-            <span className="block truncate text-sm text-[#c9a0ff]">
-              {slot.name}
-              {slot.level != null ? (
-                <span className="ml-1 text-foreground/80">{slot.level}</span>
-              ) : null}
-            </span>
-            {enchants.length ? (
-              <span className="block text-[11px] text-[#7dcea0]">
-                {enchants.join(" · ")}
-              </span>
-            ) : null}
-          </>
-        )}
-      </span>
-    </>
-  )
-
-  const rowClass = cn(
-    "flex items-center gap-2 border border-border/80 bg-background/40 px-2 py-1.5",
-    empty && "opacity-45",
-    align === "right" && "flex-row-reverse text-right"
-  )
-
-  if (!empty && slot.itemType != null) {
-    return (
-      <Link
-        href={`/wiki/items/${slot.itemType}`}
-        className={cn(rowClass, "no-underline hover:border-gold-dim")}
-      >
-        {body}
-      </Link>
-    )
-  }
-
-  return <div className={rowClass}>{body}</div>
-}
 
 function GenderIcon({ gender }: { gender: number }) {
   if (gender === 0) {
@@ -141,68 +64,113 @@ function GenderIcon({ gender }: { gender: number }) {
   )
 }
 
-function StatStrip({ stats }: { stats: ArmoryStats }) {
+function StatValue({
+  label,
+  base,
+  total,
+  bonus,
+}: {
+  label: string
+  base: number
+  total?: number
+  bonus?: number
+}) {
+  const showTotal = total != null && bonus != null && bonus !== 0
+  return (
+    <div className="flex gap-1.5">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium tabular-nums text-foreground">
+        {showTotal ? (
+          <>
+            <span>{total}</span>
+            <span className="ml-1.5 font-normal normal-case text-muted-foreground">
+              ({base}
+              <span className="text-[#4ade80]">
+                {" "}
+                +{bonus}
+              </span>
+              )
+            </span>
+          </>
+        ) : (
+          <>
+            {base}
+            <span className="ml-1 font-normal normal-case text-muted-foreground">
+              (base)
+            </span>
+          </>
+        )}
+      </dd>
+    </div>
+  )
+}
+
+function StatStrip({
+  stats,
+  computed,
+}: {
+  stats: ArmoryStats
+  computed: ArmoryComputedStats | null
+}) {
   const primary = [
-    ["STR", stats.str],
-    ["MAG", stats.magic],
-    ["VIT", stats.vit],
-    ["INT", stats.intel],
-    ["SPD", stats.speed],
-    ["LUK", stats.luck],
+    ["STR", "str"],
+    ["MAG", "magic"],
+    ["VIT", "vit"],
+    ["INT", "intel"],
+    ["SPD", "speed"],
+    ["LUK", "luck"],
   ] as const
   const combat = [
-    ["CLSR", stats.clsr],
-    ["LNGR", stats.lngr],
-    ["SPELL", stats.spell],
-    ["SUPP", stats.support],
-    ["PDEF", stats.pdef],
-    ["MDEF", stats.mdef],
+    ["CLSR", "clsr"],
+    ["LNGR", "lngr"],
+    ["SPELL", "spell"],
+    ["SUPP", "support"],
+    ["PDEF", "pdef"],
+    ["MDEF", "mdef"],
   ] as const
+
+  const total = computed?.total
+  const bonus = computed?.bonus
 
   return (
     <div className="space-y-2">
       <p className="text-xs">
         <span className="font-medium text-[#4ade80]">
-          HP {stats.hp}/{stats.maxHp}
+          HP {(total?.hp ?? stats.hp)}/{(total?.maxHp ?? stats.maxHp)}
         </span>
         <span className="text-muted-foreground"> · </span>
         <span className="font-medium text-[#38bdf8]">
-          MP {stats.mp}/{stats.maxMp}
+          MP {(total?.mp ?? stats.mp)}/{(total?.maxMp ?? stats.maxMp)}
         </span>
         {stats.xp > 0 ? (
           <span className="text-muted-foreground">{` · XP ${stats.xp}`}</span>
         ) : null}
       </p>
       <p className="text-[10px] text-muted-foreground">
-        Stats below are <span className="text-foreground/80">unequipped base</span>{" "}
-        from the character DB (same as stripping all gear). In-game totals also
-        add ItemData CorrectTbl, Tarot/Soul, SpecialEffect tokusei, and fusion
-        bonuses — not applied here yet.
+        Totals include gear, Tarot/Soul (incl. LNC/LUC conditions &amp; sets),
+        equipment sets, learned passives, and switch skills (assumed on). Still
+        missing: session buffs, digitalize, compendium, and quest bonuses.
       </p>
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs tracking-wide uppercase">
-        {primary.map(([k, v]) => (
-          <div key={k} className="flex gap-1.5">
-            <dt className="text-muted-foreground">{k}</dt>
-            <dd className="font-medium tabular-nums text-foreground">
-              {v}
-              <span className="ml-1 font-normal normal-case text-muted-foreground">
-                (base)
-              </span>
-            </dd>
-          </div>
+        {primary.map(([label, key]) => (
+          <StatValue
+            key={label}
+            label={label}
+            base={stats[key]}
+            total={total?.[key]}
+            bonus={bonus?.[key]}
+          />
         ))}
       </dl>
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs tracking-wide uppercase">
-        {combat.map(([k, v]) => (
-          <div key={k} className="flex gap-1.5">
-            <dt className="text-muted-foreground">{k}</dt>
-            <dd className="font-medium tabular-nums text-foreground">
-              {v}
-              <span className="ml-1 font-normal normal-case text-muted-foreground">
-                (base)
-              </span>
-            </dd>
-          </div>
+        {combat.map(([label, key]) => (
+          <StatValue
+            key={label}
+            label={label}
+            base={stats[key]}
+            total={total?.[key]}
+            bonus={bonus?.[key]}
+          />
         ))}
       </dl>
     </div>
@@ -254,7 +222,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
         ) : null}
         {profile.stats ? (
           <div className="mt-3">
-            <StatStrip stats={profile.stats} />
+            <StatStrip stats={profile.stats} computed={profile.computedStats} />
           </div>
         ) : null}
       </header>
@@ -262,7 +230,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
       <div className="grid gap-3 lg:grid-cols-[minmax(12rem,0.9fr)_minmax(14rem,1.2fr)_minmax(12rem,0.9fr)]">
         <div className="flex flex-col gap-1.5">
           {left.map((s) => (
-            <EquipRow key={s.slot} slot={s} align="left" />
+            <ArmoryEquipSlot key={s.slot} slot={s} align="left" />
           ))}
         </div>
 
@@ -274,7 +242,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
 
         <div className="flex flex-col gap-1.5">
           {right.map((s) => (
-            <EquipRow key={s.slot} slot={s} align="right" />
+            <ArmoryEquipSlot key={s.slot} slot={s} align="right" />
           ))}
         </div>
       </div>
