@@ -261,8 +261,89 @@ def _parse_docker_cpu(s: str) -> float | None:
         return None
 
 
+def _docker_inspect_states(names: list[str]) -> dict[str, dict[str, Any]]:
+    """Map container name → status / exit / error / health (best-effort)."""
+    if not names:
+        return {}
+    try:
+        r = subprocess.run(
+            [
+                "docker",
+                "inspect",
+                "--format",
+                "{{.Name}}\t{{.State.Status}}\t{{.State.ExitCode}}\t"
+                "{{.State.Error}}\t{{if .State.Health}}{{.State.Health.Status}}"
+                "{{else}}-{{end}}",
+                *names,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=8,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return {}
+
+    out: dict[str, dict[str, Any]] = {}
+    for line in (r.stdout or "").splitlines():
+        cols = line.split("\t")
+        if len(cols) < 4:
+            continue
+        raw_name, status, exit_s, err = cols[0], cols[1], cols[2], cols[3]
+        health = cols[4] if len(cols) > 4 else "-"
+        cname = raw_name.lstrip("/")
+        try:
+            exit_code = int(exit_s)
+        except ValueError:
+            exit_code = None
+        out[cname] = {
+            "status": (status or "").strip().lower() or "unknown",
+            "exitCode": exit_code,
+            "stateError": (err or "").strip(),
+            "health": None if health in {"", "-"} else health.strip().lower(),
+        }
+    return out
+
+
+def _process_error_from_inspect(info: dict[str, Any] | None) -> str | None:
+    if not info:
+        return "container missing"
+    status = info.get("status") or "unknown"
+    if status == "running":
+        health = info.get("health")
+        if health == "unhealthy":
+            return "healthcheck failing"
+        if health == "starting":
+            return "healthcheck starting"
+        return None
+    if status in {"restarting", "dead"}:
+        err = info.get("stateError") or ""
+        code = info.get("exitCode")
+        bits = [status]
+        if code not in (None, 0):
+            bits.append(f"exit {code}")
+        if err:
+            bits.append(err[:160])
+        return " — ".join(bits)
+    if status == "exited":
+        code = info.get("exitCode")
+        err = info.get("stateError") or ""
+        if code in (None, 0) and not err:
+            return None  # clean stop → offline, not error
+        bits = ["exited"]
+        if code not in (None, 0):
+            bits.append(f"exit {code}")
+        if err:
+            bits.append(err[:160])
+        return " — ".join(bits)
+    if status in {"created", "paused", "removing"}:
+        return status
+    return status
+
+
 def _docker_processes() -> list[dict[str, Any]]:
     names = [c for _, c in _DOCKER_CONTAINERS]
+    inspect = _docker_inspect_states(names)
     try:
         r = subprocess.run(
             [
@@ -286,9 +367,11 @@ def _docker_processes() -> list[dict[str, Any]]:
                 "pid": None,
                 "rssBytes": None,
                 "cpuPercent": None,
+                "container": cname,
+                "status": (inspect.get(cname) or {}).get("status"),
                 "error": "docker_stats_failed",
             }
-            for label, _ in _DOCKER_CONTAINERS
+            for label, cname in _DOCKER_CONTAINERS
         ]
 
     by_name: dict[str, dict[str, Any]] = {}
@@ -306,29 +389,33 @@ def _docker_processes() -> list[dict[str, Any]]:
 
     out: list[dict[str, Any]] = []
     for label, cname in _DOCKER_CONTAINERS:
+        info = inspect.get(cname)
         hit = by_name.get(cname)
+        err = _process_error_from_inspect(info)
+        running = bool(hit) or (info or {}).get("status") == "running"
+        # Prefer stats presence for true "up"; inspect can lag briefly.
         if hit:
-            out.append(
-                {
-                    "name": label,
-                    "running": True,
-                    "pid": None,
-                    "rssBytes": hit.get("rssBytes"),
-                    "cpuPercent": hit.get("cpuPercent"),
-                    "container": cname,
-                }
-            )
-        else:
-            out.append(
-                {
-                    "name": label,
-                    "running": False,
-                    "pid": None,
-                    "rssBytes": None,
-                    "cpuPercent": None,
-                    "container": cname,
-                }
-            )
+            running = True
+            # Unhealthy still counts as running but with error (orange in UI).
+            if (info or {}).get("health") == "unhealthy":
+                err = err or "healthcheck failing"
+            elif (info or {}).get("health") == "starting":
+                err = err or "healthcheck starting"
+            else:
+                err = None
+        row: dict[str, Any] = {
+            "name": label,
+            "running": running,
+            "pid": None,
+            "rssBytes": hit.get("rssBytes") if hit else None,
+            "cpuPercent": hit.get("cpuPercent") if hit else None,
+            "container": cname,
+            "status": (info or {}).get("status")
+            or ("running" if running else "offline"),
+        }
+        if err:
+            row["error"] = err
+        out.append(row)
     return out
 
 

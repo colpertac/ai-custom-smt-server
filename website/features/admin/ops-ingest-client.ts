@@ -7,7 +7,13 @@ export type IngestJobView = {
   logs: IngestLogLine[]
   finished?: boolean
   error?: string | null
-  result?: { ok?: boolean; message?: string; firstBoot?: unknown }
+  result?: {
+    ok?: boolean
+    message?: string
+    detail?: string
+    error?: string
+    firstBoot?: unknown
+  }
 }
 
 type ApiEnvelope<T> = {
@@ -140,7 +146,14 @@ export async function runIngestZip(opts: {
     }
     opts.onJob(snap.data)
     if (snap.data.finished || snap.data.phase === "done" || snap.data.phase === "error") {
-      const resultMsg = snap.data.result?.message
+      const resultMsg =
+        snap.data.result?.message ||
+        snap.data.result?.detail ||
+        (snap.data.result?.error
+          ? `${snap.data.result.error}${
+              snap.data.result.detail ? `: ${snap.data.result.detail}` : ""
+            }`
+          : undefined)
       const failed =
         snap.data.phase === "error" || snap.data.result?.ok === false
       return {

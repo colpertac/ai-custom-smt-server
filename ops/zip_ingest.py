@@ -51,6 +51,17 @@ MAX_UNCOMPRESSED = {
 DISK_HEADROOM = 256 * 1024 * 1024
 
 
+def _fmt_bytes(n: int) -> str:
+    x = float(max(0, n))
+    for unit in ("B", "KiB", "MiB", "GiB", "TiB"):
+        if x < 1024.0 or unit == "TiB":
+            if unit == "B":
+                return f"{int(x)} B"
+            return f"{x:.1f} {unit}"
+        x /= 1024.0
+    return f"{n} B"
+
+
 @dataclass
 class IngestResult:
     ok: bool
@@ -395,7 +406,11 @@ def ingest_zip_file(
                     mode=mode,
                     release_id=release_id,
                     error="disk_full",
-                    detail=f"need ~{need} free on runtime, have {free_rt}",
+                    detail=(
+                        f"need ~{_fmt_bytes(need)} free under runtime "
+                        f"({runtime}), have {_fmt_bytes(free_rt)} — "
+                        "free disk on the host or upload BinaryData and Map separately"
+                    ),
                 )
             if any(b == "overlay" for b, _, _ in planned):
                 free_up = _free_bytes(updater)
@@ -406,7 +421,10 @@ def ingest_zip_file(
                         mode=mode,
                         release_id=release_id,
                         error="disk_full",
-                        detail=f"need ~{need} free on updater, have {free_up}",
+                        detail=(
+                            f"need ~{_fmt_bytes(need)} free under updater "
+                            f"({updater}), have {_fmt_bytes(free_up)}"
+                        ),
                     )
 
             files = 0
