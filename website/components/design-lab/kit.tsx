@@ -52,7 +52,7 @@ export function LabViewport({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[100] overflow-y-auto bg-[#05070b] text-[#ced3e0]",
+        "lab-viewport fixed inset-0 z-[100] overflow-y-auto bg-[#05070b] text-[#ced3e0]",
         className
       )}
     >

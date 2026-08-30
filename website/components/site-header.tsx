@@ -10,7 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navClass =
-  "text-xs tracking-[0.14em] uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline"
+  "text-xs uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline tracking-[var(--density-nav-tracking)]"
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -24,7 +24,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-chrome-border bg-chrome">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-(--density-header-y)">
         <Link href="/" className="group no-underline">
           <p className="font-heading text-lg tracking-[0.2em] text-accent-foreground uppercase">
             Imagine{" "}

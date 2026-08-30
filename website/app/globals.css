@@ -11,9 +11,11 @@
 :root {
   --radius: 0.05rem;
   --font-sans: var(--font-body), "Verdana", "Geneva", sans-serif;
-  --font-serif: var(--font-heading), "Times New Roman", serif;
+  --font-serif: var(--font-heading-face), "Times New Roman", serif;
   --font-mono: var(--font-mono-face), "Courier New", Courier, monospace;
+  /* Body + display stacks — skins override these */
   --skin-font: var(--font-sans);
+  --skin-heading: var(--font-heading-face), "Times New Roman", serif;
 
   --shadow-color: #000000;
   --shadow-opacity: 0.45;
@@ -24,6 +26,26 @@
   --letter-spacing: 0.01em;
   --spacing: 0.25rem;
   --tracking-normal: 0.01em;
+
+  /* Density — banner default; skins override */
+  --density-header-y: 0.75rem;
+  --density-section-y: 2.5rem;
+  --density-panel-y: 1.5rem;
+  --density-panel-x: 1.25rem;
+  --density-hero-min: 22rem;
+  --density-hero-min-sm: 28rem;
+  --density-control-h: 2rem;
+  --density-control-h-sm: 1.75rem;
+  --density-control-h-lg: 2.5rem;
+  --density-control-px: 0.75rem;
+  --density-control-px-lg: 1rem;
+  --density-control-text: 0.75rem;
+  --density-control-text-lg: 0.875rem;
+  --density-card: 1rem;
+  --density-nav-tracking: 0.14em;
+  --density-stack: 1.5rem;
+  --density-lead: 0.875rem;
+  --density-footer-y: 1.5rem;
 
   --shadow-2xs: 0 1px 0 0 hsl(0 0% 0% / 0.35);
   --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
@@ -96,8 +118,31 @@
     linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 55%, #0a0a0a 100%);
 }
 
-/* test1 — Stage */
+/* test1 — Stage (roomy whitespace) */
 [data-skin="stage"] {
+  --spacing: 0.3125rem;
+  --tracking-normal: 0.02em;
+  --density-header-y: 1.25rem;
+  --density-section-y: 3.75rem;
+  --density-panel-y: 2rem;
+  --density-panel-x: 1.75rem;
+  --density-hero-min: 30rem;
+  --density-hero-min-sm: 38rem;
+  --density-control-h: 2.5rem;
+  --density-control-h-sm: 2rem;
+  --density-control-h-lg: 2.875rem;
+  --density-control-px: 1rem;
+  --density-control-px-lg: 1.25rem;
+  --density-control-text: 0.8125rem;
+  --density-control-text-lg: 0.9375rem;
+  --density-card: 1.35rem;
+  --density-nav-tracking: 0.18em;
+  --density-stack: 2.25rem;
+  --density-lead: 1.0625rem;
+  --density-footer-y: 2rem;
+  /* Cinzel display + Source Sans — theatrical stage */
+  --skin-font: var(--font-sans);
+  --skin-heading: var(--font-heading-face), "Times New Roman", serif;
   --background: #07090e;
   --foreground: #ced3e0;
   --card: #1e293e;
@@ -139,7 +184,6 @@
   --hero-lead: #8b93a7;
   --panel: #1e293e;
   --panel-rule: #334155;
-  --skin-font: var(--font-sans);
   --hero-bg:
     radial-gradient(ellipse 90% 55% at 50% -10%, #1e293e 0%, transparent 58%),
     radial-gradient(ellipse 50% 40% at 80% 90%, #162032 0%, transparent 55%),
@@ -163,6 +207,28 @@
 
 /* test2 — NewOrder frame */
 [data-skin="neworder"] {
+  --spacing: 0.235rem;
+  --density-header-y: 0.6rem;
+  --density-section-y: 2rem;
+  --density-panel-y: 1.25rem;
+  --density-panel-x: 1.1rem;
+  --density-hero-min: 20rem;
+  --density-hero-min-sm: 24rem;
+  --density-control-h: 1.85rem;
+  --density-control-h-sm: 1.6rem;
+  --density-control-h-lg: 2.25rem;
+  --density-control-px: 0.7rem;
+  --density-control-px-lg: 0.9rem;
+  --density-control-text: 0.7rem;
+  --density-control-text-lg: 0.8125rem;
+  --density-card: 0.9rem;
+  --density-nav-tracking: 0.12em;
+  --density-stack: 1.25rem;
+  --density-lead: 0.8125rem;
+  --density-footer-y: 1.25rem;
+  /* Cinzel titles + mono body — archived NewOrder support page */
+  --skin-font: var(--font-mono);
+  --skin-heading: var(--font-heading-face), "Times New Roman", serif;
   --background: #000000;
   --foreground: #ced3e0;
   --card: #1e293e;
@@ -204,7 +270,6 @@
   --hero-lead: #8b93a7;
   --panel: #1e293e;
   --panel-rule: #1e293e;
-  --skin-font: var(--font-sans);
   --hero-bg:
     linear-gradient(180deg, #1a2030 0%, #000 55%),
     radial-gradient(ellipse at 30% 40%, #3a4a6a 0%, transparent 55%),
@@ -232,6 +297,29 @@
 
 /* test3 — Forum denser */
 [data-skin="forum"] {
+  --spacing: 0.22rem;
+  --tracking-normal: 0.005em;
+  --density-header-y: 0.5rem;
+  --density-section-y: 1.75rem;
+  --density-panel-y: 1rem;
+  --density-panel-x: 1rem;
+  --density-hero-min: 18rem;
+  --density-hero-min-sm: 22rem;
+  --density-control-h: 1.75rem;
+  --density-control-h-sm: 1.5rem;
+  --density-control-h-lg: 2.1rem;
+  --density-control-px: 0.65rem;
+  --density-control-px-lg: 0.85rem;
+  --density-control-text: 0.7rem;
+  --density-control-text-lg: 0.8rem;
+  --density-card: 0.75rem;
+  --density-nav-tracking: 0.1em;
+  --density-stack: 1rem;
+  --density-lead: 0.8125rem;
+  --density-footer-y: 1rem;
+  /* All sans — denser community board */
+  --skin-font: var(--font-body), Verdana, Geneva, sans-serif;
+  --skin-heading: var(--font-body), Verdana, Geneva, sans-serif;
   --background: #0d0d0d;
   --foreground: #ced3e0;
   --card: #121212;
@@ -277,7 +365,6 @@
   --hero-lead: #8b93a7;
   --panel: #141414;
   --panel-rule: #222222;
-  --skin-font: var(--font-sans);
   --hero-bg:
     linear-gradient(180deg, transparent 40%, #0d0d0d 100%),
     radial-gradient(ellipse at 40% 20%, #1b5b0a33 0%, transparent 55%),
@@ -332,7 +419,9 @@
   --hero-lead: #b0b6c4;
   --panel: #141414;
   --panel-rule: #2a2a2a;
+  /* Cinzel + Source Sans — polished private-server */
   --skin-font: var(--font-sans);
+  --skin-heading: var(--font-heading-face), "Times New Roman", serif;
   --hero-bg:
     linear-gradient(180deg, transparent 30%, #0e0e0e 100%),
     radial-gradient(ellipse at 60% 30%, #2a3a55 0%, transparent 50%),
@@ -346,8 +435,28 @@
     linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 55%, #0a0a0a 100%);
 }
 
-/* test5 — COMP terminal */
+/* test5 — COMP terminal (tight) */
 [data-skin="comp"] {
+  --spacing: 0.2rem;
+  --tracking-normal: 0;
+  --density-header-y: 0.4rem;
+  --density-section-y: 1.5rem;
+  --density-panel-y: 0.85rem;
+  --density-panel-x: 0.85rem;
+  --density-hero-min: 16rem;
+  --density-hero-min-sm: 20rem;
+  --density-control-h: 1.65rem;
+  --density-control-h-sm: 1.4rem;
+  --density-control-h-lg: 2rem;
+  --density-control-px: 0.6rem;
+  --density-control-px-lg: 0.75rem;
+  --density-control-text: 0.7rem;
+  --density-control-text-lg: 0.75rem;
+  --density-card: 0.65rem;
+  --density-nav-tracking: 0.08em;
+  --density-stack: 0.85rem;
+  --density-lead: 0.75rem;
+  --density-footer-y: 0.85rem;
   --background: #020403;
   --foreground: #8fbf8c;
   --card: #061008;
@@ -393,7 +502,9 @@
   --hero-lead: #6a9a68;
   --panel: #061008;
   --panel-rule: #1f3d1c;
+  /* Full mono terminal */
   --skin-font: var(--font-mono);
+  --skin-heading: var(--font-mono-face), "Courier New", Courier, monospace;
   --hero-bg:
     repeating-linear-gradient(
       0deg,
@@ -426,7 +537,7 @@
 
 @theme inline {
   --font-mono: var(--font-mono);
-  --font-heading: var(--font-heading);
+  --font-heading: var(--skin-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -540,6 +651,37 @@
 }
 
 @layer components {
+  /*
+    Design-lab mockups are the visual source of truth.
+    Reset inherited live-site skin tokens so /test* stays untainted.
+  */
+  .lab-viewport {
+    --skin-heading: var(--font-heading-face), "Times New Roman", serif;
+    --skin-font: var(--font-body), "Verdana", "Geneva", sans-serif;
+    --spacing: 0.25rem;
+    --tracking-normal: 0.01em;
+    --density-header-y: 0.75rem;
+    --density-section-y: 2.5rem;
+    --density-panel-y: 1.5rem;
+    --density-panel-x: 1.25rem;
+    --density-hero-min: 22rem;
+    --density-hero-min-sm: 28rem;
+    --density-control-h: 2rem;
+    --density-control-h-sm: 1.75rem;
+    --density-control-h-lg: 2.5rem;
+    --density-control-px: 0.75rem;
+    --density-control-px-lg: 1rem;
+    --density-control-text: 0.75rem;
+    --density-control-text-lg: 0.875rem;
+    --density-card: 1rem;
+    --density-nav-tracking: 0.14em;
+    --density-stack: 1.5rem;
+    --density-lead: 0.875rem;
+    --density-footer-y: 1.5rem;
+    font-family: var(--skin-font);
+    letter-spacing: var(--tracking-normal);
+  }
+
   .site-atmosphere {
     background-color: var(--background);
     background-image: var(--atmosphere-bg);
@@ -583,7 +725,7 @@
 
   .armory-hero-name {
     display: block;
-    font-family: var(--font-heading), "Times New Roman", serif;
+    font-family: var(--skin-heading);
     font-size: clamp(1.75rem, 4vw, 2.75rem);
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -615,7 +757,7 @@
   }
 
   .font-heading {
-    font-family: var(--font-heading), "Times New Roman", serif;
+    font-family: var(--skin-heading);
     letter-spacing: 0.04em;
   }
 

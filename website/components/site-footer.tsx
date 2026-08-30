@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-chrome-border bg-background py-6 text-center text-[0.7rem] tracking-wide text-footer-muted">
+    <footer className="border-t border-chrome-border bg-background py-(--density-footer-y) text-center text-[0.7rem] tracking-wide text-footer-muted">
       <p>
         Unofficial private server fan project. Not affiliated with Atlus, Sega,
         or the original IMAGINE operators.

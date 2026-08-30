@@ -11,7 +11,7 @@ import "./globals.css"
 
 const heading = Cinzel({
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-heading-face",
   weight: ["400", "600", "700"],
 })
 

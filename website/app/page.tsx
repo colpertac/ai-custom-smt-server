@@ -14,28 +14,34 @@ export default async function HomePage() {
   return (
     <>
       <section
-        className="relative flex min-h-[22rem] items-end border-b border-chrome-border sm:min-h-[28rem]"
+        className="relative flex min-h-(--density-hero-min) items-end border-b border-chrome-border sm:min-h-(--density-hero-min-sm)"
         style={{ background: "var(--hero-bg)" }}
       >
-        <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
+        <div className="relative mx-auto w-full max-w-5xl px-4 py-(--density-section-y)">
           <p className="text-[0.7rem] tracking-[0.4em] text-gold uppercase">
             Private realm
           </p>
           <h1 className="mt-3 max-w-xl font-heading text-4xl leading-tight tracking-[0.08em] text-white uppercase sm:text-5xl">
             Return to Tokyo
           </h1>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-hero-lead sm:text-base">
+          <p
+            className="mt-4 max-w-md leading-relaxed text-hero-lead sm:text-base"
+            style={{ fontSize: "var(--density-lead)" }}
+          >
             Account portal, updater, and status for a Shin Megami Tensei:
             IMAGINE private server — built for players who still remember the
             COMP.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div
+            className="flex flex-wrap gap-3"
+            style={{ marginTop: "var(--density-stack)" }}
+          >
             {session ? (
               <Link
                 href="/account"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "uppercase tracking-[0.14em]"
+                  "uppercase tracking-[var(--density-nav-tracking)]"
                 )}
               >
                 Open account
@@ -45,7 +51,7 @@ export default async function HomePage() {
                 href="/register"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "uppercase tracking-[0.14em]"
+                  "uppercase tracking-[var(--density-nav-tracking)]"
                 )}
               >
                 Create account
@@ -55,7 +61,7 @@ export default async function HomePage() {
               href="/download"
               className={cn(
                 buttonVariants({ size: "lg", variant: "outline" }),
-                "uppercase tracking-[0.14em]"
+                "uppercase tracking-[var(--density-nav-tracking)]"
               )}
             >
               Download client
@@ -65,7 +71,7 @@ export default async function HomePage() {
                 href="/login"
                 className={cn(
                   buttonVariants({ size: "lg", variant: "ghost" }),
-                  "uppercase tracking-[0.14em] text-nav-muted"
+                  "uppercase tracking-[var(--density-nav-tracking)] text-nav-muted"
                 )}
               >
                 Sign in
@@ -98,7 +104,10 @@ export default async function HomePage() {
             },
           ] as const
         ).map((f) => (
-          <div key={f.t} className="bg-panel px-5 py-6">
+          <div
+            key={f.t}
+            className="bg-panel px-(--density-panel-x) py-(--density-panel-y)"
+          >
             <h2 className="font-heading text-sm tracking-[0.2em] text-gold uppercase">
               {f.t}
             </h2>
@@ -115,7 +124,7 @@ export default async function HomePage() {
         ))}
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-10">
+      <section className="mx-auto max-w-5xl px-4 py-(--density-section-y)">
         <div className="flex items-end justify-between gap-4 border-b border-chrome-border pb-3">
           <h2 className="font-heading text-xl tracking-[0.15em] uppercase">
             Latest news
