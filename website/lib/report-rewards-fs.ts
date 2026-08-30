@@ -54,6 +54,14 @@ export function getReportRewardsDir(): string {
   if (process.env.COMP_REPORT_REWARDS_DIR?.trim()) {
     return path.resolve(process.env.COMP_REPORT_REWARDS_DIR.trim())
   }
+  const websiteData = process.env.WEBSITE_DATA_DIR?.trim()
+  if (websiteData) {
+    return path.join(
+      path.resolve(websiteData),
+      "server-content",
+      "report-rewards"
+    )
+  }
   return path.resolve(LIB_DIR, "../../server-content/report-rewards")
 }
 
@@ -116,7 +124,7 @@ export function workingReportRewardsStampPath(): string {
 
 export function defaultReportRewardGlobal(): ReportRewardGlobal {
   return {
-    reportItemId: 900001,
+    reportItemId: 38172,
     reportItemLabel: "Dungeon Report",
     eventPrefix: "AI_REPORT_TRADE",
     greetMessageId: 1183186,

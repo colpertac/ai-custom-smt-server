@@ -1,7 +1,13 @@
 # Ops tools mount
 
-Place Linux amd64 binaries here (or point `OPS_TOOLS_DIR` at another dir).
-Compose mounts this at `/opt/comp-tools` (`BIN_DIR` for the ops sidecar).
+`install.sh` stages Linux amd64 binaries from a local **comp_hack** build
+(`comp_encrypt`, `comp_rehash`, `comp_decrypt`, `comp_bdpatch`) into this
+directory and into `ops/comp-tools/` for the Docker image.
+
+VM installs without comp_hack use **`colpertac/smt-ops:latest`** from Docker Hub
+(tools baked in at `/opt/comp-tools`).
+
+Build on the same glibc as `colpertac/smt-comp` (Debian trixie / glibc 2.38+).
 
 | Binary | Needed for |
 | --- | --- |
@@ -10,13 +16,11 @@ Compose mounts this at `/opt/comp-tools` (`BIN_DIR` for the ops sidecar).
 | `comp_decrypt` | Shield BinaryData read (custom dialog messages) |
 | `comp_bdpatch` | Custom `CEventMessage` labels for Dungeon loot NPC packages |
 
-Example (from repo root):
+Manual staging:
 
 ```bash
-ln -sf ../../comp_hack/build-localdeps-v31/bin/comp_rehash .
-ln -sf ../../comp_hack/build-localdeps-v31/bin/comp_encrypt .
-ln -sf ../../comp_hack/build-localdeps-v31/bin/comp_decrypt .
-ln -sf ../../comp_hack/build-localdeps-v31/bin/comp_bdpatch .
+./deploy/scripts/stage-ops-tools.sh
+# or: COMP_HACK_DIR=/path/to/comp_hack ./deploy/scripts/stage-ops-tools.sh
 ```
 
 Without `comp_bdpatch` + decrypt/encrypt, Lane A publish still works for

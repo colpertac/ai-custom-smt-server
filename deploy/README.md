@@ -36,7 +36,8 @@ Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxm
 
 # Manual run (without install script)
 cp .env.example .env   # EXTERNAL_IP, SESSION_SECRET, OPS_TOKEN, UPDATER_ROOT, …
-mkdir -p website-data/server-content/{config,shops,payouts}
+mkdir -p website-data/server-content/{config,shops,payouts,report-rewards}
+mkdir -p updater/{base,overlay,site}
 chmod -R a+rwX website-data   # website container runs as uid 1001
 docker compose pull && docker compose up -d --build
 ```

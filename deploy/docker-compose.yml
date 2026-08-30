@@ -148,8 +148,8 @@ services:
       - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater
       - ./:/compose:ro
       - ops-audit:/var/log/smt-ops
-      # Optional: host dir with comp_rehash / encrypt / decrypt / bdpatch
-      - ${OPS_TOOLS_DIR:-./ops-tools}:/opt/comp-tools:ro
+      # Optional dev override — default tools are baked into the smt-ops image (/opt/comp-tools).
+      # Set OPS_TOOLS_DIR in .env to mount a host dir instead.
     healthcheck:
       test:
         [
@@ -186,6 +186,10 @@ services:
       COMP_CONFIG_DIR: /website-data/server-content/config
       COMP_SHOPS_DIR: /website-data/server-content/shops
       COMP_PAYOUTS_DIR: /website-data/server-content/payouts
+      COMP_REPORT_REWARDS_DIR: /website-data/server-content/report-rewards
+      # Read-only SQLite for armory + admin character autocomplete (mounted at /comp).
+      COMP_WORLD_DB: /comp/database/world.sqlite3
+      COMP_LOBBY_DB: /comp/database/comp_hack.sqlite3
       # Forgot password + welcome email (Resend). COMP_RESET_SECRET must match lobby.
       COMP_RESET_SECRET: ${COMP_RESET_SECRET:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}

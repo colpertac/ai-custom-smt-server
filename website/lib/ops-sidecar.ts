@@ -17,6 +17,7 @@ export type OpsFirstBoot = {
   missing: string[]
   binarydata?: OpsFirstBootBucket
   maps?: OpsFirstBootBucket
+  serverdata?: OpsFirstBootBucket
   packages?: OpsFirstBootBucket
   overlay?: OpsFirstBootBucket
 }
@@ -202,6 +203,7 @@ function parseFirstBoot(raw: unknown): OpsFirstBoot | undefined {
     missing,
     binarydata: parseFirstBootBucket(o.binarydata),
     maps: parseFirstBootBucket(o.maps),
+    serverdata: parseFirstBootBucket(o.serverdata),
     packages: parseFirstBootBucket(o.packages),
     overlay: parseFirstBootBucket(o.overlay),
   }

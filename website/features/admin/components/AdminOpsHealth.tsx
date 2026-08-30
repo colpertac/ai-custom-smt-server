@@ -446,6 +446,19 @@ export function AdminOpsHealth() {
 
   const controlOk = Boolean(health?.ok)
   const firstBootBlocked = Boolean(health?.firstBoot?.needed)
+  const firstBootMissing = health?.firstBoot?.missing ?? []
+  const firstBootMissingText = (() => {
+    const labels: Record<string, string> = {
+      binarydata: "character art (BinaryData)",
+      maps: "zone maps",
+      serverdata: "server zone definitions",
+    }
+    const parts = firstBootMissing.map((m) => labels[m] ?? m)
+    if (parts.length === 0) return "required game data"
+    if (parts.length === 1) return parts[0]
+    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`
+    return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`
+  })()
   const staleText = health ? channelStaleMessage(health) : null
   const overlayText = health ? overlayStaleMessage(health) : null
   const publishing =
@@ -543,8 +556,8 @@ export function AdminOpsHealth() {
       ) : null}
       {firstBootBlocked ? (
         <FormAlert variant="warning">
-          First-time setup is not finished — upload character art data
-          (BinaryData) and zone maps before starting servers.
+          First-time setup is not finished — still need {firstBootMissingText}{" "}
+          before starting servers.
         </FormAlert>
       ) : null}
       {staleText ? <FormAlert variant="warning">{staleText}</FormAlert> : null}

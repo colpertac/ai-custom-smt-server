@@ -50,6 +50,18 @@ MAX_UNCOMPRESSED = {
 
 DISK_HEADROOM = 256 * 1024 * 1024
 
+# Server zone/event definitions (channel LoadData) — top-level folders in content zips.
+SERVERDATA_PREFIXES = (
+    "data",
+    "zones",
+    "events",
+    "partials",
+    "shops",
+    "skills",
+    "webapps",
+    "webgames",
+)
+
 
 def _fmt_bytes(n: int) -> str:
     x = float(max(0, n))
@@ -206,6 +218,10 @@ def _route_member(kind: str, rel: str) -> tuple[str, str] | None:
         return None
 
     if kind == "content":
+        for prefix in SERVERDATA_PREFIXES:
+            under = _strip_prefix(rel, prefix)
+            if under is not None:
+                return "serverdata", f"{prefix}/{under}" if under else prefix
         for prefix, bucket in (
             ("BinaryData", "binarydata"),
             ("binarydata", "binarydata"),
@@ -230,7 +246,13 @@ def _route_member(kind: str, rel: str) -> tuple[str, str] | None:
             return "overlay", client_under
         server_under = _strip_prefix(rel, "server", "Server")
         if server_under is not None:
-            return _route_member("content", server_under)
+            routed = _route_member("content", server_under)
+            if routed is not None:
+                return routed
+            for prefix in SERVERDATA_PREFIXES:
+                under = _strip_prefix(server_under, prefix)
+                if under is not None:
+                    return "serverdata", f"{prefix}/{under}" if under else prefix
         overlay_under = _strip_prefix(rel, "overlay")
         if overlay_under is not None:
             return "overlay", overlay_under
@@ -246,6 +268,8 @@ def _bucket_root(bucket: str, *, runtime: Path, updater: Path) -> Path:
         return runtime / "datastore" / "Map"
     if bucket == "packages":
         return runtime / "datastore" / "packages"
+    if bucket == "serverdata":
+        return runtime / "datastore"
     if bucket == "overlay":
         return updater / "overlay"
     raise ValueError(f"unknown bucket {bucket}")

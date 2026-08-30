@@ -182,11 +182,41 @@ $EnvFile = Join-Path $DeployDir ".env"
 
 New-Item -ItemType Directory -Force -Path (Join-Path $UpdaterRoot "overlay") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $UpdaterRoot "base") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $UpdaterRoot "site") | Out-Null
+
+function Seed-UpdaterIfNeeded {
+  $seed = Join-Path $DeployDir "seed\updater"
+  $ver = Join-Path $UpdaterRoot "overlay\hashlist.ver"
+  if (-not (Test-Path $seed)) { return }
+  if (-not (Test-Path $ver)) {
+    Copy-Item -Path (Join-Path $seed "*") -Destination $UpdaterRoot -Recurse -Force
+    Write-Host "Seeded updater from deploy/seed/updater (empty overlay — hashlist.ver ready)"
+  }
+}
+
+Seed-UpdaterIfNeeded
 New-Item -ItemType Directory -Force -Path $DataDir | Out-Null
 New-Item -ItemType Directory -Force -Path $OpsTools | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\config") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\shops") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\payouts") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards\dungeons") | Out-Null
+
+function Seed-ServerContentSubdir([string] $Subdir) {
+  $dest = Join-Path $WebsiteData "server-content\$Subdir"
+  $seed = Join-Path $DeployDir "seed\server-content\$Subdir"
+  if (-not (Test-Path $seed)) { return }
+  $hasFiles = Get-ChildItem -Path $dest -Force -ErrorAction SilentlyContinue | Select-Object -First 1
+  if (-not $hasFiles) {
+    Copy-Item -Path (Join-Path $seed "*") -Destination $dest -Recurse -Force
+    Write-Host "Seeded server-content/$Subdir from deploy/seed/server-content/$Subdir"
+  }
+}
+
+Seed-ServerContentSubdir "shops"
+Seed-ServerContentSubdir "payouts"
+Seed-ServerContentSubdir "report-rewards"
 
 $hostLabel = if ($Domain) { $Domain } else { $Ip }
 $SiteUrl = "http://${hostLabel}:${WebsitePort}"
@@ -255,6 +285,7 @@ COOKIE_SECURE=false
 OPS_URL=http://ops:14710
 COMP_IMAGE=colpertac/smt-comp:latest
 WEBSITE_IMAGE=colpertac/smt-website:latest
+OPS_IMAGE=colpertac/smt-ops:latest
 "@
 if ($ResendApiKey) { $envBody += "`nRESEND_API_KEY=$ResendApiKey" }
 if ($ResendFromEmail) { $envBody += "`nRESEND_FROM_EMAIL=$ResendFromEmail" }
@@ -270,10 +301,33 @@ Write-Host "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env — k
 
 Push-Location $DeployDir
 try {
+  $stageScript = Join-Path $DeployDir "scripts\stage-ops-tools.sh"
+  $opsDir = Join-Path (Split-Path $DeployDir -Parent) "ops"
+  $opsBuildLocal = $false
+  if ((Test-Path $stageScript) -and (Test-Path (Join-Path $opsDir "Dockerfile"))) {
+    $bash = Get-Command bash -ErrorAction SilentlyContinue
+    if ($bash) {
+      & bash $stageScript
+      if ($LASTEXITCODE -eq 0) {
+        $opsBuildLocal = $true
+        Write-Host "Ops tools staged — will build smt-ops:local from ../ops."
+        (Get-Content $EnvFile) -replace '^OPS_IMAGE=.*', 'OPS_IMAGE=colpertac/smt-ops:local' | Set-Content $EnvFile
+      } else {
+        Write-Host "No local comp_hack build — pulling colpertac/smt-ops:latest (tools baked in)."
+      }
+    }
+  } else {
+    Write-Host "Will pull colpertac/smt-ops:latest (tools baked in)."
+  }
   Write-Host "Pulling Hub images and starting stack…"
-  # Pull published services only — ops is built from ../ops (not on Hub yet).
-  docker compose pull lobby world channel website updater 2>$null
-  docker compose up -d --build
+  if ($opsBuildLocal) {
+    docker compose pull lobby world channel website updater 2>$null
+    docker compose build ops
+    docker compose up -d
+  } else {
+    docker compose pull lobby world channel website updater ops 2>$null
+    docker compose up -d
+  }
   if ($LASTEXITCODE -ne 0) { Die "docker compose up failed (exit $LASTEXITCODE)" }
 } finally {
   Pop-Location
@@ -295,5 +349,4 @@ Write-Host "  5. Allow ports 10666, 14666, 8765, $WebsitePort in Windows Firewal
 Write-Host "  6. Optional: Admin → Email — paste Resend API key + from address for forgot-password mail."
 Write-Host "     Restart lobby once after saving (Overview → restart services if needed)."
 Write-Host ""
-Write-Host "Optional: Linux amd64 comp_rehash + comp_encrypt in $OpsTools for Lane B / Client prep."
 Write-Host "Docs: docs/youtube-1.0-setup.md"

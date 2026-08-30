@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "payout": {
+    "id": "suginami-gold",
+    "name": "Suginami Tunnels (Gold)",
+    "description": "Clear bonus for gold-tier instance 5481. Shares AI_PAY_SUGINAMI_AFTER_* with bronze/silver.",
+    "family": "Suginami Tunnels",
+    "difficulty": "gold",
+    "mode": "normal",
+    "notes": "Stock clear loot already spawns boss crates; bonus grants CP only (crateCount 0). Custom loot via APPEND on gold stock crate.",
+    "enabled": true,
+    "instanceId": 5481,
+    "instanceIds": [5481, 5482],
+    "dedupFlag": 901202,
+    "bossGroupId": 901202,
+    "dropSetId": 901102,
+    "spotId": 5000,
+    "crateCount": 0,
+    "cp": 100,
+    "crateDrops": [
+      {
+        "itemId": 699,
+        "minStack": 1,
+        "maxStack": 2,
+        "rate": 100
+      }
+    ],
+    "clearItems": [],
+    "hooks": {
+      "afterNormalLootEventId": "AI_PAY_SUGINAMI_AFTER_NORMAL",
+      "afterFiendLootEventId": "AI_PAY_SUGINAMI_AFTER_FIEND",
+      "bonusEventId": "AI_PAY_SUGINAMI_GOLD_BONUS",
+      "bonusFiendEventId": "AI_PAY_SUGINAMI_GOLD_BONUS_FIEND",
+      "resumeNormalNext": "D54_540101_Q317_L"
+    }
+  }
+}

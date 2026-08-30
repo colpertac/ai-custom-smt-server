@@ -62,11 +62,13 @@ your-workspace/
 ```
 
 Runtime data (`data/`, `updater/`, custom zones) stays on the host — not in git.
-Upload game files through the admin UI after install.
 
-## License
+**What install prepares vs what you supply:**
 
-Website and ops tooling: see repository license (if added).
-COMP_hack is AGPL — see [colpertac/comp_hack](https://github.com/colpertac/comp_hack).
+| Content | Source | Copyright |
+| --- | --- | --- |
+| Config XML (`lobby.xml`, …) | install seeds | no |
+| Server zones/events (`datastore/zones`, `data/`, …) | `comp_hack/datastore` submodule (AGPL) — install stages when sibling repo present | no (open server defs) |
+| BinaryData + Map | game **client** files — upload via Admin → Game files | **yes** (Atlus) — do not commit |
 
 Do **not** commit copyrighted game assets (BinaryData, client files) to any public repo.

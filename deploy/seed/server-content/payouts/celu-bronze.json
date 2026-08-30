@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "payout": {
+    "id": "celu-bronze",
+    "name": "Celu Tower (Bronze)",
+    "description": "Clear bonus for instance 5501. Shared AI_PAY_CELU_TOWER_AFTER_* dispatcher.",
+    "family": "Celu Tower",
+    "difficulty": "bronze",
+    "mode": "normal",
+    "notes": "Stock SG1_01 already spawns 5 boss crates; bonus grants CP only (crateCount 0). Custom loot via APPEND DropSet 5500.",
+    "enabled": true,
+    "instanceId": 5501,
+    "dedupFlag": 901213,
+    "bossGroupId": 901213,
+    "dropSetId": 901113,
+    "spotId": 60101,
+    "crateCount": 0,
+    "cp": 100,
+    "crateDrops": [
+      {
+        "itemId": 699,
+        "minStack": 1,
+        "maxStack": 2,
+        "rate": 100
+      }
+    ],
+    "clearItems": [],
+    "hooks": {
+      "afterNormalLootEventId": "AI_PAY_CELU_TOWER_AFTER_NORMAL",
+      "afterFiendLootEventId": "AI_PAY_CELU_TOWER_AFTER_FIEND",
+      "bonusEventId": "AI_PAY_CELU_TOWER_BRONZE_BONUS",
+      "bonusFiendEventId": "AI_PAY_CELU_TOWER_BRONZE_BONUS_FIEND",
+      "resumeNormalNext": "D55_550101_550X_SG1_02a"
+    }
+  }
+}

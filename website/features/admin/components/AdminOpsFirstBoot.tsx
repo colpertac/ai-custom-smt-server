@@ -24,11 +24,25 @@ type FirstBoot = {
   missing: string[]
   binarydata?: Bucket
   maps?: Bucket
+  serverdata?: Bucket
   packages?: Bucket
   overlay?: Bucket
 }
 
 type KindId = "content" | "binarydata" | "maps" | "packages"
+
+function missingLabel(missing: string[]): string {
+  const labels: Record<string, string> = {
+    binarydata: "character art (BinaryData)",
+    maps: "zone maps",
+    serverdata: "server zone definitions",
+  }
+  const parts = missing.map((m) => labels[m] ?? m)
+  if (parts.length === 0) return "required game data"
+  if (parts.length === 1) return parts[0]
+  if (parts.length === 2) return `${parts[0]} and ${parts[1]}`
+  return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`
+}
 
 function BucketRow({
   label,
@@ -188,6 +202,7 @@ export function AdminOpsFirstBoot() {
 
   const ready = Boolean(boot?.ready)
   const busy = pending || starting
+  const missing = boot?.missing ?? []
 
   return (
     <section className="space-y-3 border border-border/80 bg-muted/20 px-3 py-3">
@@ -196,9 +211,10 @@ export function AdminOpsFirstBoot() {
           First-time setup
         </h2>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          The live server data folders look empty. Upload character art data
-          (BinaryData) and zone maps, then start the game servers. Files for the
-          player updater can wait until you ship custom content.
+          Upload character art (BinaryData) and zone maps from your game client,
+          then start the game servers. Server zone definitions are usually
+          seeded automatically. Updater files can wait until you ship custom
+          content.
         </p>
       </div>
       {error ? (
@@ -207,11 +223,12 @@ export function AdminOpsFirstBoot() {
       {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
       {ready ? (
         <FormAlert variant="success">
-          Character art and maps are in place. Start servers when you are ready.
+          Required data is in place. Start servers when you are ready.
         </FormAlert>
       ) : (
         <FormAlert variant="warning">
-          Start is blocked until character art data and maps are uploaded.
+          Start is blocked until {missingLabel(missing)}{" "}
+          {missing.length === 1 ? "is" : "are"} uploaded.
         </FormAlert>
       )}
       <OpsIngestStatus uploadPct={uploadPct} uploading={pending} job={job} />
@@ -222,6 +239,11 @@ export function AdminOpsFirstBoot() {
           bucket={boot?.binarydata}
         />
         <BucketRow label="Zone maps" required bucket={boot?.maps} />
+        <BucketRow
+          label="Server zone defs"
+          required
+          bucket={boot?.serverdata}
+        />
         <BucketRow label="Packages" required={false} bucket={boot?.packages} />
         <BucketRow
           label="Updater files"

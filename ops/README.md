@@ -16,8 +16,11 @@ cd deploy && docker compose up -d --build ops website
 - Service `ops` on the `smt` bridge; **not** published to the host.
 - Website uses `OPS_URL=http://ops:14710`.
 - `OPS_BACKEND=docker` + `/var/run/docker.sock` for restart / Lane C.
-- Put Linux amd64 tools in `deploy/ops-tools/` (or `OPS_TOOLS_DIR`), mounted
-  at `/opt/comp-tools` (`BIN_DIR`):
+- **comp_encrypt / comp_rehash / comp_decrypt / comp_bdpatch** live in the
+  `smt-ops` image at `/opt/comp-tools` (`BIN_DIR`). `install.sh` stages them
+  from a local **comp_hack** build when present; VM installs pull
+  `colpertac/smt-ops:latest`. Optional dev override: `OPS_TOOLS_DIR` in
+  `.env` to bind-mount `deploy/ops-tools/`.
   - `comp_rehash` — Lane B overlay hashlist
   - `comp_encrypt` / `comp_decrypt` — Shield BinaryData + Client prep
   - `comp_bdpatch` — custom CEventMessage dialog strings (Dungeon loot NPC
