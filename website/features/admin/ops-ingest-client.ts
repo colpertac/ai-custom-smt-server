@@ -134,7 +134,7 @@ export async function runIngestZip(opts: {
     if (!snap.success || !snap.data) {
       return {
         ok: false,
-        message: snap.message || "Lost ingest job (restart ops-sidecar?)",
+        message: snap.message || "Upload job lost — is server control still running?",
         job: null,
       }
     }

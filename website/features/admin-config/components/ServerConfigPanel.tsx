@@ -124,7 +124,7 @@ export function ServerConfigPanel() {
       const warnText = result.warnings.length
         ? ` (${result.warnings.map((w) => `${w.path}: ${w.message}`).join("; ")})`
         : ""
-      setOk(`Saved to working copy (schema OK)${warnText}`)
+      setOk(`Saved draft (schema OK)${warnText}`)
       await refreshList()
     } catch (e) {
       if (e instanceof ConfigSaveError) {
@@ -153,7 +153,7 @@ export function ServerConfigPanel() {
       const validated = await validateAdminConfigPublish()
       setLastReleaseId(validated.releaseId ?? null)
       const bits = [
-        "Deploy validation passed (staged candidate, live untouched)",
+        "Draft checked OK (live server untouched)",
         validated.releaseId ? `release ${validated.releaseId}` : null,
         validated.files?.length ? validated.files.join(", ") : null,
         validated.restart?.length
@@ -255,7 +255,7 @@ export function ServerConfigPanel() {
           disabled={!document || saving || !dirty}
           onClick={() => void save()}
         >
-          {saving ? "Validating…" : "Save working copy"}
+          {saving ? "Validating…" : "Save draft"}
         </Button>
         <Button
           type="button"
@@ -263,7 +263,7 @@ export function ServerConfigPanel() {
           disabled={publishing || loading || validating}
           onClick={() => void validateDeploy()}
         >
-          {validating ? "Checking deploy…" : "Validate deploy"}
+          {validating ? "Checking…" : "Check before apply"}
         </Button>
         <Button
           type="button"
@@ -273,7 +273,7 @@ export function ServerConfigPanel() {
         >
           {publishing
             ? publishPhase === "validating"
-              ? "Validating…"
+              ? "Checking…"
               : "Applying…"
             : "Apply & restart"}
         </Button>
@@ -283,7 +283,7 @@ export function ServerConfigPanel() {
           disabled={publishing || validating}
           onClick={() => void rollback()}
         >
-          Rollback last apply
+          Undo last apply
         </Button>
         {supportsSimpleMode(tab) ? (
           <div className="ml-auto flex items-center gap-2 text-sm">
@@ -302,19 +302,20 @@ export function ServerConfigPanel() {
           </div>
         ) : null}
         <p className="w-full text-xs text-muted-foreground">
-          <strong className="font-medium text-foreground">Save</strong> runs
-          schema checks (min/max, types, enums).{" "}
-          <strong className="font-medium text-foreground">Validate deploy</strong>{" "}
-          stages a Lane A candidate under{" "}
-          <code className="text-xs">runtime/releases/lane-a-config/</code>{" "}
-          (schema + port collision checks; live config untouched).{" "}
+          <strong className="font-medium text-foreground">Save draft</strong>{" "}
+          checks field types and ranges.{" "}
+          <strong className="font-medium text-foreground">
+            Check before apply
+          </strong>{" "}
+          verifies the draft (including port conflicts) without changing the
+          live server.{" "}
           <strong className="font-medium text-foreground">Apply &amp; restart</strong>{" "}
-          copies that candidate live and restarts processes.
+          copies the draft live and restarts the affected game processes.
           {supportsSimpleMode(tab) && simpleMode ? (
             <>
               {" "}
-              Simple mode hides infra fields (ports, logs, DH keys, DB). Switch
-              off for the full schema.
+              Simple mode hides infra fields (ports, logs, keys, database).
+              Switch off for the full form.
             </>
           ) : null}
         </p>
@@ -358,7 +359,7 @@ export function ServerConfigPanel() {
               {statusFor(f.id)?.description || f.description}
               {statusFor(f.id)?.dirty ? (
                 <span className="ml-2 text-amber-700">
-                  (working copy differs from live)
+                  (draft differs from live)
                 </span>
               ) : null}
             </p>
@@ -433,10 +434,9 @@ export function ServerConfigPanel() {
           <DialogHeader>
             <DialogTitle>Apply server config?</DialogTitle>
             <DialogDescription>
-              Copies the working-copy XMLs into live{" "}
-              <code className="text-xs">runtime/config/</code> and restarts
-              lobby / world / channel as needed. Players on those processes will
-              be disconnected.
+              Copies your draft settings to the live server and restarts login /
+              world / game channel as needed. Players on those processes will be
+              disconnected.
               {dirty ? " Unsaved edits on this tab will be saved first." : null}
             </DialogDescription>
           </DialogHeader>

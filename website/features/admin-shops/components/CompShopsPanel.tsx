@@ -608,7 +608,7 @@ export function CompShopsPanel() {
                 </FormAlert>
               )}
               {saveMutation.isSuccess && !isDirty && (
-                <FormAlert variant="success">Saved to working copy.</FormAlert>
+                <FormAlert variant="success">Saved draft.</FormAlert>
               )}
 
               <div className="flex flex-wrap gap-2 pt-2">

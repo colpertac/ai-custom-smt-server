@@ -22,33 +22,33 @@ import { api } from "@/lib/kyClient"
 const KINDS = [
   {
     id: "release",
-    label: "Release (client + server) — usual",
-    hint: "Zip with client/ → updater/overlay + rehash; server/ → datastore (restart channel)",
+    label: "Full release (players + server) — usual",
+    hint: "Zip with client/ (files players download) and server/ (live server data). Restart the game channel after server changes.",
   },
   {
     id: "content",
-    label: "Content (multi, no client/ prefix)",
-    hint: "Top-level BinaryData/, Map/, packages/, overlay/ (server trees + optional overlay/)",
+    label: "Mixed content (no client/ folder)",
+    hint: "Top-level BinaryData/, Map/, packages/, and/or overlay/ folders in one zip.",
   },
   {
     id: "binarydata",
-    label: "Server BinaryData only",
-    hint: "→ datastore/BinaryData/ (channel; no ImagineUpdate)",
+    label: "Character art data (BinaryData)",
+    hint: "Goes to live server data only. Restart the game channel afterward. Players do not download this via the updater.",
   },
   {
     id: "maps",
-    label: "Server maps only",
-    hint: "→ datastore/Map/ (channel; no ImagineUpdate)",
+    label: "Zone maps",
+    hint: "Goes to live server data only. Restart the game channel afterward.",
   },
   {
     id: "packages",
     label: "Packages only",
-    hint: "→ datastore/packages/ (*.zip members; merge-only)",
+    hint: "Server package zips (merge only — replace is not available).",
   },
   {
     id: "overlay",
-    label: "Client overlay only",
-    hint: "→ updater/overlay/ + rehash (translations / client files; no channel restart)",
+    label: "Updater files only",
+    hint: "Files the game updater downloads (translations, client assets). Refresh updater list runs automatically.",
   },
 ] as const
 
@@ -146,7 +146,7 @@ export function AdminOpsIngest() {
         setError(json.message || `HTTP ${response.status}`)
         return
       }
-      setOk(json.message || "Overlay rehashed")
+      setOk(json.message || "Updater list refreshed")
       window.dispatchEvent(new Event("ops-freshness-changed"))
     } catch (e) {
       setError(e instanceof Error ? e.message : "rehash failed")
@@ -158,53 +158,44 @@ export function AdminOpsIngest() {
   const kindMeta = KINDS.find((k) => k.id === kind)
 
   return (
-    <section className="mt-12">
+    <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
-          Content zip
-        </h2>
+        <div>
+          <h2 className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+            Upload game files
+          </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Add character art, maps, or files players download with the game
+            updater. For a new item or demon, use a full release zip when you
+            can.
+          </p>
+        </div>
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label="What do the zip kinds mean?"
+          className="shrink-0"
+          aria-label="Help: what each upload type means"
           onClick={() => setHelpOpen(true)}
         >
           <CircleHelp className="size-4 text-muted-foreground" />
         </Button>
       </div>
-      <div className="gold-rule mt-2 max-w-[12rem]" />
-      <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-        One upload path for server datastore and/or client updater files. For a
-        new item/demon, prefer{" "}
-        <span className="text-foreground">Release</span> with{" "}
-        <code className="text-foreground">client/</code> and{" "}
-        <code className="text-foreground">server/</code>. Overlay files land in{" "}
-        <code className="text-foreground">updater/overlay/</code> (what
-        ImagineUpdate downloads) and rehash automatically; datastore trees need
-        a <span className="text-foreground">channel restart</span>.
-      </p>
       {error ? (
-        <FormAlert className="mt-4" variant="error">
-          {error}
-        </FormAlert>
+        <FormAlert variant="error">{error}</FormAlert>
       ) : null}
-      {ok ? (
-        <FormAlert className="mt-4" variant="success">
-          {ok}
-        </FormAlert>
-      ) : null}
+      {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
       {overlayStale && !ok ? (
-        <FormAlert className="mt-4" variant="warning">
-          Overlay files changed without a successful rehash. Run{" "}
-          <span className="text-foreground">Rehash overlay</span> so clients can
-          update.
+        <FormAlert variant="warning">
+          Updater files changed but the download list was not refreshed. Click{" "}
+          <span className="text-foreground">Refresh updater list</span> so
+          players can download the new files.
         </FormAlert>
       ) : null}
       <OpsIngestStatus uploadPct={uploadPct} uploading={pending} job={job} />
-      <div className="mt-4 flex max-w-xl flex-col gap-3">
+      <div className="flex max-w-xl flex-col gap-3 border border-border/80 bg-muted/20 px-3 py-3">
         <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">Kind</span>
+          <span className="text-muted-foreground">What are you uploading?</span>
           <select
             className="border border-border bg-muted/40 px-2 py-1.5 text-sm text-foreground"
             value={kind}
@@ -255,10 +246,11 @@ export function AdminOpsIngest() {
             <span>
               <span className="text-foreground">Replace</span>
               <span className="block text-xs text-muted-foreground">
-                Destination becomes an exact mirror of the zip for Maps /
-                BinaryData / overlay. Files missing from the zip are deleted.
+                Destination becomes an exact copy of the zip for maps,
+                character art, or updater files. Files missing from the zip are
+                deleted.
                 {kind === "packages"
-                  ? " (Unavailable for Packages.)"
+                  ? " (Not available for packages.)"
                   : ""}
               </span>
             </span>
@@ -292,7 +284,7 @@ export function AdminOpsIngest() {
               : mode === "replace"
                 ? "Upload & replace"
                 : kind === "overlay" || kind === "release"
-                  ? "Upload & rehash"
+                  ? "Upload & refresh list"
                   : "Upload & merge"}
           </Button>
           <Button
@@ -302,7 +294,7 @@ export function AdminOpsIngest() {
             disabled={busy}
             onClick={() => void rehash()}
           >
-            {rehashing ? "Rehashing…" : "Rehash overlay"}
+            {rehashing ? "Refreshing…" : "Refresh updater list"}
           </Button>
         </div>
       </div>
@@ -310,55 +302,55 @@ export function AdminOpsIngest() {
       <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Content zip kinds</DialogTitle>
+            <DialogTitle>Upload types</DialogTitle>
             <DialogDescription>
-              Datastore paths feed the channel.{" "}
-              <code className="text-foreground">updater/overlay/</code> is what
-              ImagineUpdate serves to players — same BinaryData tree, different
-              consumer.
+              Some files go to the live game server. Others go to the updater so
+              players download them before logging in.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[min(70vh,28rem)] space-y-4 overflow-y-auto text-xs/relaxed">
             <p className="text-muted-foreground">
-              New item/demon art: use{" "}
-              <span className="font-medium text-foreground">Release</span> so{" "}
-              <code className="text-foreground">server/</code> updates the
-              channel and <code className="text-foreground">client/</code>{" "}
-              updates the updater. Rare one-sided cases: packages/shops (server
-              only) or EN translation overlay (client only).
+              New item or demon art: prefer a{" "}
+              <span className="font-medium text-foreground">full release</span>{" "}
+              zip with both <code className="text-foreground">server/</code>{" "}
+              (live server) and <code className="text-foreground">client/</code>{" "}
+              (updater). Server-only packages or translation-only updater zips
+              are the usual exceptions.
             </p>
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="py-1.5 pr-2 font-medium">Kind</th>
-                  <th className="py-1.5 font-medium">Where it goes</th>
+                  <th className="py-1.5 pr-2 font-medium">Type</th>
+                  <th className="py-1.5 font-medium">What it does</th>
                 </tr>
               </thead>
               <tbody className="text-foreground">
                 <tr className="border-b border-border/60 align-top">
-                  <td className="py-2 pr-2">Release</td>
+                  <td className="py-2 pr-2">Full release</td>
                   <td className="py-2">
-                    <code>client/</code> → overlay + rehash;{" "}
-                    <code>server/…</code> → datastore
+                    Player download files + live server data. Restart the game
+                    channel after server changes.
                   </td>
                 </tr>
                 <tr className="border-b border-border/60 align-top">
                   <td className="py-2 pr-2">BinaryData / Maps / Packages</td>
                   <td className="py-2">
-                    Server only under <code>datastore/</code> (restart channel)
+                    Live server only (character art, zones, packages). Restart
+                    the game channel.
                   </td>
                 </tr>
                 <tr className="border-b border-border/60 align-top">
-                  <td className="py-2 pr-2">Overlay</td>
+                  <td className="py-2 pr-2">Updater files</td>
                   <td className="py-2">
-                    <code>updater/overlay/</code> + rehash (players run updater)
+                    What players download with the game updater. Refresh updater
+                    list afterward if needed.
                   </td>
                 </tr>
                 <tr className="align-top">
-                  <td className="py-2 pr-2">Content</td>
+                  <td className="py-2 pr-2">Mixed content</td>
                   <td className="py-2">
-                    Top-level <code>BinaryData/</code>, <code>Map/</code>,{" "}
-                    <code>packages/</code>, <code>overlay/</code>
+                    Zip with top-level BinaryData, Map, packages, and/or overlay
+                    folders.
                   </td>
                 </tr>
               </tbody>

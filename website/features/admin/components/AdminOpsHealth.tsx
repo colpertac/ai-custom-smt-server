@@ -62,11 +62,11 @@ type PublishPhase =
 function phaseLabel(phase: PublishPhase): string | null {
   switch (phase) {
     case "validating":
-      return "Validating shops & payouts (building candidate release)…"
+      return "Checking shops & rewards…"
     case "applying":
-      return "Validation passed — applying to live datastore…"
+      return "Checks passed — copying to the live server…"
     case "restarting":
-      return "Applied — restarting channel…"
+      return "Copied — restarting the game channel…"
     default:
       return null
   }
@@ -90,12 +90,17 @@ function channelStaleMessage(health: OpsHealth): string | null {
   const kinds = health.lastContentKinds?.length
     ? ` (${health.lastContentKinds.join(", ")})`
     : ""
-  return `New changes made on ${when}${kinds} — channel is running stale data; restart recommended.`
+  return `New files were uploaded on ${when}${kinds}. The game channel is still running older data — restart the game channel when you are ready.`
 }
 
 function overlayStaleMessage(health: OpsHealth): string | null {
   if (!health.overlayStale) return null
-  return "Updater overlay changed — rehash from Content zip so ImagineUpdate can ship the files."
+  return "Updater files changed but the download list was not refreshed. Use Refresh updater list under Game files so players can download the new files."
+}
+
+function backendLabel(backend?: string): string {
+  if (backend === "docker") return "Docker"
+  return "This PC"
 }
 
 export function AdminOpsHealth() {
@@ -135,13 +140,13 @@ export function AdminOpsHealth() {
       }
       setHealth(json.data)
       if (!json.data.ok) {
-        setError(json.data.error || "sidecar reported not ok")
+        setError(json.data.error || "Server control is not responding")
         return
       }
       setError(null)
     } catch (e) {
       setHealth(null)
-      setError(e instanceof Error ? e.message : "health request failed")
+      setError(e instanceof Error ? e.message : "Could not reach server control")
     } finally {
       setPending(false)
     }
@@ -197,7 +202,7 @@ export function AdminOpsHealth() {
   const restartChannel = useCallback(async () => {
     await runOpsAction(
       "admin/ops/restart/channel",
-      "Channel restarted",
+      "Game channel restarted",
       setRestarting,
       () => setRestartOpen(false)
     )
@@ -225,7 +230,7 @@ export function AdminOpsHealth() {
       const releaseId = validateJson.data.releaseId
       if (!releaseId) {
         setPublishPhase("failed")
-        setError("Validation succeeded but returned no releaseId")
+        setError("Checks passed but no publish id came back")
         return
       }
       setLastReleaseId(releaseId)
@@ -249,20 +254,19 @@ export function AdminOpsHealth() {
         setPublishPhase("failed")
         setError(
           restartJson.message ||
-            "Datastore applied but channel restart failed — use Restart channel"
+            "Shops were copied but the game channel did not restart — use Restart game channel"
         )
         return
       }
 
       setPublishPhase("done")
       const parts = [
-        "Lane A published and channel restarted",
-        `release ${releaseId}`,
+        "Shops & rewards published; game channel restarted",
         applyJson.data?.shopsCopied != null
           ? `${applyJson.data.shopsCopied} shop(s)`
           : null,
         applyJson.data?.payoutsPackaged != null
-          ? `${applyJson.data.payoutsPackaged} payout(s)`
+          ? `${applyJson.data.payoutsPackaged} reward pack(s)`
           : null,
       ].filter(Boolean)
       const base = parts.join(" — ")
@@ -270,7 +274,7 @@ export function AdminOpsHealth() {
       await refresh()
     } catch (e) {
       setPublishPhase("failed")
-      setError(e instanceof Error ? e.message : "publish failed")
+      setError(e instanceof Error ? e.message : "Publish failed")
     } finally {
       setTimeout(() => {
         setPublishPhase((p) => (p === "done" || p === "failed" ? "idle" : p))
@@ -295,10 +299,10 @@ export function AdminOpsHealth() {
         setError(json.message || `HTTP ${response.status}`)
         return
       }
-      setOk(json.message || "Lane A rolled back")
+      setOk(json.message || "Last publish undone; game channel restarted")
       await refresh()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "rollback failed")
+      setError(e instanceof Error ? e.message : "Undo failed")
     } finally {
       setRollingBack(false)
     }
@@ -328,13 +332,16 @@ export function AdminOpsHealth() {
         ? json.data.services.join(", ")
         : null
       setOk(
-        [json.message || "Lane C applied", services ? `(${services})` : null]
+        [
+          json.message || "Game servers updated",
+          services ? `(${services})` : null,
+        ]
           .filter(Boolean)
           .join(" ")
       )
       await refresh()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Lane C failed")
+      setError(e instanceof Error ? e.message : "Update failed")
     } finally {
       setLaneCBusy(false)
     }
@@ -354,8 +361,7 @@ export function AdminOpsHealth() {
     }
   }, [refresh])
 
-  const verbs = health?.verbs?.length ? health.verbs.join(", ") : "—"
-  const sidecarOk = Boolean(health?.ok)
+  const controlOk = Boolean(health?.ok)
   const firstBootBlocked = Boolean(health?.firstBoot?.needed)
   const staleText = health ? channelStaleMessage(health) : null
   const overlayText = health ? overlayStaleMessage(health) : null
@@ -375,56 +381,17 @@ export function AdminOpsHealth() {
   const dockerBackend = health?.backend === "docker"
 
   return (
-    <section className="mt-12">
-      <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
-        Ops sidecar
-      </h2>
-      <div className="gold-rule mt-2 max-w-[12rem]" />
-      <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-        Localhost control plane (Phase 16I). Publish lane A{" "}
-        <span className="text-foreground">validates</span> into a candidate
-        release, then applies to live datastore and restarts channel. Rollback
-        restores the previous snapshot from the last publish.
-      </p>
-      <AdminOpsMetrics />
-      {error ? (
-        <FormAlert className="mt-4" variant="error">
-          {error}
-        </FormAlert>
-      ) : null}
-      {firstBootBlocked ? (
-        <FormAlert className="mt-4" variant="warning">
-          First boot incomplete — upload BinaryData and maps before starting
-          servers.
-        </FormAlert>
-      ) : null}
-      {staleText ? (
-        <FormAlert className="mt-4" variant="warning">
-          {staleText}
-        </FormAlert>
-      ) : null}
-      {overlayText ? (
-        <FormAlert className="mt-4" variant="warning">
-          {overlayText}
-        </FormAlert>
-      ) : null}
-      {progressText ? (
-        <FormAlert className="mt-4" variant="success">
-          {progressText}
-        </FormAlert>
-      ) : null}
-      {ok ? (
-        <FormAlert className="mt-4" variant="success">
-          {ok}
-        </FormAlert>
-      ) : null}
-      {sidecarOk && !error && !ok && !progressText && !staleText && !overlayText && !firstBootBlocked ? (
-        <FormAlert className="mt-4" variant="success">
-          Success — ops sidecar is reachable ({health?.backend ?? "native"}; verbs:{" "}
-          {verbs}).
-        </FormAlert>
-      ) : null}
-      <div className="mt-3 flex flex-wrap gap-2">
+    <section className="space-y-3">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+            Server control
+          </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Start and stop the game, publish shops &amp; rewards, or update
+            server software.
+          </p>
+        </div>
         <Button
           type="button"
           variant="outline"
@@ -432,89 +399,137 @@ export function AdminOpsHealth() {
           disabled={busy}
           onClick={() => void refresh()}
         >
-          {pending ? "Checking…" : "Check health"}
-        </Button>
-        <Button
-          type="button"
-          variant="default"
-          size="sm"
-          disabled={busy || !sidecarOk || firstBootBlocked}
-          onClick={() => setStartOpen(true)}
-        >
-          {starting ? "Starting…" : "Start servers"}
-        </Button>
-        <Button
-          type="button"
-          variant="destructive"
-          size="sm"
-          disabled={busy || !sidecarOk}
-          onClick={() => setStopOpen(true)}
-        >
-          {stopping ? "Stopping…" : "Stop servers"}
-        </Button>
-        <Button
-          type="button"
-          variant="default"
-          size="sm"
-          disabled={busy || !sidecarOk}
-          onClick={() => setPublishOpen(true)}
-        >
-          {publishing
-            ? publishPhase === "validating"
-              ? "Validating…"
-              : publishPhase === "applying"
-                ? "Applying…"
-                : "Restarting…"
-            : "Publish lane A"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={busy || !sidecarOk}
-          onClick={() => setRollbackOpen(true)}
-        >
-          {rollingBack ? "Rolling back…" : "Rollback lane A"}
-        </Button>
-        <Button
-          type="button"
-          variant="destructive"
-          size="sm"
-          disabled={busy || !sidecarOk}
-          onClick={() => setRestartOpen(true)}
-        >
-          {restarting ? "Restarting channel…" : "Restart channel"}
+          {pending ? "Refreshing…" : "Refresh status"}
         </Button>
       </div>
 
-      <div className="mt-8">
-        <h3 className="font-heading text-sm font-semibold tracking-[0.08em] uppercase">
-          Lane C — code / image
-        </h3>
-        <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Pull Hub images and recreate containers after a C++ / website image
-          push. Docker VPS only (
-          <code className="text-xs">OPS_BACKEND=docker</code>). Not for shops,
-          config XML, or content zips.
+      <AdminOpsMetrics />
+
+      {error ? (
+        <FormAlert variant="error">{error}</FormAlert>
+      ) : null}
+      {firstBootBlocked ? (
+        <FormAlert variant="warning">
+          First-time setup is not finished — upload character art data
+          (BinaryData) and zone maps before starting servers.
+        </FormAlert>
+      ) : null}
+      {staleText ? <FormAlert variant="warning">{staleText}</FormAlert> : null}
+      {overlayText ? (
+        <FormAlert variant="warning">{overlayText}</FormAlert>
+      ) : null}
+      {progressText ? (
+        <FormAlert variant="success">{progressText}</FormAlert>
+      ) : null}
+      {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
+      {controlOk &&
+      !error &&
+      !ok &&
+      !progressText &&
+      !staleText &&
+      !overlayText &&
+      !firstBootBlocked ? (
+        <FormAlert variant="success">
+          Server control is online ({backendLabel(health?.backend)}).
+        </FormAlert>
+      ) : null}
+
+      <div className="border border-border/80 bg-muted/20 px-3 py-3">
+        <p className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          Power
         </p>
-        {!dockerBackend && sidecarOk ? (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Current backend is{" "}
-            <code className="text-xs">{health?.backend ?? "native"}</code> —
-            Lane C stays disabled on this PC. Use{" "}
-            <code className="text-xs">scripts/build.sh</code> for native
-            binaries.
-          </p>
-        ) : null}
-        <div className="mt-3">
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="default"
+            size="sm"
+            disabled={busy || !controlOk || firstBootBlocked}
+            onClick={() => setStartOpen(true)}
+          >
+            {starting ? "Starting…" : "Start servers"}
+          </Button>
           <Button
             type="button"
             variant="destructive"
             size="sm"
-            disabled={busy || !sidecarOk || !dockerBackend}
+            disabled={busy || !controlOk}
+            onClick={() => setStopOpen(true)}
+          >
+            {stopping ? "Stopping…" : "Stop servers"}
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            disabled={busy || !controlOk}
+            onClick={() => setRestartOpen(true)}
+          >
+            {restarting ? "Restarting…" : "Restart game channel"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="border border-border/80 bg-muted/20 px-3 py-3">
+        <p className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          Shops &amp; rewards
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Push your draft shop prices and dungeon rewards to the live server,
+          then restart the game channel so players see them.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="default"
+            size="sm"
+            disabled={busy || !controlOk}
+            onClick={() => setPublishOpen(true)}
+          >
+            {publishing
+              ? publishPhase === "validating"
+                ? "Checking…"
+                : publishPhase === "applying"
+                  ? "Publishing…"
+                  : "Restarting…"
+              : "Publish shops & rewards"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy || !controlOk}
+            onClick={() => setRollbackOpen(true)}
+          >
+            {rollingBack ? "Undoing…" : "Undo last publish"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="border border-border/80 bg-muted/20 px-3 py-3">
+        <p className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          Software update
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Downloads new game server builds and restarts lobby, world, and
+          channel. Use this after a developer publishes a new image — not for
+          shops, config, or file uploads.
+        </p>
+        {!dockerBackend && controlOk ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            This machine runs game servers directly (not Docker), so Update game
+            servers stays off here. Rebuild binaries with the usual build script
+            on this PC instead.
+          </p>
+        ) : null}
+        <div className="mt-2">
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            disabled={busy || !controlOk || !dockerBackend}
             onClick={() => setLaneCOpen(true)}
           >
-            {laneCBusy ? "Pulling / recreating…" : "Pull & recreate images"}
+            {laneCBusy ? "Updating…" : "Update game servers"}
           </Button>
         </div>
       </div>
@@ -524,8 +539,9 @@ export function AdminOpsHealth() {
           <DialogHeader>
             <DialogTitle>Start game servers?</DialogTitle>
             <DialogDescription>
-              Starts comp_lobby, comp_world, and comp_channel in order. Already-running
-              processes are left alone. Requires BinaryData and maps on disk.
+              Starts login (lobby), world, and game channel in order. Servers
+              that are already running are left alone. Character art data and
+              maps must already be on disk.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -556,8 +572,8 @@ export function AdminOpsHealth() {
           <DialogHeader>
             <DialogTitle>Stop game servers?</DialogTitle>
             <DialogDescription>
-              Stops channel, world, and lobby. Everyone connected to the game will
-              disconnect. The website and updater are not affected.
+              Stops the game channel, world, and login server. Everyone in-game
+              will disconnect. This website keeps running.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -586,16 +602,11 @@ export function AdminOpsHealth() {
       <Dialog open={publishOpen} onOpenChange={setPublishOpen}>
         <DialogContent showCloseButton={!publishing}>
           <DialogHeader>
-            <DialogTitle>Publish lane A?</DialogTitle>
+            <DialogTitle>Publish shops &amp; rewards?</DialogTitle>
             <DialogDescription>
-              1) Validate into a candidate under{" "}
-              <code className="text-foreground">runtime/releases/lane-a/</code>{" "}
-              (DropSet conflicts / empty XML fail here — live untouched). 2)
-              Snapshot live shops + admin payout zip. 3){" "}
-              <span className="text-foreground">Mirror</span> shops (
-              <code className="text-foreground">compshop-*.xml</code> only —
-              deletes live shops removed from the editor) and restart channel.
-              Use Rollback if the new content is wrong.
+              We check your drafts first (nothing live changes if checks fail),
+              then copy shops and dungeon rewards to the live server and restart
+              the game channel. Use Undo last publish if something looks wrong.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -615,7 +626,7 @@ export function AdminOpsHealth() {
               disabled={publishing}
               onClick={() => void publishLaneA()}
             >
-              Validate &amp; apply
+              Check &amp; publish
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -624,19 +635,16 @@ export function AdminOpsHealth() {
       <Dialog open={rollbackOpen} onOpenChange={setRollbackOpen}>
         <DialogContent showCloseButton={!rollingBack}>
           <DialogHeader>
-            <DialogTitle>Rollback lane A?</DialogTitle>
+            <DialogTitle>Undo last publish?</DialogTitle>
             <DialogDescription>
-              Restores the previous snapshot from{" "}
+              Restores the previous shops &amp; rewards snapshot
               {lastReleaseId ? (
                 <>
-                  release <code className="text-foreground">{lastReleaseId}</code>
+                  {" "}
+                  (<code className="text-foreground">{lastReleaseId}</code>)
                 </>
-              ) : (
-                "the latest applied release"
-              )}{" "}
-              and restarts channel.               Does not touch non-
-              <code className="text-foreground">compshop-*.xml</code> files in
-              the shops folder.
+              ) : null}{" "}
+              and restarts the game channel.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -656,7 +664,7 @@ export function AdminOpsHealth() {
               disabled={rollingBack}
               onClick={() => void rollbackLaneA()}
             >
-              {rollingBack ? "Rolling back…" : "Rollback & restart"}
+              {rollingBack ? "Undoing…" : "Undo & restart"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -665,10 +673,10 @@ export function AdminOpsHealth() {
       <Dialog open={restartOpen} onOpenChange={setRestartOpen}>
         <DialogContent showCloseButton={!restarting}>
           <DialogHeader>
-            <DialogTitle>Restart comp_channel?</DialogTitle>
+            <DialogTitle>Restart game channel?</DialogTitle>
             <DialogDescription>
-              Everyone in the channel will disconnect and must log back in. Lobby
-              and world keep running; only the channel process restarts.
+              Everyone in the game world will disconnect and must log back in.
+              Login and world keep running; only the game channel restarts.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -688,7 +696,7 @@ export function AdminOpsHealth() {
               disabled={restarting}
               onClick={() => void restartChannel()}
             >
-              {restarting ? "Restarting…" : "Restart channel"}
+              {restarting ? "Restarting…" : "Restart game channel"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -697,19 +705,12 @@ export function AdminOpsHealth() {
       <Dialog open={laneCOpen} onOpenChange={setLaneCOpen}>
         <DialogContent showCloseButton={!laneCBusy}>
           <DialogHeader>
-            <DialogTitle>Pull &amp; recreate game images?</DialogTitle>
+            <DialogTitle>Update game servers?</DialogTitle>
             <DialogDescription>
-              Runs{" "}
-              <code className="text-foreground">
-                docker compose pull
-              </code>{" "}
-              then{" "}
-              <code className="text-foreground">
-                up -d --force-recreate
-              </code>{" "}
-              for lobby, world, and channel. Players disconnect. A bad Hub image
-              can leave the stack down until you SSH and roll back the tag —
-              prefer this only after a known-good push.
+              Downloads the latest builds and recreates lobby, world, and
+              channel. Players disconnect. Only do this after a known-good
+              update was published — a bad build can leave the servers down
+              until someone fixes them.
             </DialogDescription>
           </DialogHeader>
           <label className="mt-2 flex items-center gap-2 text-sm">
@@ -719,8 +720,7 @@ export function AdminOpsHealth() {
               onChange={(e) => setLaneCIncludeWebsite(e.target.checked)}
               disabled={laneCBusy}
             />
-            Also pull &amp; recreate website (
-            <code className="text-xs">smt-website</code>)
+            Also update this website
           </label>
           <DialogFooter>
             <Button
@@ -739,7 +739,7 @@ export function AdminOpsHealth() {
               disabled={laneCBusy}
               onClick={() => void publishLaneC()}
             >
-              {laneCBusy ? "Working…" : "Confirm pull & recreate"}
+              {laneCBusy ? "Working…" : "Confirm update"}
             </Button>
           </DialogFooter>
         </DialogContent>

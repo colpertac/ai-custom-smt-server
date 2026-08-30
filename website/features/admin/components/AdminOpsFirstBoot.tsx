@@ -190,50 +190,47 @@ export function AdminOpsFirstBoot() {
   const busy = pending || starting
 
   return (
-    <section className="mt-12">
-      <h2 className="font-heading text-xl font-semibold tracking-[0.08em] uppercase">
-        First boot
-      </h2>
-      <div className="gold-rule mt-2 max-w-[12rem]" />
-      <p className="mt-3 max-w-xl text-sm text-muted-foreground">
-        Datastore volumes look empty. Upload proprietary{" "}
-        <span className="text-foreground">BinaryData</span> and{" "}
-        <span className="text-foreground">maps</span> zips, then start lobby /
-        world / channel. Client updater overlay can wait until you ship custom
-        content players must download.
-      </p>
+    <section className="space-y-3 border border-border/80 bg-muted/20 px-3 py-3">
+      <div>
+        <h2 className="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          First-time setup
+        </h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          The live server data folders look empty. Upload character art data
+          (BinaryData) and zone maps, then start the game servers. Files for the
+          player updater can wait until you ship custom content.
+        </p>
+      </div>
       {error ? (
-        <FormAlert className="mt-4" variant="error">
-          {error}
-        </FormAlert>
+        <FormAlert variant="error">{error}</FormAlert>
       ) : null}
-      {ok ? (
-        <FormAlert className="mt-4" variant="success">
-          {ok}
-        </FormAlert>
-      ) : null}
+      {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
       {ready ? (
-        <FormAlert className="mt-4" variant="success">
-          BinaryData and maps are in place. Start servers when you are ready.
+        <FormAlert variant="success">
+          Character art and maps are in place. Start servers when you are ready.
         </FormAlert>
       ) : (
-        <FormAlert className="mt-4" variant="warning">
-          Start is blocked until BinaryData and maps are uploaded.
+        <FormAlert variant="warning">
+          Start is blocked until character art data and maps are uploaded.
         </FormAlert>
       )}
       <OpsIngestStatus uploadPct={uploadPct} uploading={pending} job={job} />
-      <ul className="mt-4 max-w-xl space-y-2 border border-border bg-muted/20 px-3 py-2">
-        <BucketRow label="BinaryData" required bucket={boot?.binarydata} />
-        <BucketRow label="Maps" required bucket={boot?.maps} />
+      <ul className="max-w-xl space-y-2 border border-border bg-background/40 px-3 py-2">
+        <BucketRow
+          label="Character art (BinaryData)"
+          required
+          bucket={boot?.binarydata}
+        />
+        <BucketRow label="Zone maps" required bucket={boot?.maps} />
         <BucketRow label="Packages" required={false} bucket={boot?.packages} />
         <BucketRow
-          label="Updater overlay"
+          label="Updater files"
           required={false}
           bucket={boot?.overlay}
         />
       </ul>
       {!ready ? (
-        <div className="mt-4 flex max-w-xl flex-col gap-3">
+        <div className="flex max-w-xl flex-col gap-3">
           <label className="flex flex-col gap-1 text-sm">
             <span className="text-muted-foreground">Upload next zip</span>
             <select
@@ -242,8 +239,8 @@ export function AdminOpsFirstBoot() {
               disabled={busy}
               onChange={(e) => setKind(e.target.value as KindId)}
             >
-              <option value="content">Content (BinaryData + Map)</option>
-              <option value="binarydata">BinaryData only</option>
+              <option value="content">Mixed (BinaryData + Map)</option>
+              <option value="binarydata">Character art only</option>
               <option value="maps">Maps only</option>
               <option value="packages">Packages (optional)</option>
             </select>
@@ -270,7 +267,7 @@ export function AdminOpsFirstBoot() {
           </div>
         </div>
       ) : (
-        <div className="mt-4">
+        <div>
           <Button
             type="button"
             size="sm"

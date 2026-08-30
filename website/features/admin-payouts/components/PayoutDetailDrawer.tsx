@@ -416,7 +416,7 @@ export function PayoutDetailDrawer({
         {saveError && <FormAlert variant="error">{saveError}</FormAlert>}
         {exportError && <FormAlert variant="error">{exportError}</FormAlert>}
         {saveOk && !isDirty && (
-          <FormAlert variant="success">Saved to working copy.</FormAlert>
+          <FormAlert variant="success">Saved draft.</FormAlert>
         )}
       </div>
 

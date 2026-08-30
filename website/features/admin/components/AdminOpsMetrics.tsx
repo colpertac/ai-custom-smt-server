@@ -120,14 +120,21 @@ export function AdminOpsMetrics() {
         ? players.error
         : undefined
 
+  const backendHint =
+    live?.backend === "docker"
+      ? "Docker"
+      : live?.backend
+        ? "This PC"
+        : undefined
+
   return (
-    <div className="mt-5 border border-border/80 bg-muted/20 px-4 py-3">
+    <div className="border border-border/80 bg-muted/20 px-4 py-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="text-[0.65rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-          Live
-          {live?.backend ? (
+          Status
+          {backendHint ? (
             <span className="ml-2 font-normal normal-case tracking-normal">
-              ({live.backend})
+              ({backendHint})
             </span>
           ) : null}
         </div>
@@ -148,7 +155,7 @@ export function AdminOpsMetrics() {
         <MetricCell
           label="CPU"
           value={formatPct(host?.cpuPercent)}
-          hint="host"
+          hint="machine"
         />
         <MetricCell label="RAM" value={memPct} hint={memHint} />
         {(live?.processes ?? []).map((proc) => (

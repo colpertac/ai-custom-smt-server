@@ -80,7 +80,7 @@ export function AdminAccountsPanel() {
   }
 
   return (
-    <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
+    <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Accounts</CardTitle>
@@ -99,7 +99,7 @@ export function AdminAccountsPanel() {
               <thead className="sticky top-0 bg-muted/80 text-muted-foreground">
                 <tr>
                   <th className="px-2 py-2 font-medium">User</th>
-                  <th className="px-2 py-2 font-medium">Lvl</th>
+                  <th className="px-2 py-2 font-medium">Admin</th>
                   <th className="px-2 py-2 font-medium">CP</th>
                   <th className="px-2 py-2 font-medium">Chars</th>
                   <th className="px-2 py-2 font-medium">On</th>
@@ -135,7 +135,7 @@ export function AdminAccountsPanel() {
             {current ? `Edit ${current.username}` : "Select an account"}
           </CardTitle>
           <CardDescription>
-            Sets user_level, CP, tickets, email, password, bans, and enabled.
+            Sets admin level, CP, tickets, email, password, bans, and enabled.
             Editing yourself forces re-login.
           </CardDescription>
         </CardHeader>
@@ -232,7 +232,7 @@ function AccountEditForm({
             />
           </Field>
           <Field>
-            <FieldLabel>User level</FieldLabel>
+            <FieldLabel>Admin level</FieldLabel>
             <Input
               type="number"
               {...form.register("userLevel", { valueAsNumber: true })}
