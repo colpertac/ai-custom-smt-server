@@ -12,6 +12,10 @@ export function SiteFooter() {
           Server status
         </Link>
         <span className="mx-2 text-[#333]">·</span>
+        <Link href="/armory" className="text-[#8b93a7] hover:text-gold-dim">
+          Armory
+        </Link>
+        <span className="mx-2 text-[#333]">·</span>
         <Link href="/download" className="text-[#8b93a7] hover:text-gold-dim">
           Client setup
         </Link>

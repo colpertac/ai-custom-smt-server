@@ -275,6 +275,52 @@
     );
   }
 
+  /* Phase 16E — portrait (Path 1 capture) or CSS 3D name stub */
+  .armory-hero {
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 40%, #243147 0%, transparent 65%),
+      linear-gradient(180deg, #121826 0%, #0a0e16 55%, #07090e 100%);
+    perspective: 900px;
+  }
+
+  .armory-hero-stage {
+    transform-style: preserve-3d;
+    animation: armory-hero-spin 14s ease-in-out infinite alternate;
+  }
+
+  .armory-hero-name {
+    display: block;
+    font-family: var(--font-heading), "Times New Roman", serif;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #e8ecf4;
+    text-shadow:
+      0 1px 0 #8b93a7,
+      0 2px 0 #6b7388,
+      0 3px 0 #4a5266,
+      0 4px 0 #334155,
+      0 8px 18px rgb(0 0 0 / 0.55),
+      0 0 28px color-mix(in srgb, var(--gold) 28%, transparent);
+    transform: rotateY(-18deg) rotateX(8deg);
+  }
+
+  @keyframes armory-hero-spin {
+    from {
+      transform: rotateY(-22deg);
+    }
+    to {
+      transform: rotateY(22deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .armory-hero-stage {
+      animation: none;
+    }
+  }
+
   .font-heading {
     font-family: var(--font-heading), "Times New Roman", serif;
     letter-spacing: 0.04em;

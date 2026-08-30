@@ -61,6 +61,15 @@ export function SiteHeader() {
           >
             Status
           </Link>
+          <Link
+            href="/armory"
+            className={cn(
+              navClass,
+              pathname.startsWith("/armory") && "text-gold"
+            )}
+          >
+            Armory
+          </Link>
           {admin ? (
             <Link
               href="/admin"
