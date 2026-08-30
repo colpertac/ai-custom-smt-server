@@ -83,6 +83,6 @@ export function getCompResetSecret(): string | undefined {
 
 /** Public site origin required for email links; falls back for local dev. */
 export function getPublicAppUrl(): string {
-  return getSiteUrl() || "http://localhost:3000"
+  return getSiteUrl() || "http://localhost:3500"
 }
 

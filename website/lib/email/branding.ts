@@ -16,7 +16,7 @@ export function getEmailBranding(): EmailBranding {
     fromName,
     fromEmail,
     supportEmail: process.env.RESEND_SUPPORT_EMAIL?.trim() || fromEmail,
-    appUrl: getSiteUrl() || "http://localhost:3000",
+    appUrl: getSiteUrl() || "http://localhost:3500",
     appName: fromName,
   }
 }
