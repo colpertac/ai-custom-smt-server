@@ -31,6 +31,26 @@ else
   echo "skip: ${CLIENT_SRC}/${FILE}.xml not present" >&2
 fi
 
+# Phase 5: DynamicMapData (unencrypted Client table)
+if [[ -f "${CLIENT_SRC}/DynamicMapData.xml" ]]; then
+  "${BDPATCH}" save dynamicmap \
+    "${CLIENT_SRC}/DynamicMapData.xml" \
+    "${CLIENT_OUT}/DynamicMapData.bin"
+  echo "built: ${CLIENT_OUT}/DynamicMapData.bin"
+else
+  echo "skip: ${CLIENT_SRC}/DynamicMapData.xml not present" >&2
+fi
+
+# Phase 8 / Track A1: UIInfoData (unencrypted Client UI strings)
+if [[ -f "${CLIENT_SRC}/UIInfoData.xml" ]]; then
+  "${BDPATCH}" save uiinfo \
+    "${CLIENT_SRC}/UIInfoData.xml" \
+    "${CLIENT_OUT}/UIInfoData.bin"
+  echo "built: ${CLIENT_OUT}/UIInfoData.bin"
+else
+  echo "skip: ${CLIENT_SRC}/UIInfoData.xml not present" >&2
+fi
+
 # Shield tables (encrypted .sbin). Source XML is gitignored proprietary data.
 build_shield() {
   local type="$1"
@@ -57,6 +77,8 @@ build_shield() {
 build_shield item ItemData
 build_shield citem CItemData
 build_shield devil DevilData
+build_shield skill SkillData
+build_shield cmessage CMessageData_Shop
 
 echo
 echo "Apply with:"

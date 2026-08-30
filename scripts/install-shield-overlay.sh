@@ -1,38 +1,59 @@
 #!/usr/bin/env bash
-# Install rebuilt Shield BinaryData from client-overlay into the live server
-# datastore. Loose Shield files override package ZIPs.
+# Install rebuilt BinaryData from client-overlay into the live server datastore.
+# Loose BinaryData files override package ZIPs.
+# Installs Shield tables (Item/CItem/Devil) and Client DynamicMapData when present.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 OVERLAY_SHIELD="${ROOT_DIR}/client-overlay/BinaryData/Shield"
-DATASTORE_SHIELD="${DATASTORE_SHIELD:-/var/lib/comp_hack/datastore/BinaryData/Shield}"
+OVERLAY_CLIENT="${ROOT_DIR}/client-overlay/BinaryData/Client"
+DATASTORE_BD="${DATASTORE_BD:-/home/cat/repos/smt/comp_hack/runtime/datastore/BinaryData}"
+DATASTORE_SHIELD="${DATASTORE_SHIELD:-${DATASTORE_BD}/Shield}"
+DATASTORE_CLIENT="${DATASTORE_CLIENT:-${DATASTORE_BD}/Client}"
 BACKUP_DIR="${BACKUP_DIR:-/home/cat/backups/ai-custom-smt/shield-$(date +%Y-%m-%d)}"
 
-# Install whichever overlay Shield tables are present.
-CANDIDATES=(ItemData.sbin CItemData.sbin DevilData.sbin)
-TO_INSTALL=()
-for f in "${CANDIDATES[@]}"; do
-  if [[ -f "${OVERLAY_SHIELD}/${f}" ]]; then
-    TO_INSTALL+=("${f}")
-  fi
-done
+installed_any=0
 
-if [[ ${#TO_INSTALL[@]} -eq 0 ]]; then
-  echo "no overlay Shield tables in ${OVERLAY_SHIELD}; run build-client-overlay.sh first" >&2
+install_files() {
+  local src_dir="$1"
+  local dst_dir="$2"
+  shift 2
+  local -a files=("$@")
+  local -a to_install=()
+  local f
+
+  for f in "${files[@]}"; do
+    if [[ -f "${src_dir}/${f}" ]]; then
+      to_install+=("${f}")
+    fi
+  done
+
+  if [[ ${#to_install[@]} -eq 0 ]]; then
+    return 0
+  fi
+
+  mkdir -p "${BACKUP_DIR}" "${dst_dir}"
+  for f in "${to_install[@]}"; do
+    if [[ -f "${dst_dir}/${f}" ]]; then
+      cp -a "${dst_dir}/${f}" "${BACKUP_DIR}/${f}"
+    fi
+    install -m 0644 "${src_dir}/${f}" "${dst_dir}/${f}"
+    echo "installed: ${dst_dir}/${f}"
+    installed_any=1
+  done
+}
+
+install_files "${OVERLAY_SHIELD}" "${DATASTORE_SHIELD}" \
+  ItemData.sbin CItemData.sbin DevilData.sbin SkillData.sbin
+install_files "${OVERLAY_CLIENT}" "${DATASTORE_CLIENT}" \
+  DynamicMapData.bin
+
+if [[ "${installed_any}" -eq 0 ]]; then
+  echo "no overlay BinaryData tables found; run build-client-overlay.sh first" >&2
   exit 1
 fi
-
-mkdir -p "${BACKUP_DIR}" "${DATASTORE_SHIELD}"
-
-for f in "${TO_INSTALL[@]}"; do
-  if [[ -f "${DATASTORE_SHIELD}/${f}" ]]; then
-    cp -a "${DATASTORE_SHIELD}/${f}" "${BACKUP_DIR}/${f}"
-  fi
-  install -m 0644 "${OVERLAY_SHIELD}/${f}" "${DATASTORE_SHIELD}/${f}"
-  echo "installed: ${DATASTORE_SHIELD}/${f}"
-done
 
 echo
 echo "stock backup: ${BACKUP_DIR}"
