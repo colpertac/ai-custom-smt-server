@@ -9,6 +9,7 @@ COMP_hack:
 - Working directory: `/home/cat/repos/smt/comp_hack`
 - Local branch: `ai-custom-server`
 - Baseline commits:
+  - `a2c09ae4` — support local-only builds without Git remotes
   - `0514648e` — track Linux build helper
   - `fbd709a7` — modern Linux server baseline
 - Upstream base commit: `e87c598c9f3d75db2f8fe8bc9929aaa65244b51d`
@@ -17,7 +18,9 @@ COMP_hack:
 libcomp submodule:
 
 - Local branch: `ai-custom-baseline`
-- Baseline commit: `4d0abed`
+- Baseline commits:
+  - `46ec2d6` — support local-only builds without Git remotes
+  - `4d0abed` — modern GCC compatibility fixes
 - Upstream base commit: `9b050ab4a20eee57da4799f202a24cc3e3be32cd`
 - Git remotes: none
 
@@ -44,6 +47,18 @@ Linux build/setup/start/systemd helper scripts.
 All runtime paths are currently owned by local user `cat`. No systemd units or
 dedicated service account are installed.
 
+The baseline was rebuilt successfully after removing all remotes. Its startup
+banner reports `URL: local-only`.
+
+Server binary SHA-256 values:
+
+- `comp_lobby`:
+  `cfdd4e95ab6e0af872a12ff3ba868b2f5201676fb680bddec81bbeca2e983ba7`
+- `comp_world`:
+  `6c721b6460e653a509ed7fe020406b587ba281c12afcbb9a5535ad06dd0f37c1`
+- `comp_channel`:
+  `3ee1dedfededabe9185abe37c780c1777e16ededa0be0bf84d6a54e1798c3d16`
+
 ## Recovery backup
 
 Local recovery snapshot:
@@ -54,7 +69,7 @@ Local recovery snapshot:
 
 It contains:
 
-- Git bundles for COMP_hack and libcomp
+- Git bundles for COMP_hack, libcomp, and this customization workspace
 - `/etc/comp_hack`
 - `/var/lib/comp_hack`, including SQLite databases and server BinaryData
 - `/var/log/comp_hack`
@@ -127,6 +142,10 @@ rm -rf libcomp
 git clone "$BACKUP/source/libcomp.bundle" libcomp
 git -C libcomp switch ai-custom-baseline
 git submodule status
+
+cd ..
+git clone "$BACKUP/source/ai_custom_smt_server.bundle" \
+  restored-ai_custom_smt_server
 ```
 
 Do not add a writable upstream remote. If a private backup repository is
@@ -146,4 +165,19 @@ Do not place these in a public repository:
 Human-authored patches, scripts, schemas, translation mappings, build tooling,
 and documentation can be versioned separately when they do not embed
 proprietary data.
+
+## Verification performed
+
+- COMP_hack and libcomp worktrees were clean after snapshot commits.
+- Server rebuild completed successfully with no Git remotes configured.
+- Lobby, world, and channel started and opened ports 10666, 18666, and 14666.
+- Account manager and lobby root returned HTTP 200 on port 10999.
+- Servers shut down cleanly after the smoke test.
+- Runtime and client backup trees matched their live sources.
+- Both copied SQLite databases returned `PRAGMA integrity_check = ok`.
+- All source Git bundles verified as complete histories.
+
+The channel still logs the previously known missing
+`MD01_002_02t.qmp` geometry warning. It does not block startup or the earlier
+confirmed in-game login/play test.
 

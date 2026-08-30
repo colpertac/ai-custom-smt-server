@@ -7,12 +7,12 @@ desirability. Each phase should leave a small, testable result.
 
 **Purpose:** Make experimentation reversible.
 
-- [ ] Put the COMP_hack changes on a dedicated Git branch/fork.
-- [ ] Record the exact server commit and client version (`1666`).
-- [ ] Back up `/etc/comp_hack`, `/var/lib/comp_hack`, and the working client.
-- [ ] Record clean build, setup, start, stop, and login smoke-test commands.
-- [ ] Create an ID registry in `docs/ids.md` before adding content.
-- [ ] Decide which generated/proprietary files remain local only.
+- [x] Put the COMP_hack changes on a dedicated local Git branch.
+- [x] Record the exact server commit and client version (`1666`).
+- [x] Back up `/etc/comp_hack`, `/var/lib/comp_hack`, and the working client.
+- [x] Record clean build, setup, start, stop, and login smoke-test commands.
+- [x] Create an ID registry in `docs/ids.md` before adding content.
+- [x] Decide which generated/proprietary files remain local only.
 
 **Done when:** A broken experiment can be discarded and the current playable
 server restored without reconstructing it manually.
