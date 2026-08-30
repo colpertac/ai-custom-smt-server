@@ -6,7 +6,7 @@ import { useEffect } from "react"
 
 import { ChangeEmailForm } from "@/features/auth/components/ChangeEmailForm"
 import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm"
-import { useLogout, useSessionUser } from "@/features/auth/hooks"
+import { useLogout, useSessionDetails } from "@/features/auth/hooks"
 import { ADMIN_USER_LEVEL } from "@/lib/admin-level"
 import { Button } from "@/components/ui/button"
 
@@ -17,7 +17,7 @@ function formatLastLogin(epoch?: number): string {
 
 export function AccountPanel() {
   const router = useRouter()
-  const { data: details, isLoading, isError, isFetched } = useSessionUser()
+  const { data: details, isLoading, isError, isFetched } = useSessionDetails()
   const logoutMutation = useLogout()
 
   useEffect(() => {

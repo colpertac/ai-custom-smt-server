@@ -4,6 +4,7 @@ import { EncryptJWT, jwtDecrypt } from "jose"
 import { cookies } from "next/headers"
 
 import type { CompAuthState } from "@/lib/comp-api"
+import { forgetChallenge, rememberChallenge } from "@/lib/comp-challenge-store"
 import { cookieSecure, getSessionSecret } from "@/lib/env"
 
 const COOKIE_NAME = "smt_session"
@@ -21,6 +22,8 @@ function secretKey() {
 }
 
 export async function sealSession(session: WebSession): Promise<void> {
+  rememberChallenge(session.username, session.challenge)
+
   const token = await new EncryptJWT({ ...session })
     .setProtectedHeader({ alg: "dir", enc: "A256GCM" })
     .setIssuedAt()
@@ -70,6 +73,16 @@ export async function readSession(): Promise<WebSession | null> {
 
 export async function clearSession(): Promise<void> {
   const jar = await cookies()
+  const token = jar.get(COOKIE_NAME)?.value
+  if (token) {
+    try {
+      const { payload } = await jwtDecrypt(token, secretKey())
+      const username = String(payload.username ?? "")
+      if (username) forgetChallenge(username)
+    } catch {
+      /* ignore */
+    }
+  }
   jar.delete(COOKIE_NAME)
 }
 

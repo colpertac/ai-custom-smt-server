@@ -9,7 +9,7 @@ import {
   ShopConflictError,
   validateCompShop,
 } from "@/lib/comp-shops-fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 export async function GET() {
   const session = await requireWebSession()
@@ -20,7 +20,6 @@ export async function GET() {
 
   try {
     const shops = await listWorkingShops()
-    await persistWebSession(session)
     return apiOk(shops)
   } catch (error) {
     return apiFail(
@@ -65,7 +64,6 @@ export async function POST(request: Request) {
 
   try {
     await createWorkingShop(shop)
-    await persistWebSession(session)
     return apiOk(
       { shopId: shop.shopId, filename: shop.filename },
       "Created",

@@ -3,7 +3,11 @@ import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { clearSession } from "@/lib/session"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import {
+  CompSessionMissingError,
+  requireWebSession,
+  withCompSession,
+} from "@/lib/web-session"
 import { passwordSchema } from "@/features/auth/schemas/login.schema"
 import { z } from "zod"
 
@@ -33,9 +37,9 @@ export async function POST(request: Request, { params }: Params) {
   const blocked = await guardApiMutation("admin-update", 30, 60_000)
   if (blocked) return blocked
 
-  const session = await requireWebSession()
-  if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
-  if (!isAdminLevel(session.userLevel)) {
+  const gate = await requireWebSession()
+  if (!gate) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+  if (!isAdminLevel(gate.userLevel)) {
     return apiFail("Forbidden", 403, "FORBIDDEN")
   }
 
@@ -71,19 +75,26 @@ export async function POST(request: Request, { params }: Params) {
   if (d.banInitiator !== undefined) payload.ban_initiator = d.banInitiator
 
   try {
-    const result = await adminUpdateAccount(session, payload)
-    if (result.error !== "Success") {
-      return apiFail(result.error, 400, "UPDATE")
-    }
+    return await withCompSession(async (session) => {
+      const result = await adminUpdateAccount(session, payload)
+      if (result.error !== "Success") {
+        return apiFail(result.error, 400, "UPDATE")
+      }
 
-    if (session.username === username) {
-      await clearSession()
-      return apiOk({ username, selfUpdated: true }, "Updated (re-login required)")
-    }
+      if (session.username === username) {
+        await clearSession()
+        return apiOk(
+          { username, selfUpdated: true },
+          "Updated (re-login required)"
+        )
+      }
 
-    await persistWebSession(session)
-    return apiOk({ username, selfUpdated: false })
+      return apiOk({ username, selfUpdated: false })
+    })
   } catch (error) {
+    if (error instanceof CompSessionMissingError) {
+      return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+    }
     return apiFail(
       error instanceof Error ? error.message : "Update failed",
       502,
@@ -96,9 +107,9 @@ export async function DELETE(_request: Request, { params }: Params) {
   const blocked = await guardApiMutation("admin-delete", 10, 60_000)
   if (blocked) return blocked
 
-  const session = await requireWebSession()
-  if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
-  if (!isAdminLevel(session.userLevel)) {
+  const gate = await requireWebSession()
+  if (!gate) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+  if (!isAdminLevel(gate.userLevel)) {
     return apiFail("Forbidden", 403, "FORBIDDEN")
   }
 
@@ -106,14 +117,18 @@ export async function DELETE(_request: Request, { params }: Params) {
   const username = rawUser.toLowerCase()
 
   try {
-    await adminDeleteAccount(session, username)
-    if (session.username === username) {
-      await clearSession()
-      return apiOk({ username, selfDeleted: true })
-    }
-    await persistWebSession(session)
-    return apiOk({ username, selfDeleted: false })
+    return await withCompSession(async (session) => {
+      await adminDeleteAccount(session, username)
+      if (session.username === username) {
+        await clearSession()
+        return apiOk({ username, selfDeleted: true })
+      }
+      return apiOk({ username, selfDeleted: false })
+    })
   } catch (error) {
+    if (error instanceof CompSessionMissingError) {
+      return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+    }
     return apiFail(
       error instanceof Error ? error.message : "Delete failed",
       502,

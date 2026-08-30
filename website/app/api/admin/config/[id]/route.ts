@@ -7,7 +7,7 @@ import {
   loadConfigDocument,
   saveConfigDocument,
 } from "@/lib/server-config/fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -22,7 +22,6 @@ export async function GET(_request: Request, ctx: Ctx) {
     const { id: raw } = await ctx.params
     const id = assertConfigId(raw)
     const loaded = await loadConfigDocument(id)
-    await persistWebSession(session)
     return apiOk({
       id,
       document: loaded.document,
@@ -58,7 +57,6 @@ export async function PUT(request: Request, ctx: Ctx) {
     const { id: raw } = await ctx.params
     const id = assertConfigId(raw)
     const result = await saveConfigDocument(id, body)
-    await persistWebSession(session)
     return apiOk(
       { id, warnings: result.warnings },
       result.warnings.length

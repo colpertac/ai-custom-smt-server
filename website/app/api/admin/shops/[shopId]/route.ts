@@ -13,7 +13,7 @@ import {
   loadShopProducts,
   resolveShopProduct,
 } from "@/lib/shop-products"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ shopId: string }> }
 
@@ -52,7 +52,6 @@ export async function GET(_request: Request, { params }: Params) {
         preview: resolveShopProduct(products, p.productId),
       })),
     }))
-    await persistWebSession(auth.session)
     return apiOk({
       ...shop,
       tabs: preview,
@@ -128,7 +127,6 @@ export async function PUT(request: Request, { params }: Params) {
 
   try {
     await writeWorkingShop(shop)
-    await persistWebSession(auth.session)
     return apiOk({ shopId, filename: shop.filename })
   } catch (error) {
     return apiFail(
@@ -151,7 +149,6 @@ export async function DELETE(_request: Request, { params }: Params) {
 
   try {
     await deleteWorkingShop(shopId)
-    await persistWebSession(auth.session)
     return apiOk({ shopId })
   } catch (error) {
     if (error instanceof ShopNotFoundError) {

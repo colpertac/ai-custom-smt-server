@@ -4,6 +4,7 @@ import { Cinzel, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Providers } from "@/app/providers"
+import { getServerUser } from "@/features/auth/server"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -34,11 +35,13 @@ export const metadata: Metadata = {
   description: "Private Shin Megami Tensei: IMAGINE server",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const initialSession = await getServerUser()
+
   return (
     <html
       lang="en"
@@ -46,7 +49,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-svh bg-[#0e0e0e] text-foreground antialiased">
-        <Providers>
+        <Providers initialSession={initialSession}>
           <div className="flex min-h-svh flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>

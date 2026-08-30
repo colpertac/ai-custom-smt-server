@@ -7,7 +7,7 @@ import {
   listPayouts,
   readPayout,
 } from "@/lib/dungeon-payouts-fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 export async function GET() {
   const session = await requireWebSession()
@@ -34,7 +34,6 @@ export async function GET() {
       type: "nodebuffer",
       compression: "DEFLATE",
     })
-    await persistWebSession(session)
 
     return new Response(new Uint8Array(buf), {
       status: 200,

@@ -17,11 +17,21 @@ import type { ChangeDisplayNameInput } from "@/features/auth/schemas/changeDispl
 import type { ChangeEmailInput } from "@/features/auth/schemas/changeEmail.schema"
 import type { SessionUser } from "@/features/auth/types/session"
 
+/** Header / nav — cookie identity (SSR-seeded); no lobby challenge burn. */
 export function useSessionUser() {
   return useQuery<SessionUser | null>({
     queryKey: ["session"],
-    queryFn: fetchSessionUser,
+    queryFn: () => fetchSessionUser(false),
     staleTime: 5 * 60 * 1000,
+  })
+}
+
+/** Account panel — live lobby get_details. */
+export function useSessionDetails() {
+  return useQuery<SessionUser | null>({
+    queryKey: ["session", "fresh"],
+    queryFn: () => fetchSessionUser(true),
+    staleTime: 30 * 1000,
   })
 }
 
@@ -29,8 +39,9 @@ export function useLogin() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["session"] })
+    onSuccess: (user) => {
+      queryClient.setQueryData(["session"], user)
+      void queryClient.invalidateQueries({ queryKey: ["session", "fresh"] })
     },
   })
 }
@@ -41,6 +52,7 @@ export function useRegister() {
     mutationFn: register,
     onSuccess: (user) => {
       queryClient.setQueryData(["session"], user)
+      void queryClient.invalidateQueries({ queryKey: ["session", "fresh"] })
     },
   })
 }
@@ -51,6 +63,7 @@ export function useLogout() {
     mutationFn: logout,
     onSuccess: () => {
       queryClient.setQueryData(["session"], null)
+      queryClient.setQueryData(["session", "fresh"], null)
       void queryClient.invalidateQueries({ queryKey: ["session"] })
     },
   })
@@ -62,6 +75,7 @@ export function useChangePassword() {
     mutationFn: changePassword,
     onSuccess: () => {
       queryClient.setQueryData(["session"], null)
+      queryClient.setQueryData(["session", "fresh"], null)
     },
   })
 }

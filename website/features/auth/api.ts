@@ -18,7 +18,8 @@ export const register = (payload: RegisterInput) =>
 export const logout = () =>
   fetcher<null>("auth/logout", { method: "POST", json: {} })
 
-export const fetchSessionUser = () => fetcher<SessionUser | null>("auth/me")
+export const fetchSessionUser = (fresh = false) =>
+  fetcher<SessionUser | null>(fresh ? "auth/me?fresh=1" : "auth/me")
 
 export const changePassword = (payload: ChangePasswordInput) =>
   fetcher<null>("auth/password", { method: "POST", json: payload })

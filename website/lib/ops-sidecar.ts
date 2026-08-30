@@ -39,6 +39,32 @@ export type OpsHealth = {
   firstBoot?: OpsFirstBoot
 }
 
+export type OpsProcessMetric = {
+  name: string
+  running: boolean
+  pid?: number | null
+  rssBytes?: number | null
+  cpuPercent?: number | null
+  container?: string
+  error?: string
+}
+
+export type OpsHostMetrics = {
+  cpuPercent?: number | null
+  memUsedBytes?: number | null
+  memTotalBytes?: number | null
+  memAvailableBytes?: number | null
+}
+
+export type OpsMetrics = {
+  ok: boolean
+  backend?: string
+  service?: string
+  error?: string
+  host?: OpsHostMetrics
+  processes?: OpsProcessMetric[]
+}
+
 export type OpsRestartChannelResult = {
   ok: boolean
   service?: string
@@ -255,6 +281,53 @@ export async function getOpsHealth(actor?: string): Promise<OpsHealth> {
         ? json.lastOverlaySource
         : null,
     firstBoot: parseFirstBoot(json.firstBoot),
+  }
+}
+
+function parseHostMetrics(raw: unknown): OpsHostMetrics | undefined {
+  if (!raw || typeof raw !== "object") return undefined
+  const o = raw as Record<string, unknown>
+  return {
+    cpuPercent: typeof o.cpuPercent === "number" ? o.cpuPercent : null,
+    memUsedBytes: typeof o.memUsedBytes === "number" ? o.memUsedBytes : null,
+    memTotalBytes: typeof o.memTotalBytes === "number" ? o.memTotalBytes : null,
+    memAvailableBytes:
+      typeof o.memAvailableBytes === "number" ? o.memAvailableBytes : null,
+  }
+}
+
+function parseProcessMetrics(raw: unknown): OpsProcessMetric[] {
+  if (!Array.isArray(raw)) return []
+  const out: OpsProcessMetric[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as Record<string, unknown>
+    if (typeof o.name !== "string") continue
+    out.push({
+      name: o.name,
+      running: Boolean(o.running),
+      pid: typeof o.pid === "number" ? o.pid : null,
+      rssBytes: typeof o.rssBytes === "number" ? o.rssBytes : null,
+      cpuPercent: typeof o.cpuPercent === "number" ? o.cpuPercent : null,
+      container: typeof o.container === "string" ? o.container : undefined,
+      error: typeof o.error === "string" ? o.error : undefined,
+    })
+  }
+  return out
+}
+
+export async function getOpsMetrics(actor?: string): Promise<OpsMetrics> {
+  const { status, json } = await opsFetch("/metrics", { actor })
+  if (status === 401) {
+    return { ok: false, error: "unauthorized" }
+  }
+  return {
+    ok: Boolean(json.ok),
+    service: typeof json.service === "string" ? json.service : undefined,
+    backend: typeof json.backend === "string" ? json.backend : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    host: parseHostMetrics(json.host),
+    processes: parseProcessMetrics(json.processes),
   }
 }
 

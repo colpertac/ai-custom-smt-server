@@ -209,6 +209,40 @@ export async function adminGetAccounts(
   )
 }
 
+export type AdminOnlineWorldCount = {
+  worldId: number
+  characterCount: number
+}
+
+export type AdminOnlineCounts = {
+  total: number
+  worlds: AdminOnlineWorldCount[]
+}
+
+/** Lobby `/admin/online` with no targets → aggregate character counts. */
+export async function adminGetOnline(
+  auth: CompAuthState
+): Promise<AdminOnlineCounts> {
+  const data = await authenticatedRequest(auth, "/admin/online")
+  if (data.error && data.error !== "Success") {
+    throw new CompApiError(String(data.error), 502, data)
+  }
+  const worldsRaw = Array.isArray(data.counts) ? data.counts : []
+  const worlds: AdminOnlineWorldCount[] = []
+  for (const row of worldsRaw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as JsonObject
+    worlds.push({
+      worldId: Number(o.world_id ?? 0),
+      characterCount: Number(o.character_count ?? 0),
+    })
+  }
+  return {
+    total: Number(data.total ?? 0),
+    worlds,
+  }
+}
+
 export async function adminUpdateAccount(
   auth: CompAuthState,
   payload: {

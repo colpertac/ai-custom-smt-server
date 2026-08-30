@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { listConfigStatus, seedWorkingFromLive } from "@/lib/server-config/fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 export async function GET() {
   const session = await requireWebSession()
@@ -13,7 +13,6 @@ export async function GET() {
   try {
     await seedWorkingFromLive()
     const files = await listConfigStatus()
-    await persistWebSession(session)
     return apiOk({ files })
   } catch (error) {
     return apiFail(

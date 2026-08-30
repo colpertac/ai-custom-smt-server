@@ -8,7 +8,7 @@ import {
   readPayout,
   writePayout,
 } from "@/lib/dungeon-payouts-fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ payoutId: string }> }
 
@@ -30,7 +30,6 @@ export async function GET(_request: Request, { params }: Params) {
   const { payoutId } = await params
   try {
     const file = await readPayout(payoutId)
-    await persistWebSession(auth.session)
     return apiOk(file)
   } catch (error) {
     if (error instanceof PayoutNotFoundError) {
@@ -74,7 +73,6 @@ export async function PUT(request: Request, { params }: Params) {
   try {
     await readPayout(payoutId)
     await writePayout(parsed.data)
-    await persistWebSession(auth.session)
     return apiOk({ id: payoutId })
   } catch (error) {
     if (error instanceof PayoutNotFoundError) {
@@ -98,7 +96,6 @@ export async function DELETE(_request: Request, { params }: Params) {
   const { payoutId } = await params
   try {
     await deletePayout(payoutId)
-    await persistWebSession(auth.session)
     return apiOk({ id: payoutId })
   } catch (error) {
     if (error instanceof PayoutNotFoundError) {

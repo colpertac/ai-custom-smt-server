@@ -7,7 +7,7 @@ import {
   PayoutNotFoundError,
   readPayout,
 } from "@/lib/dungeon-payouts-fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ payoutId: string }> }
 
@@ -30,7 +30,6 @@ export async function GET(_request: Request, { params }: Params) {
       type: "nodebuffer",
       compression: "DEFLATE",
     })
-    await persistWebSession(session)
 
     return new Response(new Uint8Array(buf), {
       status: 200,

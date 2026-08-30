@@ -7,7 +7,7 @@ import {
   shopPath,
   ShopNotFoundError,
 } from "@/lib/comp-shops-fs"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ shopId: string }> }
 
@@ -26,7 +26,6 @@ export async function GET(_request: Request, { params }: Params) {
   const filename = shopFilename(shopId)
   try {
     const xml = await readFile(shopPath(shopId), "utf8")
-    await persistWebSession(session)
     return new Response(xml, {
       status: 200,
       headers: {

@@ -1,7 +1,11 @@
 import { changeDisplayName } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import {
+  CompSessionMissingError,
+  requireWebSession,
+  withCompSession,
+} from "@/lib/web-session"
 import { z } from "zod"
 
 const schema = z.object({
@@ -12,8 +16,8 @@ export async function POST(request: Request) {
   const blocked = await guardApiMutation("disp-name", 10, 60_000)
   if (blocked) return blocked
 
-  const session = await requireWebSession()
-  if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+  const gate = await requireWebSession()
+  if (!gate) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
 
   let body: unknown
   try {
@@ -32,14 +36,18 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await changeDisplayName(session, parsed.data.dispName)
-    if (result.error !== "Success") {
-      return apiFail(result.error, 400, "UPDATE")
-    }
-    session.dispName = parsed.data.dispName
-    await persistWebSession(session)
-    return apiOk({ dispName: parsed.data.dispName })
+    return await withCompSession(async (session) => {
+      const result = await changeDisplayName(session, parsed.data.dispName)
+      if (result.error !== "Success") {
+        return apiFail(result.error, 400, "UPDATE")
+      }
+      session.dispName = parsed.data.dispName
+      return apiOk({ dispName: parsed.data.dispName })
+    })
   } catch (error) {
+    if (error instanceof CompSessionMissingError) {
+      return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+    }
     return apiFail(
       error instanceof Error ? error.message : "Update failed",
       502,

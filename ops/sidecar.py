@@ -39,6 +39,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 from first_boot import first_boot_public, first_boot_status
+from metrics import collect_metrics
 from freshness import (
     destinations_include_overlay,
     freshness_public,
@@ -134,6 +135,16 @@ def handle_health(_handler: OpsHandler) -> tuple[int, bytes, str]:
     }
     payload.update(freshness_public(runtime_dir()))
     payload.update(first_boot_public(runtime_dir(), updater_dir()))
+    return json_bytes(payload, 200)
+
+
+def handle_metrics(_handler: OpsHandler) -> tuple[int, bytes, str]:
+    backend = env("OPS_BACKEND", "native") or "native"
+    payload = collect_metrics(
+        backend=backend,
+        comp_root=SMT_ROOT / "comp_hack",
+    )
+    payload["service"] = "ops-sidecar"
     return json_bytes(payload, 200)
 
 
@@ -1592,6 +1603,7 @@ def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
 # (METHOD, path) → handler
 ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]] = {
     ("GET", "/health"): handle_health,
+    ("GET", "/metrics"): handle_metrics,
     ("POST", "/start"): handle_start,
     ("POST", "/stop"): handle_stop,
     ("POST", "/publish/lane-a"): handle_publish_lane_a,

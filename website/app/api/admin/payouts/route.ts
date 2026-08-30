@@ -9,7 +9,7 @@ import {
   PayoutConflictError,
 } from "@/lib/dungeon-payouts-fs"
 import { PAYOUT_SCHEMA_VERSION } from "@/lib/dungeon-payout-types"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 export async function GET() {
   const session = await requireWebSession()
@@ -20,7 +20,6 @@ export async function GET() {
 
   try {
     const payouts = await listPayouts()
-    await persistWebSession(session)
     return apiOk(payouts)
   } catch (error) {
     return apiFail(
@@ -65,7 +64,6 @@ export async function POST(request: Request) {
 
   try {
     await createPayout(payout)
-    await persistWebSession(session)
     return apiOk(
       { id: payout.id, version: PAYOUT_SCHEMA_VERSION },
       "Created",

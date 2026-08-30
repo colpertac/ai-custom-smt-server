@@ -1,7 +1,7 @@
 import { importAccountXml } from "@/lib/comp-import"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
   const session = await requireWebSession()
@@ -31,7 +31,6 @@ export async function POST(request: Request) {
 
   try {
     const result = await importAccountXml(file, file.name)
-    await persistWebSession(session)
     if (!result.ok) {
       return apiFail(result.message, 400, "IMPORT")
     }

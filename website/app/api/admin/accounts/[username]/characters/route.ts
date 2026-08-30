@@ -5,7 +5,7 @@ import {
 } from "@/lib/admin-characters"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import { requireWebSession } from "@/lib/web-session"
 
 type Params = { params: Promise<{ username: string }> }
 
@@ -28,7 +28,6 @@ export async function GET(_request: Request, { params }: Params) {
     if (characters == null) {
       return apiFail("Account not found", 404, "NOT_FOUND")
     }
-    await persistWebSession(session)
     return apiOk({ username, characters })
   } catch (error) {
     if (

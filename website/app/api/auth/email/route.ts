@@ -2,7 +2,11 @@ import { changeEmail } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { displayEmail } from "@/lib/email"
-import { persistWebSession, requireWebSession } from "@/lib/web-session"
+import {
+  CompSessionMissingError,
+  requireWebSession,
+  withCompSession,
+} from "@/lib/web-session"
 import { z } from "zod"
 
 const schema = z.object({
@@ -20,8 +24,8 @@ export async function POST(request: Request) {
   const blocked = await guardApiMutation("email", 10, 60_000)
   if (blocked) return blocked
 
-  const session = await requireWebSession()
-  if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+  const gate = await requireWebSession()
+  if (!gate) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
 
   let body: unknown
   try {
@@ -40,15 +44,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await changeEmail(session, parsed.data.email)
-    if (result.error !== "Success") {
-      return apiFail(result.error, 400, "UPDATE")
-    }
-    await persistWebSession(session)
-    return apiOk({
-      email: displayEmail(parsed.data.email, session.username) || "",
+    return await withCompSession(async (session) => {
+      const result = await changeEmail(session, parsed.data.email)
+      if (result.error !== "Success") {
+        return apiFail(result.error, 400, "UPDATE")
+      }
+      return apiOk({
+        email: displayEmail(parsed.data.email, session.username) || "",
+      })
     })
   } catch (error) {
+    if (error instanceof CompSessionMissingError) {
+      return apiFail("Unauthorized", 401, "UNAUTHORIZED")
+    }
     return apiFail(
       error instanceof Error ? error.message : "Update failed",
       502,

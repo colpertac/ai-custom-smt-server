@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { AdminOpsMetrics } from "@/features/admin/components/AdminOpsMetrics"
 import { api } from "@/lib/kyClient"
 
 type OpsHealth = {
@@ -385,6 +386,7 @@ export function AdminOpsHealth() {
         release, then applies to live datastore and restarts channel. Rollback
         restores the previous snapshot from the last publish.
       </p>
+      <AdminOpsMetrics />
       {error ? (
         <FormAlert className="mt-4" variant="error">
           {error}
