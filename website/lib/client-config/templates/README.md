@@ -10,6 +10,6 @@ Generation for admin **Client prep** builds files programmatically (see
 | --- | --- |
 | `ImagineClient.dat` | `-ip` / `-port` (CRLF) |
 | `ImagineUpdate*.dat` | Updater BaseURL |
-| `VersionData.txt` | Lobby `server =` |
-| `webaccess.dat` | Plaintext login URL (encrypt → `.sdat`) |
-| `webaccess.sdat` | Sample ciphertext from seed client |
+| `VersionData.txt` | Lobby `server =` entries (one per dropdown option) |
+| `webaccess.sdat.<tag>` | Encrypted login URL per VersionData tag |
+| `webaccess.sdat` | Copy of the primary tag’s webaccess file |

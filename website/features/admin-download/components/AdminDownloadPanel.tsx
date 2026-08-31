@@ -30,6 +30,10 @@ type PrepForm = {
   title: string
   tag: string
   websiteUrl: string
+  includeLocalServer: boolean
+  localTitle: string
+  localHost: string
+  localTag: string
 }
 
 /** Set true to show :8765 updater landing page publish (fallback; most use /updater/news). */
@@ -42,8 +46,12 @@ const defaultPrep = (): PrepForm => ({
   updaterPort: "8765",
   loginPort: "10999",
   title: "Private SMT",
-  tag: "local",
+  tag: "main",
   websiteUrl: "",
+  includeLocalServer: false,
+  localTitle: "Local Server",
+  localHost: "127.0.0.1",
+  localTag: "local",
 })
 
 export function AdminDownloadPanel() {
@@ -220,6 +228,10 @@ export function AdminDownloadPanel() {
           title: prep.title.trim() || undefined,
           tag: prep.tag.trim() || undefined,
           websiteUrl: prep.websiteUrl.trim() || undefined,
+          includeLocalServer: prep.includeLocalServer,
+          localTitle: prep.localTitle.trim() || undefined,
+          localHost: prep.localHost.trim() || undefined,
+          localTag: prep.localTag.trim() || undefined,
         },
       })
       if (!response.ok) {
@@ -313,6 +325,10 @@ export function AdminDownloadPanel() {
                   setPrep((p) => ({ ...p, tag: e.target.value }))
                 }
               />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Primary server tag — must differ from the local tag when both are
+                enabled.
+              </p>
             </Field>
             <Field>
               <FieldLabel htmlFor="prep-lobby">Lobby port</FieldLabel>
@@ -368,10 +384,73 @@ export function AdminDownloadPanel() {
               </p>
             </Field>
           </FieldGroup>
+
+          <div className="space-y-3 rounded-md border border-border p-3">
+            <label className="flex cursor-pointer items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="mt-0.5"
+                checked={prep.includeLocalServer}
+                onChange={(e) =>
+                  setPrep((p) => ({
+                    ...p,
+                    includeLocalServer: e.target.checked,
+                  }))
+                }
+              />
+              <span>
+                <span className="font-medium">Include local server</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  Adds a second entry to VersionData so ImagineUpdate shows a
+                  server dropdown (e.g. private server + 127.0.0.1).
+                </span>
+              </span>
+            </label>
+
+            {prep.includeLocalServer ? (
+              <FieldGroup className="grid gap-3 sm:grid-cols-3">
+                <Field>
+                  <FieldLabel htmlFor="prep-local-title">Local title</FieldLabel>
+                  <Input
+                    id="prep-local-title"
+                    value={prep.localTitle}
+                    onChange={(e) =>
+                      setPrep((p) => ({ ...p, localTitle: e.target.value }))
+                    }
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="prep-local-host">Local host</FieldLabel>
+                  <Input
+                    id="prep-local-host"
+                    value={prep.localHost}
+                    onChange={(e) =>
+                      setPrep((p) => ({ ...p, localHost: e.target.value }))
+                    }
+                    placeholder="127.0.0.1"
+                    autoComplete="off"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="prep-local-tag">Local tag</FieldLabel>
+                  <Input
+                    id="prep-local-tag"
+                    value={prep.localTag}
+                    onChange={(e) =>
+                      setPrep((p) => ({ ...p, localTag: e.target.value }))
+                    }
+                  />
+                </Field>
+              </FieldGroup>
+            ) : null}
+          </div>
+
           <p className="text-xs text-muted-foreground">
             Zip includes ImagineClient.dat, ImagineUpdate(.dat / -user),
-            VersionData(.txt / -user), and encrypted webaccess.sdat(+.local).
-            Requires ops sidecar with comp_encrypt.
+            VersionData(.txt / -user), and encrypted{" "}
+            <code className="text-foreground">webaccess.sdat.&lt;tag&gt;</code> per
+            server (plus <code className="text-foreground">webaccess.sdat</code> for
+            the primary). Requires ops sidecar with comp_encrypt.
           </p>
           <div className="flex flex-wrap gap-2">
             <Button

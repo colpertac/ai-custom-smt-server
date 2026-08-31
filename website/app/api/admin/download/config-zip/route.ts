@@ -16,6 +16,10 @@ const schema = z.object({
   title: z.string().trim().max(80).optional(),
   tag: z.string().trim().max(40).optional(),
   websiteUrl: z.string().trim().max(2000).optional(),
+  includeLocalServer: z.boolean().optional(),
+  localTitle: z.string().trim().max(80).optional(),
+  localHost: z.string().trim().max(253).optional(),
+  localTag: z.string().trim().max(40).optional(),
 })
 
 export async function POST(request: Request) {
@@ -66,6 +70,10 @@ export async function POST(request: Request) {
       title: parsed.data.title,
       tag: parsed.data.tag,
       websiteUrl: parsed.data.websiteUrl?.trim() || undefined,
+      includeLocalServer: parsed.data.includeLocalServer,
+      localTitle: parsed.data.localTitle,
+      localHost: parsed.data.localHost,
+      localTag: parsed.data.localTag,
     })
     return new Response(new Uint8Array(buf), {
       status: 200,

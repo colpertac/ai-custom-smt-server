@@ -63,6 +63,10 @@ export type ClientPrepSettings = {
   title: string
   tag: string
   websiteUrl: string
+  includeLocalServer: boolean
+  localTitle: string
+  localHost: string
+  localTag: string
 }
 
 const KEY_URL = "client_download_url"
@@ -79,8 +83,12 @@ export const DEFAULT_CLIENT_PREP: ClientPrepSettings = {
   updaterPort: "8765",
   loginPort: "10999",
   title: "Private SMT",
-  tag: "local",
+  tag: "main",
   websiteUrl: "",
+  includeLocalServer: false,
+  localTitle: "Local Server",
+  localHost: "127.0.0.1",
+  localTag: "local",
 }
 
 function parseClientPrepJson(raw: string | null): ClientPrepSettings {
@@ -109,6 +117,19 @@ function parseClientPrepJson(raw: string | null): ClientPrepSettings {
       tag:
         typeof o.tag === "string" && o.tag ? o.tag : DEFAULT_CLIENT_PREP.tag,
       websiteUrl: typeof o.websiteUrl === "string" ? o.websiteUrl : "",
+      includeLocalServer: o.includeLocalServer === true,
+      localTitle:
+        typeof o.localTitle === "string" && o.localTitle
+          ? o.localTitle
+          : DEFAULT_CLIENT_PREP.localTitle,
+      localHost:
+        typeof o.localHost === "string" && o.localHost
+          ? o.localHost
+          : DEFAULT_CLIENT_PREP.localHost,
+      localTag:
+        typeof o.localTag === "string" && o.localTag
+          ? o.localTag
+          : DEFAULT_CLIENT_PREP.localTag,
     }
   } catch {
     return { ...DEFAULT_CLIENT_PREP }
@@ -155,6 +176,22 @@ export function setClientPrepSettings(
       input.websiteUrl !== undefined
         ? input.websiteUrl.trim()
         : current.websiteUrl,
+    includeLocalServer:
+      input.includeLocalServer !== undefined
+        ? input.includeLocalServer
+        : current.includeLocalServer,
+    localTitle:
+      input.localTitle !== undefined
+        ? input.localTitle.trim() || DEFAULT_CLIENT_PREP.localTitle
+        : current.localTitle,
+    localHost:
+      input.localHost !== undefined
+        ? input.localHost.trim() || DEFAULT_CLIENT_PREP.localHost
+        : current.localHost,
+    localTag:
+      input.localTag !== undefined
+        ? input.localTag.trim() || DEFAULT_CLIENT_PREP.localTag
+        : current.localTag,
   }
   setSiteSetting(KEY_CLIENT_PREP, JSON.stringify(next))
   setSiteSetting(KEY_UPDATER_WEBSITE, next.websiteUrl)

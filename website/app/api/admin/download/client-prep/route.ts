@@ -19,6 +19,10 @@ const putSchema = z.object({
   title: z.string().trim().max(80).optional(),
   tag: z.string().trim().max(40).optional(),
   websiteUrl: z.string().trim().max(2000).optional(),
+  includeLocalServer: z.boolean().optional(),
+  localTitle: z.string().trim().max(80).optional(),
+  localHost: z.string().trim().max(253).optional(),
+  localTag: z.string().trim().max(40).optional(),
 })
 
 function validateHttpUrl(url: string): boolean {

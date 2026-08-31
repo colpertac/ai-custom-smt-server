@@ -10,10 +10,19 @@ import { encryptWebaccessViaSidecar } from "@/lib/ops-sidecar"
 
 const execFile = promisify(execFileCb)
 
+export type VersionDataEntry = {
+  title: string
+  /** Lobby host written into VersionData `server =` */
+  lobbyHost: string
+  /** HTTP host for webaccess login URL (may differ from lobby host) */
+  webHost: string
+  tag: string
+}
+
 export type ClientPrepInput = {
   /** IP or hostname for lobby / ImagineClient / fallback */
   host: string
-  /** Optional public hostname for updater + webaccess HTTP URLs */
+  /** Optional public hostname for updater + primary webaccess HTTP URLs */
   domain?: string
   lobbyPort?: number
   updaterPort?: number
@@ -23,6 +32,11 @@ export type ClientPrepInput = {
   tag?: string
   /** ImagineUpdate Information= URL (portal); defaults to updater origin */
   websiteUrl?: string
+  /** Add a second VersionData entry (e.g. 127.0.0.1 local dev) */
+  includeLocalServer?: boolean
+  localTitle?: string
+  localHost?: string
+  localTag?: string
 }
 
 export type ClientPrepFiles = Record<string, Buffer | string>
@@ -57,21 +71,76 @@ export function buildImagineUpdateDat(
   return `[Setting]\nBaseURL1 = ${origin}/files\nInformation = ${info}\n`
 }
 
+export function sanitizeVersionDataTag(tag: string): string {
+  return tag.trim().replace(/[^\w.-]/g, "") || "local"
+}
+
 export function buildVersionData(
-  title: string,
-  host: string,
-  lobbyPort: number,
-  tag: string
+  entries: Array<{ title: string; lobbyHost: string; tag: string }>,
+  lobbyPort: number
 ): string {
-  return (
-    `[versions]\n` +
-    `title = ${title}\n` +
-    `server = ${host}:${lobbyPort}\n` +
-    `tag = ${tag}\n` +
-    `\n` +
-    `[${tag}]\n` +
-    `webaccess.sdat\n`
-  )
+  if (entries.length === 0) {
+    throw new Error("At least one VersionData server is required")
+  }
+
+  const seen = new Set<string>()
+  let out = "[versions]\n"
+  for (const entry of entries) {
+    const tag = sanitizeVersionDataTag(entry.tag)
+    if (seen.has(tag)) {
+      throw new Error(`Duplicate VersionData tag: ${tag}`)
+    }
+    seen.add(tag)
+    out +=
+      `title = ${entry.title}\n` +
+      `server = ${entry.lobbyHost}:${lobbyPort}\n` +
+      `tag = ${tag}\n` +
+      `\n`
+  }
+
+  for (const tag of seen) {
+    out += `[${tag}]\nwebaccess.sdat\n\n`
+  }
+
+  return out.trimEnd() + "\n"
+}
+
+export function resolveVersionDataEntries(
+  input: ClientPrepInput
+): VersionDataEntry[] {
+  const host = lobbyHost(input)
+  if (!host) throw new Error("Host is required")
+
+  const title = (input.title?.trim() || "Private SMT").slice(0, 80)
+  const primaryTag = sanitizeVersionDataTag(input.tag || "local")
+  const entries: VersionDataEntry[] = [
+    {
+      title,
+      lobbyHost: host,
+      webHost: httpHost(input),
+      tag: primaryTag,
+    },
+  ]
+
+  if (input.includeLocalServer) {
+    const localHost = input.localHost?.trim() || "127.0.0.1"
+    entries.push({
+      title: (input.localTitle?.trim() || "Local Server").slice(0, 80),
+      lobbyHost: localHost,
+      webHost: localHost,
+      tag: sanitizeVersionDataTag(input.localTag || "local"),
+    })
+  }
+
+  const tags = new Set<string>()
+  for (const entry of entries) {
+    if (tags.has(entry.tag)) {
+      throw new Error(`Duplicate VersionData tag: ${entry.tag}`)
+    }
+    tags.add(entry.tag)
+  }
+
+  return entries
 }
 
 export function buildWebaccessPlaintext(
@@ -135,16 +204,14 @@ export async function encryptWebaccess(plaintext: string): Promise<Buffer> {
 export async function buildClientPrepFiles(
   input: ClientPrepInput
 ): Promise<ClientPrepFiles> {
-  const host = lobbyHost(input)
+  const entries = resolveVersionDataEntries(input)
+  const primary = entries[0]
   const webHost = httpHost(input)
-  if (!host) throw new Error("Host is required")
 
   const lobbyPort = input.lobbyPort ?? 10666
   const updaterPort = input.updaterPort ?? 8765
   const loginPort = input.loginPort ?? 10999
   const scheme = input.updaterScheme ?? "http"
-  const title = (input.title?.trim() || "Private SMT").slice(0, 80)
-  const tag = (input.tag?.trim() || "local").replace(/[^\w.-]/g, "") || "local"
 
   const updateDat = buildImagineUpdateDat(
     webHost,
@@ -152,19 +219,28 @@ export async function buildClientPrepFiles(
     scheme,
     input.websiteUrl
   )
-  const versionData = buildVersionData(title, host, lobbyPort, tag)
-  const plain = buildWebaccessPlaintext(webHost, loginPort, scheme)
-  const encrypted = await encryptWebaccess(plain)
+  const versionData = buildVersionData(entries, lobbyPort)
 
-  return {
-    "ImagineClient.dat": buildImagineClientDat(host, lobbyPort),
+  const files: ClientPrepFiles = {
+    "ImagineClient.dat": buildImagineClientDat(
+      primary.lobbyHost,
+      lobbyPort
+    ),
     "ImagineUpdate.dat": updateDat,
     "ImagineUpdate-user.dat": updateDat,
     "VersionData.txt": versionData,
     "VersionData-user.txt": versionData,
-    "webaccess.sdat": encrypted,
-    "webaccess.sdat.local": encrypted,
   }
+
+  for (const entry of entries) {
+    const plain = buildWebaccessPlaintext(entry.webHost, loginPort, scheme)
+    const encrypted = await encryptWebaccess(plain)
+    files[`webaccess.sdat.${entry.tag}`] = encrypted
+  }
+
+  files["webaccess.sdat"] = files[`webaccess.sdat.${primary.tag}`]
+
+  return files
 }
 
 export async function buildClientPrepZip(
