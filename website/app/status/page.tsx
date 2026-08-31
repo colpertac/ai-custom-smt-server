@@ -15,8 +15,8 @@ export default function StatusPage() {
       </h1>
       <div className="gold-rule mt-3 max-w-xs" />
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        Quick check before you blame your internet: are the game servers up, or
-        is it just your connection or client?
+        Quick check before you blame your internet: are the game servers and
+        client updater up, or is it just your connection or client?
       </p>
       <StatusPanel />
     </section>

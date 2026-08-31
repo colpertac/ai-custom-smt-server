@@ -4,6 +4,7 @@ import {
   searchWikiCatalog,
   type WikiItemCategory,
 } from "@/content/wiki"
+import { isWikiAvailable } from "@/lib/wiki-availability"
 
 const CATEGORIES = new Set<WikiItemCategory | "all">([
   "weapons",
@@ -13,6 +14,16 @@ const CATEGORIES = new Set<WikiItemCategory | "all">([
 ])
 
 export async function GET(req: NextRequest) {
+  if (!isWikiAvailable()) {
+    return NextResponse.json(
+      {
+        error: "Wiki unavailable until BinaryData is uploaded",
+        enabled: false,
+      },
+      { status: 503 }
+    )
+  }
+
   const categoryParam = req.nextUrl.searchParams.get("category") ?? "all"
   if (!CATEGORIES.has(categoryParam as WikiItemCategory | "all")) {
     return NextResponse.json(

@@ -21,6 +21,8 @@ export type ClientPrepInput = {
   updaterScheme?: "http" | "https"
   title?: string
   tag?: string
+  /** ImagineUpdate Information= URL (portal); defaults to updater origin */
+  websiteUrl?: string
 }
 
 export type ClientPrepFiles = Record<string, Buffer | string>
@@ -47,10 +49,12 @@ export function buildImagineClientDat(
 export function buildImagineUpdateDat(
   baseHost: string,
   updaterPort: number,
-  scheme: "http" | "https"
+  scheme: "http" | "https",
+  websiteUrl?: string
 ): string {
   const origin = `${scheme}://${baseHost}:${updaterPort}`
-  return `[Setting]\nBaseURL1 = ${origin}/files\nInformation = ${origin}/\n`
+  const info = websiteUrl?.trim() || `${origin}/`
+  return `[Setting]\nBaseURL1 = ${origin}/files\nInformation = ${info}\n`
 }
 
 export function buildVersionData(
@@ -142,7 +146,12 @@ export async function buildClientPrepFiles(
   const title = (input.title?.trim() || "Private SMT").slice(0, 80)
   const tag = (input.tag?.trim() || "local").replace(/[^\w.-]/g, "") || "local"
 
-  const updateDat = buildImagineUpdateDat(webHost, updaterPort, scheme)
+  const updateDat = buildImagineUpdateDat(
+    webHost,
+    updaterPort,
+    scheme,
+    input.websiteUrl
+  )
   const versionData = buildVersionData(title, host, lobbyPort, tag)
   const plain = buildWebaccessPlaintext(webHost, loginPort, scheme)
   const encrypted = await encryptWebaccess(plain)

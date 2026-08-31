@@ -47,22 +47,31 @@ const SERVICE_COPY: Record<
   updater: {
     label: "Updater",
     hint: "Patches and client files when the game checks for updates.",
-    downHint: "Updates may fail — try again later if patching breaks.",
+    downHint: "ImagineUpdate cannot fetch patches — try again later.",
   },
 }
 
 function serviceRow(service: ServiceStatus): PublicRow {
   const copy = SERVICE_COPY[service.id]
   const label = copy?.label ?? service.label
-  const hint =
+  let hint =
     service.state === "down" && copy?.downHint
       ? copy.downHint
       : copy?.hint ?? ""
 
+  if (service.state === "skipped" && service.id === "updater") {
+    hint =
+      "Updater URL is not configured on this site — status cannot be checked."
+  }
+
+  if (service.state === "down" && service.detail && service.detail !== "not configured") {
+    hint = `${hint} (${service.detail})`
+  }
+
   return {
     id: service.id,
     label,
-    state: service.state === "skipped" ? "down" : service.state,
+    state: service.state === "skipped" ? "skipped" : service.state,
     hint,
   }
 }
@@ -73,9 +82,14 @@ function publicRows(services: ServiceStatus[]): PublicRow[] {
 
   return order.flatMap((id) => {
     const service = byId.get(id)
-    if (!service || service.state === "skipped") return []
+    if (!service) return []
+    if (service.state === "skipped" && id !== "updater") return []
     return [serviceRow(service)]
   })
+}
+
+function updaterService(services: ServiceStatus[]): ServiceStatus | undefined {
+  return services.find((s) => s.id === "updater")
 }
 
 function partialOutageHint(services: ServiceStatus[]): string | null {
@@ -101,11 +115,24 @@ function overallCopy(services: ServiceStatus[]): {
   tone: "ok" | "warn" | "bad"
 } {
   const overall = gameOverall(services)
+  const updater = updaterService(services)
+  const updaterDown = updater?.state === "down"
+  const updaterSkipped = updater?.state === "skipped"
+
   if (overall === "up") {
+    if (updaterDown) {
+      return {
+        tone: "warn",
+        title: "Game servers look healthy",
+        body: "You can log in, but the client updater is offline — ImagineUpdate may fail until it is back.",
+      }
+    }
     return {
       tone: "ok",
       title: "Servers look healthy",
-      body: "If you still cannot log in, disconnect, or crash, the problem is probably on your side — connection, client, or account.",
+      body: updaterSkipped
+        ? "Game services are up. Updater status is not configured on this site."
+        : "Game servers and the client updater look reachable. If you still cannot log in, disconnect, or crash, the problem is probably on your side — connection, client, or account.",
     }
   }
   if (overall === "skipped") {
@@ -125,21 +152,24 @@ function overallCopy(services: ServiceStatus[]): {
   }
 }
 
-function stateLabel(state: ProbeState, row?: boolean): string {
+function stateLabel(state: ProbeState): string {
   if (state === "up") return "Online"
   if (state === "down") return "Offline"
-  return row ? "Offline" : "Partial"
+  if (state === "skipped") return "Not configured"
+  return "Partial"
 }
 
 function dotClass(state: ProbeState): string {
   if (state === "up") return "bg-emerald-500"
   if (state === "down") return "bg-red-500"
+  if (state === "skipped") return "bg-muted-foreground/40"
   return "bg-amber-500"
 }
 
 function textClass(state: ProbeState): string {
   if (state === "up") return "text-emerald-600 dark:text-emerald-400"
   if (state === "down") return "text-red-600 dark:text-red-400"
+  if (state === "skipped") return "text-muted-foreground"
   return "text-amber-700 dark:text-amber-400"
 }
 
@@ -202,7 +232,7 @@ export function StatusPanel() {
                 {row.label}
               </span>
               <span className={cn("text-sm font-medium", textClass(row.state))}>
-                {stateLabel(row.state, true)}
+                {stateLabel(row.state)}
               </span>
             </div>
             <p className="mt-1.5 pl-5 text-xs leading-relaxed text-muted-foreground">

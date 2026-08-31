@@ -935,6 +935,48 @@ export async function encryptWebaccessViaSidecar(
   return json.encryptedBase64
 }
 
+export type PublishUpdaterSiteInput = {
+  title?: string
+  websiteUrl?: string
+  serverLabel?: string
+}
+
+/** Write updater/site/index.html via ops sidecar. */
+export async function publishUpdaterSiteViaSidecar(
+  input: PublishUpdaterSiteInput,
+  actor?: string
+): Promise<{ ok: boolean; message?: string; detail?: string }> {
+  const { status, json } = await opsFetch("/updater/site/publish", {
+    method: "POST",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: input.title,
+      websiteUrl: input.websiteUrl,
+      serverLabel: input.serverLabel,
+    }),
+  })
+  if (status === 401) {
+    throw new Error("Ops sidecar unauthorized")
+  }
+  if (!json.ok) {
+    const detail =
+      typeof json.detail === "string"
+        ? json.detail
+        : typeof json.error === "string"
+          ? json.error
+          : `HTTP ${status}`
+    return { ok: false, detail }
+  }
+  return {
+    ok: true,
+    message:
+      typeof json.message === "string"
+        ? json.message
+        : "Updater landing page published",
+  }
+}
+
 /** Merge custom CEventMessage rows into updater overlay + rehash. */
 export async function upsertCeventMessagesViaSidecar(
   messages: Array<{ id: number; lines: string[] }>,

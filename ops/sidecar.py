@@ -64,6 +64,7 @@ from encrypt_tools import run_comp_encrypt
 from rehash import run_comp_rehash
 from ceventmessage import upsert_ceventmessages
 from service_logs import collect_service_logs
+from updater_site import write_updater_site_index
 from zip_ingest import KINDS, MAX_UPLOAD, MODES, ingest_zip_file, save_upload_stream
 
 REPO_ROOT = HERE.parent
@@ -2126,6 +2127,40 @@ def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
     )
 
 
+def handle_updater_site_publish(handler: OpsHandler) -> tuple[int, bytes, str]:
+    """Write updater/site/index.html for ImagineUpdate Information page."""
+    body = _read_json_body(handler, max_bytes=16_000)
+    title = str(body.get("title") or "Private SMT").strip()[:80]
+    website_url = str(body.get("websiteUrl") or "").strip()[:2000]
+    server_label = str(body.get("serverLabel") or "").strip()[:120]
+
+    out_path, err = write_updater_site_index(
+        updater_dir(),
+        title=title,
+        website_url=website_url,
+        server_label=server_label,
+    )
+    if err:
+        code = "invalid_website_url" if err == "invalid_website_url" else "write_failed"
+        status = 400 if err == "invalid_website_url" else 502
+        return json_bytes(
+            {
+                "ok": False,
+                "error": code,
+                "detail": err if err != "invalid_website_url" else "websiteUrl must be http(s)",
+            },
+            status,
+        )
+    return json_bytes(
+        {
+            "ok": True,
+            "path": str(out_path),
+            "message": "Updater landing page published",
+        },
+        200,
+    )
+
+
 # (METHOD, path) → handler
 ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]] = {
     ("GET", "/health"): handle_health,
@@ -2149,6 +2184,7 @@ ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]]
     ("POST", "/start/services"): handle_start_services,
     ("POST", "/stop/services"): handle_stop_services,
     ("POST", "/tools/webaccess-encrypt"): handle_tools_webaccess_encrypt,
+    ("POST", "/updater/site/publish"): handle_updater_site_publish,
     ("POST", "/client/ceventmessage/upsert"): handle_client_ceventmessage_upsert,
 }
 

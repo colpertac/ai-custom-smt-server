@@ -134,25 +134,36 @@ async function probeUpdater(): Promise<ServiceStatus> {
       id: "updater",
       label: "Updater",
       state: "skipped",
+      detail: "not configured",
     }
   }
 
+  const url = `${base}/files/hashlist.ver`
   try {
-    const response = await fetch(`${base}/files/hashlist.ver`, {
+    let response = await fetch(url, {
       method: "HEAD",
       cache: "no-store",
       signal: AbortSignal.timeout(3000),
     })
+    if (response.status === 405 || response.status === 501) {
+      response = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        signal: AbortSignal.timeout(3000),
+      })
+    }
     return {
       id: "updater",
       label: "Updater",
       state: response.ok ? "up" : "down",
+      detail: response.ok ? undefined : `HTTP ${response.status}`,
     }
-  } catch {
+  } catch (error) {
     return {
       id: "updater",
       label: "Updater",
       state: "down",
+      detail: error instanceof Error ? error.message : "unreachable",
     }
   }
 }

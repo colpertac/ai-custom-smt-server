@@ -4,7 +4,7 @@ Kinds:
   binarydata → {runtime}/datastore/BinaryData/
   maps       → {runtime}/datastore/Map/
   packages   → {runtime}/datastore/packages/  (*.zip members only)
-  overlay    → {updater}/overlay/
+  overlay    → {updater}/overlay/  (any client install path, e.g. Title/foo.txt)
   content    → route by top-level BinaryData|Map|packages|overlay prefixes
   release    → client/ → overlay; server/BinaryData|Map|packages → datastore
 
@@ -60,6 +60,20 @@ SERVERDATA_PREFIXES = (
     "skills",
     "webapps",
     "webgames",
+)
+
+# Top-level zip folders refused for overlay/client updater ingest (server buckets).
+OVERLAY_DENY_TOP = frozenset(
+    {
+        "Map",
+        "map",
+        "maps",
+        "packages",
+        "server",
+        "Server",
+        *SERVERDATA_PREFIXES,
+        "migrations",
+    }
 )
 
 
@@ -182,6 +196,20 @@ def _strip_prefix(rel: str, *prefixes: str) -> str | None:
     return None
 
 
+def _route_to_overlay(rel: str) -> str | None:
+    """Map a zip member to an overlay-relative path, or None if denied."""
+    under = _strip_prefix(rel, "overlay")
+    if under is not None:
+        return under if under else None
+    under = _strip_prefix(rel, "client", "Client")
+    if under is not None:
+        return under if under else None
+    top = rel.split("/")[0]
+    if top in OVERLAY_DENY_TOP:
+        return None
+    return rel
+
+
 def _route_member(kind: str, rel: str) -> tuple[str, str] | None:
     if kind == "binarydata":
         under = _strip_prefix(rel, "BinaryData", "binarydata")
@@ -209,12 +237,9 @@ def _route_member(kind: str, rel: str) -> tuple[str, str] | None:
         return "packages", name
 
     if kind == "overlay":
-        under = _strip_prefix(rel, "overlay")
+        under = _route_to_overlay(rel)
         if under is not None:
             return "overlay", under
-        for top in ("BinaryData", "Event", "Interface", "Sound", "Data"):
-            if rel == top or rel.startswith(top + "/"):
-                return "overlay", rel
         return None
 
     if kind == "content":

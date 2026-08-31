@@ -15,6 +15,7 @@ const schema = z.object({
   updaterScheme: z.enum(["http", "https"]).optional(),
   title: z.string().trim().max(80).optional(),
   tag: z.string().trim().max(40).optional(),
+  websiteUrl: z.string().trim().max(2000).optional(),
 })
 
 export async function POST(request: Request) {
@@ -43,6 +44,17 @@ export async function POST(request: Request) {
     )
   }
 
+  if (parsed.data.websiteUrl?.trim()) {
+    try {
+      const u = new URL(parsed.data.websiteUrl.trim())
+      if (u.protocol !== "http:" && u.protocol !== "https:") {
+        return apiFail("Website URL must be http(s)", 400, "VALIDATION")
+      }
+    } catch {
+      return apiFail("Invalid website URL", 400, "VALIDATION")
+    }
+  }
+
   try {
     const buf = await buildClientPrepZip({
       host: parsed.data.host,
@@ -53,6 +65,7 @@ export async function POST(request: Request) {
       updaterScheme: parsed.data.updaterScheme,
       title: parsed.data.title,
       tag: parsed.data.tag,
+      websiteUrl: parsed.data.websiteUrl?.trim() || undefined,
     })
     return new Response(new Uint8Array(buf), {
       status: 200,

@@ -1,7 +1,10 @@
 import type { Metadata } from "next"
 
+import {
+  AdminOpsClientUpload,
+  AdminOpsServerUpload,
+} from "@/features/admin/components/AdminOpsIngest"
 import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
-import { AdminOpsIngest } from "@/features/admin/components/AdminOpsIngest"
 import { requireAdmin } from "@/features/auth/server"
 
 export const metadata: Metadata = {
@@ -12,13 +15,14 @@ export default async function AdminGameFilesPage() {
   await requireAdmin()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs text-muted-foreground">
-        Upload character art, maps, and files players download with the game
-        updater.
+        Server uploads update the live game channel. Client uploads publish files
+        through ImagineUpdate.
       </p>
       <AdminOpsFirstBoot />
-      <AdminOpsIngest />
+      <AdminOpsServerUpload />
+      <AdminOpsClientUpload />
     </div>
   )
 }

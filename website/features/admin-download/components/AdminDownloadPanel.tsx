@@ -29,7 +29,11 @@ type PrepForm = {
   loginPort: string
   title: string
   tag: string
+  websiteUrl: string
 }
+
+/** Set true to show :8765 updater landing page publish (fallback; most use /updater/news). */
+const SHOW_PUBLISH_UPDATER_PAGE = false
 
 const defaultPrep = (): PrepForm => ({
   host: "",
@@ -39,6 +43,7 @@ const defaultPrep = (): PrepForm => ({
   loginPort: "10999",
   title: "Private SMT",
   tag: "local",
+  websiteUrl: "",
 })
 
 export function AdminDownloadPanel() {
@@ -50,7 +55,9 @@ export function AdminDownloadPanel() {
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [savingPrep, setSavingPrep] = useState(false)
   const [zipping, setZipping] = useState(false)
+  const [publishing, setPublishing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ok, setOk] = useState<string | null>(null)
 
@@ -58,23 +65,68 @@ export function AdminDownloadPanel() {
     setLoading(true)
     setError(null)
     try {
-      const response = await api("admin/download/settings")
-      const json = (await response.json()) as {
+      const [dlRes, prepRes] = await Promise.all([
+        api("admin/download/settings"),
+        api("admin/download/client-prep"),
+      ])
+      const dlJson = (await dlRes.json()) as {
         success?: boolean
         message?: string
         data?: { settings?: DownloadSettings }
       }
-      if (!response.ok || !json.success) {
-        setError(json.message || `HTTP ${response.status}`)
+      const prepJson = (await prepRes.json()) as {
+        success?: boolean
+        message?: string
+        data?: { prep?: PrepForm }
+      }
+      if (!dlRes.ok || !dlJson.success) {
+        setError(dlJson.message || `HTTP ${dlRes.status}`)
         return
       }
-      if (json.data?.settings) setSettings(json.data.settings)
+      if (dlJson.data?.settings) setSettings(dlJson.data.settings)
+      if (prepRes.ok && prepJson.success && prepJson.data?.prep) {
+        setPrep(prepJson.data.prep)
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load settings")
     } finally {
       setLoading(false)
     }
   }, [])
+
+  const savePrep = useCallback(async (opts?: { quiet?: boolean }) => {
+    if (!opts?.quiet) {
+      setSavingPrep(true)
+      setError(null)
+      setOk(null)
+    }
+    try {
+      const response = await api.put("admin/download/client-prep", {
+        json: prep,
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: { prep?: PrepForm }
+      }
+      if (!response.ok || !json.success) {
+        if (!opts?.quiet) {
+          setError(json.message || `HTTP ${response.status}`)
+        }
+        return false
+      }
+      if (json.data?.prep) setPrep(json.data.prep)
+      if (!opts?.quiet) setOk("Client prep saved")
+      return true
+    } catch (e) {
+      if (!opts?.quiet) {
+        setError(e instanceof Error ? e.message : "Save failed")
+      }
+      return false
+    } finally {
+      if (!opts?.quiet) setSavingPrep(false)
+    }
+  }, [prep])
 
   useEffect(() => {
     void loadSettings()
@@ -106,11 +158,55 @@ export function AdminDownloadPanel() {
     }
   }
 
+  const serverLabel = () => {
+    const host = prep.host.trim()
+    if (!host) return ""
+    const port = Number.parseInt(prep.lobbyPort, 10)
+    return Number.isFinite(port) ? `${host}:${port}` : host
+  }
+
+  const publishUpdaterPage = async () => {
+    setPublishing(true)
+    setError(null)
+    setOk(null)
+    try {
+      if (!(await savePrep({ quiet: true }))) {
+        setError("Could not save client prep before publishing")
+        return
+      }
+      const response = await api.put("admin/download/updater-site", {
+        json: {
+          websiteUrl: prep.websiteUrl.trim(),
+          pageTitle: prep.title.trim() || undefined,
+          serverLabel: serverLabel(),
+          publish: true,
+        },
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+      }
+      if (!response.ok || !json.success) {
+        setError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      setOk(json.message || "Updater landing page published")
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Publish failed")
+    } finally {
+      setPublishing(false)
+    }
+  }
+
   const downloadPrepZip = async () => {
     setZipping(true)
     setError(null)
     setOk(null)
     try {
+      if (!(await savePrep({ quiet: true }))) {
+        setError("Could not save client prep before building zip")
+        return
+      }
       const lobbyPort = Number.parseInt(prep.lobbyPort, 10)
       const updaterPort = Number.parseInt(prep.updaterPort, 10)
       const loginPort = Number.parseInt(prep.loginPort, 10)
@@ -123,6 +219,7 @@ export function AdminDownloadPanel() {
           loginPort: Number.isFinite(loginPort) ? loginPort : undefined,
           title: prep.title.trim() || undefined,
           tag: prep.tag.trim() || undefined,
+          websiteUrl: prep.websiteUrl.trim() || undefined,
         },
       })
       if (!response.ok) {
@@ -250,20 +347,62 @@ export function AdminDownloadPanel() {
                 }
               />
             </Field>
+            <Field className="sm:col-span-2">
+              <FieldLabel htmlFor="prep-website">
+                Website URL (ImagineUpdate Information)
+              </FieldLabel>
+              <Input
+                id="prep-website"
+                value={prep.websiteUrl}
+                onChange={(e) =>
+                  setPrep((p) => ({ ...p, websiteUrl: e.target.value }))
+                }
+                placeholder="http://192.168.0.230:3500/updater/news"
+                autoComplete="off"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                ImagineUpdate <code className="text-foreground">Information</code>{" "}
+                URL — use your lightweight news page (
+                <code className="text-foreground">/updater/news</code>) instead of
+                the main site; the updater browser cannot render modern CSS.
+              </p>
+            </Field>
           </FieldGroup>
           <p className="text-xs text-muted-foreground">
             Zip includes ImagineClient.dat, ImagineUpdate(.dat / -user),
             VersionData(.txt / -user), and encrypted webaccess.sdat(+.local).
             Requires ops sidecar with comp_encrypt.
           </p>
-          <Button
-            type="button"
-            size="sm"
-            disabled={zipping || !prep.host.trim()}
-            onClick={() => void downloadPrepZip()}
-          >
-            {zipping ? "Building…" : "Download client-config.zip"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={savingPrep}
+              onClick={() => void savePrep()}
+            >
+              {savingPrep ? "Saving…" : "Save"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={zipping || !prep.host.trim()}
+              onClick={() => void downloadPrepZip()}
+            >
+              {zipping ? "Building…" : "Download client-config.zip"}
+            </Button>
+            {SHOW_PUBLISH_UPDATER_PAGE ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={publishing || !prep.host.trim()}
+                onClick={() => void publishUpdaterPage()}
+              >
+                {publishing ? "Publishing…" : "Publish updater page"}
+              </Button>
+            ) : null}
+          </div>
         </CardContent>
       </Card>
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 import { useLogout, useSessionUser } from "@/features/auth/hooks"
 import { isAdminLevel } from "@/lib/admin-level"
@@ -18,6 +19,22 @@ export function SiteHeader() {
   const { data: session } = useSessionUser()
   const logoutMutation = useLogout()
   const admin = isAdminLevel(session?.userLevel)
+  const [wikiEnabled, setWikiEnabled] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/wiki/status")
+      .then((r) => r.json())
+      .then((body: { enabled?: boolean }) => {
+        if (!cancelled) setWikiEnabled(Boolean(body.enabled))
+      })
+      .catch(() => {
+        if (!cancelled) setWikiEnabled(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const playHref = session ? "/account" : "/register"
   const playLabel = session ? "Account" : "Play now"
@@ -73,15 +90,17 @@ export function SiteHeader() {
           >
             Armory
           </Link>
-          <Link
-            href="/wiki"
-            className={cn(
-              navClass,
-              pathname.startsWith("/wiki") && "text-gold"
-            )}
-          >
-            Wiki
-          </Link>
+          {wikiEnabled ? (
+            <Link
+              href="/wiki"
+              className={cn(
+                navClass,
+                pathname.startsWith("/wiki") && "text-gold"
+              )}
+            >
+              Wiki
+            </Link>
+          ) : null}
           {admin ? (
             <Link
               href="/admin"

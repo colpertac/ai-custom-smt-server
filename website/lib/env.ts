@@ -49,7 +49,10 @@ export function getPublicUpdaterUrl(): string | undefined {
 export function getUpdaterProbeUrl(): string | undefined {
   const value = process.env.UPDATER_PROBE_URL?.trim()
   if (value) return value.replace(/\/$/, "")
-  return getPublicUpdaterUrl()
+  const publicUrl = getPublicUpdaterUrl()
+  if (publicUrl) return publicUrl
+  if (isLocalCompApiHost()) return "http://127.0.0.1:8765"
+  return undefined
 }
 
 function compApiHostname(): string | null {
