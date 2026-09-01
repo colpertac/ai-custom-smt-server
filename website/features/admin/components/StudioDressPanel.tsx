@@ -242,8 +242,8 @@ export function StudioDressPanel() {
       <div className="border-2 border-border bg-card/60 p-4">
         <p className="text-sm font-medium">Remote preview</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Grabs the mannequin Wine window (studio crop). Website must run on
-          the studio host. ~8s cooldown per mannequin.
+          Grabs the mannequin Wine window (studio crop). Website must run on the
+          studio host. ~8s cooldown per mannequin.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {PREVIEW_ROLES.map((role) => {
@@ -272,7 +272,7 @@ export function StudioDressPanel() {
                 {slot.error && (
                   <FormAlert variant="error">{slot.error}</FormAlert>
                 )}
-                <div className="border border-border bg-black/40 min-h-40 flex items-center justify-center overflow-hidden">
+                <div className="flex min-h-40 items-center justify-center overflow-hidden border border-border bg-black/40">
                   {src ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -281,7 +281,7 @@ export function StudioDressPanel() {
                       className="max-h-72 w-full object-contain"
                     />
                   ) : (
-                    <span className="text-xs text-muted-foreground px-2 py-8">
+                    <span className="px-2 py-8 text-xs text-muted-foreground">
                       No shot yet
                     </span>
                   )}
@@ -300,7 +300,7 @@ export function StudioDressPanel() {
           <FieldLabel htmlFor="studio-mannequin">Mannequin</FieldLabel>
           <select
             id="studio-mannequin"
-            className="border-input bg-background h-8 w-full rounded-none border px-2 text-sm"
+            className="h-8 w-full rounded-none border border-input bg-background px-2 text-sm"
             value={mannequin}
             onChange={(e) => setMannequin(e.target.value)}
           >
@@ -314,7 +314,7 @@ export function StudioDressPanel() {
             id="studio-source"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            placeholder="catm"
+            placeholder=""
             autoComplete="off"
           />
         </Field>
@@ -330,7 +330,7 @@ export function StudioDressPanel() {
         </label>
         <p className="text-xs text-muted-foreground">
           Mannequin must be logged in. Gender must match (male → vam1, female →
-          vaf1). Does not touch live cat/catm clients.
+          vaf1). Does not touch live clients.
         </p>
         {error && <FormAlert variant="error">{error}</FormAlert>}
         {ok && <FormAlert variant="success">{ok}</FormAlert>}
