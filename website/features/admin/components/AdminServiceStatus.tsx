@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/kyClient"
+import { signOutAfterLobbyRestart } from "@/features/auth/lobby-restart"
 
 const SERVICES = ["lobby", "world", "channel"] as const
 type ServiceName = (typeof SERVICES)[number]
@@ -164,6 +165,13 @@ export function AdminServiceStatus({
         }
         setOk(json.message || `${service} ${action} ok`)
         await refresh()
+        if (
+          service === "lobby" &&
+          (action === "start" || action === "restart")
+        ) {
+          void signOutAfterLobbyRestart()
+          return
+        }
         // If we started/restarted but it is still offline after refresh, show logs.
         if (action === "start" || action === "restart") {
           try {

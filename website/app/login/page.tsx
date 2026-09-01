@@ -16,14 +16,16 @@ export const metadata = { title: "Log in" }
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ passwordChanged?: string }>
+  searchParams: Promise<{ passwordChanged?: string; lobbyRestarted?: string }>
 }) {
   await redirectIfLoggedIn()
 
   const params = await searchParams
-  const notice = params.passwordChanged
-    ? "Password updated. Sign in with your new password."
-    : null
+  const notice = params.lobbyRestarted
+    ? "Game servers were restarted. Sign in again so admin tools can reach the lobby."
+    : params.passwordChanged
+      ? "Password updated. Sign in with your new password."
+      : null
 
   return (
     <div className="mx-auto flex max-w-md flex-col justify-center px-4 py-10">

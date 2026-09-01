@@ -25,6 +25,7 @@ import {
   useLaneAPending,
 } from "@/features/admin/lane-a-pending"
 import { api } from "@/lib/kyClient"
+import { signOutAfterLobbyRestart } from "@/features/auth/lobby-restart"
 import { cn } from "@/lib/utils"
 
 type OpsHealth = {
@@ -190,8 +191,12 @@ export function AdminOpsHealth() {
           setError(json.message || `HTTP ${response.status}`)
           return
         }
-        setOk(json.message || fallbackOk)
-        await refresh()
+        if (path === "admin/ops/stop") {
+          setOk(json.message || fallbackOk)
+          await refresh()
+          return
+        }
+        void signOutAfterLobbyRestart()
       } catch (e) {
         setError(e instanceof Error ? e.message : "request failed")
       } finally {
@@ -855,8 +860,8 @@ export function AdminOpsHealth() {
             <DialogTitle>Restart all services?</DialogTitle>
             <DialogDescription>
               Restarts lobby, world, and channel. Players disconnect and must
-              log back in. Prefer per-service restart when only one process
-              needs it.
+              log back in — you will too, so admin tools can reach the lobby
+              again. Prefer per-service restart when only one process needs it.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -10,6 +10,7 @@ import {
   type IngestJobView,
 } from "@/features/admin/ops-ingest-client"
 import { api } from "@/lib/kyClient"
+import { signOutAfterLobbyRestart } from "@/features/auth/lobby-restart"
 
 type Bucket = {
   files: number
@@ -187,9 +188,7 @@ export function AdminOpsFirstBoot() {
         setError(json.message || `HTTP ${response.status}`)
         return
       }
-      setOk(json.message || "Game servers started")
-      setKeepVisible(false)
-      window.dispatchEvent(new Event("ops-freshness-changed"))
+      void signOutAfterLobbyRestart()
     } catch (e) {
       setError(e instanceof Error ? e.message : "start failed")
     } finally {

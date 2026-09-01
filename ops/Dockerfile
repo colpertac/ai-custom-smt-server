@@ -23,7 +23,7 @@ COPY --from=dockercli /usr/local/libexec/docker/cli-plugins/docker-compose \
 
 WORKDIR /ops
 COPY encrypt_tools.py first_boot.py freshness.py ingest_jobs.py metrics.py \
-  rehash.py sidecar.py zip_ingest.py ceventmessage.py service_logs.py ./
+  rehash.py sidecar.py zip_ingest.py ceventmessage.py service_logs.py updater_site.py ./
 # comp_encrypt / comp_rehash / … — staged by deploy/scripts/stage-ops-tools.sh
 COPY comp-tools/ /opt/comp-tools/
 RUN chmod 0755 /opt/comp-tools/* 2>/dev/null || true
