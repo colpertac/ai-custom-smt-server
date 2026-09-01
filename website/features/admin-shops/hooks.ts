@@ -8,6 +8,7 @@ import {
   fetchAdminShop,
   fetchAdminShops,
   saveAdminShop,
+  uploadAdminShopXml,
 } from "@/features/admin-shops/api"
 import type { CompShop } from "@/lib/comp-shop-xml"
 
@@ -58,6 +59,19 @@ export function useDeleteAdminShop() {
     onSuccess: (_data, shopId) => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
       void queryClient.removeQueries({ queryKey: ["admin", "shops", shopId] })
+    },
+  })
+}
+
+export function useUploadAdminShop() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => uploadAdminShopXml(file),
+    onSuccess: (data) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
+      void queryClient.invalidateQueries({
+        queryKey: ["admin", "shops", data.shopId],
+      })
     },
   })
 }

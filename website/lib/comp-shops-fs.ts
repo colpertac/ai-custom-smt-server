@@ -210,3 +210,90 @@ export async function deleteWorkingShop(shopId: number): Promise<void> {
   }
   await fs.unlink(shopPath(shopId))
 }
+
+export class ShopImportValidationError extends Error {
+  readonly issues: ShopValidationIssue[]
+
+  constructor(issues: ShopValidationIssue[]) {
+    super(issues[0]?.message ?? "Invalid shop XML")
+    this.name = "ShopImportValidationError"
+    this.issues = issues
+  }
+}
+
+export type ImportWorkingShopResult = {
+  shopId: number
+  originalShopId: number
+  shopIdChanged: boolean
+  name: string
+  filename: string
+  tabCount: number
+  productCount: number
+  warnings: string[]
+}
+
+/** Next free ShopID when `preferred` is taken (max existing + 1). */
+export async function resolveAvailableShopId(
+  preferred: number
+): Promise<{ shopId: number; changed: boolean }> {
+  if (Number.isInteger(preferred) && preferred > 0 && !(await shopExists(preferred))) {
+    return { shopId: preferred, changed: false }
+  }
+  const shops = await listWorkingShops()
+  const next =
+    shops.length > 0
+      ? Math.max(...shops.map((s) => s.shopId), preferred > 0 ? preferred : 0) + 1
+      : preferred > 0
+        ? preferred
+        : 9000
+  return { shopId: next, changed: preferred !== next }
+}
+
+export async function importWorkingShopFromXml(
+  xml: string,
+  sourceFilename: string
+): Promise<ImportWorkingShopResult> {
+  let parsed: CompShop
+  try {
+    parsed = parseCompShopXml(xml, sourceFilename)
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to parse shop XML"
+    )
+  }
+
+  const warnings: string[] = []
+  const originalShopId = parsed.shopId
+  const { shopId, changed } = await resolveAvailableShopId(parsed.shopId)
+  if (!Number.isInteger(originalShopId) || originalShopId <= 0) {
+    warnings.push(
+      `XML had invalid ShopID (${String(originalShopId)}); assigned ${shopId}`
+    )
+  } else if (changed) {
+    warnings.push(`ShopID ${originalShopId} already exists; assigned ${shopId}`)
+  }
+
+  const shop: CompShop = {
+    ...parsed,
+    shopId,
+    filename: shopFilename(shopId),
+  }
+
+  const issues = validateCompShop(shop, null)
+  if (issues.length) {
+    throw new ShopImportValidationError(issues)
+  }
+
+  await writeWorkingShop(shop)
+
+  return {
+    shopId,
+    originalShopId,
+    shopIdChanged: shopId !== originalShopId,
+    name: shop.name,
+    filename: shop.filename,
+    tabCount: shop.tabs.length,
+    productCount: shop.tabs.reduce((n, t) => n + t.products.length, 0),
+    warnings,
+  }
+}

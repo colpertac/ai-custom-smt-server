@@ -66,6 +66,28 @@ export const deleteAdminShop = async (shopId: number) => {
   return result
 }
 
+export type ImportAdminShopResult = {
+  shopId: number
+  originalShopId: number
+  shopIdChanged: boolean
+  name: string
+  filename: string
+  tabCount: number
+  productCount: number
+  warnings: string[]
+}
+
+export const uploadAdminShopXml = async (file: File) => {
+  const form = new FormData()
+  form.append("file", file)
+  const result = await fetcher<ImportAdminShopResult>("admin/shops/import", {
+    method: "POST",
+    body: form,
+  })
+  notifyLaneAPendingChanged()
+  return result
+}
+
 async function downloadBlob(path: string, filename: string): Promise<void> {
   const response = await api(path)
   if (!response.ok) {

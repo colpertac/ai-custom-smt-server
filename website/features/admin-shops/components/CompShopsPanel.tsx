@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, Upload } from "lucide-react"
 
 import {
   downloadAdminShopXml,
@@ -16,6 +16,7 @@ import {
   useCreateAdminShop,
   useDeleteAdminShop,
   useSaveAdminShop,
+  useUploadAdminShop,
 } from "@/features/admin-shops/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
@@ -69,19 +70,17 @@ function toSaveBody(draft: ShopDetail): CompShop {
     type: draft.type,
     filename: draft.filename,
     passthrough: draft.passthrough,
-    tabs: draft.tabs.map(
-      (t): CompShopTab => ({
-        name: t.name,
-        passthrough: t.passthrough,
-        products: t.products.map((p) => ({
-          productId: p.productId,
-          basePrice: p.basePrice,
-          merchantDescription: p.merchantDescription,
-          moonRestrict: p.moonRestrict,
-          passthrough: p.passthrough,
-        })),
-      })
-    ),
+    tabs: draft.tabs.map((t): CompShopTab => ({
+      name: t.name,
+      passthrough: t.passthrough,
+      products: t.products.map((p) => ({
+        productId: p.productId,
+        basePrice: p.basePrice,
+        merchantDescription: p.merchantDescription,
+        moonRestrict: p.moonRestrict,
+        passthrough: p.passthrough,
+      })),
+    })),
   }
 }
 
@@ -90,8 +89,7 @@ function shopFingerprint(shop: ShopDetail): string {
   return JSON.stringify(toSaveBody(shop))
 }
 
-const UNSAVED_MSG =
-  "You have unsaved shop changes. Leave without saving?"
+const UNSAVED_MSG = "You have unsaved shop changes. Leave without saving?"
 
 export function CompShopsPanel() {
   const confirm = useConfirm()
@@ -104,11 +102,14 @@ export function CompShopsPanel() {
   const createMutation = useCreateAdminShop()
   const saveMutation = useSaveAdminShop()
   const deleteMutation = useDeleteAdminShop()
+  const uploadMutation = useUploadAdminShop()
   const [draft, setDraft] = useState<ShopDetail | null>(null)
   const [baseline, setBaseline] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState(0)
   const [newShopId, setNewShopId] = useState("")
   const [newShopName, setNewShopName] = useState("")
+  const [importMessage, setImportMessage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const dirtyRef = useRef(false)
   const loadedShopKey = useRef<string | null>(null)
   const previewGen = useRef(0)
@@ -351,10 +352,73 @@ export function CompShopsPanel() {
             {!shops.length && (
               <p className="border-2 border-dashed border-border px-3 py-4 text-muted-foreground">
                 No shops yet. Create one below, or run{" "}
-                <code className="text-xs">scripts/shop-seed-working-copy.sh</code>
+                <code className="text-xs">
+                  scripts/shop-seed-working-copy.sh
+                </code>
                 .
               </p>
             )}
+          </div>
+
+          <div className="space-y-2 border-2 border-border bg-muted/20 p-3">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              Import XML
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Upload a channel compshop XML (e.g.{" "}
+              <code className="text-[10px]">mycompshop.xml</code>). If ShopID is
+              already taken, a new ID is assigned automatically.
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xml,text/xml,application/xml"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                e.target.value = ""
+                if (!file) return
+                void (async () => {
+                  if (!(await confirmDiscard())) return
+                  setImportMessage(null)
+                  uploadMutation.reset()
+                  uploadMutation.mutate(file, {
+                    onSuccess: (data) => {
+                      const parts = [
+                        `Imported ${data.name} as shop ${data.shopId}`,
+                        `(${data.tabCount} tabs, ${data.productCount} products)`,
+                      ]
+                      if (data.warnings.length) {
+                        parts.push(`— ${data.warnings.join("; ")}`)
+                      }
+                      setImportMessage(parts.join(" "))
+                      loadedShopKey.current = null
+                      setSelectedId(data.shopId)
+                    },
+                  })
+                })()
+              }}
+            />
+            {uploadMutation.isError && (
+              <FormAlert variant="error">
+                {uploadMutation.error instanceof Error
+                  ? uploadMutation.error.message
+                  : "Import failed"}
+              </FormAlert>
+            )}
+            {importMessage && !uploadMutation.isError && (
+              <FormAlert variant="success">{importMessage}</FormAlert>
+            )}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={uploadMutation.isPending}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload data-icon="inline-start" />
+              {uploadMutation.isPending ? "Importing…" : "Upload XML"}
+            </Button>
           </div>
 
           <div className="space-y-2 border-2 border-border bg-muted/20 p-3">
@@ -485,8 +549,9 @@ export function CompShopsPanel() {
               )}
               {!draft.productExtractPresent && (
                 <FormAlert variant="error">
-                  shop-products.json missing — run scripts/shop-export-products.sh
-                  for item previews / soft ProductID checks.
+                  shop-products.json missing — run
+                  scripts/shop-export-products.sh for item previews / soft
+                  ProductID checks.
                 </FormAlert>
               )}
               <FieldGroup>
@@ -574,7 +639,10 @@ export function CompShopsPanel() {
                       <th className="py-1 pr-2 font-medium">Item</th>
                       <th className="py-1 pr-2 font-medium">Currency</th>
                       <th className="py-1 pr-2 font-medium">BasePrice</th>
-                      <th className="py-1 pr-2 font-medium" title="u8 string-table id">
+                      <th
+                        className="py-1 pr-2 font-medium"
+                        title="u8 string-table id"
+                      >
                         Desc ID
                       </th>
                       <th className="py-1 font-medium" />
