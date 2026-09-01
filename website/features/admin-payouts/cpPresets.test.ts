@@ -25,61 +25,90 @@ const generous = {
   ...DEFAULT_CP_PRESETS.find((p) => p.id === "generous")!,
   sortOrder: 2,
 }
+const normal = {
+  ...DEFAULT_CP_PRESETS.find((p) => p.id === "normal")!,
+  sortOrder: 1,
+}
 const grindy = {
   ...DEFAULT_CP_PRESETS.find((p) => p.id === "grindy")!,
   sortOrder: 0,
 }
 
 describe("cpPresets", () => {
-  it("maps B/S/G for generous", () => {
+  it("uses per-dungeon sheet values for built-in presets", () => {
     expect(
       presetCpForPayout(
         item({
-          id: "a",
-          name: "A",
+          id: "suginami-bronze",
+          name: "Suginami (Bronze)",
           difficulty: "bronze",
           mode: "normal",
         }),
-        generous
-      )
-    ).toBe(50)
-    expect(
-      presetCpForPayout(
-        item({ id: "b", name: "B", difficulty: "silver", mode: "normal" }),
-        generous
-      )
-    ).toBe(120)
-    expect(
-      presetCpForPayout(
-        item({ id: "c", name: "C", difficulty: "gold", mode: "normal" }),
-        generous
-      )
-    ).toBe(250)
-  })
-
-  it("scales bearcat and diaspora", () => {
-    expect(
-      presetCpForPayout(
-        item({
-          id: "bc",
-          name: "BC",
-          difficulty: "bronze",
-          mode: "bearcat",
-        }),
         grindy
       )
-    ).toBe(8)
+    ).toBe(3)
     expect(
       presetCpForPayout(
         item({
-          id: "di",
-          name: "Di",
+          id: "suginami-bronze",
+          name: "Suginami (Bronze)",
+          difficulty: "bronze",
+          mode: "normal",
+        }),
+        normal
+      )
+    ).toBe(15)
+    expect(
+      presetCpForPayout(
+        item({
+          id: "mirage-ishtar",
+          name: "Mirage (Ishtar)",
+          difficulty: "special",
+          mode: "boss",
+          variantLabel: "True Ishtar",
+        }),
+        generous
+      )
+    ).toBe(500)
+  })
+
+  it("rounds fractional grindy values when scaled", () => {
+    expect(
+      presetCpForPayout(
+        item({
+          id: "suginami-unknown",
+          name: "Suginami (?)",
+          difficulty: "special",
+          mode: "other",
+        }),
+        normal
+      )
+    ).toBe(13)
+  })
+
+  it("falls back to global tiers for unmapped dungeons", () => {
+    expect(
+      presetCpForPayout(
+        item({
+          id: "diaspora-suginami",
+          name: "Diaspora Suginami",
           difficulty: "bronze",
           mode: "diaspora",
         }),
         grindy
       )
     ).toBe(120)
+    expect(
+      presetCpForPayout(
+        item({
+          id: "ice-cave",
+          name: "Ice Cave",
+          difficulty: "bronze",
+          mode: "normal",
+        }),
+        generous
+      )
+    ).toBe(50)
   })
 
   it("applyEconomyPreset fills all ids", () => {
@@ -91,9 +120,16 @@ describe("cpPresets", () => {
           difficulty: "bronze",
           mode: "normal",
         }),
+        item({
+          id: "zhuque-amaterasu-f",
+          name: "Zhu Que (Amaterasu F)",
+          difficulty: "special",
+          mode: "boss",
+        }),
       ],
       generous
     )
-    expect(map["suginami-bronze"]).toBe(50)
+    expect(map["suginami-bronze"]).toBe(30)
+    expect(map["zhuque-amaterasu-f"]).toBe(430)
   })
 })

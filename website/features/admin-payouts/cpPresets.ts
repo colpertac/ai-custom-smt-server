@@ -1,5 +1,9 @@
 import type { PayoutListItem } from "@/lib/dungeon-payout-types"
 import type { EconomyPreset } from "@/lib/cp-presets-store"
+import {
+  BUILTIN_PRESET_SCALE,
+  GRINDY_CP_BY_PAYOUT_ID,
+} from "@/lib/cp-preset-grindy-table"
 
 export type { EconomyPreset }
 
@@ -7,11 +11,22 @@ function roundCp(n: number): number {
   return Math.max(0, Math.round(n))
 }
 
+function builtinSheetCp(item: PayoutListItem, preset: EconomyPreset): number | null {
+  const scale = BUILTIN_PRESET_SCALE[preset.id]
+  if (scale === undefined) return null
+  const base = GRINDY_CP_BY_PAYOUT_ID[item.id]
+  if (base === undefined) return null
+  return roundCp(base * scale)
+}
+
 /** Resolve preset CP for one list row (difficulty + mode aware). */
 export function presetCpForPayout(
   item: PayoutListItem,
   preset: EconomyPreset
 ): number {
+  const sheetCp = builtinSheetCp(item, preset)
+  if (sheetCp !== null) return sheetCp
+
   const mode = item.mode ?? "normal"
   const difficulty = item.difficulty ?? "bronze"
 

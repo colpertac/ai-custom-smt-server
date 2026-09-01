@@ -19,6 +19,7 @@ import {
   useAdminCpPresets,
   useAdminPayoutConflicts,
   useAdminPayouts,
+  useBatchSaveAdminPayoutCp,
   useCreateAdminPayout,
   useDeleteAdminPayout,
   useRetireAdminPayoutConflictPackages,
@@ -37,11 +38,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import type { EconomyPreset } from "@/lib/cp-presets-store"
-import {
-  PAYOUT_SCHEMA_VERSION,
-  type DungeonPayoutFile,
-  type PayoutListItem,
-} from "@/lib/dungeon-payout-types"
+import type { DungeonPayoutFile, PayoutListItem } from "@/lib/dungeon-payout-types"
 
 const AUTO_SAVE_MS = 800
 
@@ -95,6 +92,7 @@ export function DungeonPayoutsPanel() {
   const liveConflicts = conflictData?.conflicts ?? []
   const createMutation = useCreateAdminPayout()
   const saveMutation = useSaveAdminPayout()
+  const batchCpMutation = useBatchSaveAdminPayoutCp()
   const deleteMutation = useDeleteAdminPayout()
 
   const [filter, setFilter] = useState("")
@@ -115,6 +113,7 @@ export function DungeonPayoutsPanel() {
 
   const draftRef = useRef(draft)
   const cpOverridesRef = useRef(cpOverrides)
+  const flushInFlightRef = useRef(false)
   draftRef.current = draft
   cpOverridesRef.current = cpOverrides
 
@@ -133,10 +132,12 @@ export function DungeonPayoutsPanel() {
   )
 
   const anyDirty = dirtyDrawer || dirtyCpIds.length > 0
+  const saving =
+    saveMutation.isPending || batchCpMutation.isPending || flushInFlightRef.current
   const dirtyRef = useRef(false)
   useEffect(() => {
-    dirtyRef.current = anyDirty || saveMutation.isPending
-  }, [anyDirty, saveMutation.isPending])
+    dirtyRef.current = anyDirty || saving
+  }, [anyDirty, saving])
 
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -149,6 +150,8 @@ export function DungeonPayoutsPanel() {
   }, [])
 
   const flushPendingChanges = useCallback(async () => {
+    if (flushInFlightRef.current) return
+
     const currentDraft = draftRef.current
     const currentCpOverrides = cpOverridesRef.current
     const cpDirty = Object.keys(currentCpOverrides).filter((id) => {
@@ -160,48 +163,54 @@ export function DungeonPayoutsPanel() {
       baseline != null &&
       fingerprint(currentDraft) !== baseline
 
-    const ids = new Set(cpDirty)
-    if (drawerDirty && currentDraft) ids.add(currentDraft.payout.id)
-    if (ids.size === 0) return
+    if (cpDirty.length === 0 && !drawerDirty) return
 
+    flushInFlightRef.current = true
     setBatchError(null)
     try {
-      for (const id of ids) {
-        let body: DungeonPayoutFile
-        if (currentDraft?.payout.id === id) {
-          body = currentDraft
-        } else {
-          const file = await fetchAdminPayout(id)
-          const cp = currentCpOverrides[id] ?? file.payout.cp
-          body = {
-            version: PAYOUT_SCHEMA_VERSION,
-            payout: { ...file.payout, cp },
-          }
-        }
-        await saveMutation.mutateAsync({ id, body })
+      const drawerId =
+        drawerDirty && currentDraft ? currentDraft.payout.id : null
+      const cpUpdates = cpDirty
+        .filter((id) => id !== drawerId)
+        .map((id) => ({ id, cp: currentCpOverrides[id]! }))
+
+      if (cpUpdates.length > 0) {
+        await batchCpMutation.mutateAsync(cpUpdates)
       }
-      setCpOverrides((prev) => {
-        const next = { ...prev }
-        for (const id of ids) delete next[id]
-        return next
-      })
-      if (currentDraft && ids.has(currentDraft.payout.id)) {
+      if (drawerDirty && currentDraft) {
+        await saveMutation.mutateAsync({
+          id: currentDraft.payout.id,
+          body: currentDraft,
+        })
         setBaseline(fingerprint(currentDraft))
       }
+
+      const savedIds = new Set([
+        ...cpUpdates.map((u) => u.id),
+        ...(drawerId ? [drawerId] : []),
+      ])
+      setCpOverrides((prev) => {
+        const next = { ...prev }
+        for (const id of savedIds) delete next[id]
+        return next
+      })
       saveMutation.reset()
+      batchCpMutation.reset()
     } catch (err) {
       setBatchError(err instanceof Error ? err.message : "Save failed")
       throw err
+    } finally {
+      flushInFlightRef.current = false
     }
-  }, [baseline, list, saveMutation])
+  }, [baseline, batchCpMutation, list, saveMutation])
 
   useEffect(() => {
-    if (!anyDirty || saveMutation.isPending) return
+    if (!anyDirty || saving) return
     const timer = window.setTimeout(() => {
       void flushPendingChanges()
     }, AUTO_SAVE_MS)
     return () => window.clearTimeout(timer)
-  }, [anyDirty, draft, cpOverrides, flushPendingChanges, saveMutation.isPending])
+  }, [anyDirty, draft, cpOverrides, flushPendingChanges, saving])
 
   const openPayout = useCallback(
     async (id: string) => {
@@ -268,12 +277,19 @@ export function DungeonPayoutsPanel() {
     void (async () => {
       const rows = list ?? []
       if (!rows.length) return
+      const sheetNote =
+        preset.id === "grindy" ||
+        preset.id === "normal" ||
+        preset.id === "generous"
+          ? "\n\nUses per-dungeon sheet values where defined; other payouts use global tier fallbacks."
+          : ""
       const ok = await confirm({
         title: `Apply “${preset.label}” preset?`,
         description:
           `Apply to all ${rows.length} payouts.\n\n` +
           `Bronze ${preset.bronze} · Silver ${preset.silver} · Gold ${preset.gold}` +
-          ` (bearcat ×${preset.bearcatMult}, diaspora ${preset.diaspora}).`,
+          ` (bearcat ×${preset.bearcatMult}, diaspora ${preset.diaspora}).` +
+          sheetNote,
         confirmLabel: "Apply preset",
       })
       if (!ok) return
@@ -358,7 +374,7 @@ export function DungeonPayoutsPanel() {
             type="button"
             size="sm"
             variant="outline"
-            disabled={exportAllPending || saveMutation.isPending}
+            disabled={exportAllPending || saving}
             onClick={() => {
               void (async () => {
                 try {
@@ -663,7 +679,7 @@ export function DungeonPayoutsPanel() {
             draft={draft}
             listItem={selectedListItem}
             isDirty={dirtyDrawer}
-            savePending={saveMutation.isPending}
+            savePending={saving}
             deletePending={deleteMutation.isPending}
             saveError={
               saveMutation.isError

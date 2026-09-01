@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
+  batchSaveAdminPayoutCp,
   createAdminPayout,
   deleteAdminPayout,
   fetchAdminPayout,
@@ -79,6 +80,22 @@ export function useSaveAdminPayout() {
       void queryClient.invalidateQueries({
         queryKey: ["admin", "payouts", vars.id],
       })
+    },
+  })
+}
+
+export function useBatchSaveAdminPayoutCp() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (updates: { id: string; cp: number }[]) =>
+      batchSaveAdminPayoutCp(updates),
+    onSuccess: (result) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "payouts"] })
+      for (const id of result.updated) {
+        void queryClient.invalidateQueries({
+          queryKey: ["admin", "payouts", id],
+        })
+      }
     },
   })
 }

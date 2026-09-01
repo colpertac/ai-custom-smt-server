@@ -50,6 +50,18 @@ export const saveAdminPayout = async (id: string, body: DungeonPayoutFile) => {
   return result
 }
 
+export const batchSaveAdminPayoutCp = async (updates: { id: string; cp: number }[]) => {
+  const result = await fetcher<{ updated: string[]; skipped: string[] }>(
+    "admin/payouts/batch-cp",
+    {
+      method: "POST",
+      json: { updates },
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
+
 export const deleteAdminPayout = async (id: string) => {
   const result = await fetcher<{ id: string }>(
     `admin/payouts/${encodeURIComponent(id)}`,

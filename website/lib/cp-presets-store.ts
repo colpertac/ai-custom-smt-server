@@ -35,7 +35,7 @@ export const DEFAULT_CP_PRESETS: Omit<EconomyPreset, "sortOrder">[] = [
   {
     id: "grindy",
     label: "Grindy",
-    blurb: "Typical PS grind — bronze ~5 CP",
+    blurb: "Sheet baseline — per-dungeon B/S/G and variants",
     bronze: 5,
     silver: 12,
     gold: 25,
@@ -47,7 +47,7 @@ export const DEFAULT_CP_PRESETS: Omit<EconomyPreset, "sortOrder">[] = [
   {
     id: "normal",
     label: "Normal",
-    blurb: "Mid casual — bronze ~20 CP",
+    blurb: "Grindy sheet ×5",
     bronze: 20,
     silver: 50,
     gold: 120,
@@ -59,7 +59,7 @@ export const DEFAULT_CP_PRESETS: Omit<EconomyPreset, "sortOrder">[] = [
   {
     id: "generous",
     label: "Generous",
-    blurb: "Casual — bronze ~50 CP",
+    blurb: "Grindy sheet ×10",
     bronze: 50,
     silver: 120,
     gold: 250,

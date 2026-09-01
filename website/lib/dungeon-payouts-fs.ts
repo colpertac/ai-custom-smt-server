@@ -190,6 +190,38 @@ export async function deletePayout(id: string): Promise<void> {
   await fs.unlink(payoutPath(id))
 }
 
+/** Update CP on many payouts in one pass (preset apply / sheet batch save). */
+export async function updatePayoutCpBatch(
+  updates: { id: string; cp: number }[]
+): Promise<{ updated: string[]; skipped: string[] }> {
+  const updated: string[] = []
+  const skipped: string[] = []
+
+  for (const { id, cp } of updates) {
+    let file: DungeonPayoutFile
+    try {
+      file = await readPayout(id)
+    } catch (error) {
+      if (error instanceof PayoutNotFoundError) {
+        skipped.push(id)
+        continue
+      }
+      throw error
+    }
+    if (file.payout.cp === cp) {
+      skipped.push(id)
+      continue
+    }
+    await writePayout({
+      version: PAYOUT_SCHEMA_VERSION,
+      payout: { ...file.payout, cp },
+    })
+    updated.push(id)
+  }
+
+  return { updated, skipped }
+}
+
 export function buildPayoutPackageFiles(payout: DungeonPayout): {
   path: string
   content: string

@@ -100,3 +100,19 @@ export const createPayoutSchema = z.object({
   name: z.string().trim().min(1).max(128),
   instanceId: z.number().int().positive(),
 })
+
+export const batchPayoutCpSchema = z.object({
+  updates: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .min(1)
+          .max(64)
+          .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id must be kebab-case"),
+        cp: z.number().int().min(0).max(10000),
+      })
+    )
+    .min(1)
+    .max(200),
+})
