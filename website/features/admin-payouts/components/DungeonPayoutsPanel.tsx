@@ -114,6 +114,8 @@ export function DungeonPayoutsPanel() {
   const draftRef = useRef(draft)
   const cpOverridesRef = useRef(cpOverrides)
   const flushInFlightRef = useRef(false)
+  /** Preset apply / explicit flush — skip debounced auto-save to avoid duplicate batch-cp. */
+  const skipAutoSaveRef = useRef(false)
   draftRef.current = draft
   cpOverridesRef.current = cpOverrides
 
@@ -205,12 +207,22 @@ export function DungeonPayoutsPanel() {
   }, [baseline, batchCpMutation, list, saveMutation])
 
   useEffect(() => {
-    if (!anyDirty || saving) return
+    if (!anyDirty || skipAutoSaveRef.current) return
     const timer = window.setTimeout(() => {
+      if (
+        skipAutoSaveRef.current ||
+        flushInFlightRef.current ||
+        saveMutation.isPending ||
+        batchCpMutation.isPending
+      ) {
+        return
+      }
       void flushPendingChanges()
     }, AUTO_SAVE_MS)
     return () => window.clearTimeout(timer)
-  }, [anyDirty, draft, cpOverrides, flushPendingChanges, saving])
+    // Intentionally omit `saving` — when a save fails, flipping saving back to false
+    // must not schedule another auto-save (that burned the batch-cp rate limit).
+  }, [anyDirty, draft, cpOverrides, flushPendingChanges, batchCpMutation, saveMutation])
 
   const openPayout = useCallback(
     async (id: string) => {
@@ -307,6 +319,7 @@ export function DungeonPayoutsPanel() {
         }
         setDraft(nextDraft)
       }
+      skipAutoSaveRef.current = true
       setCpOverrides(next)
       draftRef.current = nextDraft
       cpOverridesRef.current = next
@@ -314,6 +327,8 @@ export function DungeonPayoutsPanel() {
         await flushPendingChanges()
       } catch {
         // flushPendingChanges already surfaced the error
+      } finally {
+        skipAutoSaveRef.current = false
       }
     })()
   }

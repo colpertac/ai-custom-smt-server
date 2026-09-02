@@ -36,3 +36,5 @@ for sub in payouts report-rewards; do
   rsync -a --delete "$WORKING_SRC/$sub/" "$DEST/$sub/"
   echo "staged server-content/$sub -> deploy/seed/server-content/$sub"
 done
+
+"$SCRIPT_DIR/apply-install-payout-defaults.py" "$DEST"

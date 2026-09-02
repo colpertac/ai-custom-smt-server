@@ -6,7 +6,7 @@ import { updatePayoutCpBatch } from "@/lib/dungeon-payouts-fs"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
-  const blocked = await guardApiMutation("admin-payouts-batch-cp", 10, 60_000)
+  const blocked = await guardApiMutation("admin-payouts-batch-cp", 60, 60_000)
   if (blocked) return blocked
 
   const session = await requireWebSession()
