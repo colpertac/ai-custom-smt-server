@@ -5,30 +5,29 @@ import { Fragment } from "react"
 
 import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
-  PLANNER_STATS,
   SET_HEADER_COLORS,
+  isCombatPlannerStatKey,
   setHeaderBackground,
   type GearPlannerResult,
   type PlannerAttrs,
   type PlannerSlot,
+  type PlannerStatDef,
   type PlannerStatKey,
   plannerSlotDisplay,
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
-function formatLayerCell(stat: PlannerStatKey, value: number): string {
+function formatLayerCell(def: PlannerStatDef, value: number): string {
   if (value === 0) return ""
-  const def = PLANNER_STATS.find((s) => s.key === stat)!
   if (def.kind === "reduction") return String(value)
   return value > 0 ? `+${value}` : String(value)
 }
 
 function formatTotal(
-  stat: PlannerStatKey,
+  def: PlannerStatDef,
   raw: number,
   gearTotal: number
 ): string {
-  const def = PLANNER_STATS.find((s) => s.key === stat)!
   if (def.kind === "reduction") return `${raw - 100}%`
   if (def.kind === "lbCap") return raw.toLocaleString()
   if (def.kind === "percent") return `${gearTotal}%`
@@ -95,12 +94,14 @@ export function GearCombatMatrix({
   loadout,
   combat,
   attrs,
+  fullStats,
   onStatClick,
   onSlotHeaderClick,
 }: {
   loadout: PlannerSlot[]
   combat: GearPlannerResult
   attrs: PlannerAttrs
+  fullStats: boolean
   onStatClick: (stat: PlannerStatKey) => void
   onSlotHeaderClick: (slot: EquipSlotKey) => void
 }) {
@@ -215,29 +216,56 @@ export function GearCombatMatrix({
           </tr>
         </thead>
         <tbody>
-          {PLANNER_STATS.map((def) => {
+          {combat.visibleStats.map((def) => {
             const bd = combat.byStat[def.key]
+            if (!bd) return null
+            const combatKey = isCombatPlannerStatKey(def.key)
+              ? def.key
+              : null
+            const rowHover =
+              "group-hover/stat:shadow-[inset_0_0_0_9999px_rgba(232,196,74,0.22)]"
             return (
-              <tr key={def.key} className="border-t border-border/60">
-                <th className="sticky left-0 z-10 bg-card/95 px-2 py-1 text-left font-medium">
-                  <button
-                    type="button"
-                    className="text-left hover:text-gold-hot"
-                    onClick={() => onStatClick(def.key)}
-                  >
-                    {def.abbr}
-                  </button>
+              <tr
+                key={def.key}
+                className="group/stat border-t border-border/60"
+              >
+                <th
+                  className={cn(
+                    "sticky left-0 z-10 bg-card/95 px-2 py-1 text-left font-medium group-hover/stat:bg-muted",
+                    rowHover
+                  )}
+                >
+                  {combatKey ? (
+                    <button
+                      type="button"
+                      className="text-left hover:text-gold-hot"
+                      title={def.label}
+                      onClick={() => onStatClick(combatKey)}
+                    >
+                      {def.abbr}
+                    </button>
+                  ) : (
+                    <span className="text-muted-foreground" title={def.label}>
+                      {def.abbr}
+                    </span>
+                  )}
                 </th>
                 <td
                   className={cn(
                     "px-2 py-1 text-right font-semibold tabular-nums",
+                    rowHover,
                     bd.atCap && "bg-emerald-600/35 text-emerald-100"
                   )}
                 >
-                  {formatTotal(def.key, bd.raw, bd.gearTotal - bd.attrBonus)}
+                  {formatTotal(def, bd.raw, bd.gearTotal - bd.attrBonus)}
                 </td>
-                <td className="px-2 py-1 text-right tabular-nums text-[#c9a0ff]">
-                  {formatLayerCell(def.key, bd.setBonus)}
+                <td
+                  className={cn(
+                    "px-2 py-1 text-right tabular-nums text-[#c9a0ff]",
+                    rowHover
+                  )}
+                >
+                  {formatLayerCell(def, bd.setBonus)}
                 </td>
                 {EQUIP_SLOTS.map((slot) => {
                   const layers = bd.bySlotLayers[slot.key]
@@ -252,34 +280,49 @@ export function GearCombatMatrix({
                   return (
                     <Fragment key={`${def.key}-${slot.key}`}>
                       <td
-                        className="border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90"
+                        className={cn(
+                          "border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90",
+                          rowHover
+                        )}
                         style={cellTint}
                       >
-                        {formatLayerCell(def.key, layers.s1)}
+                        {formatLayerCell(def, layers.s1)}
                       </td>
                       <td
-                        className="px-0 py-1 text-center tabular-nums text-emerald-300/90"
+                        className={cn(
+                          "px-0 py-1 text-center tabular-nums text-emerald-300/90",
+                          rowHover
+                        )}
                         style={cellTint}
                       >
-                        {formatLayerCell(def.key, layers.s2)}
+                        {formatLayerCell(def, layers.s2)}
                       </td>
                       <td
-                        className="px-0 py-1 text-center tabular-nums text-rose-300/90"
+                        className={cn(
+                          "px-0 py-1 text-center tabular-nums text-rose-300/90",
+                          rowHover
+                        )}
                         style={cellTint}
                       >
-                        {formatLayerCell(def.key, layers.s3)}
+                        {formatLayerCell(def, layers.s3)}
                       </td>
                       <td
-                        className="px-0 py-1 text-center tabular-nums text-violet-300/90"
+                        className={cn(
+                          "px-0 py-1 text-center tabular-nums text-violet-300/90",
+                          rowHover
+                        )}
                         style={cellTint}
                       >
-                        {formatLayerCell(def.key, layers.tarot)}
+                        {formatLayerCell(def, layers.tarot)}
                       </td>
                       <td
-                        className="px-0 py-1 text-center tabular-nums text-orange-300/90"
+                        className={cn(
+                          "px-0 py-1 text-center tabular-nums text-orange-300/90",
+                          rowHover
+                        )}
                         style={cellTint}
                       >
-                        {formatLayerCell(def.key, layers.soul)}
+                        {formatLayerCell(def, layers.soul)}
                       </td>
                     </Fragment>
                   )
@@ -292,6 +335,9 @@ export function GearCombatMatrix({
       <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
         1/2/3/T/S = S1 / S2 / S3 / Tarot / Soul. Empty chips = vacant.
         Matching header tint = same EquipmentSet.
+        {fullStats
+          ? " Extra rows = nonzero bonuses from this loadout."
+          : null}
         {attrs.intel || attrs.speed || attrs.vit
           ? " INT/SPD/VIT fold into Total for Incant/CD."
           : null}

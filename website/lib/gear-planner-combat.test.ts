@@ -6,6 +6,7 @@ import {
   applyArmoryEquipmentToSlot,
   applyEnchantToSlot,
   applyLayerToSlot,
+  buildExtraPlannerStats,
   canApplyLayer,
   computeGearPlannerCombat,
   emptyPlannerLoadout,
@@ -259,5 +260,38 @@ describe("itemPieceContribution", () => {
     const item = getWikiItem(1214)
     expect(item).toBeTruthy()
     expect(itemPieceContribution(item!, "critical")).toBeGreaterThan(0)
+  })
+})
+
+describe("full stats catalog", () => {
+  it("includes real wiki CorrectTbl ids and excludes combat focus ids", () => {
+    const extras = buildExtraPlannerStats()
+    const keys = new Set(extras.map((e) => e.key))
+    expect(keys.has("mdef")).toBe(true)
+    expect(keys.has("rate_clsr")).toBe(true)
+    expect(keys.has("res_fire")).toBe(true)
+    expect(keys.has("critical")).toBe(false)
+    expect(keys.has("lbc")).toBe(false)
+    expect(
+      extras.some(
+        (e) => e.correctTblId === "CRITICAL" || e.aspectId === "LB_CHANCE"
+      )
+    ).toBe(false)
+  })
+
+  it("shows nonzero MDEF only when fullStats is on", () => {
+    const blade = getWikiItem(1254)!
+    let loadout = emptyPlannerLoadout()
+    loadout = equipWikiItemOntoSlot(loadout, "weapon", blade)
+
+    const combatOnly = computeGearPlannerCombat(loadout)
+    expect(combatOnly.visibleStats.every((s) => s.key !== "mdef")).toBe(true)
+    expect(combatOnly.byStat.mdef).toBeUndefined()
+
+    const full = computeGearPlannerCombat(loadout, undefined, undefined, {
+      fullStats: true,
+    })
+    expect(full.visibleStats.some((s) => s.key === "mdef")).toBe(true)
+    expect(full.byStat.mdef!.gearTotal).not.toBe(0)
   })
 })

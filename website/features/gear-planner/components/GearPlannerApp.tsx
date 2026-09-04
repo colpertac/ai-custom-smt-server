@@ -22,6 +22,7 @@ import { GearSlotSidebar } from "@/features/gear-planner/components/GearSlotSide
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
@@ -173,6 +174,7 @@ function GearPlannerAppClient({
   const [accountBuildError, setAccountBuildError] = useState<string | null>(
     null
   )
+  const [fullStats, setFullStats] = useState(false)
 
   useEffect(() => {
     if (shareBanner) return
@@ -180,8 +182,8 @@ function GearPlannerAppClient({
   }, [loadout, attrs, gender, lnc, notes, shareBanner])
 
   const combat = useMemo(
-    () => computeGearPlannerCombat(loadout, attrs, lnc),
-    [loadout, attrs, lnc]
+    () => computeGearPlannerCombat(loadout, attrs, lnc, { fullStats }),
+    [loadout, attrs, lnc, fullStats]
   )
 
   const equippedParam = useMemo(
@@ -532,10 +534,25 @@ function GearPlannerAppClient({
             partialSets={combat.partialSets}
           />
 
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="font-heading text-xs tracking-[0.14em] text-gold-dim uppercase">
+              Combat matrix
+            </h3>
+            <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+              <Switch
+                size="sm"
+                checked={fullStats}
+                onCheckedChange={setFullStats}
+              />
+              <span>Full stats</span>
+            </label>
+          </div>
+
           <GearCombatMatrix
             loadout={loadout}
             combat={combat}
             attrs={attrs}
+            fullStats={fullStats}
             onStatClick={(stat) => {
               setRecommendStat(stat)
               if (selectedSlot) setRecommendSlot(selectedSlot)

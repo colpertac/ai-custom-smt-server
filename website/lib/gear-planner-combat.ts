@@ -104,7 +104,8 @@ export type LayerPresence = {
 }
 
 export type PlannerStatDef = {
-  key: PlannerStatKey
+  /** Combat keys (`critical`, …) or CorrectTbl/aspect slug (`mdef`, `rate_clsr`). */
+  key: string
   abbr: string
   label: string
   correctTblId?: string
@@ -188,6 +189,16 @@ export const PLANNER_STATS: readonly PlannerStatDef[] = [
   },
 ] as const
 
+const COMBAT_STAT_SOURCE_IDS = new Set(
+  PLANNER_STATS.flatMap((s) =>
+    [s.correctTblId, s.aspectId].filter((id): id is string => Boolean(id))
+  )
+)
+
+export function isCombatPlannerStatKey(key: string): key is PlannerStatKey {
+  return PLANNER_STATS.some((s) => s.key === key)
+}
+
 export type EquipmentSetInfo = {
   id: number
   equipment: number[]
@@ -216,7 +227,9 @@ export type PlannerStatBreakdown = {
 }
 
 export type GearPlannerResult = {
-  byStat: Record<PlannerStatKey, PlannerStatBreakdown>
+  byStat: Record<string, PlannerStatBreakdown>
+  /** Ordered rows to render (combat always; extras only when nonzero). */
+  visibleStats: readonly PlannerStatDef[]
   layerPresence: Record<EquipSlotKey, LayerPresence>
   activeSets: SetStatus[]
   partialSets: SetStatus[]
@@ -769,6 +782,108 @@ function humanizeAspectId(id: string): string {
     .join(" ")
 }
 
+function classifyExtraStatKind(id: string): PlannerStatDef["kind"] {
+  if (id === "CHANT_TIME" || id === "COOLDOWN_TIME") return "reduction"
+  if (id === "LIMIT_BREAK_MAX") return "lbCap"
+  if (
+    id.startsWith("RATE_") ||
+    id.startsWith("BOOST_") ||
+    id === "LB_CHANCE" ||
+    id === "LB_DAMAGE" ||
+    id === "FINAL_CRIT_CHANCE"
+  ) {
+    return "percent"
+  }
+  return "flat"
+}
+
+function abbrFromLabel(label: string, id: string): string {
+  const trimmed = label.trim()
+  if (trimmed.length > 0 && trimmed.length <= 14) return trimmed
+  const human = humanizeAspectId(id)
+  return human.length <= 14 ? human : id.replace(/_/g, " ").slice(0, 14)
+}
+
+function collectWikiStatLabels(): Map<string, string> {
+  const labels = new Map<string, string>()
+  for (const item of listWikiItems()) {
+    for (const row of [
+      ...wikiBasicFeatures(item),
+      ...wikiCharacteristics(item),
+    ]) {
+      if (!labels.has(row.id) && row.label.trim()) {
+        labels.set(row.id, row.label.trim())
+      }
+    }
+  }
+  return labels
+}
+
+function collectGearTokuseiIds(): Set<number> {
+  const ids = new Set<number>()
+  for (const list of Object.values(sitemTokusei)) {
+    for (const id of list) ids.add(id)
+  }
+  for (const set of setList) {
+    for (const id of set.tokuseiIds) ids.add(id)
+  }
+  for (const enchant of listWikiEnchants()) {
+    for (const side of [enchant.tarot, enchant.soul]) {
+      for (const id of side.tokuseiIds ?? []) ids.add(id)
+      for (const condition of side.conditions ?? []) {
+        for (const id of condition.tokuseiIds) ids.add(id)
+      }
+    }
+  }
+  return ids
+}
+
+/**
+ * Extra matrix rows beyond the combat 11 — only ids that appear on wiki
+ * CorrectTbl or gear-linked tokusei (SItem / sets / enchants).
+ */
+export function buildExtraPlannerStats(): PlannerStatDef[] {
+  const labels = collectWikiStatLabels()
+  const aspectIds = new Set<string>()
+  const allIds = new Set<string>(labels.keys())
+
+  for (const tokId of collectGearTokuseiIds()) {
+    for (const row of tokuseiRows(tokId)) {
+      allIds.add(row.id)
+      if (row.type === 101) aspectIds.add(row.id)
+    }
+  }
+
+  const extras: PlannerStatDef[] = []
+  for (const id of allIds) {
+    if (COMBAT_STAT_SOURCE_IDS.has(id)) continue
+    const label = labels.get(id) ?? humanizeAspectId(id)
+    const isAspect = aspectIds.has(id)
+    const def: PlannerStatDef = {
+      key: id.toLowerCase(),
+      abbr: abbrFromLabel(label, id),
+      label,
+      kind: classifyExtraStatKind(id),
+    }
+    if (isAspect) def.aspectId = id
+    else def.correctTblId = id
+    if (id === "LIMIT_BREAK_MAX") def.baseTotal = LB_CAP_BASE
+    extras.push(def)
+  }
+
+  extras.sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }))
+  return extras
+}
+
+let cachedExtraPlannerStats: PlannerStatDef[] | null = null
+
+export function extraPlannerStats(): readonly PlannerStatDef[] {
+  if (!cachedExtraPlannerStats) {
+    cachedExtraPlannerStats = buildExtraPlannerStats()
+  }
+  return cachedExtraPlannerStats
+}
+
 function formatSetBonusValue(row: TokuseiRow): string {
   const id = row.id
   if (id === "SKILL_ADD") return `#${row.value}`
@@ -1005,10 +1120,18 @@ function isAtCap(def: PlannerStatDef, raw: number): boolean {
 export function computeGearPlannerCombat(
   equipment: PlannerSlot[],
   attrs: PlannerAttrs = DEFAULT_PLANNER_ATTRS,
-  lnc: PlannerLnc = 1
+  lnc: PlannerLnc = 1,
+  options?: { fullStats?: boolean }
 ): GearPlannerResult {
-  const byStat = {} as Record<PlannerStatKey, PlannerStatBreakdown>
-  for (const def of PLANNER_STATS) {
+  const fullStats = Boolean(options?.fullStats)
+  const combatStats = PLANNER_STATS
+  const extras = fullStats ? extraPlannerStats() : []
+  const statsToCompute: readonly PlannerStatDef[] = fullStats
+    ? [...combatStats, ...extras]
+    : combatStats
+
+  const byStat = {} as Record<string, PlannerStatBreakdown>
+  for (const def of statsToCompute) {
     byStat[def.key] = emptyBreakdown()
   }
   const layerPresence = emptyPresenceMap()
@@ -1042,8 +1165,8 @@ export function computeGearPlannerCombat(
       layerPresence[slot.slot].soul = enchantSideHasContent(soul.soul)
     }
 
-    for (const def of PLANNER_STATS) {
-      const layers = byStat[def.key].bySlotLayers[slot.slot]
+    for (const def of statsToCompute) {
+      const layers = byStat[def.key]!.bySlotLayers[slot.slot]
       if (sitemId != null) {
         layers.s1 += contribFromAdjustments(s1Adjustments(sitemId), def)
       }
@@ -1065,7 +1188,7 @@ export function computeGearPlannerCombat(
           def
         )
       }
-      byStat[def.key].bySlot[slot.slot] =
+      byStat[def.key]!.bySlot[slot.slot] =
         layers.s1 + layers.s2 + layers.s3 + layers.tarot + layers.soul
     }
   }
@@ -1074,19 +1197,23 @@ export function computeGearPlannerCombat(
   for (const set of activeSets) {
     const rows: TokuseiRow[] = []
     for (const tokId of set.tokuseiIds) rows.push(...tokuseiRows(tokId))
-    for (const def of PLANNER_STATS) {
+    for (const def of statsToCompute) {
       const v = contribFromAdjustments(rows, def)
-      if (v !== 0) byStat[def.key].setBonus += v
+      if (v !== 0) byStat[def.key]!.setBonus += v
     }
   }
 
   const chantAttr = chantAttrReduction(attrs)
   const cdAttr = cooldownAttrReduction(attrs)
-  byStat.incant.attrBonus = chantAttr === 0 ? 0 : -chantAttr
-  byStat.cooldown.attrBonus = cdAttr === 0 ? 0 : -cdAttr
+  if (byStat.incant) {
+    byStat.incant.attrBonus = chantAttr === 0 ? 0 : -chantAttr
+  }
+  if (byStat.cooldown) {
+    byStat.cooldown.attrBonus = cdAttr === 0 ? 0 : -cdAttr
+  }
 
-  for (const def of PLANNER_STATS) {
-    const bd = byStat[def.key]
+  for (const def of statsToCompute) {
+    const bd = byStat[def.key]!
     let pieceSum = 0
     for (const slot of EQUIP_SLOTS) pieceSum += bd.bySlot[slot.key]
     bd.gearTotal = pieceSum + bd.setBonus + bd.attrBonus
@@ -1101,8 +1228,19 @@ export function computeGearPlannerCombat(
     bd.atCap = isAtCap(def, bd.raw)
   }
 
+  const nonzeroExtras = fullStats
+    ? extras.filter((def) => {
+        const bd = byStat[def.key]
+        if (!bd) return false
+        if (def.kind === "reduction") return bd.gearTotal !== 0
+        if (def.kind === "lbCap") return bd.gearTotal !== 0 || bd.setBonus !== 0
+        return bd.gearTotal !== 0 || bd.setBonus !== 0
+      })
+    : []
+
   return {
     byStat,
+    visibleStats: [...combatStats, ...nonzeroExtras],
     layerPresence,
     activeSets,
     partialSets,
