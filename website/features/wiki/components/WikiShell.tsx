@@ -13,28 +13,64 @@ import { cn } from "@/lib/utils"
 
 export function WikiShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const builder = pathname.startsWith("/wiki/builder")
 
-  return (
-    <div className="site-atmosphere mx-auto max-w-6xl px-4 py-8 lg:py-10">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <aside className="lg:w-56 shrink-0 lg:sticky lg:top-6">
+  if (builder) {
+    return (
+      <div className="site-atmosphere flex min-h-[calc(100dvh-3.5rem)] w-full flex-col">
+        <div className="flex shrink-0 items-center gap-4 border-b border-border bg-chrome/40 px-3 py-2 sm:px-4">
           <Link
             href="/wiki"
-            className="font-heading text-lg tracking-[0.14em] text-foreground uppercase no-underline hover:text-gold-hot"
+            className="font-heading text-sm tracking-[0.14em] text-foreground uppercase no-underline hover:text-gold-hot"
           >
             Item wiki
           </Link>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <nav aria-label="Wiki" className="flex min-w-0 flex-1 gap-1 overflow-x-auto text-xs">
+            {WIKI_NAV.map((item) => {
+              const on = wikiNavActive(pathname, item)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "shrink-0 px-2 py-1 no-underline uppercase tracking-wider",
+                    on
+                      ? "text-gold"
+                      : "text-muted-foreground hover:text-gold-dim"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
+        <div className="min-h-0 min-w-0 flex-1">{children}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="site-atmosphere w-full px-3 py-4 sm:px-4 lg:px-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-5">
+        <aside className="lg:w-48 shrink-0 lg:sticky lg:top-4">
+          <Link
+            href="/wiki"
+            className="font-heading text-base tracking-[0.14em] text-foreground uppercase no-underline hover:text-gold-hot"
+          >
+            Item wiki
+          </Link>
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {countWikiCatalog().toLocaleString()} game items
           </p>
 
-          <div className="mt-5 border border-border bg-card/50 p-3">
+          <div className="mt-3 border border-border bg-card/50 p-2">
             <WikiSearch size="sm" />
           </div>
 
           <nav
             aria-label="Wiki"
-            className="mt-4 flex flex-col gap-0.5 text-sm"
+            className="mt-3 flex flex-col gap-0 text-sm"
           >
             {WIKI_NAV.map((item) => {
               const on = wikiNavActive(pathname, item)
@@ -55,7 +91,7 @@ export function WikiShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          <dl className="mt-6 space-y-2 border-t border-border pt-4 text-xs">
+          <dl className="mt-4 space-y-1.5 border-t border-border pt-3 text-xs">
             <WikiCount label="Weapons" count={countWikiItems("weapons")} />
             <WikiCount label="Armor" count={countWikiItems("armor")} />
             <WikiCount label="Items" count={countWikiItems("items")} />
@@ -109,12 +145,12 @@ export function WikiPageHeader({
 }) {
   return (
     <header>
-      <h1 className="font-heading text-3xl font-semibold tracking-[0.1em] uppercase">
+      <h1 className="font-heading text-2xl font-semibold tracking-[0.1em] uppercase">
         {title}
       </h1>
-      <div className="gold-rule mt-3 max-w-xs" />
+      <div className="gold-rule mt-2 max-w-xs" />
       {description ? (
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-2 max-w-3xl text-sm leading-snug text-muted-foreground">
           {description}
         </p>
       ) : null}

@@ -14,6 +14,7 @@ import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { WIKI_STAT_FILTER_OPTIONS } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
 export function WikiBrowsePanel({
@@ -26,14 +27,24 @@ export function WikiBrowsePanel({
   const meta = WIKI_CATEGORY_META[category]
   const [query, setQuery] = useState("")
   const [slot, setSlot] = useState<string | null>(null)
+  const [stat, setStat] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [items, setItems] = useState<WikiItem[]>([])
   const [total, setTotal] = useState(totalCount)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const setQueryAndReset = (value: string) => {
+    setQuery(value)
     setPage(0)
-  }, [query, slot, category])
+  }
+  const setSlotAndReset = (value: string | null) => {
+    setSlot(value)
+    setPage(0)
+  }
+  const setStatAndReset = (value: string | null) => {
+    setStat(value)
+    setPage(0)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -47,6 +58,7 @@ export function WikiBrowsePanel({
       const q = query.trim()
       if (q) params.set("q", q)
       if (slot) params.set("slot", slot)
+      if (stat) params.set("stat", stat)
 
       fetch(`/api/wiki/browse?${params.toString()}`)
         .then((res) => res.json())
@@ -65,7 +77,9 @@ export function WikiBrowsePanel({
       cancelled = true
       window.clearTimeout(handle)
     }
-  }, [category, query, slot, page])
+  }, [category, query, slot, stat, page])
+
+  const filtered = Boolean(query.trim() || slot || stat)
 
   return (
     <div className="space-y-6">
@@ -74,7 +88,7 @@ export function WikiBrowsePanel({
         description={`${meta.blurb} ${totalCount.toLocaleString()} entries in this category.`}
       />
 
-      <div className="grid gap-4 border border-border bg-card/40 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+      <div className="grid gap-4 border border-border bg-card/40 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_auto] sm:items-end">
         <Field>
           <FieldLabel htmlFor={`wiki-filter-${category}`}>
             Filter this category
@@ -82,15 +96,35 @@ export function WikiBrowsePanel({
           <Input
             id={`wiki-filter-${category}`}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => setQueryAndReset(e.target.value)}
             placeholder="Name or item ID…"
             autoComplete="off"
           />
         </Field>
+        {category === "weapons" || category === "armor" ? (
+          <Field>
+            <FieldLabel htmlFor={`wiki-stat-${category}`}>Stat (S2/S3)</FieldLabel>
+            <select
+              id={`wiki-stat-${category}`}
+              className="flex h-9 w-full rounded-none border border-border bg-background px-2 text-sm"
+              value={stat ?? ""}
+              onChange={(e) => setStatAndReset(e.target.value || null)}
+            >
+              <option value="">Any stat</option>
+              {WIKI_STAT_FILTER_OPTIONS.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : (
+          <span />
+        )}
         <p className="text-xs text-muted-foreground sm:pb-2">
           {loading
             ? "Loading…"
-            : query.trim() || slot
+            : filtered
               ? `${total.toLocaleString()} match${total === 1 ? "" : "es"}`
               : `${total.toLocaleString()} in category`}
         </p>
@@ -101,14 +135,14 @@ export function WikiBrowsePanel({
           <SlotChip
             label="All slots"
             active={!slot}
-            onClick={() => setSlot(null)}
+            onClick={() => setSlotAndReset(null)}
           />
           {wikiArmorSlots.map((s) => (
             <SlotChip
               key={s}
               label={s}
               active={slot === s}
-              onClick={() => setSlot(slot === s ? null : s)}
+              onClick={() => setSlotAndReset(slot === s ? null : s)}
             />
           ))}
         </div>
@@ -123,7 +157,7 @@ export function WikiBrowsePanel({
 
       {items.length === 0 && !loading ? (
         <div className="border border-dashed border-border bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground">
-          No entries match. Try another name, ID, or slot filter.
+          No entries match. Try another name, ID, slot, or stat filter.
         </div>
       ) : (
         <WikiItemTable items={items} category={category} />

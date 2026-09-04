@@ -41,7 +41,7 @@ function FlowArrow() {
 
 function CompShopFlowRow({ row }: { row: WikiCompShopListing }) {
   return (
-    <li className="border border-border/70 bg-muted/10 p-3 sm:p-4">
+    <li className="border border-border/70 bg-muted/10 p-2.5 sm:p-3">
       <div className="flex items-stretch gap-0">
         <FlowBox label="Shop">
           <p>{row.shopName}</p>
@@ -70,14 +70,14 @@ export function WikiCompShopSources({
   if (listings.length === 0) return null
 
   return (
-    <section className="border border-border bg-muted/20 p-4">
-      <h2 className="font-heading text-sm font-semibold tracking-[0.12em] uppercase text-gold-dim">
+    <section className="border border-border bg-muted/20 p-3">
+      <h2 className="font-heading text-xs font-semibold tracking-[0.12em] uppercase text-gold-dim">
         Where to get
       </h2>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-1 text-[0.7rem] leading-snug text-muted-foreground">
         In-game shops on this server — not world NPC vendors, drops, or quests.
       </p>
-      <ul className="mt-4 space-y-3">
+      <ul className="mt-2.5 space-y-2">
         {listings.map((row) => (
           <CompShopFlowRow
             key={`${row.shopId}-${row.tabName}-${row.productId}`}

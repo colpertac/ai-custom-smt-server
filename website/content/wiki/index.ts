@@ -291,11 +291,53 @@ export function countWikiCatalog(): number {
   return wikiCatalog.items.length
 }
 
+export type WikiStatBucket = "basic" | "characteristic" | "any"
+
 export type WikiSearchOptions = {
   category?: WikiItemCategory | "all"
   slot?: string
+  /** CorrectTbl id filter (e.g. COOLDOWN_TIME). Matches S2/S3 rows. */
+  stat?: string
+  /** Which feature bucket to search; default any. */
+  statBucket?: WikiStatBucket
+  /** Minimum absolute value of the matched stat row. */
+  statMin?: number
+  /**
+   * Character gender for wearable filter: 0 male, 1 female.
+   * Keeps gender-any (2) plus matching lock.
+   */
+  gender?: 0 | 1
   limit?: number
   offset?: number
+}
+
+/** True if a catalog item can be worn by this character gender. */
+export function wikiItemFitsGender(
+  item: WikiItem,
+  gender: 0 | 1 | null | undefined
+): boolean {
+  if (gender == null) return true
+  // 2 = any / neutral
+  return item.gender === 2 || item.gender === gender
+}
+
+function itemHasStat(
+  item: WikiItem,
+  statId: string,
+  bucket: WikiStatBucket,
+  statMin: number
+): boolean {
+  const id = statId.toUpperCase()
+  const rows: WikiItemStat[] = []
+  if (bucket === "basic" || bucket === "any") {
+    rows.push(...wikiBasicFeatures(item))
+  }
+  if (bucket === "characteristic" || bucket === "any") {
+    rows.push(...wikiCharacteristics(item))
+  }
+  return rows.some(
+    (row) => row.id.toUpperCase() === id && Math.abs(row.value) >= statMin
+  )
 }
 
 export function searchWikiCatalog(
@@ -313,6 +355,18 @@ export function searchWikiCatalog(
   if (options.slot) {
     const slot = options.slot.toLowerCase()
     pool = pool.filter((item) => item.equipSlot.toLowerCase() === slot)
+  }
+
+  if (options.stat) {
+    const bucket = options.statBucket ?? "any"
+    const statMin = options.statMin ?? 0
+    pool = pool.filter((item) =>
+      itemHasStat(item, options.stat!, bucket, statMin)
+    )
+  }
+
+  if (options.gender === 0 || options.gender === 1) {
+    pool = pool.filter((item) => wikiItemFitsGender(item, options.gender))
   }
 
   const q = query.trim().toLowerCase()

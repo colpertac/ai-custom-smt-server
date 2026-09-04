@@ -59,7 +59,7 @@ export function WikiSearchPanel() {
   }, [q, page])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <WikiPageHeader
         title="Search"
         description="Find any item by name or numeric ID across weapons, armor, and consumables."

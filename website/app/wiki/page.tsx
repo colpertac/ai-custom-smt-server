@@ -39,6 +39,15 @@ export default function WikiIndexPage() {
             consumables.
           </li>
           <li>
+            <span className="font-medium text-foreground">Builder</span> plans
+            combat loadouts (cooldown, limit break, crit, and more) with set
+            bonuses counted once — see{" "}
+            <Link href="/wiki/builder" className="text-gold-dim hover:text-gold-hot">
+              Gear builder
+            </Link>
+            .
+          </li>
+          <li>
             <span className="font-medium text-foreground">Open a row</span> for
             full stats, gender lock, stack size, and NPC buy/sell values.
           </li>

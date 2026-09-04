@@ -15,7 +15,8 @@ import {
   wikiCharacteristics,
 } from "@/content/wiki"
 import { EXPERTISE_POINTS_PER_RANK } from "@/lib/armory-catalogs"
-import type { ArmoryEquipmentSlot, ArmoryStats } from "@/lib/armory"
+import type { ArmoryEquipmentSlot } from "@/lib/armory-equipment"
+import type { ArmoryStats } from "@/lib/armory"
 
 export type StatAdjustment = { id: string; type: number; value: number }
 

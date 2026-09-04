@@ -6,52 +6,37 @@ import { cn } from "@/lib/utils"
 export function WikiGenderBadge({
   gender,
   label,
+  iconOnly = false,
   className,
 }: {
   gender: number
   label: string
+  /** Symbol only; full label stays on `title` / `aria-label`. */
+  iconOnly?: boolean
   className?: string
 }) {
-  if (gender === 0) {
-    return (
-      <span
-        className={cn(
-          "inline-flex items-center gap-1.5 font-medium text-sky-400",
-          className
-        )}
-        title={label}
-      >
-        <Mars className="size-4 shrink-0" aria-hidden strokeWidth={2.25} />
-        <span>{label}</span>
-      </span>
-    )
-  }
-
-  if (gender === 1) {
-    return (
-      <span
-        className={cn(
-          "inline-flex items-center gap-1.5 font-medium text-fuchsia-400",
-          className
-        )}
-        title={label}
-      >
-        <Venus className="size-4 shrink-0" aria-hidden strokeWidth={2.25} />
-        <span>{label}</span>
-      </span>
-    )
-  }
+  const Icon =
+    gender === 0 ? Mars : gender === 1 ? Venus : VenusAndMars
+  const color =
+    gender === 0
+      ? "text-sky-400"
+      : gender === 1
+        ? "text-fuchsia-400"
+        : "text-gold-dim"
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 font-medium text-gold-dim",
+        "inline-flex items-center font-medium",
+        iconOnly ? "gap-0" : "gap-1.5",
+        color,
         className
       )}
       title={label}
+      aria-label={label}
     >
-      <VenusAndMars className="size-4 shrink-0" aria-hidden strokeWidth={2.25} />
-      <span>{label}</span>
+      <Icon className="size-4 shrink-0" aria-hidden strokeWidth={2.25} />
+      {iconOnly ? null : <span>{label}</span>}
     </span>
   )
 }

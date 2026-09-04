@@ -12,19 +12,14 @@ import {
   type WikiItem,
 } from "@/content/wiki"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
+import { WikiEquipmentSetsBox } from "@/features/wiki/components/WikiEquipmentSetsBox"
 import { WikiFeatureBox } from "@/features/wiki/components/WikiFeatureBox"
 import { WikiCompShopSources } from "@/features/wiki/components/WikiCompShopSources"
 import { WikiFusionBox } from "@/features/wiki/components/WikiFusionBox"
 import { WikiItemIcon } from "@/features/wiki/components/WikiItemIcon"
 import { WikiBreadcrumb } from "@/features/wiki/components/WikiShell"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { equipmentSetMembership } from "@/lib/gear-planner-combat"
 
 export function WikiItemDetailView({ item }: { item: WikiItem }) {
   const category = getWikiItemCategory(item)
@@ -35,9 +30,10 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
   const tarotFusion = wikiItemTarotFusion(item)
   const soulFusion = wikiItemSoulFusion(item)
   const compShops = wikiItemCompShops(item.id)
+  const equipmentSets = equipmentSetMembership(item.id)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <WikiBreadcrumb
         segments={[
           { label: "Item wiki", href: "/wiki" },
@@ -46,74 +42,71 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
         ]}
       />
 
-      <Card className="border-2 bg-card/70">
-        <CardHeader className="border-b border-border">
-          <div className="flex items-start gap-4">
-            <WikiItemIcon item={item} size={80} className="shrink-0" />
-            <div className="min-w-0 flex-1">
-              <CardTitle className="font-heading text-2xl tracking-wide uppercase">
-                {item.name}
-              </CardTitle>
-              <CardDescription className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-                <span className="font-mono text-xs text-muted-foreground">
-                  #{item.id}
-                </span>
-                <span>·</span>
-                <span>{item.equipSlot}</span>
-                {item.weaponType && item.weaponType !== "NONE" ? (
-                  <>
-                    <span>·</span>
-                    <span>{item.weaponType}</span>
-                  </>
-                ) : null}
-                {category === "armor" ? (
-                  <>
-                    <span>·</span>
-                    <WikiGenderBadge
-                      gender={item.gender}
-                      label={item.genderLabel}
-                    />
-                  </>
-                ) : null}
-                {item.level > 0 ? (
-                  <>
-                    <span>·</span>
-                    <span>Lv {item.level}</span>
-                  </>
-                ) : null}
-              </CardDescription>
-            </div>
+      <article className="border border-border bg-card/40">
+        <header className="flex items-start gap-3 border-b border-border px-3 py-2.5 sm:px-4">
+          <WikiItemIcon item={item} size={56} className="shrink-0" />
+          <div className="min-w-0 flex-1">
+            <h1 className="font-heading text-xl tracking-wide uppercase leading-tight">
+              {item.name}
+            </h1>
+            <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted-foreground">
+              <span className="font-mono text-xs">#{item.id}</span>
+              <span aria-hidden>·</span>
+              <span>{item.equipSlot}</span>
+              {item.weaponType && item.weaponType !== "NONE" ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>{item.weaponType}</span>
+                </>
+              ) : null}
+              {category === "armor" ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <WikiGenderBadge
+                    gender={item.gender}
+                    label={item.genderLabel}
+                  />
+                </>
+              ) : null}
+              {item.level > 0 ? (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>Lv {item.level}</span>
+                </>
+              ) : null}
+            </p>
           </div>
-        </CardHeader>
+        </header>
 
-        <CardContent className="grid gap-6 pt-6 lg:grid-cols-[minmax(0,1fr)_16rem]">
-          <div className="space-y-6">
+        <div className="grid gap-3 p-3 sm:p-4 xl:grid-cols-[minmax(0,1fr)_18rem] xl:gap-4">
+          <div className="min-w-0 space-y-3">
             <section>
-              <h2 className="font-heading text-sm font-semibold tracking-[0.12em] uppercase text-gold-dim">
+              <h2 className="font-heading text-xs font-semibold tracking-[0.12em] uppercase text-gold-dim">
                 Description
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+              <p className="mt-1.5 text-sm leading-snug text-foreground/90">
                 {item.description || "No in-game description on record."}
               </p>
             </section>
 
-            <div className="space-y-4">
+            <div className="grid gap-3 lg:grid-cols-2">
               <WikiFeatureBox
                 title="Set bonus"
                 tag="S1"
-                hint="Appearance / set bonus — what this item contributes when fused onto another piece."
+                hint="This piece alone / transfers as S1 when fused."
                 lines={setBonus}
               />
+              <WikiEquipmentSetsBox sets={equipmentSets} />
               <WikiFeatureBox
                 title="Basic features"
                 tag="S2"
-                hint="Core combat stats from the game data for this item."
+                hint="Core combat stats from game data."
                 stats={basicFeatures}
               />
               <WikiFeatureBox
                 title="Characteristics"
                 tag="S3"
-                hint="Rate bonuses, cooldown tweaks, and other trait-style modifiers."
+                hint="Rate bonuses, cooldown, and trait modifiers."
                 stats={characteristics}
               />
               {tarotFusion ? (
@@ -130,11 +123,13 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
                   empty=""
                 />
               ) : null}
-              <WikiCompShopSources listings={compShops} />
+              <div className="lg:col-span-2">
+                <WikiCompShopSources listings={compShops} />
+              </div>
             </div>
           </div>
 
-          <aside className="space-y-4">
+          <aside className="space-y-2 xl:order-none">
             <MetaPanel title="Details">
               <MetaRow label="Category">
                 <Link
@@ -172,9 +167,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
             </MetaPanel>
 
             <MetaPanel title="Shop values">
-              <p className="mb-3 text-xs text-muted-foreground">
-                Default NPC buy/sell values from the client — not live shop
-                prices on this server.
+              <p className="mb-2 text-[0.7rem] leading-snug text-muted-foreground">
+                Default NPC buy/sell from the client — not live shop prices.
               </p>
               <MetaRow label="Buy">
                 {item.buyPrice > 0
@@ -188,8 +182,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
               </MetaRow>
             </MetaPanel>
           </aside>
-        </CardContent>
-      </Card>
+        </div>
+      </article>
 
       <p className="text-xs text-muted-foreground">
         Item data exported from the game client
@@ -209,11 +203,11 @@ function MetaPanel({
   children: React.ReactNode
 }) {
   return (
-    <div className="border border-border bg-muted/30 p-3">
-      <h3 className="font-heading text-xs font-semibold tracking-[0.14em] uppercase text-muted-foreground">
+    <div className="border border-border bg-muted/30 px-2.5 py-2">
+      <h3 className="font-heading text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-muted-foreground">
         {title}
       </h3>
-      <dl className="mt-3 space-y-2.5 text-sm">{children}</dl>
+      <dl className="mt-2 space-y-1.5 text-sm">{children}</dl>
     </div>
   )
 }
