@@ -1,14 +1,20 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import siteIcon from "@/app/icon.png"
 import { useLogout, useSessionUser } from "@/features/auth/hooks"
 import { isAdminLevel } from "@/lib/admin-level"
 import { SkinSwitcher } from "@/components/skin-switcher"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import {
+  DEFAULT_SITE_NAME,
+  splitSiteName,
+} from "@/lib/website-branding"
 
 const navClass =
   "shrink-0 text-xs uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline tracking-[var(--density-nav-tracking)]"
@@ -20,6 +26,8 @@ export function SiteHeader() {
   const logoutMutation = useLogout()
   const admin = isAdminLevel(session?.userLevel)
   const [wikiEnabled, setWikiEnabled] = useState(false)
+  const [siteName, setSiteName] = useState(DEFAULT_SITE_NAME)
+  const [iconUrl, setIconUrl] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -36,19 +44,65 @@ export function SiteHeader() {
     }
   }, [])
 
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/branding")
+      .then((r) => r.json())
+      .then(
+        (body: {
+          success?: boolean
+          data?: { siteName?: string; iconUrl?: string | null }
+        }) => {
+          if (cancelled || !body.success || !body.data) return
+          if (body.data.siteName?.trim()) setSiteName(body.data.siteName.trim())
+          setIconUrl(body.data.iconUrl ?? null)
+        }
+      )
+      .catch(() => {
+        /* keep defaults */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const playHref = session ? "/account" : "/register"
   const playLabel = session ? "Account" : "Play now"
+  const { lead, accent } = splitSiteName(siteName)
 
   return (
     <header className="border-b border-chrome-border bg-chrome">
       <div
         className="flex w-full items-center justify-between gap-2 px-3 py-(--density-header-y) sm:gap-3 sm:px-4 lg:px-5"
       >
-        <Link href="/" className="group shrink-0 no-underline">
+        <Link
+          href="/"
+          className="group flex shrink-0 items-center gap-2 no-underline sm:gap-2.5"
+        >
+          {iconUrl ? (
+            // Custom upload — served from data dir via API (not next/image optimized).
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={iconUrl}
+              alt=""
+              width={28}
+              height={28}
+              className="size-6 rounded-sm sm:size-7"
+            />
+          ) : (
+            <Image
+              src={siteIcon}
+              alt=""
+              width={28}
+              height={28}
+              className="size-6 rounded-sm sm:size-7"
+              priority
+            />
+          )}
           <p className="font-heading text-base tracking-[0.16em] text-accent-foreground uppercase sm:text-lg sm:tracking-[0.2em]">
-            Imagine{" "}
+            {lead ? `${lead} ` : null}
             <span className="text-gold transition-colors group-hover:text-gold-hot">
-              Private
+              {accent}
             </span>
           </p>
         </Link>
@@ -90,6 +144,17 @@ export function SiteHeader() {
           >
             Armory
           </Link>
+          {wikiEnabled ? (
+            <Link
+              href="/builder"
+              className={cn(
+                navClass,
+                pathname.startsWith("/builder") && "text-gold"
+              )}
+            >
+              Builder
+            </Link>
+          ) : null}
           {wikiEnabled ? (
             <Link
               href="/wiki"

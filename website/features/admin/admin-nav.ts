@@ -5,6 +5,7 @@ import {
   Download,
   Flag,
   FolderArchive,
+  Globe,
   LayoutDashboard,
   Mail,
   MessageSquareText,
@@ -27,6 +28,7 @@ export type AdminNavItem = {
 
 export const ADMIN_NAV: AdminNavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
+  { href: "/admin/website", label: "Website", icon: Globe, match: "prefix" },
   { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
   { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
   {
@@ -60,6 +62,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
 
 export function adminPageTitle(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Overview"
+  if (pathname.startsWith("/admin/website")) return "Website"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
   if (pathname.startsWith("/admin/reports")) return "Reports"
   if (pathname.startsWith("/admin/chat-logs")) return "Chat logs"

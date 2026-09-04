@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Providers } from "@/app/providers"
 import { getServerUser } from "@/features/auth/server"
+import { getWebsiteBranding } from "@/lib/site-settings-store"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
@@ -27,12 +28,24 @@ const mono = IBM_Plex_Mono({
   weight: ["400", "500"],
 })
 
-export const metadata: Metadata = {
-  title: {
-    default: "IMAGINE",
-    template: "%s · IMAGINE",
-  },
-  description: "Private Shin Megami Tensei: IMAGINE server",
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = getWebsiteBranding()
+  const titleName = branding.siteName
+  return {
+    title: {
+      default: titleName,
+      template: `%s · ${titleName}`,
+    },
+    description: "Private Shin Megami Tensei: IMAGINE server",
+    ...(branding.iconUrl
+      ? {
+          icons: {
+            icon: branding.iconUrl,
+            apple: branding.iconUrl,
+          },
+        }
+      : {}),
+  }
 }
 
 export default async function RootLayout({
