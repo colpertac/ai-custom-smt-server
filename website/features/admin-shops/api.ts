@@ -77,10 +77,21 @@ export type ImportAdminShopResult = {
   warnings: string[]
 }
 
-export const uploadAdminShopXml = async (file: File) => {
+export type ImportAdminShopsBatchResult = {
+  imported: ImportAdminShopResult[]
+  errors: { filename: string; message: string }[]
+}
+
+export const uploadAdminShopXml = async (files: File | File[]) => {
+  const list = Array.isArray(files) ? files : [files]
+  if (list.length === 0) {
+    throw new Error("No files selected")
+  }
   const form = new FormData()
-  form.append("file", file)
-  const result = await fetcher<ImportAdminShopResult>("admin/shops/import", {
+  for (const file of list) {
+    form.append("file", file)
+  }
+  const result = await fetcher<ImportAdminShopsBatchResult>("admin/shops/import", {
     method: "POST",
     body: form,
   })

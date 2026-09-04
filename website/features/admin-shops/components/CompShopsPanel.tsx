@@ -365,35 +365,63 @@ export function CompShopsPanel() {
               Import XML
             </p>
             <p className="text-xs text-muted-foreground">
-              Upload a channel compshop XML (e.g.{" "}
-              <code className="text-[10px]">mycompshop.xml</code>). If ShopID is
-              already taken, a new ID is assigned automatically.
+              Upload one or more channel compshop XML files (e.g.{" "}
+              <code className="text-[10px]">mycompshop.xml</code>). If a ShopID
+              is already taken, a new ID is assigned automatically.
             </p>
             <input
               ref={fileInputRef}
               type="file"
               accept=".xml,text/xml,application/xml"
+              multiple
               className="hidden"
               onChange={(e) => {
-                const file = e.target.files?.[0]
+                const files = Array.from(e.target.files ?? [])
                 e.target.value = ""
-                if (!file) return
+                if (!files.length) return
                 void (async () => {
                   if (!(await confirmDiscard())) return
                   setImportMessage(null)
                   uploadMutation.reset()
-                  uploadMutation.mutate(file, {
+                  uploadMutation.mutate(files, {
                     onSuccess: (data) => {
-                      const parts = [
-                        `Imported ${data.name} as shop ${data.shopId}`,
-                        `(${data.tabCount} tabs, ${data.productCount} products)`,
-                      ]
-                      if (data.warnings.length) {
-                        parts.push(`— ${data.warnings.join("; ")}`)
+                      const lines: string[] = []
+                      if (data.imported.length === 1) {
+                        const shop = data.imported[0]!
+                        const parts = [
+                          `Imported ${shop.name} as shop ${shop.shopId}`,
+                          `(${shop.tabCount} tabs, ${shop.productCount} products)`,
+                        ]
+                        if (shop.warnings.length) {
+                          parts.push(`— ${shop.warnings.join("; ")}`)
+                        }
+                        lines.push(parts.join(" "))
+                      } else if (data.imported.length > 1) {
+                        lines.push(
+                          `Imported ${data.imported.length} shops: ${data.imported
+                            .map((s) => `${s.name} (#${s.shopId})`)
+                            .join(", ")}`
+                        )
+                        const warned = data.imported.filter((s) => s.warnings.length)
+                        for (const shop of warned) {
+                          lines.push(
+                            `${shop.name} (#${shop.shopId}): ${shop.warnings.join("; ")}`
+                          )
+                        }
                       }
-                      setImportMessage(parts.join(" "))
-                      loadedShopKey.current = null
-                      setSelectedId(data.shopId)
+                      if (data.errors.length) {
+                        lines.push(
+                          `${data.errors.length} failed: ${data.errors
+                            .map((err) => `${err.filename} (${err.message})`)
+                            .join("; ")}`
+                        )
+                      }
+                      setImportMessage(lines.join("\n"))
+                      const last = data.imported[data.imported.length - 1]
+                      if (last) {
+                        loadedShopKey.current = null
+                        setSelectedId(last.shopId)
+                      }
                     },
                   })
                 })()
@@ -407,7 +435,14 @@ export function CompShopsPanel() {
               </FormAlert>
             )}
             {importMessage && !uploadMutation.isError && (
-              <FormAlert variant="success">{importMessage}</FormAlert>
+              <FormAlert
+                variant={
+                  importMessage.includes(" failed:") ? "warning" : "success"
+                }
+                className="whitespace-pre-line"
+              >
+                {importMessage}
+              </FormAlert>
             )}
             <Button
               type="button"

@@ -66,12 +66,14 @@ export function useDeleteAdminShop() {
 export function useUploadAdminShop() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (file: File) => uploadAdminShopXml(file),
+    mutationFn: (files: File | File[]) => uploadAdminShopXml(files),
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
-      void queryClient.invalidateQueries({
-        queryKey: ["admin", "shops", data.shopId],
-      })
+      for (const shop of data.imported) {
+        void queryClient.invalidateQueries({
+          queryKey: ["admin", "shops", shop.shopId],
+        })
+      }
     },
   })
 }
