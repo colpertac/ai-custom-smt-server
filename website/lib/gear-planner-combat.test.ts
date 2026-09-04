@@ -203,6 +203,17 @@ describe("rankItemsForStat", () => {
     expect(arms!.completesSetIds).toContain(167)
     expect(arms!.setCompletionBonus).toBe(20)
   })
+
+  it("layer=s2 only returns items with that layer contributing", () => {
+    const hits = rankItemsForStat({
+      stat: "cooldown",
+      layer: "s2",
+      limit: 20,
+    })
+    for (const hit of hits) {
+      expect(itemLayerContribution(hit.item, "s2", "cooldown")).not.toBe(0)
+    }
+  })
 })
 
 describe("itemPieceContribution", () => {

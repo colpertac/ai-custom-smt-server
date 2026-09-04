@@ -1050,6 +1050,8 @@ export type RankedGearHit = {
 export function rankItemsForStat(options: {
   stat: PlannerStatKey
   slot?: EquipSlotKey | null
+  /** When set, only items whose S1/S2/S3 layer contributes to the target stat. */
+  layer?: GearLayer | null
   loadout?: PlannerSlot[]
   excludeEquipped?: boolean
   gender?: 0 | 1 | null
@@ -1068,6 +1070,7 @@ export function rankItemsForStat(options: {
   )
   const q = options.query?.trim().toLowerCase() ?? ""
   const gender = options.gender
+  const layer = options.layer ?? null
 
   const pool = listWikiItems().filter((item) => {
     const slotKey = equipSlotKeyFromWikiSlot(item.equipSlot)
@@ -1094,31 +1097,42 @@ export function rankItemsForStat(options: {
   const hits: RankedGearHit[] = []
   for (const item of pool) {
     const slotKey = equipSlotKeyFromWikiSlot(item.equipSlot)!
-    const pieceContribution = itemPieceContribution(item, options.stat)
 
-    const trial = equipWikiItemOntoSlot(loadout, slotKey, item)
-    const before = activeAndPartialSets(loadout).activeSets.map((s) => s.id)
-    const after = activeAndPartialSets(trial).activeSets
-    const newlyComplete = after.filter((s) => !before.includes(s.id))
-
+    let pieceContribution: number
     let setCompletionBonus = 0
     const completesSetIds: number[] = []
-    for (const set of newlyComplete) {
-      const rows: TokuseiRow[] = []
-      for (const tokId of set.tokuseiIds) rows.push(...tokuseiRows(tokId))
-      const v = contribFromAdjustments(rows, def)
-      if (v !== 0) {
-        setCompletionBonus += v
-        completesSetIds.push(set.id)
-      } else if (set.tokuseiIds.length > 0) {
-        completesSetIds.push(set.id)
+
+    if (layer) {
+      pieceContribution = itemLayerContribution(item, layer, options.stat)
+      if (pieceContribution === 0) continue
+    } else {
+      pieceContribution = itemPieceContribution(item, options.stat)
+
+      const trial = equipWikiItemOntoSlot(loadout, slotKey, item)
+      const before = activeAndPartialSets(loadout).activeSets.map((s) => s.id)
+      const after = activeAndPartialSets(trial).activeSets
+      const newlyComplete = after.filter((s) => !before.includes(s.id))
+
+      for (const set of newlyComplete) {
+        const rows: TokuseiRow[] = []
+        for (const tokId of set.tokuseiIds) rows.push(...tokuseiRows(tokId))
+        const v = contribFromAdjustments(rows, def)
+        if (v !== 0) {
+          setCompletionBonus += v
+          completesSetIds.push(set.id)
+        } else if (set.tokuseiIds.length > 0) {
+          completesSetIds.push(set.id)
+        }
       }
+
+      const combined = pieceContribution + setCompletionBonus
+      if (combined === 0 && completesSetIds.length === 0) continue
     }
 
-    const combined = pieceContribution + setCompletionBonus
-    if (combined === 0 && completesSetIds.length === 0) continue
-
-    const score = def.kind === "reduction" ? -combined : combined
+    const rankedValue = layer
+      ? pieceContribution
+      : pieceContribution + setCompletionBonus
+    const score = def.kind === "reduction" ? -rankedValue : rankedValue
 
     hits.push({
       item,

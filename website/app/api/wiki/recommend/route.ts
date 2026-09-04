@@ -59,6 +59,11 @@ export async function GET(req: NextRequest) {
   const hits = rankItemsForStat({
     stat,
     slot,
+    layer: (() => {
+      const raw = req.nextUrl.searchParams.get("layer")
+      if (raw === "s1" || raw === "s2" || raw === "s3") return raw
+      return null
+    })(),
     loadout,
     excludeEquipped: true,
     limit,

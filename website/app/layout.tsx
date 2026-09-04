@@ -63,7 +63,7 @@ export default async function RootLayout({
         <Providers initialSession={initialSession}>
           <div className="flex min-h-svh flex-col">
             <SiteHeader />
-            <main className="flex-1">{children}</main>
+            <main className="flex min-h-0 flex-1 flex-col">{children}</main>
             <SiteFooter />
           </div>
         </Providers>

@@ -10,8 +10,8 @@ export default function BuilderLayout({
     return <WikiUnavailable />
   }
   return (
-    <div className="site-atmosphere flex min-h-[calc(100dvh-3.5rem)] w-full flex-col">
-      <div className="min-h-0 min-w-0 flex-1">{children}</div>
+    <div className="site-atmosphere flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">{children}</div>
     </div>
   )
 }
