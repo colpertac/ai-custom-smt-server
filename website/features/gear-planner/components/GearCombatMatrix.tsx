@@ -7,6 +7,7 @@ import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
   PLANNER_STATS,
   SET_HEADER_COLORS,
+  setHeaderBackground,
   type GearPlannerResult,
   type PlannerAttrs,
   type PlannerSlot,
@@ -141,11 +142,18 @@ export function GearCombatMatrix({
                   key={slot.key}
                   colSpan={5}
                   className="border-b border-l border-border px-0.5 py-1 text-center"
-                  style={bg ? { backgroundColor: `${bg}55` } : undefined}
+                  style={
+                    bg
+                      ? {
+                          backgroundColor: setHeaderBackground(bg),
+                          boxShadow: `inset 0 0 0 1px ${bg}`,
+                        }
+                      : undefined
+                  }
                 >
                   <button
                     type="button"
-                    className="w-full hover:text-gold-hot"
+                    className="w-full text-white hover:brightness-110"
                     onClick={() => onSlotHeaderClick(slot.key)}
                   >
                     <span className="mb-0.5 flex justify-center gap-px">
@@ -168,7 +176,7 @@ export function GearCombatMatrix({
                         title="Soul"
                       />
                     </span>
-                    <span className="font-heading text-[9px] tracking-wider uppercase">
+                    <span className="font-heading text-[9px] font-semibold tracking-wider uppercase">
                       {slot.label}
                     </span>
                   </button>
@@ -177,22 +185,33 @@ export function GearCombatMatrix({
             })}
           </tr>
           <tr className="bg-muted/30 text-center text-[8px] text-muted-foreground">
-            {EQUIP_SLOTS.map((slot) => (
-              <Fragment key={slot.key}>
-                {LAYER_HEADERS.map((h, i) => (
-                  <th
-                    key={h.key}
-                    className={cn(
-                      "px-0 py-0.5 font-normal",
-                      i === 0 && "border-l border-border/40",
-                      h.className
-                    )}
-                  >
-                    {h.label}
-                  </th>
-                ))}
-              </Fragment>
-            ))}
+            {EQUIP_SLOTS.map((slot) => {
+              const colorIdx = combat.setColorIndexBySlot[slot.key]
+              const bg =
+                colorIdx >= 0
+                  ? SET_HEADER_COLORS[colorIdx % SET_HEADER_COLORS.length]
+                  : undefined
+              const tint = bg
+                ? { backgroundColor: setHeaderBackground(bg, 0.35) }
+                : undefined
+              return (
+                <Fragment key={slot.key}>
+                  {LAYER_HEADERS.map((h, i) => (
+                    <th
+                      key={h.key}
+                      className={cn(
+                        "px-0 py-0.5 font-normal",
+                        i === 0 && "border-l border-border/40",
+                        h.className
+                      )}
+                      style={tint}
+                    >
+                      {h.label}
+                    </th>
+                  ))}
+                </Fragment>
+              )
+            })}
           </tr>
         </thead>
         <tbody>
@@ -222,21 +241,44 @@ export function GearCombatMatrix({
                 </td>
                 {EQUIP_SLOTS.map((slot) => {
                   const layers = bd.bySlotLayers[slot.key]
+                  const colorIdx = combat.setColorIndexBySlot[slot.key]
+                  const bg =
+                    colorIdx >= 0
+                      ? SET_HEADER_COLORS[colorIdx % SET_HEADER_COLORS.length]
+                      : undefined
+                  const cellTint = bg
+                    ? { backgroundColor: setHeaderBackground(bg, 0.22) }
+                    : undefined
                   return (
                     <Fragment key={`${def.key}-${slot.key}`}>
-                      <td className="border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90">
+                      <td
+                        className="border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90"
+                        style={cellTint}
+                      >
                         {formatLayerCell(def.key, layers.s1)}
                       </td>
-                      <td className="px-0 py-1 text-center tabular-nums text-emerald-300/90">
+                      <td
+                        className="px-0 py-1 text-center tabular-nums text-emerald-300/90"
+                        style={cellTint}
+                      >
                         {formatLayerCell(def.key, layers.s2)}
                       </td>
-                      <td className="px-0 py-1 text-center tabular-nums text-rose-300/90">
+                      <td
+                        className="px-0 py-1 text-center tabular-nums text-rose-300/90"
+                        style={cellTint}
+                      >
                         {formatLayerCell(def.key, layers.s3)}
                       </td>
-                      <td className="px-0 py-1 text-center tabular-nums text-violet-300/90">
+                      <td
+                        className="px-0 py-1 text-center tabular-nums text-violet-300/90"
+                        style={cellTint}
+                      >
                         {formatLayerCell(def.key, layers.tarot)}
                       </td>
-                      <td className="px-0 py-1 text-center tabular-nums text-orange-300/90">
+                      <td
+                        className="px-0 py-1 text-center tabular-nums text-orange-300/90"
+                        style={cellTint}
+                      >
                         {formatLayerCell(def.key, layers.soul)}
                       </td>
                     </Fragment>

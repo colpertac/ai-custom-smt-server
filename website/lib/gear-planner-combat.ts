@@ -64,14 +64,27 @@ export type PlannerSlot = {
   slot: EquipSlotKey
   label: string
   index: number
-  /** Appearance + SItem (S1). */
+  /**
+   * Appearance / EquipmentSet piece (`Item.Type`).
+   * Icon, name, and set matching use this id.
+   */
   s1ItemId: number | null
-  /** basicFeatures (S2). */
+  /**
+   * SItem tokusei donor (`Item.SpecialEffect`). When null, falls back to
+   * `s1ItemId` (manual equip / older saves).
+   */
+  sitemItemId: number | null
+  /** basicFeatures (S2) — usually `Item.BasicEffect`. */
   s2ItemId: number | null
-  /** characteristics (S3). */
+  /** characteristics (S3) — game stores with BasicEffect; planner may split. */
   s3ItemId: number | null
   tarotEnchantId: number | null
   soulEnchantId: number | null
+}
+
+/** SItem / S1 combat donor for a slot. */
+export function slotSitemId(slot: PlannerSlot): number | null {
+  return slot.sitemItemId ?? slot.s1ItemId
 }
 
 export type LayerFive = {
@@ -216,6 +229,8 @@ export type PlannerStoredState = {
   version: 3
   slots: Array<{
     s1: number | null
+    /** Optional; omitted in older saves → combat falls back to s1. */
+    sitem?: number | null
     s2: number | null
     s3: number | null
     tarot: number | null
@@ -284,11 +299,52 @@ export function emptyPlannerLoadout(): PlannerSlot[] {
     label: slot.label,
     index: slot.index,
     s1ItemId: null,
+    sitemItemId: null,
     s2ItemId: null,
     s3ItemId: null,
     tarotEnchantId: null,
     soulEnchantId: null,
   }))
+}
+
+/**
+ * Map one armory equipment row onto a planner slot.
+ * Matches live/armory-stats: Type=appearance/set, SpecialEffect=SItem,
+ * BasicEffect=CorrectTbl (S2+S3).
+ */
+export function applyArmoryEquipmentToSlot(
+  slot: PlannerSlot,
+  src: {
+    itemType: number | null
+    basicEffect: number
+    specialEffect: number
+    tarot?: number
+    soul?: number
+  }
+): PlannerSlot {
+  if (src.itemType == null) return slot
+  const typeId = src.itemType
+  const basic =
+    src.basicEffect > 0 && src.basicEffect !== 0xffff
+      ? src.basicEffect
+      : typeId
+  const special =
+    src.specialEffect > 0 && src.specialEffect !== 0xffff
+      ? src.specialEffect
+      : typeId
+  const tarot =
+    src.tarot && src.tarot > 0 && src.tarot !== 32767 ? src.tarot : null
+  const soul =
+    src.soul && src.soul > 0 && src.soul !== 32767 ? src.soul : null
+  return {
+    ...slot,
+    s1ItemId: typeId,
+    sitemItemId: special,
+    s2ItemId: basic,
+    s3ItemId: basic,
+    tarotEnchantId: tarot,
+    soulEnchantId: soul,
+  }
 }
 
 export function serializePlannerState(options: {
@@ -304,6 +360,7 @@ export function serializePlannerState(options: {
       const slot = options.loadout.find((s) => s.index === def.index)!
       return {
         s1: slot.s1ItemId,
+        sitem: slot.sitemItemId,
         s2: slot.s2ItemId,
         s3: slot.s3ItemId,
         tarot: slot.tarotEnchantId,
@@ -345,6 +402,7 @@ export function parsePlannerState(raw: unknown): {
     return {
       ...slot,
       s1ItemId: num(row.s1),
+      sitemItemId: num(row.sitem),
       s2ItemId: num(row.s2),
       s3ItemId: num(row.s3),
       tarotEnchantId: num(row.tarot),
@@ -405,6 +463,7 @@ export function equipWikiItemOntoSlot(
       return {
         ...slot,
         s1ItemId: null,
+        sitemItemId: null,
         s2ItemId: null,
         s3ItemId: null,
         tarotEnchantId: null,
@@ -414,6 +473,7 @@ export function equipWikiItemOntoSlot(
     return {
       ...slot,
       s1ItemId: item.id,
+      sitemItemId: item.id,
       s2ItemId: item.id,
       s3ItemId: item.id,
       tarotEnchantId: null,
@@ -431,18 +491,19 @@ export function applyLayerToSlot(
   return loadout.map((slot) => {
     if (slot.slot !== slotKey) return slot
     if (layer === "s1") {
-      // New base: if slot was empty, seed all layers; else only replace S1 look/SItem.
+      // New base: if slot was empty, seed all layers; else only replace appearance+SItem.
       if (slot.s1ItemId == null) {
         return {
           ...slot,
           s1ItemId: item.id,
+          sitemItemId: item.id,
           s2ItemId: item.id,
           s3ItemId: item.id,
           tarotEnchantId: null,
           soulEnchantId: null,
         }
       }
-      return { ...slot, s1ItemId: item.id }
+      return { ...slot, s1ItemId: item.id, sitemItemId: item.id }
     }
     if (layer === "s2") return { ...slot, s2ItemId: item.id }
     return { ...slot, s3ItemId: item.id }
@@ -823,6 +884,19 @@ export function activeAndPartialSets(equipment: PlannerSlot[]): {
 }
 
 /** Assign a shared color index to slots that share an active/partial set. */
+export function setColorIndexBySetId(sets: SetStatus[]): Map<number, number> {
+  const ranked = [...sets].sort(
+    (a, b) =>
+      Number(b.complete) - Number(a.complete) ||
+      b.matchedCount - a.matchedCount ||
+      a.id - b.id
+  )
+  const out = new Map<number, number>()
+  ranked.forEach((set, i) => out.set(set.id, i))
+  return out
+}
+
+/** Assign a shared color index to slots that share an active/partial set. */
 export function setColorIndexBySlot(
   equipment: PlannerSlot[],
   sets: SetStatus[]
@@ -830,16 +904,11 @@ export function setColorIndexBySlot(
   const out = {} as Record<EquipSlotKey, number>
   for (const slot of EQUIP_SLOTS) out[slot.key] = -1
 
-  const ranked = [...sets].sort(
-    (a, b) =>
-      Number(b.complete) - Number(a.complete) ||
-      b.matchedCount - a.matchedCount ||
-      a.id - b.id
-  )
+  const colorBySet = setColorIndexBySetId(sets)
 
-  let colorIdx = 0
-  for (const set of ranked) {
-    const color = colorIdx++
+  for (const set of sets) {
+    const color = colorBySet.get(set.id)
+    if (color == null) continue
     for (const slotIdx of set.requiredSlots) {
       const def = EQUIP_SLOTS[slotIdx]
       if (!def) continue
@@ -946,6 +1015,8 @@ export function computeGearPlannerCombat(
 
   for (const slot of equipment) {
     const s1 = slot.s1ItemId != null ? getWikiItem(slot.s1ItemId) : null
+    const sitemId = slotSitemId(slot)
+    const sitem = sitemId != null ? getWikiItem(sitemId) : null
     const s2 = slot.s2ItemId != null ? getWikiItem(slot.s2ItemId) : null
     const s3 = slot.s3ItemId != null ? getWikiItem(slot.s3ItemId) : null
     const tarot =
@@ -957,7 +1028,11 @@ export function computeGearPlannerCombat(
         ? getWikiEnchant(slot.soulEnchantId)
         : null
 
-    if (s1) layerPresence[slot.slot].s1 = layerHasContent(s1, "s1")
+    if (s1 || sitem) {
+      layerPresence[slot.slot].s1 =
+        (s1 ? layerHasContent(s1, "s1") : false) ||
+        (sitem ? layerHasContent(sitem, "s1") : false)
+    }
     if (s2) layerPresence[slot.slot].s2 = layerHasContent(s2, "s2")
     if (s3) layerPresence[slot.slot].s3 = layerHasContent(s3, "s3")
     if (tarot) {
@@ -969,8 +1044,8 @@ export function computeGearPlannerCombat(
 
     for (const def of PLANNER_STATS) {
       const layers = byStat[def.key].bySlotLayers[slot.slot]
-      if (s1) {
-        layers.s1 += contribFromAdjustments(s1Adjustments(s1.id), def)
+      if (sitemId != null) {
+        layers.s1 += contribFromAdjustments(s1Adjustments(sitemId), def)
       }
       if (s2) {
         layers.s2 += contribFromAdjustments(s2Adjustments(s2), def)
@@ -1253,17 +1328,33 @@ export const WIKI_STAT_FILTER_OPTIONS: {
   { id: "LUCK", label: "LUCK" },
 ]
 
+/**
+ * High-chroma set header tints — hues spaced around the wheel so adjacent
+ * sets stay easy to tell apart (avoid near-duplicate purples/golds).
+ */
 export const SET_HEADER_COLORS = [
-  "#7c5cbf",
-  "#c9a227",
-  "#c44c4c",
-  "#3d9e6f",
-  "#5a4a8a",
-  "#8a8a8a",
-  "#d4782e",
-  "#8bc34a",
-  "#4aa8c9",
-  "#d4a84a",
-  "#bf5c8a",
-  "#5c8abf",
+  "#ff4d6d", // hot rose
+  "#ffd60a", // bright gold
+  "#00e5a8", // mint
+  "#4cc9f0", // cyan
+  "#ff9f1c", // orange
+  "#b8f200", // lime
+  "#7b61ff", // vivid violet (single purple family)
+  "#ff5ced", // magenta
+  "#5c7cfa", // blue
+  "#2ec4b6", // teal
+  "#ff6b35", // vermillion
+  "#e8f1a6", // pale chartreuse
 ]
+
+/** Opaque-enough tint for dark table chrome (was ~33% and too dim). */
+export const SET_HEADER_TINT_ALPHA = 0.78
+
+export function setHeaderBackground(color: string, alpha = SET_HEADER_TINT_ALPHA): string {
+  const hex = color.replace("#", "")
+  if (hex.length !== 6) return color
+  const r = Number.parseInt(hex.slice(0, 2), 16)
+  const g = Number.parseInt(hex.slice(2, 4), 16)
+  const b = Number.parseInt(hex.slice(4, 6), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}

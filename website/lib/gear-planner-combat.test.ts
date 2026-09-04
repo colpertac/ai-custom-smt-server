@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import { getWikiItem } from "@/content/wiki"
 import {
   activeAndPartialSets,
+  applyArmoryEquipmentToSlot,
   applyEnchantToSlot,
   applyLayerToSlot,
   canApplyLayer,
@@ -13,6 +14,7 @@ import {
   itemLayerContribution,
   itemPieceContribution,
   itemSubcategory,
+  plannerSlotDisplay,
   rankItemsForStat,
 } from "@/lib/gear-planner-combat"
 
@@ -175,6 +177,42 @@ describe("applyLayerToSlot / canApplyLayer", () => {
       gender: 0,
     })
     expect(check.ok).toBe(false)
+  })
+})
+
+describe("applyArmoryEquipmentToSlot", () => {
+  it("keeps Type as appearance and SpecialEffect as SItem donor", () => {
+    const base = emptyPlannerLoadout().find((s) => s.slot === "extra")!
+    const slot = applyArmoryEquipmentToSlot(base, {
+      itemType: 32744,
+      basicEffect: 32725,
+      specialEffect: 32725,
+      tarot: 564,
+      soul: 319,
+    })
+    expect(slot.s1ItemId).toBe(32744)
+    expect(slot.sitemItemId).toBe(32725)
+    expect(slot.s2ItemId).toBe(32725)
+    expect(slot.s3ItemId).toBe(32725)
+    expect(plannerSlotDisplay(slot).name).toBe("Ｓ．Ｏ．Ｕ．Ｌ．＋１")
+
+    const result = computeGearPlannerCombat([
+      ...emptyPlannerLoadout().map((s) => (s.slot === "extra" ? slot : s)),
+    ])
+    // SItem tokusei come from special (32725), not the Type shell.
+    expect(result.byStat.critical.bySlotLayers.extra.s1).toBe(
+      itemLayerContribution(getWikiItem(32725)!, "s1", "critical")
+    )
+  })
+
+  it("leaves empty armory slots empty", () => {
+    const base = emptyPlannerLoadout().find((s) => s.slot === "bottom")!
+    const slot = applyArmoryEquipmentToSlot(base, {
+      itemType: null,
+      basicEffect: 0,
+      specialEffect: 0,
+    })
+    expect(slot.s1ItemId).toBeNull()
   })
 })
 

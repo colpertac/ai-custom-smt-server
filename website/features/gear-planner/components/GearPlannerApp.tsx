@@ -27,7 +27,10 @@ import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
   DEFAULT_PLANNER_ATTRS,
   SET_HEADER_COLORS,
+  setColorIndexBySetId,
+  setHeaderBackground,
   applyEnchantToSlot,
+  applyArmoryEquipmentToSlot,
   applyLayerToSlot,
   canApplyEnchant,
   canApplyLayer,
@@ -292,25 +295,8 @@ function GearPlannerAppClient({
       setLoadout(
         emptyPlannerLoadout().map((slot) => {
           const src = profile.equipment.find((e) => e.slot === slot.slot)
-          if (!src || src.itemType == null) return slot
-          const s1 =
-            src.specialEffect > 0 ? src.specialEffect : src.itemType
-          const basic =
-            src.basicEffect > 0 ? src.basicEffect : src.itemType
-          const tarot =
-            src.tarot && src.tarot > 0 && src.tarot !== 32767
-              ? src.tarot
-              : null
-          const soul =
-            src.soul && src.soul > 0 && src.soul !== 32767 ? src.soul : null
-          return {
-            ...slot,
-            s1ItemId: s1,
-            s2ItemId: basic,
-            s3ItemId: basic,
-            tarotEnchantId: tarot,
-            soulEnchantId: soul,
-          }
+          if (!src) return slot
+          return applyArmoryEquipmentToSlot(slot, src)
         })
       )
       const g = profile.appearance?.gender
@@ -752,6 +738,7 @@ function GearSetLegend({
     ...activeSets.map((s) => ({ ...s, tone: "active" as const })),
     ...partialSets.slice(0, 8).map((s) => ({ ...s, tone: "partial" as const })),
   ]
+  const colorBySet = setColorIndexBySetId([...activeSets, ...partialSets])
   if (rows.length === 0) {
     return (
       <p className="text-xs text-muted-foreground">
@@ -766,23 +753,28 @@ function GearSetLegend({
         Equipment sets
       </h3>
       <ul className="mt-2 flex flex-wrap gap-2 text-xs">
-        {rows.map((s, idx) => (
-          <li
-            key={`${s.tone}-${s.id}`}
-            className="border border-border px-2 py-1"
-            style={{
-              borderLeftWidth: 4,
-              borderLeftColor:
-                SET_HEADER_COLORS[idx % SET_HEADER_COLORS.length],
-            }}
-          >
-            Set {s.id}{" "}
-            <span className="text-muted-foreground">
-              {s.matchedCount}/{s.requiredCount}
-              {s.complete ? " · active" : " · partial"}
-            </span>
-          </li>
-        ))}
+        {rows.map((s) => {
+          const colorIdx = colorBySet.get(s.id) ?? 0
+          const color =
+            SET_HEADER_COLORS[colorIdx % SET_HEADER_COLORS.length] ?? "#888"
+          return (
+            <li
+              key={`${s.tone}-${s.id}`}
+              className="border border-border px-2 py-1 text-white"
+              style={{
+                backgroundColor: setHeaderBackground(color, 0.55),
+                borderLeftWidth: 4,
+                borderLeftColor: color,
+              }}
+            >
+              Set {s.id}{" "}
+              <span className="text-white/90">
+                {s.matchedCount}/{s.requiredCount}
+                {s.complete ? " · active" : " · partial"}
+              </span>
+            </li>
+          )
+        })}
       </ul>
     </div>
   )
