@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Upload } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
+import { NewsMarkdown } from "@/components/news-markdown"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -29,9 +30,11 @@ type WebsiteBranding = {
 export function AdminWebsitePanel() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [siteName, setSiteName] = useState(DEFAULT_SITE_NAME)
+  const [aboutMarkdown, setAboutMarkdown] = useState("")
   const [branding, setBranding] = useState<WebsiteBranding | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [savingAbout, setSavingAbout] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,13 +53,16 @@ export function AdminWebsitePanel() {
       const json = (await response.json()) as {
         success?: boolean
         message?: string
-        data?: { branding?: WebsiteBranding }
+        data?: { branding?: WebsiteBranding; aboutMarkdown?: string }
       }
       if (!response.ok || !json.success || !json.data?.branding) {
         setError(json.message || `HTTP ${response.status}`)
         return
       }
       applyBranding(json.data.branding)
+      setAboutMarkdown(
+        typeof json.data.aboutMarkdown === "string" ? json.data.aboutMarkdown : ""
+      )
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load branding")
     } finally {
@@ -79,7 +85,7 @@ export function AdminWebsitePanel() {
       const json = (await response.json()) as {
         success?: boolean
         message?: string
-        data?: { branding?: WebsiteBranding }
+        data?: { branding?: WebsiteBranding; aboutMarkdown?: string }
       }
       if (!response.ok || !json.success || !json.data?.branding) {
         setError(json.message || `HTTP ${response.status}`)
@@ -91,6 +97,32 @@ export function AdminWebsitePanel() {
       setError(e instanceof Error ? e.message : "Save failed")
     } finally {
       setSaving(false)
+    }
+  }
+
+  const saveAbout = async () => {
+    setSavingAbout(true)
+    setError(null)
+    setOk(null)
+    try {
+      const response = await api.put("admin/website/settings", {
+        json: { aboutMarkdown },
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: { branding?: WebsiteBranding; aboutMarkdown?: string }
+      }
+      if (!response.ok || !json.success || typeof json.data?.aboutMarkdown !== "string") {
+        setError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      setAboutMarkdown(json.data.aboutMarkdown)
+      setOk("About page saved")
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Save failed")
+    } finally {
+      setSavingAbout(false)
     }
   }
 
@@ -248,6 +280,51 @@ export function AdminWebsitePanel() {
               {resetting ? "Resetting…" : "Reset to default"}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">About page</CardTitle>
+          <CardDescription>
+            Markdown content for{" "}
+            <a href="/about" className="text-gold-dim hover:text-gold">
+              /about
+            </a>
+            . Supports headings, lists, links, and tables.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 lg:grid-cols-2">
+            <label className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">Body (Markdown)</span>
+              <textarea
+                className="min-h-[16rem] border border-border bg-muted/30 px-2 py-1.5 font-mono text-xs text-foreground"
+                value={aboutMarkdown}
+                onChange={(e) => setAboutMarkdown(e.target.value)}
+                disabled={savingAbout}
+                spellCheck
+              />
+            </label>
+            <div className="flex flex-col gap-1 text-xs">
+              <span className="text-muted-foreground">Preview</span>
+              <div className="min-h-[16rem] border border-border/80 bg-muted/20 px-3 py-2">
+                {aboutMarkdown.trim() ? (
+                  <NewsMarkdown source={aboutMarkdown} />
+                ) : (
+                  <p className="text-muted-foreground">Nothing to preview.</p>
+                )}
+              </div>
+            </div>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            disabled={savingAbout}
+            onClick={() => void saveAbout()}
+          >
+            {savingAbout ? "Saving…" : "Save about"}
+          </Button>
         </CardContent>
       </Card>
     </div>

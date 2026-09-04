@@ -12,6 +12,10 @@ export function SiteFooter() {
           Server status
         </Link>
         <span className="mx-2 text-faint">·</span>
+        <Link href="/about" className="text-muted-foreground hover:text-gold-dim">
+          About
+        </Link>
+        <span className="mx-2 text-faint">·</span>
         <Link href="/armory" className="text-muted-foreground hover:text-gold-dim">
           Armory
         </Link>

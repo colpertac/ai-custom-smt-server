@@ -438,3 +438,30 @@ export function readWebsiteBrandingIcon(): {
     updatedAt: getSiteSettingUpdatedAt(KEY_BRANDING_ICON_EXT),
   }
 }
+
+const KEY_ABOUT_MARKDOWN = "about_markdown"
+
+export const ABOUT_MARKDOWN_MAX_CHARS = 100_000
+
+export const DEFAULT_ABOUT_MARKDOWN = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+## Our realm
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## Community
+
+Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
+`
+
+export function getAboutMarkdown(): string {
+  const raw = getSiteSetting(KEY_ABOUT_MARKDOWN)
+  if (raw === null) return DEFAULT_ABOUT_MARKDOWN
+  return raw
+}
+
+export function setAboutMarkdown(markdown: string): string {
+  const next = markdown.slice(0, ABOUT_MARKDOWN_MAX_CHARS)
+  setSiteSetting(KEY_ABOUT_MARKDOWN, next)
+  return next
+}

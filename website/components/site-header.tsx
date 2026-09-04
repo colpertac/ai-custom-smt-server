@@ -105,6 +105,15 @@ export function SiteHeader() {
             News
           </Link>
           <Link
+            href="/about"
+            className={cn(
+              navClass,
+              pathname.startsWith("/about") && "text-gold"
+            )}
+          >
+            About
+          </Link>
+          <Link
             href="/download"
             className={cn(
               navClass,

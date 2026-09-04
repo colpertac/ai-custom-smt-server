@@ -13,8 +13,8 @@ export default async function AdminWebsitePage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Customize the site name and icon shown in the header. Settings are
-        stored in the website database — no rebuild required.
+        Customize the site name, icon, and About page. Settings are stored in
+        the website database — no rebuild required.
       </p>
       <AdminWebsitePanel />
     </div>
