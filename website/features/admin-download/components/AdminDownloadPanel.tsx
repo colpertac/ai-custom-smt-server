@@ -380,7 +380,8 @@ export function AdminDownloadPanel() {
                 ImagineUpdate <code className="text-foreground">Information</code>{" "}
                 URL — use your lightweight news page (
                 <code className="text-foreground">/updater/news</code>) instead of
-                the main site; the updater browser cannot render modern CSS.
+                the main site; keep this lightweight HTML view for the updater
+                WebEngine panel.
               </p>
             </Field>
           </FieldGroup>
