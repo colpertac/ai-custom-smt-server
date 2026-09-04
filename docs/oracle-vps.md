@@ -325,10 +325,123 @@ docker compose up -d
 
 ---
 
+## Current deploy (2026-09-04)
+
+Host: `ubuntu@150.136.212.72` (`smtdeploy`), Ubuntu 24 amd64, Docker +
+firewalld. Stack root: **`/opt/smt`**.
+
+| Piece | Notes |
+| --- | --- |
+| Compose | `docker compose` in `/opt/smt` (Hub images) |
+| Data | `/opt/smt/data` (SQLite + datastore + BinaryData) |
+| Website data | `/opt/smt/website-data` (uid **1001** / nextjs) |
+| Updater | `/opt/smt/updater` → `:8765` |
+| Website | `:3000` (`SITE_URL=https://starcatpik.com`, `COOKIE_SECURE=true`) |
+| HTTPS | Caddy profile in compose (`starcatpik.com` on `80`/`443`) |
+| Backups | `/opt/smt/backups/`; cron **04:17 UTC** daily cold backup |
+| Health | `/opt/smt/scripts-local/healthcheck.sh` every **5 min** → `logs/healthcheck.log` |
+
+firewalld open: `22`, `10666`, `14666`, `8765`, `3000`, `80`, `443` (+
+masquerade). Do **not** publish `10999` / `18666`.
+
+Public smoke (from outside OCI): `https://starcatpik.com` → 200, updater
+`https://starcatpik.com/files/hashlist.dat` → 200, TCP `10666` / `14666` connect.
+
+Automatic HTTPS is handled by Caddy in Docker (`compose --profile https up -d`)
+with Let's Encrypt certificates saved in named volume `caddy-data`.
+
+---
+
+## Backups and restore (on this VPS)
+
+Cold backup (brief COMP downtime):
+
+```bash
+cd /opt/smt
+./scripts/backup.sh --data ./data --compose . --out ./backups
+```
+
+Cron already runs that daily. Archives: `backups/smt-runtime-*.tar.gz` +
+`.sha256`. First backup verified 2026-09-04 (sha256 OK; MANIFEST + SQLite
+extract drill).
+
+Full data restore (keeps current images; **overwrites** `data/` after renaming
+it to `data.bak-*`):
+
+```bash
+cd /opt/smt
+./scripts/restore.sh \
+  --archive ./backups/smt-runtime-YYYYMMDD-HHMMSS.tar.gz \
+  --data ./data --compose . --yes
+docker compose ps
+docker compose logs --tail=30 lobby world channel
+```
+
+Optional: `--restore-env` to also restore `.env` from the archive.
+
+Off-box copy (recommended before inviting players):
+
+```bash
+rsync -a /opt/smt/backups/ you@backup-host:smt-oracle-backups/
+```
+
+Details: [backup-restore.md](backup-restore.md).
+
+---
+
+## Monitoring
+
+```bash
+tail -f /opt/smt/logs/healthcheck.log
+# OK lines: disk%, website/updater HTTP, latest backup name
+# FAIL lines: down services, unhealthy, HTTP errors, stale/missing backup
+```
+
+Manual check:
+
+```bash
+/opt/smt/scripts-local/healthcheck.sh; echo $?
+df -h /
+cd /opt/smt && docker compose ps
+```
+
+---
+
+## Rollback and incident recovery
+
+| Situation | Action |
+| --- | --- |
+| Bad image pull / broken binary | Pin previous Hub tag in `.env` (`COMP_IMAGE=…`, `WEBSITE_IMAGE=…`) then `docker compose pull && docker compose up -d` |
+| Bad data / datastore edit | `./scripts/restore.sh --archive … --yes` then confirm healthy + login |
+| Compose / firewalld bridge mess after reboot | See §2 (`compose down`, prune network, restart firewalld → docker → `up -d`) |
+| Whole VM ruined | Restore the **OCI boot volume snapshot** taken before Phase 15 work, then re-copy a fresh deploy zip if needed |
+| Website SQLite permission errors | `chown -R 1001:1001 /opt/smt/website-data` and recreate `website` |
+| Channel unreachable after IP change | Set `EXTERNAL_IP` in `.env` to the public IP/DNS clients use, then `docker compose up -d` |
+
+Reboot recovery (expected path):
+
+```bash
+ssh ubuntu@PUBLIC_IP
+sudo systemctl is-active firewalld docker
+cd /opt/smt && docker compose ps
+# if containers did not return: docker compose up -d
+```
+
+Incident checklist:
+
+1. Note time + symptom (login fail, updater 404, website 500, channel drop).
+2. `docker compose ps` + `logs --tail=80 lobby world channel website`.
+3. `tail -50 /opt/smt/logs/healthcheck.log`.
+4. Prefer **restore archive** or **image pin** over improvising on live `data/`.
+5. After fix: one cold backup, confirm website + hashlist + lobby TCP from outside.
+
+---
+
 ## Done when
 
-- [ ] VCN + firewalld allow 22 / 10666 / 14666 / 8765 / 3000
-- [ ] `docker compose ps` all healthy
-- [ ] Website + updater reachable on the public IP
-- [ ] Clean client updates and logs in from outside your LAN
-- [ ] Cold backup taken and restore path known
+- [x] VCN + firewalld allow 22 / 10666 / 14666 / 8765 / 3000
+- [x] `docker compose ps` all healthy
+- [x] Website + updater reachable on the public IP
+- [ ] Clean client updates and logs in from outside your LAN *(operator play smoke)*
+- [x] Cold backup taken and restore path known
+- [x] DNS + HTTPS for website and updater (`starcatpik.com` via Caddy profile)

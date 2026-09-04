@@ -300,8 +300,17 @@ if [[ ! -f "$DATA_DIR/config/lobby.xml" ]]; then
   fi
 fi
 
-SITE_URL="http://${DOMAIN:-$EXTERNAL_IP}:${WEBSITE_PORT}"
-PUBLIC_UPDATER_URL="http://${DOMAIN:-$EXTERNAL_IP}:8765"
+if [[ -n "$DOMAIN" ]]; then
+  SITE_URL="https://${DOMAIN}"
+  PUBLIC_UPDATER_URL="https://${DOMAIN}"
+  COOKIE_SECURE_VAL="true"
+  COMPOSE_PROFILES_VAL="https"
+else
+  SITE_URL="http://${EXTERNAL_IP}:${WEBSITE_PORT}"
+  PUBLIC_UPDATER_URL="http://${EXTERNAL_IP}:8765"
+  COOKIE_SECURE_VAL="false"
+  COMPOSE_PROFILES_VAL=""
+fi
 
 if [[ -f "$ENV_FILE" ]]; then
   echo "Keeping secrets from existing $ENV_FILE when present."
@@ -373,7 +382,11 @@ fi
   echo "WEBSITE_PORT=$WEBSITE_PORT"
   echo "SITE_URL=$SITE_URL"
   echo "PUBLIC_UPDATER_URL=$PUBLIC_UPDATER_URL"
-  echo "COOKIE_SECURE=false"
+  echo "COOKIE_SECURE=$COOKIE_SECURE_VAL"
+  if [[ -n "$DOMAIN" ]]; then
+    echo "DOMAIN=$DOMAIN"
+    echo "COMPOSE_PROFILES=$COMPOSE_PROFILES_VAL"
+  fi
   echo "OPS_URL=http://ops:14710"
   echo "COMP_IMAGE=colpertac/smt-comp:latest"
   echo "WEBSITE_IMAGE=colpertac/smt-website:latest"

@@ -1,0 +1,13 @@
+{$DOMAIN} {
+    encode zstd gzip
+
+    # Client updater files (hashlist, packages, patches)
+    handle /files/* {
+        reverse_proxy updater:80
+    }
+
+    # Next.js website portal
+    handle {
+        reverse_proxy website:3000
+    }
+}
