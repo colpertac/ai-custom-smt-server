@@ -261,17 +261,33 @@ function GearPlannerAppClient({
         )
         return
       }
-      const profile = (await res.json()) as {
-        equipment: Array<{
-          slot: EquipSlotKey
-          itemType: number | null
-          basicEffect: number
-          specialEffect: number
-          tarot?: number
-          soul?: number
-        }>
-        appearance?: { gender?: number }
-        stats?: { level?: number; str?: number; magic?: number; vit?: number; intel?: number; speed?: number; luck?: number }
+      const json = (await res.json()) as {
+        success?: boolean
+        data?: {
+          equipment: Array<{
+            slot: EquipSlotKey
+            itemType: number | null
+            basicEffect: number
+            specialEffect: number
+            tarot?: number
+            soul?: number
+          }>
+          appearance?: { gender?: number }
+          stats?: {
+            level?: number
+            str?: number
+            magic?: number
+            vit?: number
+            intel?: number
+            speed?: number
+            luck?: number
+          }
+        }
+      }
+      const profile = json.data
+      if (!profile?.equipment) {
+        setImportError("Import failed")
+        return
       }
       setLoadout(
         emptyPlannerLoadout().map((slot) => {
