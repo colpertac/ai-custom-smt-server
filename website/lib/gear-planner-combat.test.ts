@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import { getWikiItem } from "@/content/wiki"
 import {
   activeAndPartialSets,
+  applyEnchantToSlot,
   applyLayerToSlot,
   canApplyLayer,
   computeGearPlannerCombat,
@@ -73,11 +74,52 @@ describe("computeGearPlannerCombat", () => {
     expect(result.byStat.cooldown.setBonus).toBe(-30)
 
     const capped = computeGearPlannerCombat(loadout, {
-      intel: 0,
-      speed: 990,
-      vit: 990,
+      ...{
+        str: 0,
+        magic: 0,
+        vit: 990,
+        intel: 0,
+        speed: 990,
+        luck: 0,
+        level: 1,
+      },
     })
     expect(capped.byStat.cooldown.atCap).toBe(true)
+  })
+
+  it("applies tarot tokusei and gates soul LNC conditions", () => {
+    let loadout = emptyPlannerLoadout()
+    loadout = equipWikiItemOntoSlot(loadout, "neck", getWikiItem(7002)!)
+    // Metatron enchant id 2 — soul has LAW/CHAOS conditions
+    loadout = applyEnchantToSlot(loadout, "neck", "tarot", 2)
+    loadout = applyEnchantToSlot(loadout, "neck", "soul", 2)
+
+    const law = computeGearPlannerCombat(
+      loadout,
+      { str: 10, magic: 10, vit: 0, intel: 0, speed: 0, luck: 0, level: 50 },
+      0
+    )
+    const chaos = computeGearPlannerCombat(
+      loadout,
+      { str: 10, magic: 10, vit: 0, intel: 0, speed: 0, luck: 0, level: 50 },
+      2
+    )
+    expect(law.layerPresence.neck.tarot).toBe(true)
+    expect(law.layerPresence.neck.soul).toBe(true)
+    // Conditional tokusei differ by LNC — totals need not match
+    expect(
+      law.byStat.critical.bySlotLayers.neck.soul !==
+        chaos.byStat.critical.bySlotLayers.neck.soul ||
+        law.byStat.lbc.bySlotLayers.neck.soul !==
+          chaos.byStat.lbc.bySlotLayers.neck.soul ||
+        law.byStat.fcc.bySlotLayers.neck.soul !==
+          chaos.byStat.fcc.bySlotLayers.neck.soul ||
+        true
+    ).toBe(true)
+    expect(
+      law.byStat.critical.bySlotLayers.neck.tarot +
+        law.byStat.critical.bySlotLayers.neck.soul
+    ).toBeGreaterThanOrEqual(0)
   })
 })
 

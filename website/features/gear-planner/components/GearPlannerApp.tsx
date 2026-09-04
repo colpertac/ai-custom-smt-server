@@ -10,7 +10,9 @@ import {
 } from "react"
 
 import { getWikiItem, type WikiItem } from "@/content/wiki"
+import { GearBuildsPanel } from "@/features/gear-planner/components/GearBuildsPanel"
 import { GearCombatMatrix } from "@/features/gear-planner/components/GearCombatMatrix"
+import { GearEnchantPicker } from "@/features/gear-planner/components/GearEnchantPicker"
 import {
   GearRecommendTable,
   recommendHitToWikiItem,
@@ -20,70 +22,66 @@ import { GearSlotSidebar } from "@/features/gear-planner/components/GearSlotSide
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
+  DEFAULT_PLANNER_ATTRS,
   SET_HEADER_COLORS,
+  applyEnchantToSlot,
   applyLayerToSlot,
+  canApplyEnchant,
   canApplyLayer,
   computeGearPlannerCombat,
   emptyPlannerLoadout,
   equipWikiItemOntoSlot,
   itemSubcategory,
+  parsePlannerState,
   plannerSlotDisplay,
+  serializePlannerState,
+  type EnchantSide,
   type GearLayer,
   type PlannerAttrs,
+  type PlannerLnc,
   type PlannerSlot,
   type PlannerStatKey,
   type SetStatus,
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
-const STORAGE_KEY = "imagine-gear-planner-v2"
+const STORAGE_KEY = "imagine-gear-planner-v3"
+const LEGACY_STORAGE_KEY = "imagine-gear-planner-v2"
 
 export type PlannerGender = 0 | 1
-
-type StoredState = {
-  slots: Array<{
-    s1: number | null
-    s2: number | null
-    s3: number | null
-  }>
-  attrs: PlannerAttrs
-  gender?: PlannerGender
-}
 
 function loadStored(): {
   loadout: PlannerSlot[]
   attrs: PlannerAttrs
   gender: PlannerGender
+  lnc: PlannerLnc
+  notes: string
 } {
-  const empty = emptyPlannerLoadout()
-  const defaultAttrs = { intel: 0, speed: 0, vit: 0 }
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { loadout: empty, attrs: defaultAttrs, gender: 0 }
-    const parsed = JSON.parse(raw) as StoredState
-    const loadout = empty.map((slot, i) => {
-      const row = parsed.slots?.[i]
-      if (!row) return slot
+    const raw =
+      localStorage.getItem(STORAGE_KEY) ??
+      localStorage.getItem(LEGACY_STORAGE_KEY)
+    if (!raw) {
       return {
-        ...slot,
-        s1ItemId: row.s1,
-        s2ItemId: row.s2,
-        s3ItemId: row.s3,
+        loadout: emptyPlannerLoadout(),
+        attrs: { ...DEFAULT_PLANNER_ATTRS },
+        gender: 0,
+        lnc: 1,
+        notes: "",
       }
-    })
-    return {
-      loadout,
-      attrs: {
-        intel: Number(parsed.attrs?.intel) || 0,
-        speed: Number(parsed.attrs?.speed) || 0,
-        vit: Number(parsed.attrs?.vit) || 0,
-      },
-      gender: parsed.gender === 1 ? 1 : 0,
     }
+    return parsePlannerState(JSON.parse(raw))
   } catch {
-    return { loadout: empty, attrs: defaultAttrs, gender: 0 }
+    return {
+      loadout: emptyPlannerLoadout(),
+      attrs: { ...DEFAULT_PLANNER_ATTRS },
+      gender: 0,
+      lnc: 1,
+      notes: "",
+    }
   }
 }
 
@@ -95,26 +93,35 @@ function useIsClient() {
   )
 }
 
-function persist(
-  loadout: PlannerSlot[],
-  attrs: PlannerAttrs,
+function persist(state: {
+  loadout: PlannerSlot[]
+  attrs: PlannerAttrs
   gender: PlannerGender
-) {
-  const slots = EQUIP_SLOTS.map((def) => {
-    const slot = loadout.find((s) => s.index === def.index)!
-    return {
-      s1: slot.s1ItemId,
-      s2: slot.s2ItemId,
-      s3: slot.s3ItemId,
-    }
-  })
+  lnc: PlannerLnc
+  notes: string
+}) {
   localStorage.setItem(
     STORAGE_KEY,
-    JSON.stringify({ slots, attrs, gender })
+    JSON.stringify(serializePlannerState(state))
   )
 }
 
-export function GearPlannerApp() {
+const ATTR_FIELDS: Array<{ key: keyof PlannerAttrs; label: string }> = [
+  { key: "str", label: "STR" },
+  { key: "magic", label: "MAG" },
+  { key: "vit", label: "VIT" },
+  { key: "intel", label: "INT" },
+  { key: "speed", label: "SPD" },
+  { key: "luck", label: "LUCK" },
+  { key: "level", label: "Lv" },
+]
+
+export function GearPlannerApp({
+  initialSharePayload,
+}: {
+  /** Shared build loaded from `/builder/s/[token]`. */
+  initialSharePayload?: unknown
+} = {}) {
   const isClient = useIsClient()
   if (!isClient) {
     return (
@@ -123,14 +130,31 @@ export function GearPlannerApp() {
       </div>
     )
   }
-  return <GearPlannerAppClient />
+  return <GearPlannerAppClient initialSharePayload={initialSharePayload} />
 }
 
-function GearPlannerAppClient() {
-  const stored = loadStored()
+function GearPlannerAppClient({
+  initialSharePayload,
+}: {
+  initialSharePayload?: unknown
+}) {
+  const accountBuildId = useMemo(() => {
+    if (typeof window === "undefined") return null
+    return new URLSearchParams(window.location.search).get("build")
+  }, [])
+
+  const stored = useMemo(() => {
+    if (initialSharePayload != null) {
+      return parsePlannerState(initialSharePayload)
+    }
+    return loadStored()
+  }, [initialSharePayload])
+
   const [loadout, setLoadout] = useState<PlannerSlot[]>(stored.loadout)
   const [attrs, setAttrs] = useState<PlannerAttrs>(stored.attrs)
   const [gender, setGender] = useState<PlannerGender>(stored.gender)
+  const [lnc, setLnc] = useState<PlannerLnc>(stored.lnc)
+  const [notes, setNotes] = useState(stored.notes)
   const [selectedSlot, setSelectedSlot] = useState<EquipSlotKey | null>(null)
   const [recommendStat, setRecommendStat] = useState<PlannerStatKey>("cooldown")
   const [recommendSlot, setRecommendSlot] = useState<EquipSlotKey | "">("")
@@ -138,14 +162,23 @@ function GearPlannerAppClient() {
   const [importName, setImportName] = useState("")
   const [importBusy, setImportBusy] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
+  const [shareBanner] = useState(initialSharePayload != null)
+  const [accountBuildMeta, setAccountBuildMeta] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+  const [accountBuildError, setAccountBuildError] = useState<string | null>(
+    null
+  )
 
   useEffect(() => {
-    persist(loadout, attrs, gender)
-  }, [loadout, attrs, gender])
+    if (shareBanner) return
+    persist({ loadout, attrs, gender, lnc, notes })
+  }, [loadout, attrs, gender, lnc, notes, shareBanner])
 
   const combat = useMemo(
-    () => computeGearPlannerCombat(loadout, attrs),
-    [loadout, attrs]
+    () => computeGearPlannerCombat(loadout, attrs, lnc),
+    [loadout, attrs, lnc]
   )
 
   const equippedParam = useMemo(
@@ -167,9 +200,50 @@ function GearPlannerAppClient() {
     return itemSubcategory(selectedEquip.s1ItemId)
   }, [selectedEquip])
 
+  const applyStored = useCallback(
+    (payload: unknown) => {
+      const next = parsePlannerState(payload)
+      setLoadout(next.loadout)
+      setAttrs(next.attrs)
+      setGender(next.gender)
+      setLnc(next.lnc)
+      setNotes(next.notes)
+      setDropError(null)
+    },
+    []
+  )
+
+  useEffect(() => {
+    if (!accountBuildId || initialSharePayload != null) return
+    let cancelled = false
+    fetch(`/api/builder/builds/${encodeURIComponent(accountBuildId)}`)
+      .then(async (res) => {
+        const json = (await res.json()) as {
+          data?: { id: string; name: string; payload: unknown }
+          message?: string
+        }
+        if (cancelled) return
+        if (!res.ok || !json.data?.payload) {
+          setAccountBuildError(json.message ?? "Could not load that build")
+          return
+        }
+        applyStored(json.data.payload)
+        setAccountBuildMeta({ id: json.data.id, name: json.data.name })
+        window.history.replaceState({}, "", "/builder")
+      })
+      .catch(() => {
+        if (!cancelled) setAccountBuildError("Could not load that build")
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [accountBuildId, initialSharePayload, applyStored])
+
   const clearAll = useCallback(() => {
     setLoadout(emptyPlannerLoadout())
-    setAttrs({ intel: 0, speed: 0, vit: 0 })
+    setAttrs({ ...DEFAULT_PLANNER_ATTRS })
+    setLnc(1)
+    setNotes("")
     setSelectedSlot(null)
     setDropError(null)
   }, [])
@@ -193,8 +267,11 @@ function GearPlannerAppClient() {
           itemType: number | null
           basicEffect: number
           specialEffect: number
+          tarot?: number
+          soul?: number
         }>
         appearance?: { gender?: number }
+        stats?: { level?: number; str?: number; magic?: number; vit?: number; intel?: number; speed?: number; luck?: number }
       }
       setLoadout(
         emptyPlannerLoadout().map((slot) => {
@@ -204,16 +281,35 @@ function GearPlannerAppClient() {
             src.specialEffect > 0 ? src.specialEffect : src.itemType
           const basic =
             src.basicEffect > 0 ? src.basicEffect : src.itemType
+          const tarot =
+            src.tarot && src.tarot > 0 && src.tarot !== 32767
+              ? src.tarot
+              : null
+          const soul =
+            src.soul && src.soul > 0 && src.soul !== 32767 ? src.soul : null
           return {
             ...slot,
             s1ItemId: s1,
             s2ItemId: basic,
             s3ItemId: basic,
+            tarotEnchantId: tarot,
+            soulEnchantId: soul,
           }
         })
       )
       const g = profile.appearance?.gender
       if (g === 0 || g === 1) setGender(g)
+      if (profile.stats) {
+        setAttrs((a) => ({
+          str: profile.stats?.str ?? a.str,
+          magic: profile.stats?.magic ?? a.magic,
+          vit: profile.stats?.vit ?? a.vit,
+          intel: profile.stats?.intel ?? a.intel,
+          speed: profile.stats?.speed ?? a.speed,
+          luck: profile.stats?.luck ?? a.luck,
+          level: profile.stats?.level ?? a.level,
+        }))
+      }
     } catch {
       setImportError("Import failed")
     } finally {
@@ -240,88 +336,146 @@ function GearPlannerAppClient() {
     [selectedSlot, selectedEquip, gender]
   )
 
+  const handleDropEnchant = useCallback(
+    (enchantId: number, side: EnchantSide) => {
+      if (!selectedSlot || !selectedEquip) return
+      const check = canApplyEnchant({
+        target: selectedEquip,
+        enchantId,
+        side,
+      })
+      if (!check.ok) {
+        setDropError(check.reason ?? "Cannot apply fusion")
+        return
+      }
+      setDropError(null)
+      setLoadout((prev) =>
+        applyEnchantToSlot(prev, selectedSlot, side, enchantId)
+      )
+    },
+    [selectedSlot, selectedEquip]
+  )
+
+  const currentPayload = useMemo(
+    () =>
+      serializePlannerState({
+        loadout,
+        attrs,
+        gender,
+        lnc,
+        notes,
+      }),
+    [loadout, attrs, gender, lnc, notes]
+  )
+
   return (
-    <div className="flex h-[calc(100dvh-3.5rem-2.75rem)] min-h-[32rem] w-full">
+    <div className="flex h-[calc(100dvh-3.5rem)] min-h-[32rem] w-full">
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-4">
         <div className="space-y-4">
+          {shareBanner ? (
+            <div className="flex flex-wrap items-center justify-between gap-2 border border-violet-500/40 bg-violet-500/10 px-3 py-2 text-xs">
+              <p>Viewing a shared build (not auto-saved to this browser).</p>
+              <Button
+                type="button"
+                size="xs"
+                variant="outline"
+                onClick={() => {
+                  localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify(currentPayload)
+                  )
+                  window.location.href = "/builder"
+                }}
+              >
+                Copy to my draft
+              </Button>
+            </div>
+          ) : null}
+
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="font-heading text-2xl font-semibold tracking-[0.1em] uppercase sm:text-3xl">
                 Gear builder
               </h1>
               <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
-                S1 / S2 / S3 columns show which layer contributes. Drag
-                recommendation cells onto the sidebar layer cards.
+                S1–S3, Tarot (T), and Soul (S). Drag or double-click recommend /
+                fusion rows onto the open sidebar.
               </p>
             </div>
-            <div className="flex items-center gap-1 border border-border p-1">
-              <Button
-                type="button"
-                size="xs"
-                variant={gender === 0 ? "default" : "ghost"}
-                onClick={() => setGender(0)}
-              >
-                Male
-              </Button>
-              <Button
-                type="button"
-                size="xs"
-                variant={gender === 1 ? "default" : "ghost"}
-                onClick={() => setGender(1)}
-              >
-                Female
-              </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1 border border-border p-1">
+                <Button
+                  type="button"
+                  size="xs"
+                  variant={gender === 0 ? "default" : "ghost"}
+                  onClick={() => setGender(0)}
+                >
+                  Male
+                </Button>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant={gender === 1 ? "default" : "ghost"}
+                  onClick={() => setGender(1)}
+                >
+                  Female
+                </Button>
+              </div>
+              <div className="flex items-center gap-1 border border-border p-1">
+                {(
+                  [
+                    [0, "Law"],
+                    [1, "Neutral"],
+                    [2, "Chaos"],
+                  ] as const
+                ).map(([v, label]) => (
+                  <Button
+                    key={v}
+                    type="button"
+                    size="xs"
+                    variant={lnc === v ? "default" : "ghost"}
+                    onClick={() => setLnc(v)}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </header>
 
-          <div className="flex flex-wrap items-end gap-3 border border-border bg-card/40 p-3">
-            <Field className="min-w-[6rem]">
-              <FieldLabel htmlFor="gp-int">INT</FieldLabel>
-              <Input
-                id="gp-int"
-                type="number"
-                value={attrs.intel}
-                onChange={(e) =>
-                  setAttrs((a) => ({
-                    ...a,
-                    intel: Number(e.target.value) || 0,
-                  }))
-                }
-              />
-            </Field>
-            <Field className="min-w-[6rem]">
-              <FieldLabel htmlFor="gp-spd">SPD</FieldLabel>
-              <Input
-                id="gp-spd"
-                type="number"
-                value={attrs.speed}
-                onChange={(e) =>
-                  setAttrs((a) => ({
-                    ...a,
-                    speed: Number(e.target.value) || 0,
-                  }))
-                }
-              />
-            </Field>
-            <Field className="min-w-[6rem]">
-              <FieldLabel htmlFor="gp-vit">VIT</FieldLabel>
-              <Input
-                id="gp-vit"
-                type="number"
-                value={attrs.vit}
-                onChange={(e) =>
-                  setAttrs((a) => ({
-                    ...a,
-                    vit: Number(e.target.value) || 0,
-                  }))
-                }
-              />
-            </Field>
+          <GearBuildsPanel
+            payload={currentPayload}
+            onLoad={applyStored}
+            initialActive={accountBuildMeta}
+          />
+          {accountBuildError ? (
+            <p className="text-xs text-destructive">{accountBuildError}</p>
+          ) : null}
+
+          <div className="flex flex-wrap items-end gap-2 border border-border bg-card/40 p-3">
+            {ATTR_FIELDS.map((f) => (
+              <Field key={f.key} className="w-[4.5rem]">
+                <FieldLabel htmlFor={`gp-${f.key}`}>{f.label}</FieldLabel>
+                <Input
+                  id={`gp-${f.key}`}
+                  type="number"
+                  className="h-8 px-1.5 text-xs"
+                  value={attrs[f.key]}
+                  onChange={(e) =>
+                    setAttrs((a) => ({
+                      ...a,
+                      [f.key]: Number(e.target.value) || 0,
+                    }))
+                  }
+                />
+              </Field>
+            ))}
             <Field className="min-w-[12rem] flex-1">
               <FieldLabel htmlFor="gp-import">Import from armory</FieldLabel>
               <div className="flex gap-2">
                 <Input
                   id="gp-import"
+                  className="h-8 text-xs"
                   value={importName}
                   onChange={(e) => setImportName(e.target.value)}
                   placeholder="Character name"
@@ -329,6 +483,7 @@ function GearPlannerAppClient() {
                 />
                 <Button
                   type="button"
+                  size="sm"
                   variant="outline"
                   disabled={importBusy || !importName.trim()}
                   onClick={() => void importFromArmory()}
@@ -340,10 +495,21 @@ function GearPlannerAppClient() {
                 <p className="mt-1 text-xs text-destructive">{importError}</p>
               ) : null}
             </Field>
-            <Button type="button" variant="outline" onClick={clearAll}>
+            <Button type="button" size="sm" variant="outline" onClick={clearAll}>
               Clear
             </Button>
           </div>
+
+          <Field>
+            <FieldLabel htmlFor="gp-notes">Build notes</FieldLabel>
+            <Textarea
+              id="gp-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Expertise ranks, best summoned demons, playstyle tips… (not used in math)"
+              className="min-h-[4rem] text-xs"
+            />
+          </Field>
 
           <GearLoadoutStrip
             loadout={loadout}
@@ -379,32 +545,41 @@ function GearPlannerAppClient() {
             }}
           />
 
-          <GearRecommendTable
-            stat={recommendStat}
-            onStatChange={setRecommendStat}
-            slot={recommendSlot}
-            onSlotChange={setRecommendSlot}
-            gender={gender}
-            equippedParam={equippedParam}
-            subcategory={
-              recommendSlot && recommendSlot === selectedSlot
-                ? focusedSubcategory
-                : null
-            }
-            onEquipWhole={(hit: RecommendHit) => {
-              const item = recommendHitToWikiItem(hit)
-              setLoadout((prev) =>
-                equipWikiItemOntoSlot(prev, hit.slotKey, item)
-              )
-              setSelectedSlot(hit.slotKey)
-              setDropError(null)
-            }}
-            onApplyLayer={(hit, layer) => {
-              if (!selectedSlot) return
-              const donor = getWikiItem(hit.id) ?? recommendHitToWikiItem(hit)
-              handleDropLayer(donor, layer)
-            }}
-          />
+          <div className="grid gap-3 xl:grid-cols-2">
+            <GearRecommendTable
+              stat={recommendStat}
+              onStatChange={setRecommendStat}
+              slot={recommendSlot}
+              onSlotChange={setRecommendSlot}
+              gender={gender}
+              equippedParam={equippedParam}
+              subcategory={
+                recommendSlot && recommendSlot === selectedSlot
+                  ? focusedSubcategory
+                  : null
+              }
+              onEquipWhole={(hit: RecommendHit) => {
+                const item = recommendHitToWikiItem(hit)
+                setLoadout((prev) =>
+                  equipWikiItemOntoSlot(prev, hit.slotKey, item)
+                )
+                setSelectedSlot(hit.slotKey)
+                setDropError(null)
+              }}
+              onApplyLayer={(hit, layer) => {
+                if (!selectedSlot) return
+                const donor = getWikiItem(hit.id) ?? recommendHitToWikiItem(hit)
+                handleDropLayer(donor, layer)
+              }}
+            />
+            <GearEnchantPicker
+              stat={recommendStat}
+              attrs={attrs}
+              lnc={lnc}
+              enabled={Boolean(selectedEquip?.s1ItemId)}
+              onApply={handleDropEnchant}
+            />
+          </div>
         </div>
       </div>
 
@@ -430,6 +605,7 @@ function GearPlannerAppClient() {
               setDropError(null)
             }}
             onDropLayer={handleDropLayer}
+            onDropEnchant={handleDropEnchant}
           />
         </div>
       ) : null}
@@ -456,6 +632,7 @@ function GearPlannerAppClient() {
               setDropError(null)
             }}
             onDropLayer={handleDropLayer}
+            onDropEnchant={handleDropEnchant}
           />
         </div>
       ) : null}

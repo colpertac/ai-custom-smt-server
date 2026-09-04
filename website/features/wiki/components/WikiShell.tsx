@@ -13,42 +13,6 @@ import { cn } from "@/lib/utils"
 
 export function WikiShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const builder = pathname.startsWith("/wiki/builder")
-
-  if (builder) {
-    return (
-      <div className="site-atmosphere flex min-h-[calc(100dvh-3.5rem)] w-full flex-col">
-        <div className="flex shrink-0 items-center gap-4 border-b border-border bg-chrome/40 px-3 py-2 sm:px-4">
-          <Link
-            href="/wiki"
-            className="font-heading text-sm tracking-[0.14em] text-foreground uppercase no-underline hover:text-gold-hot"
-          >
-            Item wiki
-          </Link>
-          <nav aria-label="Wiki" className="flex min-w-0 flex-1 gap-1 overflow-x-auto text-xs">
-            {WIKI_NAV.map((item) => {
-              const on = wikiNavActive(pathname, item)
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "shrink-0 px-2 py-1 no-underline uppercase tracking-wider",
-                    on
-                      ? "text-gold"
-                      : "text-muted-foreground hover:text-gold-dim"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
-        <div className="min-h-0 min-w-0 flex-1">{children}</div>
-      </div>
-    )
-  }
 
   return (
     <div className="site-atmosphere w-full px-3 py-4 sm:px-4 lg:px-5">

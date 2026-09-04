@@ -3,6 +3,15 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   // Required for website/Dockerfile (standalone Node server).
   output: "standalone",
+  async redirects() {
+    return [
+      {
+        source: "/wiki/builder",
+        destination: "/builder",
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

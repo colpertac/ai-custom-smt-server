@@ -190,6 +190,10 @@ export function wikiSetBonus(item: WikiItem): string[] {
   return item.setBonus ?? []
 }
 
+export function listWikiEnchants(): WikiEnchantRecord[] {
+  return [...enchantsById.values()]
+}
+
 export function isActiveEnchantId(id: number): boolean {
   return id > 0 && id !== ENCHANT_ENABLE_EFFECT
 }

@@ -2,7 +2,6 @@ import type { WikiItemCategory } from "@/content/wiki"
 
 export const WIKI_NAV = [
   { href: "/wiki", label: "Home", exact: true },
-  { href: "/wiki/builder", label: "Builder", prefix: "/wiki/builder" },
   { href: "/wiki/search", label: "Search", prefix: "/wiki/search" },
   { href: "/wiki/weapons", label: "Weapons", prefix: "/wiki/weapons" },
   { href: "/wiki/armor", label: "Armor", prefix: "/wiki/armor" },

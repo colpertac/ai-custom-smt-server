@@ -14,17 +14,19 @@ import {
   wikiBasicFeatures,
   wikiCharacteristics,
 } from "@/content/wiki"
+import {
+  evaluateEnchantCondition,
+  isStatThresholdCondition,
+  statIdForConditionType,
+  type EnchantCondition,
+} from "@/lib/enchant-conditions"
 import { EXPERTISE_POINTS_PER_RANK } from "@/lib/armory-catalogs"
 import type { ArmoryEquipmentSlot } from "@/lib/armory-equipment"
 import type { ArmoryStats } from "@/lib/armory"
 
 export type StatAdjustment = { id: string; type: number; value: number }
 
-export type EnchantCondition = {
-  type: number
-  params: number[]
-  tokuseiIds: number[]
-}
+export type { EnchantCondition }
 
 export type ArmoryComputedStats = {
   /** Stored EntityStats row (unequipped). */
@@ -167,15 +169,6 @@ const DISPLAY_STAT_IDS = [
   "MP_MAX",
 ] as const
 
-const STAT_CONDITION_STAT_IDS = [
-  "STR",
-  "MAGIC",
-  "VIT",
-  "INT",
-  "SPEED",
-  "LUCK",
-] as const
-
 const GROWTH_TABLE_SIZE = 16
 const WEAPON_GROWTH: [number, number][] = [
   [2, 2], [4, 3], [6, 4], [8, 5], [10, 6], [12, 7], [14, 8], [16, 9],
@@ -285,53 +278,6 @@ export function computeDisabledExpertiseSkills(
     }
   }
   return disabled
-}
-
-function lncAlignment(lnc: number): "LAW" | "NEUTRAL" | "CHAOS" {
-  if (lnc >= 5000) return "CHAOS"
-  if (lnc <= -5000) return "LAW"
-  return "NEUTRAL"
-}
-
-function evaluateEnchantCondition(
-  condition: EnchantCondition,
-  ctx: {
-    level: number
-    lnc: number
-    expertisePoints: ReadonlyMap<number, number>
-  }
-): boolean {
-  const [p1, p2] = condition.params
-  switch (condition.type) {
-    case 0:
-      return true
-    case 1:
-      return (p1 === 0 || ctx.level >= p1) && (p2 === 0 || ctx.level <= p2)
-    case 2: {
-      const align = lncAlignment(ctx.lnc)
-      if (align === "LAW") return (p1 & 0x04) !== 0
-      if (align === "NEUTRAL") return (p1 & 0x02) !== 0
-      if (align === "CHAOS") return (p1 & 0x01) !== 0
-      return false
-    }
-    default:
-      if (condition.type >= 100 && condition.type <= 158) {
-        const expId = condition.type - 100
-        const points = ctx.expertisePoints.get(expId) ?? 0
-        const rank = Math.floor(Math.max(0, points) / EXPERTISE_POINTS_PER_RANK)
-        return rank >= p1
-      }
-      return false
-  }
-}
-
-function isStatThresholdCondition(type: number): boolean {
-  return type >= 10 && type <= 10 + STAT_CONDITION_STAT_IDS.length - 1
-}
-
-function statIdForConditionType(type: number): string | null {
-  const idx = type - 10
-  return STAT_CONDITION_STAT_IDS[idx] ?? null
 }
 
 function addTokuseiAdjustments(out: StatAdjustment[], tokuseiId: number): void {

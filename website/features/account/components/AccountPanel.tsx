@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
+import { AccountGearBuilds } from "@/features/account/components/AccountGearBuilds"
 import { ChangeEmailForm } from "@/features/auth/components/ChangeEmailForm"
 import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm"
 import { useLogout, useSessionDetails } from "@/features/auth/hooks"
@@ -132,6 +133,8 @@ export function AccountPanel() {
           </p>
         ) : null}
       </section>
+
+      <AccountGearBuilds />
 
       <div className="mt-3 grid gap-3 md:grid-cols-2">
         <section className="border border-border bg-card/60 px-5 py-5">

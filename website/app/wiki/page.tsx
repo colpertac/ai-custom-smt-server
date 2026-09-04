@@ -42,7 +42,7 @@ export default function WikiIndexPage() {
             <span className="font-medium text-foreground">Builder</span> plans
             combat loadouts (cooldown, limit break, crit, and more) with set
             bonuses counted once — see{" "}
-            <Link href="/wiki/builder" className="text-gold-dim hover:text-gold-hot">
+            <Link href="/builder" className="text-gold-dim hover:text-gold-hot">
               Gear builder
             </Link>
             .

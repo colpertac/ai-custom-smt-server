@@ -3,14 +3,24 @@ import itemSubcategoriesPayload from "@/content/armory/item-subcategories.json"
 import sitemTokuseiPayload from "@/content/armory/sitem-tokusei.json"
 import tokuseiCorrectionsPayload from "@/content/armory/tokusei-corrections.json"
 import {
+  getWikiEnchant,
   getWikiItem,
+  isActiveEnchantId,
+  listWikiEnchants,
   listWikiItems,
   wikiBasicFeatures,
   wikiCharacteristics,
   wikiSetBonus,
+  type WikiEnchantCharastic,
+  type WikiEnchantRecord,
   type WikiItem,
 } from "@/content/wiki"
 import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
+import {
+  evaluateEnchantCondition,
+  lncPointsFromAlignment,
+  type PlannerLnc,
+} from "@/lib/enchant-conditions"
 
 export type PlannerStatKey =
   | "critical"
@@ -26,6 +36,59 @@ export type PlannerStatKey =
   | "cooldown"
 
 export type GearLayer = "s1" | "s2" | "s3"
+export type EnchantSide = "tarot" | "soul"
+
+export type PlannerAttrs = {
+  str: number
+  magic: number
+  vit: number
+  intel: number
+  speed: number
+  luck: number
+  level: number
+}
+
+export const DEFAULT_PLANNER_ATTRS: PlannerAttrs = {
+  str: 0,
+  magic: 0,
+  vit: 0,
+  intel: 0,
+  speed: 0,
+  luck: 0,
+  level: 1,
+}
+
+export type StatAdjustment = { id: string; type: number; value: number }
+
+export type PlannerSlot = {
+  slot: EquipSlotKey
+  label: string
+  index: number
+  /** Appearance + SItem (S1). */
+  s1ItemId: number | null
+  /** basicFeatures (S2). */
+  s2ItemId: number | null
+  /** characteristics (S3). */
+  s3ItemId: number | null
+  tarotEnchantId: number | null
+  soulEnchantId: number | null
+}
+
+export type LayerFive = {
+  s1: number
+  s2: number
+  s3: number
+  tarot: number
+  soul: number
+}
+
+export type LayerPresence = {
+  s1: boolean
+  s2: boolean
+  s3: boolean
+  tarot: boolean
+  soul: boolean
+}
 
 export type PlannerStatDef = {
   key: PlannerStatKey
@@ -112,30 +175,6 @@ export const PLANNER_STATS: readonly PlannerStatDef[] = [
   },
 ] as const
 
-export type PlannerAttrs = {
-  intel: number
-  speed: number
-  vit: number
-}
-
-export type StatAdjustment = { id: string; type: number; value: number }
-
-export type PlannerSlot = {
-  slot: EquipSlotKey
-  label: string
-  index: number
-  /** Appearance + SItem (S1). */
-  s1ItemId: number | null
-  /** basicFeatures (S2). */
-  s2ItemId: number | null
-  /** characteristics (S3). */
-  s3ItemId: number | null
-}
-
-export type LayerTriple = { s1: number; s2: number; s3: number }
-
-export type LayerPresence = { s1: boolean; s2: boolean; s3: boolean }
-
 export type EquipmentSetInfo = {
   id: number
   equipment: number[]
@@ -153,8 +192,8 @@ export type SetStatus = {
 }
 
 export type PlannerStatBreakdown = {
-  bySlotLayers: Record<EquipSlotKey, LayerTriple>
-  /** s1+s2+s3 per slot (piece only, no set). */
+  bySlotLayers: Record<EquipSlotKey, LayerFive>
+  /** All layers per slot (piece only, no set). */
   bySlot: Record<EquipSlotKey, number>
   setBonus: number
   attrBonus: number
@@ -170,6 +209,22 @@ export type GearPlannerResult = {
   partialSets: SetStatus[]
   /** Slot key → shared color index for set header highlighting (-1 = none). */
   setColorIndexBySlot: Record<EquipSlotKey, number>
+}
+
+/** Serializable planner payload (localStorage v3 + account builds). */
+export type PlannerStoredState = {
+  version: 3
+  slots: Array<{
+    s1: number | null
+    s2: number | null
+    s3: number | null
+    tarot: number | null
+    soul: number | null
+  }>
+  attrs: PlannerAttrs
+  gender: 0 | 1
+  lnc: PlannerLnc
+  notes: string
 }
 
 type TokuseiRow = StatAdjustment
@@ -231,7 +286,94 @@ export function emptyPlannerLoadout(): PlannerSlot[] {
     s1ItemId: null,
     s2ItemId: null,
     s3ItemId: null,
+    tarotEnchantId: null,
+    soulEnchantId: null,
   }))
+}
+
+export function serializePlannerState(options: {
+  loadout: PlannerSlot[]
+  attrs: PlannerAttrs
+  gender: 0 | 1
+  lnc: PlannerLnc
+  notes: string
+}): PlannerStoredState {
+  return {
+    version: 3,
+    slots: EQUIP_SLOTS.map((def) => {
+      const slot = options.loadout.find((s) => s.index === def.index)!
+      return {
+        s1: slot.s1ItemId,
+        s2: slot.s2ItemId,
+        s3: slot.s3ItemId,
+        tarot: slot.tarotEnchantId,
+        soul: slot.soulEnchantId,
+      }
+    }),
+    attrs: { ...options.attrs },
+    gender: options.gender,
+    lnc: options.lnc,
+    notes: options.notes,
+  }
+}
+
+export function parsePlannerState(raw: unknown): {
+  loadout: PlannerSlot[]
+  attrs: PlannerAttrs
+  gender: 0 | 1
+  lnc: PlannerLnc
+  notes: string
+} {
+  const empty = emptyPlannerLoadout()
+  const fallback = {
+    loadout: empty,
+    attrs: { ...DEFAULT_PLANNER_ATTRS },
+    gender: 0 as const,
+    lnc: 1 as PlannerLnc,
+    notes: "",
+  }
+  if (!raw || typeof raw !== "object") return fallback
+  const parsed = raw as Record<string, unknown>
+  const slotsRaw = parsed.slots
+  if (!Array.isArray(slotsRaw)) return fallback
+
+  const loadout = empty.map((slot, i) => {
+    const row = slotsRaw[i] as Record<string, unknown> | undefined
+    if (!row) return slot
+    const num = (v: unknown) =>
+      typeof v === "number" && Number.isFinite(v) ? v : null
+    return {
+      ...slot,
+      s1ItemId: num(row.s1),
+      s2ItemId: num(row.s2),
+      s3ItemId: num(row.s3),
+      tarotEnchantId: num(row.tarot),
+      soulEnchantId: num(row.soul),
+    }
+  })
+
+  const attrsIn = (parsed.attrs ?? {}) as Partial<PlannerAttrs>
+  const attrs: PlannerAttrs = {
+    str: Number(attrsIn.str) || 0,
+    magic: Number(attrsIn.magic) || 0,
+    vit: Number(attrsIn.vit) || 0,
+    intel: Number(attrsIn.intel) || 0,
+    speed: Number(attrsIn.speed) || 0,
+    luck: Number(attrsIn.luck) || 0,
+    level: Number(attrsIn.level) || 1,
+  }
+
+  const lncRaw = parsed.lnc
+  const lnc: PlannerLnc =
+    lncRaw === 0 || lncRaw === 2 ? lncRaw : 1
+
+  return {
+    loadout,
+    attrs,
+    gender: parsed.gender === 1 ? 1 : 0,
+    lnc,
+    notes: typeof parsed.notes === "string" ? parsed.notes : "",
+  }
 }
 
 export function plannerSlotDisplay(slot: PlannerSlot): {
@@ -260,13 +402,22 @@ export function equipWikiItemOntoSlot(
   return loadout.map((slot) => {
     if (slot.slot !== slotKey) return slot
     if (!item) {
-      return { ...slot, s1ItemId: null, s2ItemId: null, s3ItemId: null }
+      return {
+        ...slot,
+        s1ItemId: null,
+        s2ItemId: null,
+        s3ItemId: null,
+        tarotEnchantId: null,
+        soulEnchantId: null,
+      }
     }
     return {
       ...slot,
       s1ItemId: item.id,
       s2ItemId: item.id,
       s3ItemId: item.id,
+      tarotEnchantId: null,
+      soulEnchantId: null,
     }
   })
 }
@@ -287,6 +438,8 @@ export function applyLayerToSlot(
           s1ItemId: item.id,
           s2ItemId: item.id,
           s3ItemId: item.id,
+          tarotEnchantId: null,
+          soulEnchantId: null,
         }
       }
       return { ...slot, s1ItemId: item.id }
@@ -322,16 +475,24 @@ function emptySlotMap(): Record<EquipSlotKey, number> {
   return out
 }
 
-function emptyLayerMap(): Record<EquipSlotKey, LayerTriple> {
-  const out = {} as Record<EquipSlotKey, LayerTriple>
-  for (const slot of EQUIP_SLOTS) out[slot.key] = { s1: 0, s2: 0, s3: 0 }
+function emptyLayerMap(): Record<EquipSlotKey, LayerFive> {
+  const out = {} as Record<EquipSlotKey, LayerFive>
+  for (const slot of EQUIP_SLOTS) {
+    out[slot.key] = { s1: 0, s2: 0, s3: 0, tarot: 0, soul: 0 }
+  }
   return out
 }
 
 function emptyPresenceMap(): Record<EquipSlotKey, LayerPresence> {
   const out = {} as Record<EquipSlotKey, LayerPresence>
   for (const slot of EQUIP_SLOTS) {
-    out[slot.key] = { s1: false, s2: false, s3: false }
+    out[slot.key] = {
+      s1: false,
+      s2: false,
+      s3: false,
+      tarot: false,
+      soul: false,
+    }
   }
   return out
 }
@@ -403,6 +564,84 @@ export function layerHasContent(item: WikiItem, layer: GearLayer): boolean {
   }
   if (layer === "s2") return wikiBasicFeatures(item).length > 0
   return wikiCharacteristics(item).length > 0
+}
+
+function enchantSideHasContent(side: WikiEnchantCharastic): boolean {
+  return (
+    (side.tokuseiIds?.length ?? 0) > 0 ||
+    (side.conditions?.length ?? 0) > 0 ||
+    side.lines.some((l) => l.trim().length > 0) ||
+    side.name.trim().length > 0
+  )
+}
+
+function enchantConditionCtx(attrs: PlannerAttrs, lnc: PlannerLnc) {
+  return {
+    level: attrs.level,
+    lnc: lncPointsFromAlignment(lnc),
+    stats: {
+      STR: attrs.str,
+      MAGIC: attrs.magic,
+      VIT: attrs.vit,
+      INT: attrs.intel,
+      SPEED: attrs.speed,
+      LUCK: attrs.luck,
+    },
+  }
+}
+
+/** Tokusei rows from an enchant side, including currently-met conditions. */
+export function enchantSideAdjustments(
+  side: WikiEnchantCharastic,
+  attrs: PlannerAttrs,
+  lnc: PlannerLnc
+): TokuseiRow[] {
+  const out: TokuseiRow[] = []
+  for (const tokId of side.tokuseiIds ?? []) {
+    out.push(...tokuseiRows(tokId))
+  }
+  const ctx = enchantConditionCtx(attrs, lnc)
+  for (const condition of side.conditions ?? []) {
+    if (!evaluateEnchantCondition(condition, ctx)) continue
+    for (const tokId of condition.tokuseiIds) {
+      out.push(...tokuseiRows(tokId))
+    }
+  }
+  return out
+}
+
+export function applyEnchantToSlot(
+  loadout: PlannerSlot[],
+  slotKey: EquipSlotKey,
+  side: EnchantSide,
+  enchantId: number | null
+): PlannerSlot[] {
+  return loadout.map((slot) => {
+    if (slot.slot !== slotKey) return slot
+    if (side === "tarot") return { ...slot, tarotEnchantId: enchantId }
+    return { ...slot, soulEnchantId: enchantId }
+  })
+}
+
+export function canApplyEnchant(options: {
+  target: PlannerSlot
+  enchantId: number
+  side: EnchantSide
+}): { ok: boolean; reason?: string } {
+  const { target, enchantId, side } = options
+  if (target.s1ItemId == null) {
+    return { ok: false, reason: "Equip an S1 base piece before applying T/S" }
+  }
+  if (!isActiveEnchantId(enchantId)) {
+    return { ok: false, reason: "Invalid enchant id" }
+  }
+  const enchant = getWikiEnchant(enchantId)
+  if (!enchant) return { ok: false, reason: "Unknown enchant" }
+  const sideData = side === "tarot" ? enchant.tarot : enchant.soul
+  if (!enchantSideHasContent(sideData)) {
+    return { ok: false, reason: `This crystal has no ${side} effect` }
+  }
+  return { ok: true }
 }
 
 export function itemLayerContribution(
@@ -696,7 +935,8 @@ function isAtCap(def: PlannerStatDef, raw: number): boolean {
 
 export function computeGearPlannerCombat(
   equipment: PlannerSlot[],
-  attrs: PlannerAttrs = { intel: 0, speed: 0, vit: 0 }
+  attrs: PlannerAttrs = DEFAULT_PLANNER_ATTRS,
+  lnc: PlannerLnc = 1
 ): GearPlannerResult {
   const byStat = {} as Record<PlannerStatKey, PlannerStatBreakdown>
   for (const def of PLANNER_STATS) {
@@ -708,10 +948,24 @@ export function computeGearPlannerCombat(
     const s1 = slot.s1ItemId != null ? getWikiItem(slot.s1ItemId) : null
     const s2 = slot.s2ItemId != null ? getWikiItem(slot.s2ItemId) : null
     const s3 = slot.s3ItemId != null ? getWikiItem(slot.s3ItemId) : null
+    const tarot =
+      slot.tarotEnchantId != null && isActiveEnchantId(slot.tarotEnchantId)
+        ? getWikiEnchant(slot.tarotEnchantId)
+        : null
+    const soul =
+      slot.soulEnchantId != null && isActiveEnchantId(slot.soulEnchantId)
+        ? getWikiEnchant(slot.soulEnchantId)
+        : null
 
     if (s1) layerPresence[slot.slot].s1 = layerHasContent(s1, "s1")
     if (s2) layerPresence[slot.slot].s2 = layerHasContent(s2, "s2")
     if (s3) layerPresence[slot.slot].s3 = layerHasContent(s3, "s3")
+    if (tarot) {
+      layerPresence[slot.slot].tarot = enchantSideHasContent(tarot.tarot)
+    }
+    if (soul) {
+      layerPresence[slot.slot].soul = enchantSideHasContent(soul.soul)
+    }
 
     for (const def of PLANNER_STATS) {
       const layers = byStat[def.key].bySlotLayers[slot.slot]
@@ -724,8 +978,20 @@ export function computeGearPlannerCombat(
       if (s3) {
         layers.s3 += contribFromAdjustments(s3Adjustments(s3), def)
       }
+      if (tarot) {
+        layers.tarot += contribFromAdjustments(
+          enchantSideAdjustments(tarot.tarot, attrs, lnc),
+          def
+        )
+      }
+      if (soul) {
+        layers.soul += contribFromAdjustments(
+          enchantSideAdjustments(soul.soul, attrs, lnc),
+          def
+        )
+      }
       byStat[def.key].bySlot[slot.slot] =
-        layers.s1 + layers.s2 + layers.s3
+        layers.s1 + layers.s2 + layers.s3 + layers.tarot + layers.soul
     }
   }
 
@@ -874,6 +1140,82 @@ export type GearLayerDragPayload = {
   itemId: number
   layer: GearLayer
 }
+
+export const GEAR_ENCHANT_MIME = "application/x-gear-enchant"
+
+export type GearEnchantDragPayload = {
+  enchantId: number
+  side: EnchantSide
+}
+
+export type RankedEnchantHit = {
+  enchant: WikiEnchantRecord
+  side: EnchantSide
+  contribution: number
+  score: number
+  effectName: string
+  sourceName: string
+  lines: string[]
+}
+
+export function rankEnchantsForStat(options: {
+  stat: PlannerStatKey
+  side: EnchantSide
+  attrs: PlannerAttrs
+  lnc: PlannerLnc
+  limit?: number
+  query?: string
+}): RankedEnchantHit[] {
+  const def = PLANNER_STATS.find((s) => s.key === options.stat)
+  if (!def) return []
+  const limit = options.limit ?? 40
+  const q = options.query?.trim().toLowerCase() ?? ""
+
+  const hits: RankedEnchantHit[] = []
+  for (const enchant of listWikiEnchants()) {
+    const sideData =
+      options.side === "tarot" ? enchant.tarot : enchant.soul
+    if (!enchantSideHasContent(sideData)) continue
+    const effectName = sideData.name.trim() || `Enchant #${enchant.id}`
+    const sourceName =
+      enchant.sourceName ??
+      getWikiItem(enchant.crystalItemId)?.name ??
+      `Crystal #${enchant.crystalItemId}`
+    if (
+      q &&
+      !effectName.toLowerCase().includes(q) &&
+      !sourceName.toLowerCase().includes(q) &&
+      !String(enchant.id).includes(q) &&
+      !String(enchant.crystalItemId).includes(q)
+    ) {
+      continue
+    }
+    const contribution = contribFromAdjustments(
+      enchantSideAdjustments(sideData, options.attrs, options.lnc),
+      def
+    )
+    if (contribution === 0 && sideData.lines.length === 0) continue
+    const score = def.kind === "reduction" ? -contribution : contribution
+    hits.push({
+      enchant,
+      side: options.side,
+      contribution,
+      score,
+      effectName,
+      sourceName,
+      lines: sideData.lines,
+    })
+  }
+
+  hits.sort(
+    (a, b) =>
+      b.score - a.score ||
+      a.enchant.id - b.enchant.id
+  )
+  return hits.slice(0, limit)
+}
+
+export type { PlannerLnc }
 
 export const WIKI_STAT_FILTER_OPTIONS: {
   id: string

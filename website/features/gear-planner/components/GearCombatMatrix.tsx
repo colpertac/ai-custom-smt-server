@@ -15,10 +15,7 @@ import {
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
-function formatLayerCell(
-  stat: PlannerStatKey,
-  value: number
-): string {
+function formatLayerCell(stat: PlannerStatKey, value: number): string {
   if (value === 0) return ""
   const def = PLANNER_STATS.find((s) => s.key === stat)!
   if (def.kind === "reduction") return String(value)
@@ -43,7 +40,7 @@ function LayerChip({
   iconSrc,
   title,
 }: {
-  color: "s1" | "s2" | "s3"
+  color: "s1" | "s2" | "s3" | "tarot" | "soul"
   filled: boolean
   iconSrc?: string | null
   title: string
@@ -53,13 +50,17 @@ function LayerChip({
       ? "border-sky-500 bg-sky-500/80"
       : color === "s2"
         ? "border-emerald-500 bg-emerald-500/80"
-        : "border-rose-500 bg-rose-500/80"
+        : color === "s3"
+          ? "border-rose-500 bg-rose-500/80"
+          : color === "tarot"
+            ? "border-violet-500 bg-violet-500/80"
+            : "border-orange-500 bg-orange-500/80"
   const empty = "border-muted-foreground/40 bg-transparent"
   return (
     <span
       title={title}
       className={cn(
-        "inline-flex size-4 items-center justify-center border",
+        "inline-flex size-3.5 items-center justify-center border",
         filled ? bg : empty
       )}
     >
@@ -67,8 +68,8 @@ function LayerChip({
         <Image
           src={iconSrc}
           alt=""
-          width={12}
-          height={12}
+          width={10}
+          height={10}
           className="pixelated"
           unoptimized
         />
@@ -76,6 +77,18 @@ function LayerChip({
     </span>
   )
 }
+
+const LAYER_HEADERS: Array<{
+  key: "s1" | "s2" | "s3" | "tarot" | "soul"
+  label: string
+  className: string
+}> = [
+  { key: "s1", label: "1", className: "text-sky-400" },
+  { key: "s2", label: "2", className: "text-emerald-400" },
+  { key: "s3", label: "3", className: "text-rose-400" },
+  { key: "tarot", label: "T", className: "text-violet-400" },
+  { key: "soul", label: "S", className: "text-orange-400" },
+]
 
 export function GearCombatMatrix({
   loadout,
@@ -92,7 +105,7 @@ export function GearCombatMatrix({
 }) {
   return (
     <div className="overflow-x-auto border border-border">
-      <table className="w-full min-w-[90rem] border-collapse text-[11px]">
+      <table className="w-full min-w-[110rem] border-collapse text-[10px]">
         <thead>
           <tr className="bg-muted/40 text-left">
             <th
@@ -126,8 +139,8 @@ export function GearCombatMatrix({
               return (
                 <th
                   key={slot.key}
-                  colSpan={3}
-                  className="border-b border-l border-border px-1 py-1 text-center"
+                  colSpan={5}
+                  className="border-b border-l border-border px-0.5 py-1 text-center"
                   style={bg ? { backgroundColor: `${bg}55` } : undefined}
                 >
                   <button
@@ -135,25 +148,27 @@ export function GearCombatMatrix({
                     className="w-full hover:text-gold-hot"
                     onClick={() => onSlotHeaderClick(slot.key)}
                   >
-                    <span className="mb-1 flex justify-center gap-0.5">
+                    <span className="mb-0.5 flex justify-center gap-px">
                       <LayerChip
                         color="s1"
                         filled={presence.s1}
                         iconSrc={display.iconSrc}
-                        title="S1 present"
+                        title="S1"
+                      />
+                      <LayerChip color="s2" filled={presence.s2} title="S2" />
+                      <LayerChip color="s3" filled={presence.s3} title="S3" />
+                      <LayerChip
+                        color="tarot"
+                        filled={presence.tarot}
+                        title="Tarot"
                       />
                       <LayerChip
-                        color="s2"
-                        filled={presence.s2}
-                        title="S2 present"
-                      />
-                      <LayerChip
-                        color="s3"
-                        filled={presence.s3}
-                        title="S3 present"
+                        color="soul"
+                        filled={presence.soul}
+                        title="Soul"
                       />
                     </span>
-                    <span className="font-heading text-[10px] tracking-wider uppercase">
+                    <span className="font-heading text-[9px] tracking-wider uppercase">
                       {slot.label}
                     </span>
                   </button>
@@ -161,14 +176,21 @@ export function GearCombatMatrix({
               )
             })}
           </tr>
-          <tr className="bg-muted/30 text-center text-[9px] text-muted-foreground">
+          <tr className="bg-muted/30 text-center text-[8px] text-muted-foreground">
             {EQUIP_SLOTS.map((slot) => (
               <Fragment key={slot.key}>
-                <th className="border-l border-border/40 px-0.5 py-0.5 font-normal text-sky-400">
-                  S1
-                </th>
-                <th className="px-0.5 py-0.5 font-normal text-emerald-400">S2</th>
-                <th className="px-0.5 py-0.5 font-normal text-rose-400">S3</th>
+                {LAYER_HEADERS.map((h, i) => (
+                  <th
+                    key={h.key}
+                    className={cn(
+                      "px-0 py-0.5 font-normal",
+                      i === 0 && "border-l border-border/40",
+                      h.className
+                    )}
+                  >
+                    {h.label}
+                  </th>
+                ))}
               </Fragment>
             ))}
           </tr>
@@ -202,14 +224,20 @@ export function GearCombatMatrix({
                   const layers = bd.bySlotLayers[slot.key]
                   return (
                     <Fragment key={`${def.key}-${slot.key}`}>
-                      <td className="border-l border-border/40 px-0.5 py-1 text-center tabular-nums text-sky-300/90">
+                      <td className="border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90">
                         {formatLayerCell(def.key, layers.s1)}
                       </td>
-                      <td className="px-0.5 py-1 text-center tabular-nums text-emerald-300/90">
+                      <td className="px-0 py-1 text-center tabular-nums text-emerald-300/90">
                         {formatLayerCell(def.key, layers.s2)}
                       </td>
-                      <td className="px-0.5 py-1 text-center tabular-nums text-rose-300/90">
+                      <td className="px-0 py-1 text-center tabular-nums text-rose-300/90">
                         {formatLayerCell(def.key, layers.s3)}
+                      </td>
+                      <td className="px-0 py-1 text-center tabular-nums text-violet-300/90">
+                        {formatLayerCell(def.key, layers.tarot)}
+                      </td>
+                      <td className="px-0 py-1 text-center tabular-nums text-orange-300/90">
+                        {formatLayerCell(def.key, layers.soul)}
                       </td>
                     </Fragment>
                   )
@@ -220,9 +248,8 @@ export function GearCombatMatrix({
         </tbody>
       </table>
       <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
-        Blue / green / red = S1 / S2 / S3. Empty chips = vacant layer. Matching
-        header tint = same EquipmentSet. Set column counts multi-piece bonuses
-        once.
+        1/2/3/T/S = S1 / S2 / S3 / Tarot / Soul. Empty chips = vacant.
+        Matching header tint = same EquipmentSet.
         {attrs.intel || attrs.speed || attrs.vit
           ? " INT/SPD/VIT fold into Total for Incant/CD."
           : null}

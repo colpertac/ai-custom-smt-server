@@ -4,16 +4,26 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-import { getWikiItem, type WikiItem, type WikiItemStat } from "@/content/wiki"
+import {
+  getWikiEnchant,
+  getWikiItem,
+  resolveSoulFusionByEnchantId,
+  resolveTarotFusionByEnchantId,
+  type WikiItem,
+  type WikiItemStat,
+} from "@/content/wiki"
 import { formatWikiStatValue } from "@/content/wiki"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { EquipSlotKey } from "@/lib/armory-equipment"
 import {
+  GEAR_ENCHANT_MIME,
   GEAR_LAYER_MIME,
   layerHasContent,
   plannerSlotDisplay,
+  type EnchantSide,
+  type GearEnchantDragPayload,
   type GearLayer,
   type GearLayerDragPayload,
   type PlannerSlot,
@@ -166,6 +176,109 @@ function LayerDropCard({
   )
 }
 
+function EnchantDropCard({
+  side,
+  title,
+  tag,
+  enchantId,
+  emptyHint,
+  onDropEnchant,
+}: {
+  side: EnchantSide
+  title: string
+  tag: string
+  enchantId: number | null
+  emptyHint: string
+  onDropEnchant: (enchantId: number, side: EnchantSide) => void
+}) {
+  const [over, setOver] = useState(false)
+  const border =
+    side === "tarot" ? "border-violet-500/60" : "border-orange-500/60"
+  const fusion =
+    enchantId != null
+      ? side === "tarot"
+        ? resolveTarotFusionByEnchantId(enchantId)
+        : resolveSoulFusionByEnchantId(enchantId)
+      : null
+  const enchant = enchantId != null ? getWikiEnchant(enchantId) : null
+
+  return (
+    <div
+      className={cn(
+        "border border-dashed px-2 py-1.5 transition-colors",
+        border,
+        over && "bg-muted/40"
+      )}
+      onDragOver={(e) => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = "copy"
+        setOver(true)
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault()
+        setOver(false)
+        const raw =
+          e.dataTransfer.getData(GEAR_ENCHANT_MIME) ||
+          e.dataTransfer.getData("text/plain")
+        if (!raw) return
+        let payload: GearEnchantDragPayload | null = null
+        try {
+          payload = JSON.parse(raw) as GearEnchantDragPayload
+        } catch {
+          const [idStr, sideStr] = raw.split(":")
+          if (idStr && (sideStr === "tarot" || sideStr === "soul")) {
+            payload = { enchantId: Number(idStr), side: sideStr }
+          }
+        }
+        if (!payload || payload.side !== side) return
+        onDropEnchant(payload.enchantId, side)
+      }}
+    >
+      <div className="mb-1 flex items-baseline justify-between gap-2">
+        <h3 className="font-heading text-[10px] tracking-[0.12em] text-gold-dim uppercase">
+          <span
+            className={cn(
+              "mr-1.5 font-mono",
+              side === "tarot" ? "text-violet-400" : "text-orange-400"
+            )}
+          >
+            {tag}
+          </span>
+          {title}
+        </h3>
+        {fusion?.effectName ? (
+          <span className="truncate text-[10px] text-[#c9a0ff]">
+            {fusion.effectName}
+          </span>
+        ) : null}
+      </div>
+      {!fusion ? (
+        <p className="text-[11px] text-muted-foreground">{emptyHint}</p>
+      ) : (
+        <div className="space-y-0.5">
+          <p className="truncate text-[10px] text-muted-foreground">
+            {fusion.sourceName}
+            {enchant ? ` · #${enchant.id}` : ""}
+          </p>
+          <ul className="space-y-0.5 text-[11px] leading-snug">
+            {fusion.lines.slice(0, 6).map((line) => (
+              <li key={line} className="truncate">
+                {line}
+              </li>
+            ))}
+            {fusion.lines.length > 6 ? (
+              <li className="text-muted-foreground">
+                +{fusion.lines.length - 6} more
+              </li>
+            ) : null}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function GearSlotSidebar({
   slotKey,
   equipped,
@@ -175,6 +288,7 @@ export function GearSlotSidebar({
   onClear,
   onSelectWhole,
   onDropLayer,
+  onDropEnchant,
 }: {
   slotKey: EquipSlotKey
   equipped: PlannerSlot
@@ -184,6 +298,7 @@ export function GearSlotSidebar({
   onClear: () => void
   onSelectWhole: (item: WikiItem) => void
   onDropLayer: (item: WikiItem, layer: GearLayer) => void
+  onDropEnchant: (enchantId: number, side: EnchantSide) => void
 }) {
   const [q, setQ] = useState("")
   const [items, setItems] = useState<WikiItem[]>([])
@@ -334,6 +449,22 @@ export function GearSlotSidebar({
             item={s3}
             emptyHint="Drop / double-click S3 here."
             onDropDonor={onDropLayer}
+          />
+          <EnchantDropCard
+            side="tarot"
+            title="Tarot"
+            tag="T"
+            enchantId={equipped.tarotEnchantId}
+            emptyHint="Drop / pick Tarot here."
+            onDropEnchant={onDropEnchant}
+          />
+          <EnchantDropCard
+            side="soul"
+            title="Soul"
+            tag="S"
+            enchantId={equipped.soulEnchantId}
+            emptyHint="Drop / pick Soul here."
+            onDropEnchant={onDropEnchant}
           />
         </section>
 
