@@ -15,7 +15,10 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { api } from "@/lib/kyClient"
-import { DEFAULT_SITE_NAME } from "@/lib/website-branding"
+import {
+  DEFAULT_SITE_ICON_URL,
+  DEFAULT_SITE_NAME,
+} from "@/lib/website-branding"
 
 type WebsiteBranding = {
   siteName: string
@@ -145,7 +148,7 @@ export function AdminWebsitePanel() {
     return <p className="text-sm text-muted-foreground">Loading…</p>
   }
 
-  const previewSrc = branding?.iconUrl ?? "/icon.png"
+  const previewSrc = branding?.iconUrl ?? DEFAULT_SITE_ICON_URL
 
   return (
     <div className="space-y-6">

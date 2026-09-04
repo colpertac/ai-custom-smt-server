@@ -1,17 +1,16 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-import siteIcon from "@/app/icon.png"
 import { useLogout, useSessionUser } from "@/features/auth/hooks"
 import { isAdminLevel } from "@/lib/admin-level"
 import { SkinSwitcher } from "@/components/skin-switcher"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
+  DEFAULT_SITE_ICON_URL,
   DEFAULT_SITE_NAME,
   splitSiteName,
 } from "@/lib/website-branding"
@@ -27,7 +26,7 @@ export function SiteHeader() {
   const admin = isAdminLevel(session?.userLevel)
   const [wikiEnabled, setWikiEnabled] = useState(false)
   const [siteName, setSiteName] = useState(DEFAULT_SITE_NAME)
-  const [iconUrl, setIconUrl] = useState<string | null>(null)
+  const [iconUrl, setIconUrl] = useState(DEFAULT_SITE_ICON_URL)
 
   useEffect(() => {
     let cancelled = false
@@ -55,7 +54,7 @@ export function SiteHeader() {
         }) => {
           if (cancelled || !body.success || !body.data) return
           if (body.data.siteName?.trim()) setSiteName(body.data.siteName.trim())
-          setIconUrl(body.data.iconUrl ?? null)
+          setIconUrl(body.data.iconUrl?.trim() || DEFAULT_SITE_ICON_URL)
         }
       )
       .catch(() => {
@@ -79,26 +78,14 @@ export function SiteHeader() {
           href="/"
           className="group flex shrink-0 items-center gap-2 no-underline sm:gap-2.5"
         >
-          {iconUrl ? (
-            // Custom upload — served from data dir via API (not next/image optimized).
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={iconUrl}
-              alt=""
-              width={28}
-              height={28}
-              className="size-6 rounded-sm sm:size-7"
-            />
-          ) : (
-            <Image
-              src={siteIcon}
-              alt=""
-              width={28}
-              height={28}
-              className="size-6 rounded-sm sm:size-7"
-              priority
-            />
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={iconUrl}
+            alt=""
+            width={28}
+            height={28}
+            className="size-6 rounded-sm sm:size-7"
+          />
           <p className="font-heading text-base tracking-[0.16em] text-accent-foreground uppercase sm:text-lg sm:tracking-[0.2em]">
             {lead ? `${lead} ` : null}
             <span className="text-gold transition-colors group-hover:text-gold-hot">

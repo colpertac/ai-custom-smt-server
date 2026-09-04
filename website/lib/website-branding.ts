@@ -1,6 +1,8 @@
 /** Client-safe branding helpers (no Node deps). */
 
 export const DEFAULT_SITE_NAME = "Imagine Private"
+/** Default mark served from `public/icon.png` (not app/ file metadata). */
+export const DEFAULT_SITE_ICON_URL = "/icon.png"
 
 /** Split display name so the last word can use the gold accent. */
 export function splitSiteName(siteName: string): {

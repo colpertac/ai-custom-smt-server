@@ -31,20 +31,18 @@ const mono = IBM_Plex_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const branding = getWebsiteBranding()
   const titleName = branding.siteName
+  const icon = branding.iconUrl ?? "/icon.png"
   return {
     title: {
       default: titleName,
       template: `%s · ${titleName}`,
     },
     description: "Private Shin Megami Tensei: IMAGINE server",
-    ...(branding.iconUrl
-      ? {
-          icons: {
-            icon: branding.iconUrl,
-            apple: branding.iconUrl,
-          },
-        }
-      : {}),
+    icons: {
+      icon: [{ url: icon }],
+      shortcut: icon,
+      apple: icon,
+    },
   }
 }
 
