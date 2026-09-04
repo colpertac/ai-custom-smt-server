@@ -1,4 +1,4 @@
-import { getNewsPostById } from "@/lib/news-store"
+import { getNewsPostById, listNewsImages } from "@/lib/news-store"
 import { renderUpdaterNewsPostPage } from "@/lib/updater-news-html"
 
 export const dynamic = "force-dynamic"
@@ -15,7 +15,7 @@ export async function GET(_request: Request, { params }: Props) {
   if (!post) {
     return new Response("Not found", { status: 404 })
   }
-  const html = renderUpdaterNewsPostPage(post)
+  const html = renderUpdaterNewsPostPage(post, listNewsImages(id))
   return new Response(html, {
     status: 200,
     headers: {

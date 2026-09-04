@@ -2,7 +2,7 @@ import { remark } from "remark"
 import remarkGfm from "remark-gfm"
 import html from "remark-html"
 
-import type { NewsPost } from "@/lib/news-store"
+import type { NewsImage, NewsPost } from "@/lib/news-store"
 import { getPublicAppUrl } from "@/lib/env"
 
 const UPDATER_STYLES = `
@@ -33,6 +33,14 @@ hr { border: none; border-top: 1px solid #ccc; margin: 12px 0; }
 .post:first-child { border-top: none; padding-top: 0; margin-top: 0; }
 .summary { color: #333; margin: 4px 0 0; }
 .nav { margin-bottom: 12px; font-size: 9pt; }
+.gallery { margin: 12px 0; }
+.gallery img {
+  display: block;
+  width: 320px;
+  max-width: 320px;
+  height: auto;
+  margin: 0 0 10px;
+}
 `.trim()
 
 function escapeHtml(text: string): string {
@@ -85,12 +93,30 @@ ${items}`
   return pageShell("Server news", body)
 }
 
-export function renderUpdaterNewsPostPage(post: NewsPost): string {
+function renderGalleryHtml(base: string, images: NewsImage[]): string {
+  if (images.length === 0) return ""
+  const imgs = images
+    .map((image) => {
+      const src = `${base}${image.url}`
+      return `<img src="${escapeHtml(src)}" alt="" width="320" />`
+    })
+    .join("\n  ")
+  return `<div class="gallery">
+  ${imgs}
+</div>`
+}
+
+export function renderUpdaterNewsPostPage(
+  post: NewsPost,
+  images: NewsImage[] = []
+): string {
   const base = getPublicAppUrl().replace(/\/$/, "")
   const bodyHtml = markdownToUpdaterHtml(post.body)
+  const galleryHtml = renderGalleryHtml(base, images)
   const body = `<p class="nav"><a href="${base}/updater/news">← All news</a></p>
 <p class="meta">${escapeHtml(post.date)}</p>
 <h1>${escapeHtml(post.title)}</h1>
+${galleryHtml}
 ${bodyHtml}`
   return pageShell(post.title, body)
 }

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { NewsMarkdown } from "@/components/news-markdown"
-import { getNewsPostById } from "@/lib/news-store"
+import { getNewsPostById, listNewsImages } from "@/lib/news-store"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -23,6 +23,7 @@ export default async function NewsPostPage({ params }: Props) {
   if (!Number.isFinite(id) || id <= 0) notFound()
   const post = getNewsPostById(id)
   if (!post) notFound()
+  const images = listNewsImages(id)
 
   return (
     <article className="mx-auto max-w-2xl px-4 py-10">
@@ -37,6 +38,19 @@ export default async function NewsPostPage({ params }: Props) {
         {post.title}
       </h1>
       <div className="gold-rule mt-4 max-w-sm" />
+      {images.length > 0 ? (
+        <div className="mt-6 space-y-3">
+          {images.map((image) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={image.id}
+              src={image.url}
+              alt=""
+              className="w-full"
+            />
+          ))}
+        </div>
+      ) : null}
       <div className="mt-6">
         <NewsMarkdown source={post.body} />
       </div>

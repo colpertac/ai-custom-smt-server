@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { api } from "@/lib/kyClient"
 
+import { NewsImageDropzone } from "./NewsImageDropzone"
+
 type NewsPost = {
   id: number
   title: string
@@ -290,6 +292,19 @@ export function AdminNewsPanel() {
                 </div>
               </div>
             </div>
+
+            {typeof selectedId === "number" ? (
+              <NewsImageDropzone
+                postId={selectedId}
+                disabled={saving}
+                onError={setError}
+                onOk={setOk}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Save the post first to upload images.
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-2">
               <Button
