@@ -48,7 +48,7 @@ export function AccountImportPanel() {
 
   return (
     <form
-      className="mt-6 max-w-lg space-y-4 border-2 border-border bg-card/60 p-4"
+      className="max-w-lg space-y-4 border-2 border-border bg-card/60 p-4"
       onSubmit={(e) => void onSubmit(e)}
     >
       <Field>

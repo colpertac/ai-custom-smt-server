@@ -15,7 +15,6 @@ import {
   Settings,
   Store,
   Ticket,
-  Upload,
   Users,
 } from "lucide-react"
 
@@ -58,7 +57,6 @@ export const ADMIN_NAV: AdminNavItem[] = [
     match: "prefix",
   },
   { href: "/admin/studio", label: "Studio", icon: Palette, match: "prefix" },
-  { href: "/admin/import", label: "Import", icon: Upload, match: "prefix" },
   { href: "/admin/sql", label: "SQL", icon: Database, match: "prefix" },
 ]
 
@@ -79,7 +77,6 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/dungeon-loot")) return "Dungeon loot"
   if (pathname.startsWith("/admin/report-rewards")) return "Dungeon loot"
   if (pathname.startsWith("/admin/studio")) return "Studio"
-  if (pathname.startsWith("/admin/import")) return "Import"
   if (pathname.startsWith("/admin/sql")) return "SQL"
   return "Admin"
 }

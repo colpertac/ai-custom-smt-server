@@ -10,7 +10,7 @@ Import is baked into this stack: lobby schema defaults, runtime/deploy
 
 1. Lobby running; `COMP_API_URL` reachable from the website process.
 2. Sign in as admin (`userLevel >= 1000`).
-3. Open **`/admin/import`**, upload the XML.
+3. Open **`/admin/accounts`**, upload the XML under Import account.
 
 BFF: `POST /api/admin/import` → lobby `POST /import` (multipart field
 `accountToImport`).
