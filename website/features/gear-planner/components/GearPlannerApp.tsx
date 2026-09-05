@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
 } from "react"
 
-import { getWikiItem, type WikiItem } from "@/content/wiki"
+import type { WikiItem } from "@/content/wiki/types"
 import { GearBuildsPanel } from "@/features/gear-planner/components/GearBuildsPanel"
 import { GearCombatMatrix } from "@/features/gear-planner/components/GearCombatMatrix"
 import { GearEnchantPicker } from "@/features/gear-planner/components/GearEnchantPicker"
@@ -18,8 +18,22 @@ import {
   recommendHitToWikiItem,
   type RecommendHit,
 } from "@/features/gear-planner/components/GearRecommendTable"
-import { GearSlotSidebar } from "@/features/gear-planner/components/GearSlotSidebar"
+import { GearSuggestPanel } from "@/features/gear-planner/components/GearSuggestPanel"
+import {
+  GearSlotSidebar,
+  type SidebarFlashTarget,
+} from "@/features/gear-planner/components/GearSlotSidebar"
+import { CircleHelp, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
@@ -175,6 +189,14 @@ function GearPlannerAppClient({
     null
   )
   const [fullStats, setFullStats] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
+  const [flashTarget, setFlashTarget] = useState<SidebarFlashTarget>(null)
+
+  useEffect(() => {
+    if (!flashTarget) return
+    const timer = window.setTimeout(() => setFlashTarget(null), 1000)
+    return () => window.clearTimeout(timer)
+  }, [flashTarget])
 
   useEffect(() => {
     if (shareBanner) return
@@ -335,6 +357,7 @@ function GearPlannerAppClient({
         return
       }
       setDropError(null)
+      setFlashTarget({ layer, key: Date.now() })
       setLoadout((prev) => applyLayerToSlot(prev, selectedSlot, layer, donor))
     },
     [selectedSlot, selectedEquip, gender]
@@ -353,6 +376,7 @@ function GearPlannerAppClient({
         return
       }
       setDropError(null)
+      setFlashTarget({ layer: side, key: Date.now() })
       setLoadout((prev) =>
         applyEnchantToSlot(prev, selectedSlot, side, enchantId)
       )
@@ -398,9 +422,168 @@ function GearPlannerAppClient({
 
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h1 className="font-heading text-2xl font-semibold tracking-[0.1em] uppercase sm:text-3xl">
-                Gear builder
-              </h1>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="font-heading text-2xl font-semibold tracking-[0.1em] uppercase sm:text-3xl">
+                  Gear builder
+                </h1>
+                <Dialog open={guideOpen} onOpenChange={setGuideOpen}>
+                  <DialogTrigger
+                    type="button"
+                    className="inline-flex items-center gap-1.5 rounded-xs border border-border/80 bg-card/60 px-2.5 py-1 text-xs font-medium text-foreground transition-all hover:border-gold-dim hover:bg-gold/10 hover:text-gold-hot focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                  >
+                    <CircleHelp className="size-3.5 text-gold-dim" aria-hidden />
+                    <span>How it works</span>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto sm:max-w-3xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2 font-heading text-lg tracking-[0.08em] text-gold-dim uppercase">
+                        <Sparkles className="size-4 text-gold" aria-hidden />
+                        How the Gear Builder Works
+                      </DialogTitle>
+                      <DialogDescription className="text-xs text-muted-foreground">
+                        In SMT Imagine, loadouts are &ldquo;Frankenstein&rdquo; gear: you can combine appearances, traits, and enchants from different pieces into a single slot.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-3.5 py-1 text-xs">
+                      <div className="overflow-hidden rounded-xs border border-border/90 bg-black/60 shadow-inner">
+                        <div className="flex items-center justify-between border-b border-border/70 bg-card/60 px-3 py-1.5 text-[11px] font-medium">
+                          <span className="flex items-center gap-1.5 text-foreground">
+                            <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" />
+                            <span>Quick visual walkthrough</span>
+                          </span>
+                          <span className="font-mono text-[10px] text-muted-foreground">
+                            Double-click & Drag & Drop Demo
+                          </span>
+                        </div>
+                        <video
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls
+                          preload="metadata"
+                          poster="/media/planner-guide-poster.webp"
+                          className="aspect-[1920/830] w-full bg-black/80 object-cover"
+                        >
+                          <source src="/media/planner-guide.webm" type="video/webm" />
+                          <source src="/media/planner-guide.mp4" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+
+                      <div className="grid gap-2.5 sm:grid-cols-2">
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              1
+                            </span>
+                            <span>Pick a Gear Slot</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            Click any slot header in the <strong>Combat Matrix</strong> (e.g. <em>Head</em>, <em>Top</em>, <em>Weapon</em>) to open its sidebar on the right.
+                          </p>
+                        </div>
+
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              2
+                            </span>
+                            <span>Equip a Base Piece</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            Under <em>Equip whole piece</em> in the sidebar, pick a base item. This sets your appearance shell and activates multi-piece <strong>Equipment Set</strong> bonuses.
+                          </p>
+                        </div>
+
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              3
+                            </span>
+                            <span>Mix & Match S1, S2, S3</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            In the <strong>Recommendations</strong> table below, every item shows distinct colored cards. <strong>Double-click</strong> or <strong>drag & drop</strong> any layer directly into your open sidebar!
+                          </p>
+                        </div>
+
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              4
+                            </span>
+                            <span>Enchants & Combat Caps</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            Apply <strong>Tarot</strong> & <strong>Soul</strong> crystal enchants. Watch the Combat Matrix: numbers highlighted in <span className="font-semibold text-emerald-400">green</span> have reached their hard cap (e.g. 100% LBC or 5s CD).
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xs border border-border bg-card/60 p-2.5">
+                        <h4 className="mb-2 font-heading text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                          Understanding the 5 Slot Layers
+                        </h4>
+                        <div className="grid gap-1.5 text-[11px] sm:grid-cols-3">
+                          <div className="rounded-xs border border-sky-500/40 bg-sky-950/20 p-1.5">
+                            <span className="font-mono font-semibold text-sky-400 uppercase">
+                              S1 · Set / SItem
+                            </span>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Appearance shell, SItem tokusei, and multi-piece set activator.
+                            </p>
+                          </div>
+                          <div className="rounded-xs border border-emerald-500/40 bg-emerald-950/20 p-1.5">
+                            <span className="font-mono font-semibold text-emerald-400 uppercase">
+                              S2 · Basic
+                            </span>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Base attributes, physical / magic defense, and core stats.
+                            </p>
+                          </div>
+                          <div className="rounded-xs border border-rose-500/40 bg-rose-950/20 p-1.5">
+                            <span className="font-mono font-semibold text-rose-400 uppercase">
+                              S3 · Characteristics
+                            </span>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Special weapon or armor characteristics, procs, and mods.
+                            </p>
+                          </div>
+                          <div className="rounded-xs border border-violet-500/40 bg-violet-950/20 p-1.5">
+                            <span className="font-mono font-semibold text-violet-400 uppercase">
+                              T · Tarot
+                            </span>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Arcana crystal enchant modifying combat stats.
+                            </p>
+                          </div>
+                          <div className="rounded-xs border border-amber-500/40 bg-amber-950/20 p-1.5">
+                            <span className="font-mono font-semibold text-amber-400 uppercase">
+                              S · Soul
+                            </span>
+                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                              Soul crystal fusion providing passive bonuses.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="default"
+                        onClick={() => setGuideOpen(false)}
+                      >
+                        Got it
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
               <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
                 S1–S3, Tarot (T), and Soul (S). Drag or double-click recommend /
                 fusion rows onto the open sidebar.
@@ -548,6 +731,18 @@ function GearPlannerAppClient({
             </label>
           </div>
 
+          <GearSuggestPanel
+            loadout={loadout}
+            attrs={attrs}
+            lnc={lnc}
+            gender={gender}
+            onApply={(next) => {
+              setLoadout(next)
+              setFlashTarget({ layer: "all", key: Date.now() })
+              setDropError(null)
+            }}
+          />
+
           <GearCombatMatrix
             loadout={loadout}
             combat={combat}
@@ -560,6 +755,7 @@ function GearPlannerAppClient({
             onSlotHeaderClick={(key) => {
               setSelectedSlot(key)
               setRecommendSlot(key)
+              setFlashTarget(null)
               setDropError(null)
             }}
           />
@@ -583,11 +779,12 @@ function GearPlannerAppClient({
                   equipWikiItemOntoSlot(prev, hit.slotKey, item)
                 )
                 setSelectedSlot(hit.slotKey)
+                setFlashTarget({ layer: "all", key: Date.now() })
                 setDropError(null)
               }}
               onApplyLayer={(hit, layer) => {
                 if (!selectedSlot) return
-                const donor = getWikiItem(hit.id) ?? recommendHitToWikiItem(hit)
+                const donor = recommendHitToWikiItem(hit)
                 handleDropLayer(donor, layer)
               }}
             />
@@ -610,17 +807,23 @@ function GearPlannerAppClient({
             equipped={selectedEquip}
             gender={gender}
             dropError={dropError}
-            onClose={() => setSelectedSlot(null)}
+            flashTarget={flashTarget}
+            onClose={() => {
+              setSelectedSlot(null)
+              setFlashTarget(null)
+            }}
             onClear={() => {
               setLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, null)
               )
+              setFlashTarget(null)
               setDropError(null)
             }}
             onSelectWhole={(item) => {
               setLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, item)
               )
+              setFlashTarget({ layer: "all", key: Date.now() })
               setDropError(null)
             }}
             onDropLayer={handleDropLayer}
@@ -637,17 +840,23 @@ function GearPlannerAppClient({
             equipped={selectedEquip}
             gender={gender}
             dropError={dropError}
-            onClose={() => setSelectedSlot(null)}
+            flashTarget={flashTarget}
+            onClose={() => {
+              setSelectedSlot(null)
+              setFlashTarget(null)
+            }}
             onClear={() => {
               setLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, null)
               )
+              setFlashTarget(null)
               setDropError(null)
             }}
             onSelectWhole={(item) => {
               setLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, item)
               )
+              setFlashTarget({ layer: "all", key: Date.now() })
               setDropError(null)
             }}
             onDropLayer={handleDropLayer}

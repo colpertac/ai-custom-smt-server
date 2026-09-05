@@ -733,9 +733,145 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .armory-hero-stage {
+    .armory-hero-stage,
+    .animate-blink-s1,
+    .animate-blink-s2,
+    .animate-blink-s3,
+    .animate-blink-tarot,
+    .animate-blink-soul {
       animation: none;
     }
+  }
+
+  @keyframes blink-layer-rose {
+    0% {
+      background-color: rgba(244, 63, 94, 0.42);
+      border-color: rgb(251, 113, 133);
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
+    }
+    30% {
+      background-color: rgba(244, 63, 94, 0.12);
+      border-color: rgba(244, 63, 94, 0.6);
+      box-shadow: 0 0 6px rgba(244, 63, 94, 0.2);
+    }
+    60% {
+      background-color: rgba(244, 63, 94, 0.38);
+      border-color: rgb(251, 113, 133);
+      box-shadow: 0 0 18px rgba(244, 63, 94, 0.55);
+    }
+    100% {
+      background-color: transparent;
+      border-color: rgba(244, 63, 94, 0.6);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes blink-layer-emerald {
+    0% {
+      background-color: rgba(16, 185, 129, 0.42);
+      border-color: rgb(52, 211, 153);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    }
+    30% {
+      background-color: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.2);
+    }
+    60% {
+      background-color: rgba(16, 185, 129, 0.38);
+      border-color: rgb(52, 211, 153);
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.55);
+    }
+    100% {
+      background-color: transparent;
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes blink-layer-sky {
+    0% {
+      background-color: rgba(14, 165, 233, 0.42);
+      border-color: rgb(56, 189, 248);
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
+    }
+    30% {
+      background-color: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.6);
+      box-shadow: 0 0 6px rgba(14, 165, 233, 0.2);
+    }
+    60% {
+      background-color: rgba(14, 165, 233, 0.38);
+      border-color: rgb(56, 189, 248);
+      box-shadow: 0 0 18px rgba(14, 165, 233, 0.55);
+    }
+    100% {
+      background-color: transparent;
+      border-color: rgba(14, 165, 233, 0.6);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes blink-layer-violet {
+    0% {
+      background-color: rgba(168, 85, 247, 0.42);
+      border-color: rgb(192, 132, 252);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    }
+    30% {
+      background-color: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 0 6px rgba(168, 85, 247, 0.2);
+    }
+    60% {
+      background-color: rgba(168, 85, 247, 0.38);
+      border-color: rgb(192, 132, 252);
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.55);
+    }
+    100% {
+      background-color: transparent;
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes blink-layer-orange {
+    0% {
+      background-color: rgba(249, 115, 22, 0.42);
+      border-color: rgb(251, 146, 60);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+    }
+    30% {
+      background-color: rgba(249, 115, 22, 0.12);
+      border-color: rgba(249, 115, 22, 0.6);
+      box-shadow: 0 0 6px rgba(249, 115, 22, 0.2);
+    }
+    60% {
+      background-color: rgba(249, 115, 22, 0.38);
+      border-color: rgb(251, 146, 60);
+      box-shadow: 0 0 18px rgba(249, 115, 22, 0.55);
+    }
+    100% {
+      background-color: transparent;
+      border-color: rgba(249, 115, 22, 0.6);
+      box-shadow: none;
+    }
+  }
+
+  .animate-blink-s1 {
+    animation: blink-layer-sky 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animate-blink-s2 {
+    animation: blink-layer-emerald 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animate-blink-s3 {
+    animation: blink-layer-rose 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animate-blink-tarot {
+    animation: blink-layer-violet 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animate-blink-soul {
+    animation: blink-layer-orange 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .font-heading {

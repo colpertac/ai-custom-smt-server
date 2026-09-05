@@ -154,8 +154,9 @@ export function GearCombatMatrix({
                 >
                   <button
                     type="button"
-                    className="w-full text-white hover:brightness-110"
+                    className="group/slot w-full rounded-xs py-0.5 text-white transition-all hover:bg-white/10 hover:brightness-125 hover:ring-1 hover:ring-white/40 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
                     onClick={() => onSlotHeaderClick(slot.key)}
+                    title={`Click to open ${slot.label} sidebar`}
                   >
                     <span className="mb-0.5 flex justify-center gap-px">
                       <LayerChip
@@ -238,14 +239,20 @@ export function GearCombatMatrix({
                   {combatKey ? (
                     <button
                       type="button"
-                      className="text-left hover:text-gold-hot"
-                      title={def.label}
+                      className="group/btn inline-flex items-center gap-1 rounded-xs px-1 py-0.5 text-left font-mono font-semibold transition-all hover:bg-gold/15 hover:text-gold-hot hover:ring-1 hover:ring-gold/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                      title={`Filter recommendations for ${def.label} (${def.abbr})`}
                       onClick={() => onStatClick(combatKey)}
                     >
-                      {def.abbr}
+                      <span>{def.abbr}</span>
+                      <span className="font-sans text-[9px] text-muted-foreground opacity-60 group-hover/btn:text-gold-dim group-hover/btn:opacity-100">
+                        ↗
+                      </span>
                     </button>
                   ) : (
-                    <span className="text-muted-foreground" title={def.label}>
+                    <span
+                      className="inline-block px-1 py-0.5 font-mono text-muted-foreground"
+                      title={def.label}
+                    >
                       {def.abbr}
                     </span>
                   )}

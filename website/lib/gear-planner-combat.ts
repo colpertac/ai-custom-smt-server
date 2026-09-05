@@ -1063,7 +1063,9 @@ export function canApplyLayer(options: {
   }
 
   const baseId = target.s1ItemId
-  if (baseId != null) {
+  // Subcategory / armor gender locks apply when frankenstein-mixing S2/S3 onto an
+  // existing base — not when replacing the S1 appearance shell itself.
+  if (baseId != null && layer !== "s1") {
     const base = getWikiItem(baseId)
     if (base) {
       const baseSub = itemSubcategory(base.id)

@@ -12,7 +12,7 @@ import {
   type WikiItem,
   type WikiItemStat,
 } from "@/content/wiki"
-import { formatWikiStatValue } from "@/content/wiki"
+import { formatWikiStatValue } from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,6 +29,7 @@ import {
   type PlannerSlot,
   wikiSlotLabelForKey,
 } from "@/lib/gear-planner-combat"
+import { fetchWikiItem } from "@/lib/wiki-item-client"
 import { cn } from "@/lib/utils"
 
 function CompactLayerBody({
@@ -91,6 +92,8 @@ function LayerDropCard({
   item,
   emptyHint,
   onDropDonor,
+  isBlinking,
+  blinkKey,
 }: {
   layer: GearLayer
   title: string
@@ -98,6 +101,8 @@ function LayerDropCard({
   item: WikiItem | null
   emptyHint: string
   onDropDonor: (donor: WikiItem, layer: GearLayer) => void
+  isBlinking?: boolean
+  blinkKey?: number
 }) {
   const [over, setOver] = useState(false)
   const border =
@@ -107,12 +112,23 @@ function LayerDropCard({
         ? "border-emerald-500/60"
         : "border-rose-500/60"
 
+  const blinkClass = isBlinking
+    ? layer === "s1"
+      ? "animate-blink-s1"
+      : layer === "s2"
+        ? "animate-blink-s2"
+        : "animate-blink-s3"
+    : null
+
   return (
     <div
+      key={blinkKey}
       className={cn(
-        "border border-dashed px-2 py-1.5 transition-colors",
+        "rounded-xs border border-dashed px-2 py-1.5 transition-all hover:bg-muted/20",
         border,
-        over && "bg-muted/40"
+        blinkClass,
+        over &&
+          "bg-accent/30 ring-2 ring-white/50 shadow-[0_0_12px_rgba(255,255,255,0.25)]"
       )}
       onDragOver={(e) => {
         e.preventDefault()
@@ -140,9 +156,11 @@ function LayerDropCard({
           }
         }
         if (!payload || payload.layer !== layer) return
-        const donor = getWikiItem(payload.itemId)
-        if (!donor) return
-        onDropDonor(donor, layer)
+        void fetchWikiItem(payload.itemId).then((live) => {
+          const donor = live ?? getWikiItem(payload.itemId)
+          if (!donor) return
+          onDropDonor(donor, layer)
+        })
       }}
     >
       <div className="mb-1 flex items-baseline justify-between gap-2">
@@ -183,6 +201,8 @@ function EnchantDropCard({
   enchantId,
   emptyHint,
   onDropEnchant,
+  isBlinking,
+  blinkKey,
 }: {
   side: EnchantSide
   title: string
@@ -190,6 +210,8 @@ function EnchantDropCard({
   enchantId: number | null
   emptyHint: string
   onDropEnchant: (enchantId: number, side: EnchantSide) => void
+  isBlinking?: boolean
+  blinkKey?: number
 }) {
   const [over, setOver] = useState(false)
   const border =
@@ -202,12 +224,21 @@ function EnchantDropCard({
       : null
   const enchant = enchantId != null ? getWikiEnchant(enchantId) : null
 
+  const blinkClass = isBlinking
+    ? side === "tarot"
+      ? "animate-blink-tarot"
+      : "animate-blink-soul"
+    : null
+
   return (
     <div
+      key={blinkKey}
       className={cn(
-        "border border-dashed px-2 py-1.5 transition-colors",
+        "rounded-xs border border-dashed px-2 py-1.5 transition-all hover:bg-muted/20",
         border,
-        over && "bg-muted/40"
+        blinkClass,
+        over &&
+          "bg-accent/30 ring-2 ring-white/50 shadow-[0_0_12px_rgba(255,255,255,0.25)]"
       )}
       onDragOver={(e) => {
         e.preventDefault()
@@ -279,11 +310,17 @@ function EnchantDropCard({
   )
 }
 
+export type SidebarFlashTarget = {
+  layer: "s1" | "s2" | "s3" | "tarot" | "soul" | "all"
+  key: number
+} | null
+
 export function GearSlotSidebar({
   slotKey,
   equipped,
   gender,
   dropError,
+  flashTarget,
   onClose,
   onClear,
   onSelectWhole,
@@ -294,6 +331,7 @@ export function GearSlotSidebar({
   equipped: PlannerSlot
   gender: 0 | 1
   dropError: string | null
+  flashTarget?: SidebarFlashTarget
   onClose: () => void
   onClear: () => void
   onSelectWhole: (item: WikiItem) => void
@@ -303,14 +341,36 @@ export function GearSlotSidebar({
   const [q, setQ] = useState("")
   const [items, setItems] = useState<WikiItem[]>([])
   const [loading, setLoading] = useState(false)
+  const [liveById, setLiveById] = useState<Record<number, WikiItem>>({})
   const slotLabel = wikiSlotLabelForKey(slotKey)
   const display = plannerSlotDisplay(equipped)
-  const s1 =
-    equipped.s1ItemId != null ? (getWikiItem(equipped.s1ItemId) ?? null) : null
-  const s2 =
-    equipped.s2ItemId != null ? (getWikiItem(equipped.s2ItemId) ?? null) : null
-  const s3 =
-    equipped.s3ItemId != null ? (getWikiItem(equipped.s3ItemId) ?? null) : null
+
+  useEffect(() => {
+    const ids = [equipped.s1ItemId, equipped.s2ItemId, equipped.s3ItemId].filter(
+      (id): id is number => id != null
+    )
+    let cancelled = false
+    for (const id of ids) {
+      if (liveById[id]) continue
+      void fetchWikiItem(id).then((item) => {
+        if (cancelled || !item) return
+        setLiveById((prev) => (prev[id] ? prev : { ...prev, [id]: item }))
+      })
+    }
+    return () => {
+      cancelled = true
+    }
+    // liveById intentionally omitted — only refetch when equipped ids change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [equipped.s1ItemId, equipped.s2ItemId, equipped.s3ItemId])
+
+  const resolveEquipped = (id: number | null | undefined): WikiItem | null => {
+    if (id == null) return null
+    return liveById[id] ?? getWikiItem(id) ?? null
+  }
+  const s1 = resolveEquipped(equipped.s1ItemId)
+  const s2 = resolveEquipped(equipped.s2ItemId)
+  const s3 = resolveEquipped(equipped.s3ItemId)
 
   useEffect(() => {
     let cancelled = false
@@ -433,6 +493,10 @@ export function GearSlotSidebar({
             item={s1}
             emptyHint="Drop / double-click S1 here."
             onDropDonor={onDropLayer}
+            isBlinking={
+              flashTarget?.layer === "s1" || flashTarget?.layer === "all"
+            }
+            blinkKey={flashTarget?.key}
           />
           <LayerDropCard
             layer="s2"
@@ -441,6 +505,10 @@ export function GearSlotSidebar({
             item={s2}
             emptyHint="Drop / double-click S2 here."
             onDropDonor={onDropLayer}
+            isBlinking={
+              flashTarget?.layer === "s2" || flashTarget?.layer === "all"
+            }
+            blinkKey={flashTarget?.key}
           />
           <LayerDropCard
             layer="s3"
@@ -449,6 +517,10 @@ export function GearSlotSidebar({
             item={s3}
             emptyHint="Drop / double-click S3 here."
             onDropDonor={onDropLayer}
+            isBlinking={
+              flashTarget?.layer === "s3" || flashTarget?.layer === "all"
+            }
+            blinkKey={flashTarget?.key}
           />
           <EnchantDropCard
             side="tarot"
@@ -457,6 +529,8 @@ export function GearSlotSidebar({
             enchantId={equipped.tarotEnchantId}
             emptyHint="Drop / pick Tarot here."
             onDropEnchant={onDropEnchant}
+            isBlinking={flashTarget?.layer === "tarot"}
+            blinkKey={flashTarget?.key}
           />
           <EnchantDropCard
             side="soul"
@@ -465,6 +539,8 @@ export function GearSlotSidebar({
             enchantId={equipped.soulEnchantId}
             emptyHint="Drop / pick Soul here."
             onDropEnchant={onDropEnchant}
+            isBlinking={flashTarget?.layer === "soul"}
+            blinkKey={flashTarget?.key}
           />
         </section>
 
