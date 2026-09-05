@@ -10,7 +10,22 @@ import {
   navItemActive,
 } from "@/features/admin/admin-nav"
 import { useLaneAPending } from "@/features/admin/lane-a-pending"
+import { useOpenReportsPending } from "@/features/admin/open-reports-pending"
 import { cn } from "@/lib/utils"
+
+function navPendingDot(
+  itemHref: string,
+  laneAPending: boolean,
+  openReportsPending: boolean
+): { title: string } | null {
+  if (itemHref === "/admin" && laneAPending) {
+    return { title: "Unpublished game content changes" }
+  }
+  if (itemHref === "/admin/reports" && openReportsPending) {
+    return { title: "Open player reports" }
+  }
+  return null
+}
 
 export function AdminShell({
   username,
@@ -22,6 +37,7 @@ export function AdminShell({
   const pathname = usePathname()
   const title = adminPageTitle(pathname)
   const laneA = useLaneAPending()
+  const openReports = useOpenReportsPending()
 
   return (
     <div className="flex min-h-[calc(100svh-3.5rem)] w-full flex-col lg:flex-row">
@@ -39,8 +55,11 @@ export function AdminShell({
           {ADMIN_NAV.map((item) => {
             const on = navItemActive(item, pathname)
             const Icon = item.icon
-            const showPendingDot =
-              item.href === "/admin" && laneA.pending
+            const pendingDot = navPendingDot(
+              item.href,
+              laneA.pending,
+              openReports.pending
+            )
             return (
               <Link
                 key={item.href}
@@ -61,11 +80,11 @@ export function AdminShell({
                 />
                 <span className="flex min-w-0 flex-1 items-center gap-1.5">
                   <span className="truncate">{item.label}</span>
-                  {showPendingDot ? (
+                  {pendingDot ? (
                     <span
                       className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
-                      title="Unpublished game content changes"
-                      aria-label="Unpublished game content changes"
+                      title={pendingDot.title}
+                      aria-label={pendingDot.title}
                     />
                   ) : null}
                 </span>

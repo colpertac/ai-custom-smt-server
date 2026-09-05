@@ -4,9 +4,11 @@ import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
 
 import { CharacterNameCombobox } from "@/features/admin/components/CharacterNameCombobox"
+import { notifyOpenReportsPendingChanged } from "@/features/admin/open-reports-pending"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Textarea } from "@/components/ui/textarea"
 import { api } from "@/lib/kyClient"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +23,9 @@ type Report = {
   resolveTime: number
   reporterUsername: string
   resolverUsername: string
+  note: string
+  noteUpdatedBy: string
+  noteUpdatedAt: number
 }
 
 type ChatLog = {
@@ -65,13 +70,16 @@ export function AdminReportsPanel() {
   const [reports, setReports] = useState<Report[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [evidence, setEvidence] = useState<ChatLog[]>([])
+  const [noteDraft, setNoteDraft] = useState("")
   const [loading, setLoading] = useState(false)
   const [evidenceLoading, setEvidenceLoading] = useState(false)
   const [resolving, setResolving] = useState(false)
+  const [savingNote, setSavingNote] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ok, setOk] = useState<string | null>(null)
 
   const current = reports.find((r) => r.uid === selected) ?? null
+  const noteDirty = current ? noteDraft !== (current.note || "") : false
 
   useEffect(() => {
     let cancelled = false
@@ -114,7 +122,16 @@ export function AdminReportsPanel() {
         setError(json.message || `HTTP ${response.status}`)
         return
       }
-      setReports(json.data?.reports ?? [])
+      const next = (json.data?.reports ?? []).map((r) => ({
+        ...r,
+        note: r.note ?? "",
+        noteUpdatedBy: r.noteUpdatedBy ?? "",
+        noteUpdatedAt: r.noteUpdatedAt ?? 0,
+      }))
+      setReports(next)
+      if (!resolved && !filter.trim()) {
+        notifyOpenReportsPendingChanged()
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load reports")
     } finally {
@@ -125,6 +142,10 @@ export function AdminReportsPanel() {
   useEffect(() => {
     void load()
   }, [load])
+
+  useEffect(() => {
+    setNoteDraft(current?.note ?? "")
+  }, [current?.uid, current?.note])
 
   useEffect(() => {
     if (!current || current.resolved) {
@@ -160,6 +181,50 @@ export function AdminReportsPanel() {
     }
   }, [current])
 
+  const saveNote = async () => {
+    if (!current) return
+    setSavingNote(true)
+    setError(null)
+    setOk(null)
+    try {
+      const response = await api.post("admin/reports/note", {
+        json: { uid: current.uid, note: noteDraft },
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: {
+          note?: string
+          noteUpdatedBy?: string
+          noteUpdatedAt?: number
+        }
+      }
+      if (!response.ok || !json.success) {
+        setError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      const nextNote = json.data?.note ?? noteDraft.trim()
+      setReports((prev) =>
+        prev.map((r) =>
+          r.uid === current.uid
+            ? {
+                ...r,
+                note: nextNote,
+                noteUpdatedBy: json.data?.noteUpdatedBy ?? r.noteUpdatedBy,
+                noteUpdatedAt: json.data?.noteUpdatedAt ?? r.noteUpdatedAt,
+              }
+            : r
+        )
+      )
+      setNoteDraft(nextNote)
+      setOk(json.message || "Note saved")
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save note")
+    } finally {
+      setSavingNote(false)
+    }
+  }
+
   const resolve = async () => {
     if (!current) return
     setResolving(true)
@@ -167,7 +232,7 @@ export function AdminReportsPanel() {
     setOk(null)
     try {
       const response = await api.post("admin/reports/resolve", {
-        json: { uid: current.uid },
+        json: { uid: current.uid, note: noteDraft },
       })
       const json = (await response.json()) as {
         success?: boolean
@@ -179,6 +244,7 @@ export function AdminReportsPanel() {
       }
       setOk(json.message || "Resolved")
       setSelected(null)
+      notifyOpenReportsPendingChanged()
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Resolve failed")
@@ -279,7 +345,16 @@ export function AdminReportsPanel() {
                     </td>
                     <td className="px-2 py-1.5">{r.playerName}</td>
                     <td className="px-2 py-1.5">
-                      {SUBJECT_LABEL[r.subject] ?? r.subject}
+                      <span className="inline-flex items-center gap-1.5">
+                        {SUBJECT_LABEL[r.subject] ?? r.subject}
+                        {r.note ? (
+                          <span
+                            className="size-1.5 shrink-0 rounded-full bg-muted-foreground/70"
+                            title="Has admin note"
+                            aria-label="Has admin note"
+                          />
+                        ) : null}
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -333,25 +408,66 @@ export function AdminReportsPanel() {
                   </div>
                   <p className="whitespace-pre-wrap">{current.comment || "—"}</p>
                 </div>
-                {current.resolved ? (
-                  <div>
-                    <div className="text-[0.65rem] text-muted-foreground uppercase">
-                      Resolved
-                    </div>
-                    <p className="text-xs">
-                      {current.resolverUsername || "—"} ·{" "}
-                      {formatTs(current.resolveTime)}
+                <div>
+                  <FieldLabel htmlFor="report-admin-note">Admin note</FieldLabel>
+                  <Textarea
+                    id="report-admin-note"
+                    value={noteDraft}
+                    onChange={(e) => setNoteDraft(e.target.value)}
+                    placeholder="Reasoning, action taken, misc context…"
+                    className="mt-1 min-h-20 rounded-none"
+                    maxLength={4000}
+                  />
+                  {current.noteUpdatedBy ? (
+                    <p className="mt-1 text-[0.65rem] text-muted-foreground">
+                      Last saved by {current.noteUpdatedBy}
+                      {current.noteUpdatedAt
+                        ? ` · ${new Date(current.noteUpdatedAt).toLocaleString()}`
+                        : ""}
                     </p>
+                  ) : null}
+                </div>
+                {current.resolved ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div>
+                      <div className="text-[0.65rem] text-muted-foreground uppercase">
+                        Resolved
+                      </div>
+                      <p className="text-xs">
+                        {current.resolverUsername || "—"} ·{" "}
+                        {formatTs(current.resolveTime)}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={savingNote || !noteDirty}
+                      onClick={() => void saveNote()}
+                    >
+                      {savingNote ? "Saving…" : "Save note"}
+                    </Button>
                   </div>
                 ) : (
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={resolving}
-                    onClick={() => void resolve()}
-                  >
-                    {resolving ? "Resolving…" : "Mark resolved"}
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={resolving}
+                      onClick={() => void resolve()}
+                    >
+                      {resolving ? "Resolving…" : "Mark resolved"}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={savingNote || !noteDirty}
+                      onClick={() => void saveNote()}
+                    >
+                      {savingNote ? "Saving…" : "Save note"}
+                    </Button>
+                  </div>
                 )}
               </FieldGroup>
 

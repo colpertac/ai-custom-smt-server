@@ -3,6 +3,7 @@ import { compApiFailMessage, DEFAULT_WORLD_ID } from "@/lib/comp-api-errors"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
+import { getReportNotesMap } from "@/lib/report-notes-store"
 import {
   CompSessionMissingError,
   requireWebSession,
@@ -53,7 +54,20 @@ export async function POST(request: Request) {
         playerName: parsed.data.playerName || undefined,
         limit: parsed.data.limit ?? 100,
       })
-      return apiOk({ worldId, reports })
+      const notes = getReportNotesMap(
+        worldId,
+        reports.map((r) => r.uid).filter(Boolean)
+      )
+      const withNotes = reports.map((r) => {
+        const note = notes.get(r.uid)
+        return {
+          ...r,
+          note: note?.note ?? "",
+          noteUpdatedBy: note?.updatedBy ?? "",
+          noteUpdatedAt: note?.updatedAt ?? 0,
+        }
+      })
+      return apiOk({ worldId, reports: withNotes })
     })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {

@@ -3,6 +3,7 @@ import { compApiFailMessage, DEFAULT_WORLD_ID } from "@/lib/comp-api-errors"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
+import { upsertReportNote } from "@/lib/report-notes-store"
 import {
   CompSessionMissingError,
   requireWebSession,
@@ -12,6 +13,7 @@ import { z } from "zod"
 
 const resolveSchema = z.object({
   uid: z.string().trim().min(1),
+  note: z.string().max(4000).optional(),
   worldId: z.number().int().min(0).optional(),
 })
 
@@ -51,6 +53,14 @@ export async function POST(request: Request) {
       })
       if (result.error !== "Success") {
         return apiFail(result.error, 400, "RESOLVE")
+      }
+      if (parsed.data.note !== undefined) {
+        upsertReportNote({
+          worldId,
+          uid: parsed.data.uid,
+          note: parsed.data.note,
+          updatedBy: gate.username,
+        })
       }
       return apiOk({ uid: parsed.data.uid, worldId }, "Report resolved")
     })
