@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  Database,
   FileText,
   Coins,
   Download,
@@ -58,6 +59,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   },
   { href: "/admin/studio", label: "Studio", icon: Palette, match: "prefix" },
   { href: "/admin/import", label: "Import", icon: Upload, match: "prefix" },
+  { href: "/admin/sql", label: "SQL", icon: Database, match: "prefix" },
 ]
 
 export function adminPageTitle(pathname: string): string {
@@ -78,6 +80,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/report-rewards")) return "Dungeon loot"
   if (pathname.startsWith("/admin/studio")) return "Studio"
   if (pathname.startsWith("/admin/import")) return "Import"
+  if (pathname.startsWith("/admin/sql")) return "SQL"
   return "Admin"
 }
 
