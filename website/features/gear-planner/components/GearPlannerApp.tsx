@@ -373,8 +373,8 @@ function GearPlannerAppClient({
   )
 
   return (
-    <div className="flex h-full min-h-0 w-full">
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4">
+    <div className="flex min-h-0 w-full items-start">
+      <div className="min-w-0 flex-1 p-3 sm:p-4">
         <div className="space-y-4">
           {shareBanner ? (
             <div className="flex flex-wrap items-center justify-between gap-2 border border-violet-500/40 bg-violet-500/10 px-3 py-2 text-xs">
@@ -603,7 +603,7 @@ function GearPlannerAppClient({
       </div>
 
       {selectedSlot && selectedEquip ? (
-        <div className="hidden h-full min-h-0 w-[min(100%,24rem)] shrink-0 lg:block xl:w-[28rem]">
+        <div className="hidden shrink-0 lg:sticky lg:top-0 lg:block lg:h-screen lg:max-h-screen lg:self-start w-[min(100%,24rem)] xl:w-[28rem]">
           <GearSlotSidebar
             key={selectedSlot}
             slotKey={selectedSlot}
