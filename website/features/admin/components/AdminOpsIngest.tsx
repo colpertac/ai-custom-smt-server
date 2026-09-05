@@ -95,6 +95,7 @@ function OpsIngestPanel({
   const [kind, setKind] = useState<IngestKindId>(defaultKind)
   const [mode, setMode] = useState<ModeId>("merge")
   const [file, setFile] = useState<File | null>(null)
+  const [regenWiki, setRegenWiki] = useState(false)
   const [pending, setPending] = useState(false)
   const [rehashing, setRehashing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -137,6 +138,7 @@ function OpsIngestPanel({
   const busy = pending || rehashing
   const replaceAllowed = kind !== "packages"
   const autoRehash = kind === "overlay" || kind === "release"
+  const wikiEligible = kind === "binarydata" || kind === "content"
 
   const onSubmit = useCallback(async () => {
     if (!file) {
@@ -153,6 +155,7 @@ function OpsIngestPanel({
         kind,
         mode,
         file,
+        wiki: wikiEligible && regenWiki,
         onUploadProgress: setUploadPct,
         onJob: setJob,
       })
@@ -160,7 +163,16 @@ function OpsIngestPanel({
         setError(result.message)
         return
       }
-      setOk(result.message)
+      const wiki = result.job?.result?.wikiRegen
+      let message = result.message
+      if (wiki && !wiki.skipped) {
+        if (wiki.ok) {
+          message = `${message} — wiki regenerated (${wiki.itemCount ?? "?"} items)`
+        } else if (wiki.detail) {
+          message = `${message} — wiki regen failed: ${wiki.detail}`
+        }
+      }
+      setOk(message)
       setFile(null)
       window.dispatchEvent(new Event("ops-freshness-changed"))
     } catch (e) {
@@ -169,7 +181,7 @@ function OpsIngestPanel({
       setPending(false)
       setUploadPct(null)
     }
-  }, [file, kind, mode])
+  }, [file, kind, mode, regenWiki, wikiEligible])
 
   const rehash = useCallback(async () => {
     setRehashing(true)
@@ -315,6 +327,24 @@ function OpsIngestPanel({
             </span>
           ) : null}
         </label>
+        {wikiEligible ? (
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={regenWiki}
+              disabled={busy}
+              onChange={(e) => setRegenWiki(e.target.checked)}
+              className="mt-1"
+            />
+            <span>
+              <span className="text-foreground">Also regenerate wiki catalog</span>
+              <span className="block text-xs text-muted-foreground">
+                Rebuild live item/enchant data from Shield BinaryData after
+                merge. Icons stay from the website image.
+              </span>
+            </span>
+          </label>
+        ) : null}
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"
@@ -389,7 +419,10 @@ export function AdminOpsServerUpload() {
                 <td className="py-2 pr-2">BinaryData</td>
                 <td className="py-2">
                   <code className="text-foreground">datastore/BinaryData/</code> —
-                  restart channel
+                  restart channel. Optional checkbox regenerates the live{" "}
+                  <code className="text-foreground">/wiki</code> catalog from
+                  Shield tables (items + enchants); icons stay baked in the site
+                  image.
                 </td>
               </tr>
               <tr className="border-b border-border/60 align-top">

@@ -36,6 +36,10 @@ export function OpsIngestStatus({
     headline = files
       ? `Zip uploaded. Unpacking ${files}`
       : "Zip uploaded. Unpacking…"
+  } else if (job?.phase === "rehashing") {
+    headline = "Refreshing updater list…"
+  } else if (job?.phase === "wiki") {
+    headline = "Regenerating wiki catalog…"
   } else if (job?.phase === "done") {
     headline = files ? `Unpack complete (${files})` : "Unpack complete"
   } else if (job?.phase === "error") {

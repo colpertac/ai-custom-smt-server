@@ -1,4 +1,4 @@
-import type { WikiItemCategory } from "@/content/wiki"
+import type { WikiItemCategory } from "@/content/wiki/types"
 
 export const WIKI_NAV = [
   { href: "/wiki", label: "Home", exact: true },

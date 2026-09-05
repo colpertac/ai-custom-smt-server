@@ -1,13 +1,13 @@
 import Link from "next/link"
 
-import type { WikiItem, WikiItemCategory, WikiItemStat } from "@/content/wiki"
+import type { WikiItem, WikiItemCategory, WikiItemStat } from "@/content/wiki/types"
 import {
   formatWikiStatValue,
   getWikiItemCategory,
   wikiBasicFeatures,
   wikiCharacteristics,
   wikiSetBonus,
-} from "@/content/wiki"
+} from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { WikiItemIcon } from "@/features/wiki/components/WikiItemIcon"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"

@@ -2,17 +2,49 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
-import {
-  countWikiCatalog,
-  countWikiItems,
-} from "@/content/wiki"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WIKI_NAV, wikiNavActive } from "@/features/wiki/wiki-nav"
 import { cn } from "@/lib/utils"
 
+type WikiStatusCounts = {
+  itemCount: number
+  weapons: number
+  armor: number
+  items: number
+}
+
 export function WikiShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [counts, setCounts] = useState<WikiStatusCounts | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/wiki/status")
+      .then((res) => res.json())
+      .then(
+        (data: {
+          enabled?: boolean
+          itemCount?: number
+          counts?: { weapons?: number; armor?: number; items?: number }
+        }) => {
+          if (cancelled || !data.enabled) return
+          setCounts({
+            itemCount: data.itemCount ?? 0,
+            weapons: data.counts?.weapons ?? 0,
+            armor: data.counts?.armor ?? 0,
+            items: data.counts?.items ?? 0,
+          })
+        }
+      )
+      .catch(() => {
+        /* ignore */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   return (
     <div className="site-atmosphere w-full px-3 py-4 sm:px-4 lg:px-5">
@@ -25,7 +57,9 @@ export function WikiShell({ children }: { children: React.ReactNode }) {
             Item wiki
           </Link>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {countWikiCatalog().toLocaleString()} game items
+            {counts
+              ? `${counts.itemCount.toLocaleString()} game items`
+              : "Loading catalog…"}
           </p>
 
           <div className="mt-3 border border-border bg-card/50 p-2">
@@ -56,9 +90,9 @@ export function WikiShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <dl className="mt-4 space-y-1.5 border-t border-border pt-3 text-xs">
-            <WikiCount label="Weapons" count={countWikiItems("weapons")} />
-            <WikiCount label="Armor" count={countWikiItems("armor")} />
-            <WikiCount label="Items" count={countWikiItems("items")} />
+            <WikiCount label="Weapons" count={counts?.weapons} />
+            <WikiCount label="Armor" count={counts?.armor} />
+            <WikiCount label="Items" count={counts?.items} />
           </dl>
         </aside>
 
@@ -68,11 +102,19 @@ export function WikiShell({ children }: { children: React.ReactNode }) {
   )
 }
 
-function WikiCount({ label, count }: { label: string; count: number }) {
+function WikiCount({
+  label,
+  count,
+}: {
+  label: string
+  count: number | undefined
+}) {
   return (
     <div className="flex justify-between gap-3 text-muted-foreground">
       <dt>{label}</dt>
-      <dd className="font-mono text-foreground">{count.toLocaleString()}</dd>
+      <dd className="font-mono text-foreground">
+        {count != null ? count.toLocaleString() : "—"}
+      </dd>
     </div>
   )
 }

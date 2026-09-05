@@ -1,10 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 import {
+  listWikiArmorSlots,
   searchWikiCatalog,
   type WikiItemCategory,
   type WikiStatBucket,
-} from "@/content/wiki"
+} from "@/lib/wiki-catalog"
 import { isWikiAvailable } from "@/lib/wiki-availability"
 
 const CATEGORIES = new Set<WikiItemCategory | "all">([
@@ -76,5 +77,8 @@ export async function GET(req: NextRequest) {
     limit,
     offset,
   })
-  return NextResponse.json(result)
+  return NextResponse.json({
+    ...result,
+    armorSlots: listWikiArmorSlots(),
+  })
 }

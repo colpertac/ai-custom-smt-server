@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
-import { countWikiItems, countWikiCatalog } from "@/content/wiki"
+import { countWikiItems, countWikiCatalog } from "@/lib/wiki-catalog"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WikiPageHeader } from "@/features/wiki/components/WikiShell"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"

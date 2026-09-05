@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { getWikiItem } from "@/content/wiki"
+import { getWikiItem } from "@/lib/wiki-catalog"
 import { WikiItemDetailView } from "@/features/wiki/components/WikiItemDetailView"
 
 export const dynamic = "force-dynamic"

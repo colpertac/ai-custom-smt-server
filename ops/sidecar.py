@@ -66,6 +66,7 @@ from ceventmessage import upsert_ceventmessages
 from service_logs import collect_service_logs
 from updater_site import write_updater_site_index
 from zip_ingest import KINDS, MAX_UPLOAD, MODES, ingest_zip_file, save_upload_stream
+from wiki_export import destinations_include_binarydata, export_wiki_catalogs
 
 REPO_ROOT = HERE.parent
 SMT_ROOT = REPO_ROOT.parent
@@ -1039,6 +1040,58 @@ def _maybe_rehash_after_ingest(
     return True, detail
 
 
+def _maybe_wiki_after_ingest(
+    job_id: str,
+    result,
+    *,
+    want_wiki: bool,
+    runtime: Path,
+) -> dict:
+    """Optionally regenerate runtime wiki catalogs after BinaryData ingest.
+
+    Never fails the ingest job — wiki export errors are reported on wikiRegen.
+    """
+    if not want_wiki:
+        return {"ok": True, "skipped": True, "detail": "wiki regen not requested"}
+    if not destinations_include_binarydata(
+        result.destinations, kind=getattr(result, "kind", "") or ""
+    ):
+        ingest_jobs.log(
+            job_id,
+            "wiki regen skipped — no BinaryData in destinations",
+        )
+        return {
+            "ok": True,
+            "skipped": True,
+            "detail": "no BinaryData in destinations",
+        }
+    ingest_jobs.set_phase(job_id, "wiki", msg="regenerating wiki catalog…")
+    ingest_jobs.log(job_id, "regenerating wiki catalog from BinaryData…")
+    ok, code, info = export_wiki_catalogs(runtime)
+    detail = (info or {}).get("detail") or code or ""
+    if ok:
+        item_count = (info or {}).get("itemCount")
+        enchant_count = (info or {}).get("enchantCount")
+        ingest_jobs.log(
+            job_id,
+            f"wiki catalog written ({item_count} items, {enchant_count} enchants)",
+        )
+        return {
+            "ok": True,
+            "skipped": False,
+            "itemCount": item_count,
+            "enchantCount": enchant_count,
+            "detail": detail,
+        }
+    ingest_jobs.log(job_id, f"wiki regen failed ({code}): {detail}")
+    return {
+        "ok": False,
+        "skipped": False,
+        "detail": detail or code or "wiki_export_failed",
+        "error": code or "wiki_export_failed",
+    }
+
+
 def _run_ingest_job(
     job_id: str,
     zip_path: Path,
@@ -1049,6 +1102,7 @@ def _run_ingest_job(
     updater: Path,
     releases: Path,
     want_rehash: bool,
+    want_wiki: bool = False,
 ) -> None:
     ingest_jobs.set_phase(job_id, "unpacking", msg="zip uploaded — unpacking")
     try:
@@ -1093,6 +1147,12 @@ def _run_ingest_job(
                     error="rehash_failed",
                 )
                 return
+            payload["wikiRegen"] = _maybe_wiki_after_ingest(
+                job_id,
+                result,
+                want_wiki=want_wiki,
+                runtime=runtime,
+            )
         else:
             ingest_jobs.log(
                 job_id,
@@ -1167,6 +1227,9 @@ def handle_ingest_zip(handler: OpsHandler) -> tuple[int, bytes, str]:
     else:
         # Default on: skip automatically when the zip has no overlay dests.
         want_rehash = True
+
+    wiki_raw = (qs.get("wiki") or ["0"])[0].strip().lower()
+    want_wiki = wiki_raw in {"1", "true", "yes"}
 
     try:
         length = int(handler.headers.get("Content-Length") or "0")
@@ -1271,6 +1334,7 @@ def handle_ingest_zip(handler: OpsHandler) -> tuple[int, bytes, str]:
             "updater": updater,
             "releases": releases,
             "want_rehash": want_rehash,
+            "want_wiki": want_wiki,
         },
         daemon=True,
         name=f"ingest-{job_id}",

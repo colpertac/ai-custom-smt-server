@@ -64,6 +64,9 @@ export async function POST(request: Request) {
   const rehashRaw = String(form.get("rehash") || "1").trim().toLowerCase()
   const rehash = !(rehashRaw === "0" || rehashRaw === "false" || rehashRaw === "no")
 
+  const wikiRaw = String(form.get("wiki") || "0").trim().toLowerCase()
+  const wiki = wikiRaw === "1" || wikiRaw === "true" || wikiRaw === "yes"
+
   const file = form.get("file")
   if (!(file instanceof File)) {
     return apiFail("Missing file", 400, "VALIDATION")
@@ -101,7 +104,8 @@ export async function POST(request: Request) {
 
   try {
     const result = await ingestOpsZip(kind, file, session.username, mode, {
-      rehash: rehash,
+      rehash,
+      wiki,
     })
     if (!result.ok) {
       const msg =

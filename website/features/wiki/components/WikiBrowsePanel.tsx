@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import type { WikiItem, WikiItemCategory } from "@/content/wiki"
-import { wikiArmorSlots } from "@/content/wiki"
+import type { WikiItem, WikiItemCategory } from "@/content/wiki/types"
 import { WikiItemTable } from "@/features/wiki/components/WikiItemTable"
 import {
   WIKI_PAGE_SIZE,
@@ -31,6 +30,7 @@ export function WikiBrowsePanel({
   const [page, setPage] = useState(0)
   const [items, setItems] = useState<WikiItem[]>([])
   const [total, setTotal] = useState(totalCount)
+  const [armorSlots, setArmorSlots] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
   const setQueryAndReset = (value: string) => {
@@ -62,12 +62,19 @@ export function WikiBrowsePanel({
 
       fetch(`/api/wiki/browse?${params.toString()}`)
         .then((res) => res.json())
-        .then((data: { total: number; items: WikiItem[] }) => {
-          if (cancelled) return
-          setTotal(data.total)
-          setItems(data.items)
-          setLoading(false)
-        })
+        .then(
+          (data: {
+            total: number
+            items: WikiItem[]
+            armorSlots?: string[]
+          }) => {
+            if (cancelled) return
+            setTotal(data.total)
+            setItems(data.items)
+            if (data.armorSlots) setArmorSlots(data.armorSlots)
+            setLoading(false)
+          }
+        )
         .catch(() => {
           if (!cancelled) setLoading(false)
         })
@@ -130,14 +137,14 @@ export function WikiBrowsePanel({
         </p>
       </div>
 
-      {category === "armor" && wikiArmorSlots.length > 0 ? (
+      {category === "armor" && armorSlots.length > 0 ? (
         <div className="flex flex-wrap gap-2">
           <SlotChip
             label="All slots"
             active={!slot}
             onClick={() => setSlotAndReset(null)}
           />
-          {wikiArmorSlots.map((s) => (
+          {armorSlots.map((s) => (
             <SlotChip
               key={s}
               label={s}

@@ -8,7 +8,7 @@ import {
   rankItemsForStat,
   type PlannerStatKey,
 } from "@/lib/gear-planner-combat"
-import { getWikiItem } from "@/content/wiki"
+import { getWikiItem } from "@/lib/wiki-catalog"
 import { isWikiAvailable } from "@/lib/wiki-availability"
 
 const STAT_KEYS = new Set(PLANNER_STATS.map((s) => s.key))

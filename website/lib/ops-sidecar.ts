@@ -752,6 +752,13 @@ export type OpsIngestResult = {
   channelStale?: boolean
   firstBoot?: OpsFirstBoot
   logs?: { at?: string; msg: string }[]
+  wikiRegen?: {
+    ok?: boolean
+    skipped?: boolean
+    itemCount?: number
+    enchantCount?: number
+    detail?: string
+  }
 }
 
 export type OpsIngestJob = {
@@ -776,7 +783,7 @@ export async function ingestOpsZip(
   body: Blob | ArrayBuffer | Uint8Array,
   actor?: string,
   mode: OpsIngestMode = "merge",
-  options?: { rehash?: boolean }
+  options?: { rehash?: boolean; wiki?: boolean }
 ): Promise<OpsIngestResult> {
   const secret = opsToken()
   if (!secret) {
@@ -791,7 +798,8 @@ export async function ingestOpsZip(
   const url =
     `${opsBaseUrl()}/ingest/zip?kind=${encodeURIComponent(kind)}` +
     `&mode=${encodeURIComponent(mode)}` +
-    (options?.rehash === false ? "&rehash=0" : "&rehash=1")
+    (options?.rehash === false ? "&rehash=0" : "&rehash=1") +
+    (options?.wiki ? "&wiki=1" : "&wiki=0")
   // Node/DOM typings disagree on Uint8Array vs BodyInit; Buffer is accepted at runtime.
   const fetchBody = (
     body instanceof Blob

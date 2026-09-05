@@ -2,15 +2,15 @@ import Link from "next/link"
 
 import {
   getWikiItemCategory,
+  getWikiItemsPayload,
   wikiBasicFeatures,
-  wikiCatalog,
   wikiCharacteristics,
   wikiItemSoulFusion,
   wikiItemTarotFusion,
   wikiItemCompShops,
   wikiSetBonus,
   type WikiItem,
-} from "@/content/wiki"
+} from "@/lib/wiki-catalog"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { WikiEquipmentSetsBox } from "@/features/wiki/components/WikiEquipmentSetsBox"
 import { WikiFeatureBox } from "@/features/wiki/components/WikiFeatureBox"
@@ -187,8 +187,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
 
       <p className="text-xs text-muted-foreground">
         Item data exported from the game client
-        {wikiCatalog.generatedAt
-          ? ` · updated ${new Date(wikiCatalog.generatedAt).toLocaleDateString()}`
+        {getWikiItemsPayload().generatedAt
+          ? ` · updated ${new Date(getWikiItemsPayload().generatedAt).toLocaleDateString()}`
           : null}
       </p>
     </div>

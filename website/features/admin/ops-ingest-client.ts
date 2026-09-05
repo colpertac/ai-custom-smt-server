@@ -13,6 +13,13 @@ export type IngestJobView = {
     detail?: string
     error?: string
     firstBoot?: unknown
+    wikiRegen?: {
+      ok?: boolean
+      skipped?: boolean
+      itemCount?: number
+      enchantCount?: number
+      detail?: string
+    }
   }
 }
 
@@ -26,6 +33,7 @@ export function uploadIngestZipXhr(opts: {
   kind: string
   mode: string
   file: File
+  wiki?: boolean
   onProgress: (pct: number) => void
 }): Promise<ApiEnvelope<{ jobId?: string; message?: string }>> {
   return new Promise((resolve, reject) => {
@@ -33,6 +41,7 @@ export function uploadIngestZipXhr(opts: {
     body.set("kind", opts.kind)
     body.set("mode", opts.mode)
     body.set("file", opts.file)
+    body.set("wiki", opts.wiki ? "1" : "0")
     const xhr = new XMLHttpRequest()
     xhr.open("POST", "/api/admin/ops/ingest/zip")
     xhr.timeout = 0
@@ -95,6 +104,7 @@ export async function runIngestZip(opts: {
   kind: string
   mode: string
   file: File
+  wiki?: boolean
   onUploadProgress: (pct: number) => void
   onJob: (job: IngestJobView) => void
 }): Promise<{
@@ -107,6 +117,7 @@ export async function runIngestZip(opts: {
     kind: opts.kind,
     mode: opts.mode,
     file: opts.file,
+    wiki: opts.wiki,
     onProgress: opts.onUploadProgress,
   })
   const jobId = uploaded.data?.jobId

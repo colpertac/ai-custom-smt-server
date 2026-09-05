@@ -1,5 +1,5 @@
-import type { WikiItemStat } from "@/content/wiki"
-import { formatWikiStatValue } from "@/content/wiki"
+import type { WikiItemStat } from "@/content/wiki/types"
+import { formatWikiStatValue } from "@/content/wiki/format"
 import { cn } from "@/lib/utils"
 
 const LAYER_HUE: Record<string, { box: string; tag: string; row: string }> = {
