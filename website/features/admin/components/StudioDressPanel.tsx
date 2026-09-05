@@ -26,6 +26,33 @@ type PreviewSlot = {
   error: string | null
 }
 
+type AccountStatus = {
+  username: string
+  exists: boolean
+  userLevel: number
+  isAdmin: boolean
+  enabled: boolean
+  characterName: string | null
+  characterExists: boolean
+  characterGender: number | null
+  characterZone: number | null
+  accountUid: string | null
+  characterUid: string | null
+}
+
+type StudioAccountsOverview = {
+  vam1: AccountStatus
+  vaf1: AccountStatus
+}
+
+type SeedSuccessResponse = {
+  message: string
+  passwords: {
+    vam1: string
+    vaf1: string
+  }
+}
+
 const PREVIEW_ROLES = ["vam1", "vaf1"] as const
 
 export function StudioDressPanel() {
@@ -38,6 +65,18 @@ export function StudioDressPanel() {
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [ok, setOk] = useState<string | null>(null)
+
+  // Mannequin Accounts Seed State
+  const [accounts, setAccounts] = useState<StudioAccountsOverview | null>(null)
+  const [accountsLoading, setAccountsLoading] = useState(false)
+  const [accountsError, setAccountsError] = useState<string | null>(null)
+  const [seedPending, setSeedPending] = useState(false)
+  const [seedError, setSeedError] = useState<string | null>(null)
+  const [seedSuccess, setSeedSuccess] = useState<SeedSuccessResponse | null>(null)
+  const [showPasswordFields, setShowPasswordFields] = useState(false)
+  const [customVamPass, setCustomVamPass] = useState("")
+  const [customVafPass, setCustomVafPass] = useState("")
+
   const [previews, setPreviews] = useState<Record<string, PreviewSlot>>(() =>
     Object.fromEntries(
       PREVIEW_ROLES.map((m) => [
@@ -46,6 +85,32 @@ export function StudioDressPanel() {
       ])
     )
   )
+
+  const refreshAccounts = useCallback(async () => {
+    setAccountsLoading(true)
+    setAccountsError(null)
+    try {
+      const response = await api("admin/studio/seed")
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: StudioAccountsOverview
+      }
+      if (!response.ok || !json.success || !json.data) {
+        setAccounts(null)
+        setAccountsError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      setAccounts(json.data)
+    } catch (err) {
+      setAccounts(null)
+      setAccountsError(
+        err instanceof Error ? err.message : "Failed to load mannequin accounts"
+      )
+    } finally {
+      setAccountsLoading(false)
+    }
+  }, [])
 
   const refreshHealth = useCallback(async () => {
     setRefreshing(true)
@@ -106,7 +171,56 @@ export function StudioDressPanel() {
   useEffect(() => {
     void refreshHealth()
     void refreshPreviewMeta()
-  }, [refreshHealth, refreshPreviewMeta])
+    void refreshAccounts()
+  }, [refreshHealth, refreshPreviewMeta, refreshAccounts])
+
+  async function onSeedAccounts() {
+    setSeedPending(true)
+    setSeedError(null)
+    setSeedSuccess(null)
+    try {
+      const payload: { vamPass?: string; vafPass?: string } = {}
+      if (customVamPass.trim()) payload.vamPass = customVamPass.trim()
+      if (customVafPass.trim()) payload.vafPass = customVafPass.trim()
+
+      const response = await api("admin/studio/seed", {
+        method: "POST",
+        json: payload,
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: {
+          message: string
+          passwords: {
+            vam1: string
+            vaf1: string
+          }
+        }
+      }
+
+      if (!response.ok || !json.success) {
+        setSeedError(json.message || `HTTP ${response.status}`)
+        return
+      }
+
+      setSeedSuccess({
+        message: json.message || "Mannequin accounts and characters seeded successfully.",
+        passwords: json.data?.passwords ?? {
+          vam1: customVamPass.trim() || "vam1vam1",
+          vaf1: customVafPass.trim() || "vaf1vaf1",
+        },
+      })
+      void refreshAccounts()
+      void refreshHealth()
+    } catch (err) {
+      setSeedError(
+        err instanceof Error ? err.message : "Failed to seed mannequin accounts"
+      )
+    } finally {
+      setSeedPending(false)
+    }
+  }
 
   async function capturePreview(role: string) {
     setPreviews((prev) => ({
@@ -201,6 +315,192 @@ export function StudioDressPanel() {
 
   return (
     <div className="mt-6 max-w-3xl space-y-4">
+      {/* Seed Mannequin Accounts & Characters Card */}
+      <div className="border-2 border-border bg-card/60 p-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium">Mannequin accounts &amp; characters</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Dedicated accounts for portrait studio mannequins (<span className="font-mono text-foreground">vam1</span> &amp; <span className="font-mono text-foreground">vaf1</span>) with admin rights and characters parked in studio (zone 10105).
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={accountsLoading}
+            onClick={() => void refreshAccounts()}
+          >
+            {accountsLoading ? "Refreshing…" : "Check status"}
+          </Button>
+        </div>
+
+        {accountsError && <FormAlert variant="error">{accountsError}</FormAlert>}
+
+        {accounts && (
+          <div className="grid gap-3 sm:grid-cols-2 text-xs">
+            <div className="border border-border/80 bg-background/50 p-3 space-y-1.5">
+              <div className="flex items-center justify-between font-mono font-medium text-sm">
+                <span>vam1 (Male)</span>
+                {accounts.vam1.isAdmin ? (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                    Admin GM
+                  </span>
+                ) : accounts.vam1.exists ? (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/30">
+                    Lvl {accounts.vam1.userLevel}
+                  </span>
+                ) : (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-muted text-muted-foreground">
+                    Not created
+                  </span>
+                )}
+              </div>
+              <p className="text-muted-foreground">
+                Account:{" "}
+                {accounts.vam1.exists ? (
+                  <span className="text-foreground">
+                    {accounts.vam1.enabled ? "Active" : "Disabled"}
+                  </span>
+                ) : (
+                  <span className="text-destructive">Missing</span>
+                )}
+              </p>
+              <p className="text-muted-foreground">
+                Character:{" "}
+                {accounts.vam1.characterExists ? (
+                  <span>
+                    <span className="font-mono text-foreground font-medium">
+                      {accounts.vam1.characterName}
+                    </span>
+                    {accounts.vam1.characterZone === 10105
+                      ? " (zone 10105 studio)"
+                      : ` (zone ${accounts.vam1.characterZone ?? "?"})`}
+                  </span>
+                ) : (
+                  <span className="text-destructive">Missing</span>
+                )}
+              </p>
+            </div>
+
+            <div className="border border-border/80 bg-background/50 p-3 space-y-1.5">
+              <div className="flex items-center justify-between font-mono font-medium text-sm">
+                <span>vaf1 (Female)</span>
+                {accounts.vaf1.isAdmin ? (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                    Admin GM
+                  </span>
+                ) : accounts.vaf1.exists ? (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/30">
+                    Lvl {accounts.vaf1.userLevel}
+                  </span>
+                ) : (
+                  <span className="text-[11px] px-1.5 py-0.5 bg-muted text-muted-foreground">
+                    Not created
+                  </span>
+                )}
+              </div>
+              <p className="text-muted-foreground">
+                Account:{" "}
+                {accounts.vaf1.exists ? (
+                  <span className="text-foreground">
+                    {accounts.vaf1.enabled ? "Active" : "Disabled"}
+                  </span>
+                ) : (
+                  <span className="text-destructive">Missing</span>
+                )}
+              </p>
+              <p className="text-muted-foreground">
+                Character:{" "}
+                {accounts.vaf1.characterExists ? (
+                  <span>
+                    <span className="font-mono text-foreground font-medium">
+                      {accounts.vaf1.characterName}
+                    </span>
+                    {accounts.vaf1.characterZone === 10105
+                      ? " (zone 10105 studio)"
+                      : ` (zone ${accounts.vaf1.characterZone ?? "?"})`}
+                  </span>
+                ) : (
+                  <span className="text-destructive">Missing</span>
+                )}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showPasswordFields && (
+          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-border/60">
+            <Field>
+              <FieldLabel htmlFor="vam-pass" className="text-xs">
+                vam1 password
+              </FieldLabel>
+              <Input
+                id="vam-pass"
+                type="text"
+                placeholder="vam1vam1"
+                value={customVamPass}
+                onChange={(e) => setCustomVamPass(e.target.value)}
+                className="h-8 text-xs font-mono"
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="vaf-pass" className="text-xs">
+                vaf1 password
+              </FieldLabel>
+              <Input
+                id="vaf-pass"
+                type="text"
+                placeholder="vaf1vaf1"
+                value={customVafPass}
+                onChange={(e) => setCustomVafPass(e.target.value)}
+                className="h-8 text-xs font-mono"
+              />
+            </Field>
+          </div>
+        )}
+
+        {seedError && <FormAlert variant="error">{seedError}</FormAlert>}
+        {seedSuccess && (
+          <div className="space-y-2">
+            <FormAlert variant="success">{seedSuccess.message}</FormAlert>
+            <div className="border border-emerald-500/30 bg-emerald-500/5 p-3 text-xs space-y-1 font-mono">
+              <p className="font-sans font-medium text-foreground">
+                Client login credentials ready:
+              </p>
+              <p>
+                • Male: <span className="font-bold text-foreground">vam1</span> / pass:{" "}
+                <span className="font-bold text-foreground">{seedSuccess.passwords.vam1}</span> (character:{" "}
+                <span className="font-bold text-foreground">vam</span>)
+              </p>
+              <p>
+                • Female: <span className="font-bold text-foreground">vaf1</span> / pass:{" "}
+                <span className="font-bold text-foreground">{seedSuccess.passwords.vaf1}</span> (character:{" "}
+                <span className="font-bold text-foreground">vaf</span>)
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <Button
+            type="button"
+            size="sm"
+            disabled={seedPending}
+            onClick={() => void onSeedAccounts()}
+          >
+            {seedPending ? "Seeding accounts & characters…" : "Seed vam & vaf accounts"}
+          </Button>
+          <button
+            type="button"
+            onClick={() => setShowPasswordFields((v) => !v)}
+            className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-4"
+          >
+            {showPasswordFields ? "Hide custom passwords" : "Customize passwords"}
+          </button>
+        </div>
+      </div>
+
       <div className="border-2 border-border bg-card/60 p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium">Mannequin status</p>
