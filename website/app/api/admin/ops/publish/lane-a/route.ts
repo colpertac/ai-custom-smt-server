@@ -2,6 +2,7 @@ import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
 import { publishLaneAOps } from "@/lib/lane-a-ops"
+import { setPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -20,6 +21,16 @@ export async function POST(request: Request) {
     if (body.restart === false) restart = false
   } catch {
     /* default restart=true */
+  }
+
+  if (restart) {
+    setPlannedMaintenance(
+      ["channel"],
+      "admin_restart",
+      180,
+      session.username,
+      "Lane A publish"
+    )
   }
 
   try {

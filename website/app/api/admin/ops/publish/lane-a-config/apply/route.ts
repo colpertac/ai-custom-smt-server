@@ -2,6 +2,7 @@ import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
 import { applyOpsLaneAConfig } from "@/lib/ops-sidecar"
+import { setPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -32,6 +33,16 @@ export async function POST(request: Request) {
   }
   if (!releaseId) {
     return apiFail("releaseId is required", 400, "BAD_REQUEST")
+  }
+
+  if (restart) {
+    setPlannedMaintenance(
+      ["channel", "world"],
+      "admin_restart",
+      180,
+      session.username,
+      `Lane A config apply (${releaseId})`
+    )
   }
 
   try {

@@ -465,3 +465,84 @@ export function setAboutMarkdown(markdown: string): string {
   setSiteSetting(KEY_ABOUT_MARKDOWN, next)
   return next
 }
+
+const KEY_SERVER_ALERT_WEBHOOK = "server_alert_discord_webhook"
+const KEY_SERVER_ALERT_ENABLED = "server_alert_enabled"
+const KEY_SERVER_ALERT_THRESHOLD_SEC = "server_alert_threshold_sec"
+const KEY_SERVER_ALERT_MENTION = "server_alert_mention"
+
+export type ServerAlertSettings = {
+  discordWebhook: string
+  enabled: boolean
+  offlineThresholdSec: number
+  mention: string
+}
+
+export function getServerAlertSettings(): ServerAlertSettings {
+  const envWebhook = process.env.SERVER_ALERT_DISCORD_WEBHOOK?.trim() || ""
+  const envEnabled = process.env.SERVER_ALERT_ENABLED?.trim().toLowerCase()
+  const envThreshold =
+    Number(process.env.SERVER_ALERT_OFFLINE_THRESHOLD_SEC) || 60
+  const envMention = process.env.SERVER_ALERT_MENTION?.trim() || ""
+
+  let dbWebhook: string | null = null
+  let dbEnabled: string | null = null
+  let dbThreshold: string | null = null
+  let dbMention: string | null = null
+
+  try {
+    dbWebhook = getSiteSetting(KEY_SERVER_ALERT_WEBHOOK)
+    dbEnabled = getSiteSetting(KEY_SERVER_ALERT_ENABLED)
+    dbThreshold = getSiteSetting(KEY_SERVER_ALERT_THRESHOLD_SEC)
+    dbMention = getSiteSetting(KEY_SERVER_ALERT_MENTION)
+  } catch {
+    // DB not available (e.g. lightweight test runner)
+  }
+
+  const discordWebhook = dbWebhook !== null ? dbWebhook.trim() : envWebhook
+  let enabled: boolean
+  if (dbEnabled !== null) {
+    enabled = dbEnabled === "1" || dbEnabled === "true"
+  } else if (envEnabled !== undefined && envEnabled !== "") {
+    enabled = envEnabled === "1" || envEnabled === "true"
+  } else {
+    enabled = Boolean(discordWebhook)
+  }
+
+  const thresholdRaw = dbThreshold !== null ? Number(dbThreshold) : envThreshold
+  const offlineThresholdSec =
+    Number.isFinite(thresholdRaw) && thresholdRaw > 0 ? thresholdRaw : 60
+  const mention = dbMention !== null ? dbMention.trim() : envMention
+
+  return {
+    discordWebhook,
+    enabled,
+    offlineThresholdSec,
+    mention,
+  }
+}
+
+export function setServerAlertSettings(
+  input: Partial<ServerAlertSettings>
+): ServerAlertSettings {
+  try {
+    if (input.discordWebhook !== undefined) {
+      setSiteSetting(KEY_SERVER_ALERT_WEBHOOK, input.discordWebhook.trim())
+    }
+    if (input.enabled !== undefined) {
+      setSiteSetting(KEY_SERVER_ALERT_ENABLED, input.enabled ? "1" : "0")
+    }
+    if (input.offlineThresholdSec !== undefined) {
+      setSiteSetting(
+        KEY_SERVER_ALERT_THRESHOLD_SEC,
+        String(Math.max(5, Math.floor(input.offlineThresholdSec)))
+      )
+    }
+    if (input.mention !== undefined) {
+      setSiteSetting(KEY_SERVER_ALERT_MENTION, input.mention.trim())
+    }
+  } catch {
+    // DB not available
+  }
+  return getServerAlertSettings()
+}

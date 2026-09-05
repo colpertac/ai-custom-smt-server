@@ -1,29 +1,60 @@
 "use client"
 
+import * as React from "react"
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
 
 import { cn } from "@/lib/utils"
+
+const SIZES = {
+  sm: {
+    root: "h-5 w-9 p-0.5",
+    thumb:
+      "size-4 data-checked:translate-x-4 data-[checked]:translate-x-4 group-data-checked/switch:translate-x-4 data-unchecked:translate-x-0 data-[unchecked]:translate-x-0 group-data-unchecked/switch:translate-x-0",
+  },
+  default: {
+    root: "h-6 w-11 p-0.5",
+    thumb:
+      "size-5 data-checked:translate-x-5 data-[checked]:translate-x-5 group-data-checked/switch:translate-x-5 data-unchecked:translate-x-0 data-[unchecked]:translate-x-0 group-data-unchecked/switch:translate-x-0",
+  },
+  lg: {
+    root: "h-7 w-12 p-0.5",
+    thumb:
+      "size-6 data-checked:translate-x-5 data-[checked]:translate-x-5 group-data-checked/switch:translate-x-5 data-unchecked:translate-x-0 data-[unchecked]:translate-x-0 group-data-unchecked/switch:translate-x-0",
+  },
+} as const
 
 function Switch({
   className,
   size = "default",
   ...props
 }: SwitchPrimitive.Root.Props & {
-  size?: "sm" | "default"
+  size?: "sm" | "default" | "lg"
 }) {
+  const sizeConfig = SIZES[size] ?? SIZES.default
+
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
       data-size={size}
       className={cn(
-        "peer group/switch relative inline-flex shrink-0 items-center rounded-full border border-transparent transition-all outline-none group-has-[:focus-visible]/field-label:border-transparent group-has-[:focus-visible]/field-label:ring-0 after:absolute after:-inset-x-3 after:-inset-y-2 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-[size=default]:h-[16.6px] data-[size=default]:w-[28px] data-[size=sm]:h-[14px] data-[size=sm]:w-[24px] dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 data-checked:bg-primary data-unchecked:bg-input dark:data-unchecked:bg-input/80 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        "peer group/switch relative inline-flex shrink-0 cursor-pointer items-center rounded-full border transition-all duration-200 outline-none select-none",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        sizeConfig.root,
+        // Unchecked track: distinctly visible, recessed pill with border & dark fill
+        "data-unchecked:bg-zinc-800 data-unchecked:border-zinc-600/80 data-[unchecked]:bg-zinc-800 data-[unchecked]:border-zinc-600/80 hover:data-unchecked:border-zinc-400 hover:data-unchecked:bg-zinc-750 shadow-inner",
+        // Checked track: vibrant primary/gold with matching border and soft glow
+        "data-checked:bg-primary data-checked:border-primary data-[checked]:bg-primary data-[checked]:border-primary shadow-xs data-checked:shadow-primary/40 hover:data-checked:brightness-105",
         className
       )}
       {...props}
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
-        className="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-3.5 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] dark:data-checked:bg-primary-foreground group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 dark:data-unchecked:bg-foreground"
+        className={cn(
+          "pointer-events-none block rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out",
+          sizeConfig.thumb
+        )}
       />
     </SwitchPrimitive.Root>
   )

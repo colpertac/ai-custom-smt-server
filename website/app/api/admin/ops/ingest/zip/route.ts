@@ -6,6 +6,7 @@ import {
   type OpsIngestKind,
   type OpsIngestMode,
 } from "@/lib/ops-sidecar"
+import { setPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 export const runtime = "nodejs"
@@ -75,6 +76,26 @@ export async function POST(request: Request) {
       `File too large for kind=${kind} (max ${MAX_BYTES[kind]} bytes)`,
       413,
       "PAYLOAD"
+    )
+  }
+
+  // If uploading server-side content (maps, binarydata, packages, content, release),
+  // suppress watchdog alerts for 300s while unpacking and restarting channel.
+  if (kind === "maps") {
+    setPlannedMaintenance(
+      ["channel", "world"],
+      "map_upload",
+      300,
+      session.username,
+      `Map upload (${file.name || "zip"})`
+    )
+  } else if (kind !== "overlay") {
+    setPlannedMaintenance(
+      ["channel"],
+      "content_upload",
+      300,
+      session.username,
+      `${kind} upload (${file.name || "zip"})`
     )
   }
 

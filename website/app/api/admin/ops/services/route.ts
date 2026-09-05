@@ -8,6 +8,10 @@ import {
   startOpsServices,
   stopOpsServices,
 } from "@/lib/ops-sidecar"
+import {
+  clearPlannedMaintenance,
+  setPlannedMaintenance,
+} from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 const bodySchema = z.object({
@@ -43,6 +47,20 @@ export async function POST(request: Request) {
 
   const { action, service } = parsed.data
   const label = service.charAt(0).toUpperCase() + service.slice(1)
+
+  if (action === "start") {
+    clearPlannedMaintenance([service])
+  } else if (action === "stop") {
+    setPlannedMaintenance([service], "admin_stop", null, session.username)
+  } else if (action === "restart") {
+    setPlannedMaintenance(
+      [service],
+      "admin_restart",
+      180,
+      session.username,
+      `${label} restart`
+    )
+  }
 
   try {
     const result =

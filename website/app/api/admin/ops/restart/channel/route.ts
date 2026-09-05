@@ -2,6 +2,7 @@ import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
 import { restartOpsChannel } from "@/lib/ops-sidecar"
+import { setPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST() {
@@ -13,6 +14,15 @@ export async function POST() {
   if (!isAdminLevel(session.userLevel)) {
     return apiFail("Forbidden", 403, "FORBIDDEN")
   }
+
+  // Grace period so watchdog suppresses false crash alerts while channel restarts
+  setPlannedMaintenance(
+    ["channel"],
+    "admin_restart",
+    180,
+    session.username,
+    "Channel restart"
+  )
 
   try {
     const result = await restartOpsChannel(session.username)

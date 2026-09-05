@@ -2,6 +2,7 @@ import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
 import { startOpsServers } from "@/lib/ops-sidecar"
+import { clearPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
 /** Compose start waits on healthchecks — allow long-running request. */
@@ -16,6 +17,9 @@ export async function POST() {
   if (!isAdminLevel(session.userLevel)) {
     return apiFail("Forbidden", 403, "FORBIDDEN")
   }
+
+  // Clear any intentional stop maintenance flags
+  clearPlannedMaintenance(["all", "lobby", "world", "channel"])
 
   try {
     const result = await startOpsServers(session.username)

@@ -120,3 +120,26 @@ export function getPublicAppUrl(): string {
   return getSiteUrl() || "http://localhost:3500"
 }
 
+/** Outgoing Discord webhook for server crash alerts (bootleg Sentry). */
+export function getServerAlertDiscordWebhook(): string | undefined {
+  const envVal = process.env.SERVER_ALERT_DISCORD_WEBHOOK?.trim()
+  return envVal || undefined
+}
+
+export function isServerAlertEnabled(): boolean {
+  const envVal = process.env.SERVER_ALERT_ENABLED?.trim().toLowerCase()
+  if (envVal === "true" || envVal === "1") return true
+  if (envVal === "false" || envVal === "0") return false
+  return Boolean(getServerAlertDiscordWebhook())
+}
+
+export function getServerAlertOfflineThresholdSec(): number {
+  const num = Number(process.env.SERVER_ALERT_OFFLINE_THRESHOLD_SEC)
+  return Number.isFinite(num) && num > 0 ? num : 60
+}
+
+export function getServerAlertMention(): string {
+  return process.env.SERVER_ALERT_MENTION?.trim() || ""
+}
+
+
