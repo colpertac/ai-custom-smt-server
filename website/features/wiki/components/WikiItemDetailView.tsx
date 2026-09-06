@@ -19,6 +19,7 @@ import { WikiFusionBox } from "@/features/wiki/components/WikiFusionBox"
 import { WikiItemIcon } from "@/features/wiki/components/WikiItemIcon"
 import { WikiBreadcrumb } from "@/features/wiki/components/WikiShell"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
+import { WikiStoreBuyPanel } from "@/features/store/components/WikiStoreBuyPanel"
 import { equipmentSetMembership } from "@/lib/gear-planner-combat"
 
 export function WikiItemDetailView({ item }: { item: WikiItem }) {
@@ -181,6 +182,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
                   : "—"}
               </MetaRow>
             </MetaPanel>
+
+            <WikiStoreBuyPanel itemId={item.id} itemName={item.name} />
           </aside>
         </div>
       </article>

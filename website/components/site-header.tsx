@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { useLogout, useSessionUser } from "@/features/auth/hooks"
+import { CartNavLink } from "@/features/store/components/CartNavLink"
 import { isAdminLevel } from "@/lib/admin-level"
 import { SkinSwitcher } from "@/components/skin-switcher"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -25,6 +26,7 @@ export function SiteHeader() {
   const logoutMutation = useLogout()
   const admin = isAdminLevel(session?.userLevel)
   const [wikiEnabled, setWikiEnabled] = useState(false)
+  const [storeEnabled, setStoreEnabled] = useState(false)
   const [siteName, setSiteName] = useState(DEFAULT_SITE_NAME)
   const [iconUrl, setIconUrl] = useState(DEFAULT_SITE_ICON_URL)
 
@@ -37,6 +39,21 @@ export function SiteHeader() {
       })
       .catch(() => {
         if (!cancelled) setWikiEnabled(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch("/api/store/status")
+      .then((r) => r.json())
+      .then((body: { enabled?: boolean }) => {
+        if (!cancelled) setStoreEnabled(Boolean(body.enabled))
+      })
+      .catch(() => {
+        if (!cancelled) setStoreEnabled(false)
       })
     return () => {
       cancelled = true
@@ -103,6 +120,15 @@ export function SiteHeader() {
             className={cn(navClass, pathname.startsWith("/news") && "text-gold")}
           >
             News
+          </Link>
+          <Link
+            href="/events"
+            className={cn(
+              navClass,
+              pathname.startsWith("/events") && "text-gold"
+            )}
+          >
+            Events
           </Link>
           <Link
             href="/about"
@@ -176,6 +202,7 @@ export function SiteHeader() {
 
           {session ? (
             <>
+              {wikiEnabled && storeEnabled ? <CartNavLink /> : null}
               <Link
                 href="/account"
                 className={cn(

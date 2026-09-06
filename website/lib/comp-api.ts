@@ -479,6 +479,39 @@ export async function adminDeletePromo(
   return { error: String(data.error ?? "Unknown error") }
 }
 
+/**
+ * Lobby `/admin/post_items` — grant ShopProductData rows to an account mailbox,
+ * optionally debiting CP atomically.
+ */
+export async function adminPostItems(
+  auth: CompAuthState,
+  payload: {
+    username: string
+    products: number[]
+    cp?: number
+  }
+): Promise<{ error: string; cp?: number }> {
+  const body: JsonObject = {
+    username: payload.username.toLowerCase(),
+    products: payload.products,
+  }
+  if (payload.cp != null && payload.cp > 0) {
+    body.cp = payload.cp
+  }
+  const data = await authenticatedRequest(auth, "/admin/post_items", body)
+  const error = String(data.error ?? "Unknown error")
+  const cp =
+    typeof data.cp === "number"
+      ? data.cp
+      : data.cp != null
+        ? Number(data.cp)
+        : undefined
+  return {
+    error,
+    cp: Number.isFinite(cp) ? cp : undefined,
+  }
+}
+
 export async function adminUpdateAccount(
   auth: CompAuthState,
   payload: {

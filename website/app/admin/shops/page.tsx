@@ -4,7 +4,7 @@ import { CompShopsPanel } from "@/features/admin-shops/components/CompShopsPanel
 import { requireAdmin } from "@/features/auth/server"
 
 export const metadata: Metadata = {
-  title: "Shops",
+  title: "COMP shop",
 }
 
 export default async function AdminShopsPage() {
