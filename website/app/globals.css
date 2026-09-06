@@ -49,8 +49,10 @@
 
   --shadow-2xs: 0 1px 0 0 hsl(0 0% 0% / 0.35);
   --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.4);
-  --shadow-sm: 0 2px 4px 0 hsl(0 0% 0% / 0.45), inset 0 1px 0 hsl(210 20% 80% / 0.04);
-  --shadow: 0 2px 8px 0 hsl(0 0% 0% / 0.5), inset 0 1px 0 hsl(210 20% 80% / 0.05);
+  --shadow-sm:
+    0 2px 4px 0 hsl(0 0% 0% / 0.45), inset 0 1px 0 hsl(210 20% 80% / 0.04);
+  --shadow:
+    0 2px 8px 0 hsl(0 0% 0% / 0.5), inset 0 1px 0 hsl(210 20% 80% / 0.05);
   --shadow-md: 0 4px 12px 0 hsl(0 0% 0% / 0.55);
   --shadow-lg: 0 8px 20px 0 hsl(0 0% 0% / 0.6);
   --shadow-xl: 0 12px 28px 0 hsl(0 0% 0% / 0.65);
@@ -874,6 +876,20 @@
     animation: blink-layer-orange 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
+  @keyframes conflict-blink {
+    0%,
+    100% {
+      background-color: rgba(239, 68, 68, 0.12);
+    }
+    50% {
+      background-color: rgba(239, 68, 68, 0.42);
+    }
+  }
+
+  .animate-conflict-blink {
+    animation: conflict-blink 0.1s ease-in-out 2;
+  }
+
   .font-heading {
     font-family: var(--skin-heading);
     letter-spacing: 0.04em;
@@ -882,5 +898,61 @@
   .pixelated {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+  }
+
+  /* FullCalendar — schedule editor (dark admin skins) */
+  .event-schedule-calendar .fc {
+    --fc-border-color: color-mix(in oklab, var(--border) 80%, transparent);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: color-mix(in oklab, var(--muted) 40%, transparent);
+    --fc-list-event-hover-bg-color: color-mix(
+      in oklab,
+      var(--muted) 50%,
+      transparent
+    );
+    --fc-today-bg-color: color-mix(in oklab, var(--primary) 12%, transparent);
+    --fc-button-bg-color: color-mix(in oklab, var(--muted) 60%, transparent);
+    --fc-button-border-color: var(--border);
+    --fc-button-text-color: var(--foreground);
+    --fc-button-hover-bg-color: color-mix(
+      in oklab,
+      var(--muted) 80%,
+      transparent
+    );
+    --fc-button-hover-border-color: var(--border);
+    --fc-button-active-bg-color: color-mix(
+      in oklab,
+      var(--primary) 25%,
+      transparent
+    );
+    --fc-button-active-border-color: color-mix(
+      in oklab,
+      var(--primary) 50%,
+      transparent
+    );
+    --fc-event-border-color: transparent;
+    color: var(--foreground);
+    font-size: 0.75rem;
+  }
+  .event-schedule-calendar .fc .fc-toolbar-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .event-schedule-calendar .fc .fc-col-header-cell-cushion,
+  .event-schedule-calendar .fc .fc-daygrid-day-number {
+    color: var(--muted-foreground);
+    text-decoration: none;
+  }
+  .event-schedule-calendar .fc .fc-event {
+    border-radius: 2px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .event-schedule-calendar .fc .fc-event-selected {
+    outline: 2px solid color-mix(in oklab, var(--primary) 80%, white);
+    outline-offset: 1px;
+  }
+  .event-schedule-calendar .fc .fc-highlight {
+    background: color-mix(in oklab, var(--primary) 20%, transparent);
   }
 }

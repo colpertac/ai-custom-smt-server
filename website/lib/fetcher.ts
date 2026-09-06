@@ -25,25 +25,33 @@ export async function fetcher<T>(url: string, options?: Options): Promise<T> {
   if (!response.ok) {
     let message = `HTTP ${response.status}`
     let errorCode = "HTTP_ERROR"
+    let errorData: Record<string, unknown> | undefined
     try {
-      const errorData = (await response.json()) as Partial<ApiErrorBody>
-      const raw = errorData?.message
+      const parsed = (await response.json()) as Partial<ApiErrorBody> & {
+        data?: unknown
+      }
+      const raw = parsed?.message
       message =
         typeof raw === "string" && raw
           ? raw
           : Array.isArray(raw)
             ? (raw as string[]).join(", ")
             : message
-      errorCode = errorData?.error || errorCode
+      errorCode = parsed?.error || errorCode
+      if (parsed?.data !== undefined) {
+        errorData = parsed.data as Record<string, unknown>
+      }
     } catch {
       /* keep defaults */
     }
     const err = new Error(message) as Error & {
       statusCode: number
       error: string
+      data?: unknown
     }
     err.statusCode = response.status
     err.error = errorCode
+    if (errorData !== undefined) err.data = errorData
     throw err
   }
 

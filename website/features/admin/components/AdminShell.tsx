@@ -19,7 +19,7 @@ function navPendingDot(
   openReportsPending: boolean
 ): { title: string } | null {
   if (itemHref === "/admin" && laneAPending) {
-    return { title: "Unpublished game content changes" }
+    return { title: "Unpublished changes — publish / restart needed" }
   }
   if (itemHref === "/admin/reports" && openReportsPending) {
     return { title: "Open player reports" }

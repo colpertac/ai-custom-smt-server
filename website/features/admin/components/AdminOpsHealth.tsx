@@ -651,7 +651,7 @@ export function AdminOpsHealth() {
               laneAPending.pending ? "text-cyan-300" : "text-muted-foreground"
             )}
           >
-            Shops &amp; payouts
+            Shops, payouts &amp; events
           </p>
           {laneAPending.pending ? (
             <span className="inline-flex items-center gap-1.5 rounded-sm border border-cyan-400/50 bg-cyan-400/15 px-1.5 py-0.5 text-[0.65rem] font-medium tracking-wide text-cyan-200 uppercase">
@@ -687,6 +687,21 @@ export function AdminOpsHealth() {
                 <li>
                   <span className="font-medium text-cyan-50">Dungeon loot</span>{" "}
                   — working copy has unpublished boss-crate changes
+                </li>
+              ) : null}
+              {laneAPending.channelDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Events / channel</span>{" "}
+                  — draft <code className="text-cyan-50">channel.xml</code>{" "}
+                  differs from live; Apply &amp; Restart on Events (Manual) or
+                  wait for the schedule reconciler
+                </li>
+              ) : null}
+              {laneAPending.eventsSchedulePending ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Event schedule</span>{" "}
+                  — saved schedule differs from live; restart the game channel
+                  (Power → Channel, or Publish &amp; restart) to apply
                 </li>
               ) : null}
             </ul>

@@ -28,6 +28,9 @@ import {
 import type { CustomEventMessage } from "./report-reward-types.ts"
 import { parseCompShopXml } from "./comp-shop-xml.ts"
 import { validateCompShop } from "./comp-shops-fs.ts"
+import { getEventScheduleStatus } from "./events/event-schedule-fs.ts"
+import { setsEqual } from "./events/event-schedule-math.ts"
+import { listConfigStatus } from "./server-config/fs.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
 export const LANE_A_REPORT_REWARDS_ZIP = "zzz_ai_custom_report_rewards_admin.zip"
@@ -455,11 +458,19 @@ export type LaneAPendingStatus = {
   shopsDirty: boolean
   payoutsDirty: boolean
   reportRewardsDirty: boolean
+  /** Working channel.xml differs from live (manual events / config draft). */
+  channelDirty: boolean
+  /**
+   * Schedule enabled and current desired events differ from live.
+   * Next daily flip alone does not count (that is expected schedule, not drift).
+   */
+  eventsSchedulePending: boolean
 }
 
 /**
  * True when working shops/payouts differ from what is live on the game server
- * (admin must Publish shops & payouts on Overview).
+ * (admin must Publish shops & payouts on Overview), or when channel.xml /
+ * event schedule needs apply/restart.
  *
  * Payouts compare working JSON to a stamp written on successful publish so
  * disabled / conflict-skipped drafts still show as pending.
@@ -468,15 +479,25 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
   const runtime = getRuntimeDir()
   const shopsLive = path.join(runtime, "datastore", "shops")
 
-  const [shopsWorking, shopsLiveDigest, payoutsWorking, publishedPayouts, reportWorking, publishedReports] =
-    await Promise.all([
-      shopsTreeDigest(shopsWorkingDir()),
-      shopsTreeDigest(shopsLive),
-      workingPayoutsJsonDigest(),
-      readPublishedPayoutsJsonDigest(),
-      workingReportRewardsJsonDigest(),
-      readPublishedReportRewardsDigest(),
-    ])
+  const [
+    shopsWorking,
+    shopsLiveDigest,
+    payoutsWorking,
+    publishedPayouts,
+    reportWorking,
+    publishedReports,
+    configStatuses,
+    scheduleStatus,
+  ] = await Promise.all([
+    shopsTreeDigest(shopsWorkingDir()),
+    shopsTreeDigest(shopsLive),
+    workingPayoutsJsonDigest(),
+    readPublishedPayoutsJsonDigest(),
+    workingReportRewardsJsonDigest(),
+    readPublishedReportRewardsDigest(),
+    listConfigStatus(),
+    getEventScheduleStatus().catch(() => null),
+  ])
 
   const shopsDirty = shopsWorking !== shopsLiveDigest
   // No stamp yet → any working payout draft counts as unpublished.
@@ -488,11 +509,33 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     publishedReports == null
       ? reportWorking !== createHash("sha256").update("").digest("hex")
       : reportWorking !== publishedReports
+
+  const channelDirty =
+    configStatuses.find((s) => s.id === "channel")?.dirty === true
+
+  // Only flag when live does not match *current* schedule day.
+  // pendingRestartAt is always set to the next flip while awaiting — that is
+  // normal and must not keep the Overview cyan dot lit after a successful apply.
+  const eventsSchedulePending = Boolean(
+    scheduleStatus?.config.enabled &&
+      !setsEqual(
+        scheduleStatus.desiredActiveIds,
+        scheduleStatus.liveActiveIds
+      )
+  )
+
   return {
-    pending: shopsDirty || payoutsDirty || reportRewardsDirty,
+    pending:
+      shopsDirty ||
+      payoutsDirty ||
+      reportRewardsDirty ||
+      channelDirty ||
+      eventsSchedulePending,
     shopsDirty,
     payoutsDirty,
     reportRewardsDirty,
+    channelDirty,
+    eventsSchedulePending,
   }
 }
 

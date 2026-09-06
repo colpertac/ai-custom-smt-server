@@ -35,6 +35,9 @@ Env:
   (see [AI/phases/phase16.md](../AI/phases/phase16.md))
 - `RESEND_API_KEY` / `RESEND_FROM_EMAIL` / `RESEND_FROM_NAME` — welcome + reset mail (server-only); prefer **Admin → Email** in production
 - `COMP_RESET_SECRET` — lobby password-reset APIs; auto-managed via **Admin → Email** (writes `comp-reset-secret` for Docker lobby)
+- `COMP_ANNOUNCE_USER` / `COMP_ANNOUNCE_PASSWORD` — lobby admin credentials for
+  event-schedule restart countdowns (10/5/1 min world ticker, same as Admin →
+  Announce). Optional; rotation still runs if unset, but in-game announces are skipped.
 
 Email layout (monno-style):
 
