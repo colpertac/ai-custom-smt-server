@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { DungeonLootDrawer } from "@/features/admin-dungeon-loot/components/DungeonLootDrawer"
+import { RotationFacingPicker } from "@/features/admin-dungeon-loot/components/RotationFacingPicker"
 import {
   groupDungeonLootByFamily,
   variantDisplayLabel,
@@ -647,7 +648,14 @@ export function DungeonLootPanel() {
                         </div>
                       </Field>
                       <Field>
-                        <FieldLabel>Rotation</FieldLabel>
+                        <FieldLabel>
+                          <RotationFacingPicker
+                            value={trader.rotation}
+                            onChange={(rotation) =>
+                              updateTrader(i, { rotation })
+                            }
+                          />
+                        </FieldLabel>
                         <Input
                           type="number"
                           step="any"
