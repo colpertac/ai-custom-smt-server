@@ -3,8 +3,9 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Coins } from "lucide-react"
 
-import { useLogout, useSessionUser } from "@/features/auth/hooks"
+import { useLogout, useSessionDetails, useSessionUser } from "@/features/auth/hooks"
 import { CartNavLink } from "@/features/store/components/CartNavLink"
 import { isAdminLevel } from "@/lib/admin-level"
 import { SkinSwitcher } from "@/components/skin-switcher"
@@ -18,6 +19,29 @@ import {
 
 const navClass =
   "shrink-0 text-xs uppercase text-nav-muted transition-colors hover:text-gold-dim no-underline tracking-[var(--density-nav-tracking)]"
+
+/** Live CP from lobby — only mounted when store is on + user logged in. */
+function HeaderCpBalance() {
+  const { data, isLoading } = useSessionDetails()
+  const cp = data?.cp
+
+  return (
+    <Link
+      href="/account"
+      className={cn(
+        navClass,
+        "inline-flex items-center gap-1 tabular-nums text-gold-dim hover:text-gold-hot"
+      )}
+      title="Your CP balance"
+    >
+      <Coins className="size-3.5 shrink-0" aria-hidden />
+      <span>
+        {isLoading ? "…" : cp != null ? cp.toLocaleString() : "—"}
+        <span className="ml-0.5 opacity-80">CP</span>
+      </span>
+    </Link>
+  )
+}
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -202,6 +226,7 @@ export function SiteHeader() {
 
           {session ? (
             <>
+              {wikiEnabled && storeEnabled ? <HeaderCpBalance /> : null}
               {wikiEnabled && storeEnabled ? <CartNavLink /> : null}
               <Link
                 href="/account"

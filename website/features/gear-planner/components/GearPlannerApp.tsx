@@ -11,6 +11,7 @@ import {
 
 import type { WikiItem } from "@/content/wiki/types"
 import { GearBuildsPanel } from "@/features/gear-planner/components/GearBuildsPanel"
+import { GearBuilderBuyPanel } from "@/features/gear-planner/components/GearBuilderBuyPanel"
 import { GearCombatMatrix } from "@/features/gear-planner/components/GearCombatMatrix"
 import { GearEnchantPicker } from "@/features/gear-planner/components/GearEnchantPicker"
 import {
@@ -23,7 +24,7 @@ import {
   GearSlotSidebar,
   type SidebarFlashTarget,
 } from "@/features/gear-planner/components/GearSlotSidebar"
-import { CircleHelp, Sparkles } from "lucide-react"
+import { CircleHelp, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -437,7 +438,7 @@ function GearPlannerAppClient({
                   <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto sm:max-w-3xl">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2 font-heading text-lg tracking-[0.08em] text-gold-dim uppercase">
-                        <Sparkles className="size-4 text-gold" aria-hidden />
+                        <WandSparkles className="size-4 text-gold" aria-hidden />
                         How the Gear Builder Works
                       </DialogTitle>
                       <DialogDescription className="text-xs text-muted-foreground">
@@ -635,6 +636,7 @@ function GearPlannerAppClient({
             onLoad={applyStored}
             initialActive={accountBuildMeta}
           />
+          <GearBuilderBuyPanel loadout={loadout} />
           {accountBuildError ? (
             <p className="text-xs text-destructive">{accountBuildError}</p>
           ) : null}

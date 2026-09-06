@@ -512,6 +512,51 @@ export async function adminPostItems(
   }
 }
 
+export type CustomPostGrantItem = {
+  productId: number
+  basicEffect?: number
+  specialEffect?: number
+  tarot?: number
+  soul?: number
+}
+
+/**
+ * Lobby `/admin/grant_custom_items` — grant fused/enchanted PostItem rows,
+ * optionally debiting CP atomically.
+ */
+export async function adminGrantCustomItems(
+  auth: CompAuthState,
+  payload: {
+    username: string
+    items: CustomPostGrantItem[]
+    cp?: number
+  }
+): Promise<{ error: string; cp?: number }> {
+  const body: JsonObject = {
+    username: payload.username.toLowerCase(),
+    items: payload.items,
+  }
+  if (payload.cp != null && payload.cp > 0) {
+    body.cp = payload.cp
+  }
+  const data = await authenticatedRequest(
+    auth,
+    "/admin/grant_custom_items",
+    body
+  )
+  const error = String(data.error ?? "Unknown error")
+  const cp =
+    typeof data.cp === "number"
+      ? data.cp
+      : data.cp != null
+        ? Number(data.cp)
+        : undefined
+  return {
+    error,
+    cp: Number.isFinite(cp) ? cp : undefined,
+  }
+}
+
 export async function adminUpdateAccount(
   auth: CompAuthState,
   payload: {
