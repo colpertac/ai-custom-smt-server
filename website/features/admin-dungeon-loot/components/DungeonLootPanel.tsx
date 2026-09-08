@@ -34,7 +34,8 @@ import {
   type ReportRewardGlobalFile,
 } from "@/lib/report-reward-types"
 
-const AUTO_SAVE_MS = 900
+/** Debounce only for global settings fields (sidebar dungeon saves on blur). */
+const GLOBAL_AUTO_SAVE_MS = 900
 
 const TIERS = [
   { key: "bronze" as const, label: "Bronze", headClass: "bg-[#3d2a1a]/80 text-[#e8c49a]" },
@@ -84,6 +85,8 @@ export function DungeonLootPanel() {
 
   const draftRef = useRef(draft)
   draftRef.current = draft
+  const baselineRef = useRef(baseline)
+  baselineRef.current = baseline
 
   useEffect(() => {
     if (globalQuery.data && globalBaseline == null) {
@@ -101,6 +104,14 @@ export function DungeonLootPanel() {
   globalDraftRef.current = globalDraft
 
   const openDungeon = useCallback(async (id: string) => {
+    if (draftRef.current && fingerprint(draftRef.current) !== baselineRef.current) {
+      try {
+        await persistDungeonRef.current()
+      } catch {
+        // keep editing current dungeon if save failed
+        return
+      }
+    }
     setSelectedId(id)
     setSaveError(null)
     setSaveOk(false)
@@ -115,6 +126,28 @@ export function DungeonLootPanel() {
     }
   }, [])
 
+  const persistDungeon = useCallback(
+    async (override?: ReportRewardDungeonFile) => {
+      const current = override ?? draftRef.current
+      if (!current) return
+      if (fingerprint(current) === baselineRef.current) return
+      setSaveError(null)
+      try {
+        await saveDungeon.mutateAsync({ id: current.dungeon.id, body: current })
+        const fp = fingerprint(current)
+        setBaseline(fp)
+        baselineRef.current = fp
+        setSaveOk(true)
+      } catch (e) {
+        setSaveError(e instanceof Error ? e.message : "Save failed")
+        throw e
+      }
+    },
+    [saveDungeon]
+  )
+  const persistDungeonRef = useRef(persistDungeon)
+  persistDungeonRef.current = persistDungeon
+
   useEffect(() => {
     const id = searchParams.get("dungeon")?.trim()
     if (id && id !== selectedId) {
@@ -123,28 +156,6 @@ export function DungeonLootPanel() {
   }, [searchParams, selectedId, openDungeon])
 
   const isDirty = draft != null && baseline != null && fingerprint(draft) !== baseline
-
-  const persistDungeon = useCallback(async () => {
-    const current = draftRef.current
-    if (!current || !isDirty) return
-    setSaveError(null)
-    try {
-      await saveDungeon.mutateAsync({ id: current.dungeon.id, body: current })
-      setBaseline(fingerprint(current))
-      setSaveOk(true)
-    } catch (e) {
-      setSaveError(e instanceof Error ? e.message : "Save failed")
-      throw e
-    }
-  }, [isDirty, saveDungeon])
-
-  useEffect(() => {
-    if (!draft || !isDirty) return
-    const t = setTimeout(() => {
-      void persistDungeon()
-    }, AUTO_SAVE_MS)
-    return () => clearTimeout(t)
-  }, [draft, isDirty, persistDungeon])
 
   const persistGlobal = useCallback(async () => {
     const current = globalDraftRef.current
@@ -162,13 +173,15 @@ export function DungeonLootPanel() {
     if (!globalDirty) return
     const t = setTimeout(() => {
       void persistGlobal()
-    }, AUTO_SAVE_MS)
+    }, GLOBAL_AUTO_SAVE_MS)
     return () => clearTimeout(t)
   }, [globalDraft, globalDirty, persistGlobal])
 
   const handleDungeonChange = useCallback(
     (next: ReportRewardDungeonFile) => {
+      setSaveOk(false)
       setDraft(next)
+      draftRef.current = next
       patchDungeonList(next)
     },
     [patchDungeonList]
@@ -863,9 +876,11 @@ export function DungeonLootPanel() {
             onChange={handleDungeonChange}
             onFlushSave={persistDungeon}
             onClearSelection={() => {
-              setSelectedId(null)
-              setDraft(null)
-              setBaseline(null)
+              void persistDungeon().finally(() => {
+                setSelectedId(null)
+                setDraft(null)
+                setBaseline(null)
+              })
             }}
           />
         ) : (

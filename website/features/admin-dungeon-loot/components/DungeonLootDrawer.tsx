@@ -29,7 +29,8 @@ type Props = {
   saveError: string | null
   saveOk: boolean
   onChange: (next: ReportRewardDungeonFile) => void
-  onFlushSave: () => void | Promise<void>
+  /** Pass `next` when flushing in the same tick as a local update. */
+  onFlushSave: (next?: ReportRewardDungeonFile) => void | Promise<void>
   onClearSelection: () => void
 }
 
@@ -79,6 +80,11 @@ export function DungeonLootDrawer({
 }: Props) {
   const d = draft.dungeon
 
+  const applyImmediate = (next: ReportRewardDungeonFile) => {
+    onChange(next)
+    void onFlushSave(next)
+  }
+
   return (
     <TooltipProvider delay={200}>
     <aside className="flex max-h-[calc(100vh-8rem)] w-full flex-col border-2 border-border bg-card lg:w-[28rem] lg:shrink-0">
@@ -102,7 +108,7 @@ export function DungeonLootDrawer({
               className="mt-0.5"
               checked={d.enabled}
               onChange={(e) =>
-                onChange(updateDungeon(draft, { enabled: e.target.checked }))
+                applyImmediate(updateDungeon(draft, { enabled: e.target.checked }))
               }
             />
             <span>
@@ -122,7 +128,8 @@ export function DungeonLootDrawer({
                 Drops in boss crate
               </h3>
               <p className="text-[0.65rem] text-muted-foreground">
-                Item id + how many can drop (min–max) and chance.
+                Item id + how many can drop (min–max) and chance. Saves when you
+                leave a field.
               </p>
             </div>
             <Button
@@ -130,7 +137,7 @@ export function DungeonLootDrawer({
               size="sm"
               variant="outline"
               onClick={() =>
-                onChange(
+                applyImmediate(
                   updateDungeon(draft, {
                     drops: [
                       ...d.drops,
@@ -195,6 +202,7 @@ export function DungeonLootDrawer({
                           })
                         )
                       }
+                      onBlur={() => void onFlushSave()}
                     />
                   </td>
                   <td className="py-1 pr-1">
@@ -211,6 +219,7 @@ export function DungeonLootDrawer({
                           })
                         )
                       }
+                      onBlur={() => void onFlushSave()}
                     />
                   </td>
                   <td className="py-1 pr-1">
@@ -229,6 +238,7 @@ export function DungeonLootDrawer({
                           })
                         )
                       }
+                      onBlur={() => void onFlushSave()}
                     />
                   </td>
                   <td className="py-1 pr-1">
@@ -247,6 +257,7 @@ export function DungeonLootDrawer({
                           })
                         )
                       }
+                      onBlur={() => void onFlushSave()}
                     />
                   </td>
                   <td className="py-1 pr-1">
@@ -266,6 +277,7 @@ export function DungeonLootDrawer({
                           })
                         )
                       }
+                      onBlur={() => void onFlushSave()}
                     />
                   </td>
                   <td className="py-1">
@@ -276,7 +288,7 @@ export function DungeonLootDrawer({
                       className="text-[#ff9b9b]"
                       aria-label="Remove drop"
                       onClick={() =>
-                        onChange(
+                        applyImmediate(
                           updateDungeon(draft, {
                             drops: d.drops.filter((_, j) => j !== i),
                           })
@@ -316,7 +328,7 @@ export function DungeonLootDrawer({
                   name={`tradable-${d.id}`}
                   checked={Boolean(drop.tradableForCp)}
                   onChange={() =>
-                    onChange(
+                    applyImmediate(
                       updateDungeon(draft, {
                         drops: d.drops.map((row, j) => ({
                           ...row,
@@ -337,7 +349,7 @@ export function DungeonLootDrawer({
                 type="button"
                 className="text-[0.65rem] text-muted-foreground underline-offset-2 hover:underline"
                 onClick={() =>
-                  onChange(
+                  applyImmediate(
                     updateDungeon(draft, {
                       drops: d.drops.map((row) => ({
                         ...row,
@@ -371,12 +383,6 @@ export function DungeonLootDrawer({
           </Link>
           . Extra crate loot stays editable here.
         </p>
-      </div>
-
-      <div className="mt-auto border-t-2 border-border p-3">
-        <Button type="button" size="sm" variant="outline" onClick={() => void onFlushSave()}>
-          Save now
-        </Button>
       </div>
     </aside>
     </TooltipProvider>
