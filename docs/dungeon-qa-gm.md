@@ -8,9 +8,8 @@ floor, resets the payout dedup flag, enables invuln, and starts the boss event.
 
 
 
-Requires channel rebuild after C++ changes and `UserLevel` ≥ 200 (same as
-
-`@instance`).
+Requires channel rebuild after C++ changes and `UserLevel` ≥ 50
+(`GM_CMD_LVL_DUNGEON_QA`; Basic GM). Separate from `@instance` (Creative, 25).
 
 
 

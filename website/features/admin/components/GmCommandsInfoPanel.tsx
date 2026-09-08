@@ -13,12 +13,12 @@ import {
 const LEVEL_FILTERS = [
   { id: "all", label: "All" },
   { id: "0", label: "=0", level: 0 },
-  { id: "1", label: "=1", level: 1 },
-  { id: "100", label: "=100", level: 100 },
-  { id: "200", label: "=200", level: 200 },
-  { id: "250", label: "=250", level: 250 },
+  { id: "1", label: "Explorer =1", level: 1 },
+  { id: "10", label: "Story =10", level: 10 },
+  { id: "25", label: "Creative =25", level: 25 },
+  { id: "50", label: "Basic GM =50", level: 50 },
   { id: "400", label: "=400", level: 400 },
-  { id: "650+", label: "≥650", minLevel: 650 },
+  { id: "700+", label: "≥700", minLevel: 700 },
 ] as const
 
 function matchesQuery(cmd: GmCommand, q: string): boolean {
@@ -41,7 +41,7 @@ function passesLevelFilter(
   filterId: (typeof LEVEL_FILTERS)[number]["id"]
 ): boolean {
   if (filterId === "all") return true
-  if (filterId === "650+") return cmd.level >= 650
+  if (filterId === "700+") return cmd.level >= 700
   return cmd.level === Number(filterId)
 }
 

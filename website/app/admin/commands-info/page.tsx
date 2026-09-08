@@ -18,9 +18,12 @@ export default async function AdminCommandsInfoPage() {
         <span className="font-medium text-foreground">
           UserLevel ≥ each command&apos;s threshold
         </span>
-        ; higher levels unlock every lower tier. Thresholds are stock{" "}
+        ; higher levels unlock every lower tier. Thresholds are{" "}
         <code className="text-xs">GM_CMD_LVL_*</code> values (editable under
-        Config → Constants). New accounts get{" "}
+        Config → Constants): <span className="text-foreground">1</span> Explorer,{" "}
+        <span className="text-foreground">10</span> Story,{" "}
+        <span className="text-foreground">25</span> Creative,{" "}
+        <span className="text-foreground">50</span> Basic GM. New accounts get{" "}
         <code className="text-xs">RegistrationUserLevel</code> from lobby
         config.
       </p>

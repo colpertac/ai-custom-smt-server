@@ -32,9 +32,10 @@ export function RegistrationUserLevelHelp() {
             <span className="font-medium text-foreground">
               UserLevel ≥ threshold
             </span>
-            . Higher levels include every lower tier. Thresholds are stock{" "}
-            <code className="text-[0.7rem]">GM_CMD_LVL_*</code> values from{" "}
-            <code className="text-[0.7rem]">constants.xml</code>.{" "}
+            . Higher levels include every lower tier. Ladder: 1 Explorer, 10
+            Story, 25 Creative, 50 Basic GM (
+            <code className="text-[0.7rem]">GM_CMD_LVL_*</code> in{" "}
+            <code className="text-[0.7rem]">constants.xml</code>).{" "}
             <Link
               href="/admin/commands-info"
               className="font-medium text-foreground underline-offset-2 hover:underline"

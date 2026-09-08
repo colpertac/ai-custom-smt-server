@@ -56,7 +56,7 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
   RegistrationTicketCount:
     "Character creation tickets given to a brand-new registered account.",
   RegistrationUserLevel:
-    "UserLevel assigned on registration (0 = normal player; high values are GM-like).",
+    "UserLevel on registration (0 normal; 1 Explorer; 10 Story; 25 Creative; 50+ Basic GM / staff).",
   RegistrationAccountEnabled:
     "Whether newly registered accounts are enabled immediately.",
   CharacterNameRegex:
