@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  BookOpenText,
   Database,
   FileText,
   Coins,
@@ -54,6 +55,12 @@ export const ADMIN_NAV: AdminNavItem[] = [
     match: "prefix",
   },
   { href: "/admin/config", label: "Config", icon: Settings, match: "prefix" },
+  {
+    href: "/admin/commands-info",
+    label: "GM commands",
+    icon: BookOpenText,
+    match: "prefix",
+  },
   { href: "/admin/events", label: "Events", icon: PartyPopper, match: "prefix" },
   { href: "/admin/shops", label: "COMP shop", icon: Store, match: "prefix" },
   { href: "/admin/store", label: "Store", icon: ShoppingCart, match: "prefix" },
@@ -80,6 +87,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/email")) return "Email"
   if (pathname.startsWith("/admin/game-files")) return "Game files"
   if (pathname.startsWith("/admin/config")) return "Config"
+  if (pathname.startsWith("/admin/commands-info")) return "GM commands"
   if (pathname.startsWith("/admin/events")) return "Events"
   if (pathname.startsWith("/admin/shops")) return "COMP shop"
   if (pathname.startsWith("/admin/store") || pathname.startsWith("/admin/prices"))

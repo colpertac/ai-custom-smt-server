@@ -2,6 +2,7 @@
 
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { RegistrationUserLevelHelp } from "@/features/admin-config/components/RegistrationUserLevelHelp"
 import { fieldHelpOrFallback } from "@/lib/server-config/field-help"
 import type {
   ConfigMap,
@@ -171,6 +172,11 @@ function FieldRow({
     </span>
   ) : null
 
+  const nameHelp =
+    field.name === "RegistrationUserLevel" ? (
+      <RegistrationUserLevelHelp />
+    ) : null
+
   if (field.kind === "object" || field.pointer) {
     const present = isObject(value)
     const members = present ? value.members : {}
@@ -223,8 +229,9 @@ function FieldRow({
             checked={value === true}
             onChange={(e) => onChange(e.target.checked)}
           />
-          <span>
+          <span className="inline-flex items-center gap-1.5">
             {field.name}
+            {nameHelp}
             {badge}
           </span>
         </label>
@@ -238,6 +245,7 @@ function FieldRow({
       <Field>
         <FieldLabel>
           {field.name}
+          {nameHelp}
           {badge}
         </FieldLabel>
         <select
@@ -262,6 +270,7 @@ function FieldRow({
       <Field>
         <FieldLabel>
           {field.name}
+          {nameHelp}
           {badge}
         </FieldLabel>
         <textarea
@@ -280,6 +289,7 @@ function FieldRow({
       <Field>
         <FieldLabel>
           {field.name}
+          {nameHelp}
           {badge}
         </FieldLabel>
         <textarea
@@ -297,6 +307,7 @@ function FieldRow({
     <Field>
       <FieldLabel>
         {field.name}
+        {nameHelp}
         {badge}
       </FieldLabel>
       <Input
