@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 
 import {
-  ADMIN_NAV,
+  ADMIN_NAV_SECTIONS,
   adminPageTitle,
   navItemActive,
 } from "@/features/admin/admin-nav"
@@ -52,45 +52,55 @@ export function AdminShell({
           aria-label="Admin"
           className="flex gap-1 overflow-x-auto px-2 py-2 lg:flex-col lg:overflow-visible lg:px-0 lg:py-1"
         >
-          {ADMIN_NAV.map((item) => {
-            const on = navItemActive(item, pathname)
-            const Icon = item.icon
-            const pendingDot = navPendingDot(
-              item.href,
-              laneA.pending,
-              openReports.pending
-            )
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
-                  on
-                    ? "border-gold bg-[#161c28] text-foreground"
-                    : "border-transparent text-muted-foreground hover:bg-[#121824] hover:text-foreground"
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    on ? "text-gold-dim" : "text-muted-foreground"
-                  )}
-                  aria-hidden
-                />
-                <span className="flex min-w-0 flex-1 items-center gap-1.5">
-                  <span className="truncate">{item.label}</span>
-                  {pendingDot ? (
-                    <span
-                      className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
-                      title={pendingDot.title}
-                      aria-label={pendingDot.title}
+          {ADMIN_NAV_SECTIONS.map((section) => (
+            <div
+              key={section.id}
+              className="flex shrink-0 gap-1 lg:flex-col lg:gap-0 lg:py-1.5"
+            >
+              <p className="hidden px-3 pb-0.5 font-mono text-[0.6rem] tracking-[0.12em] text-muted-foreground/70 uppercase lg:block">
+                {section.label}
+              </p>
+              {section.items.map((item) => {
+                const on = navItemActive(item, pathname)
+                const Icon = item.icon
+                const pendingDot = navPendingDot(
+                  item.href,
+                  laneA.pending,
+                  openReports.pending
+                )
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
+                      on
+                        ? "border-gold bg-[#161c28] text-foreground"
+                        : "border-transparent text-muted-foreground hover:bg-[#121824] hover:text-foreground"
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "size-3.5 shrink-0",
+                        on ? "text-gold-dim" : "text-muted-foreground"
+                      )}
+                      aria-hidden
                     />
-                  ) : null}
-                </span>
-              </Link>
-            )
-          })}
+                    <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                      <span className="truncate">{item.label}</span>
+                      {pendingDot ? (
+                        <span
+                          className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
+                          title={pendingDot.title}
+                          aria-label={pendingDot.title}
+                        />
+                      ) : null}
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
         </nav>
         <div className="hidden border-t border-border p-2 lg:block">
           <Link
@@ -115,7 +125,14 @@ export function AdminShell({
             Account
           </Link>
         </header>
-        <div className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-5">
+        <div
+          className={cn(
+            "mx-auto w-full flex-1 px-4 py-5",
+            pathname.startsWith("/admin/studio")
+              ? "max-w-none"
+              : "max-w-[1400px]"
+          )}
+        >
           {children}
         </div>
       </div>

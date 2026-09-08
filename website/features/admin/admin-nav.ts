@@ -12,7 +12,7 @@ import {
   Mail,
   MessageSquareText,
   Newspaper,
-  Palette,
+  Camera,
   Settings,
   PartyPopper,
   Store,
@@ -29,52 +29,96 @@ export type AdminNavItem = {
   match: "exact" | "prefix"
 }
 
-export const ADMIN_NAV: AdminNavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
-  { href: "/admin/website", label: "Website", icon: Globe, match: "prefix" },
-  { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
-  { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
+export type AdminNavSection = {
+  id: string
+  label: string
+  items: AdminNavItem[]
+}
+
+/**
+ * Sidebar order: daily ops first, then site content, live server/economy,
+ * and rarely used / one-shot tools last.
+ */
+export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
   {
-    href: "/admin/chat-logs",
-    label: "Chat logs",
-    icon: MessageSquareText,
-    match: "prefix",
+    id: "monitor",
+    label: "Monitor",
+    items: [
+      { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
+      { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
+      { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
+      {
+        href: "/admin/chat-logs",
+        label: "Chat logs",
+        icon: MessageSquareText,
+        match: "prefix",
+      },
+    ],
   },
-  { href: "/admin/news", label: "News", icon: Newspaper, match: "prefix" },
   {
-    href: "/admin/download",
-    label: "Download",
-    icon: Download,
-    match: "prefix",
+    id: "website",
+    label: "Website",
+    items: [
+      { href: "/admin/website", label: "Website", icon: Globe, match: "prefix" },
+      { href: "/admin/news", label: "News", icon: Newspaper, match: "prefix" },
+      {
+        href: "/admin/download",
+        label: "Download",
+        icon: Download,
+        match: "prefix",
+      },
+    ],
   },
-  { href: "/admin/email", label: "Email", icon: Mail, match: "prefix" },
   {
-    href: "/admin/game-files",
-    label: "Game files",
-    icon: FolderArchive,
-    match: "prefix",
+    id: "server",
+    label: "Server",
+    items: [
+      {
+        href: "/admin/events",
+        label: "Events",
+        icon: PartyPopper,
+        match: "prefix",
+      },
+      { href: "/admin/shops", label: "COMP shop", icon: Store, match: "prefix" },
+      { href: "/admin/store", label: "Store", icon: ShoppingCart, match: "prefix" },
+      { href: "/admin/promos", label: "Promos", icon: Ticket, match: "prefix" },
+      { href: "/admin/payouts", label: "Payouts", icon: Coins, match: "prefix" },
+      {
+        href: "/admin/dungeon-loot",
+        label: "Dungeon loot",
+        icon: FileText,
+        match: "prefix",
+      },
+      { href: "/admin/config", label: "Config", icon: Settings, match: "prefix" },
+      {
+        href: "/admin/game-files",
+        label: "Game files",
+        icon: FolderArchive,
+        match: "prefix",
+      },
+      { href: "/admin/studio", label: "Studio", icon: Camera, match: "prefix" },
+    ],
   },
-  { href: "/admin/config", label: "Config", icon: Settings, match: "prefix" },
   {
-    href: "/admin/commands-info",
-    label: "GM commands",
-    icon: BookOpenText,
-    match: "prefix",
+    id: "advanced",
+    label: "Advanced",
+    items: [
+      { href: "/admin/email", label: "Email", icon: Mail, match: "prefix" },
+      {
+        href: "/admin/commands-info",
+        label: "GM commands",
+        icon: BookOpenText,
+        match: "prefix",
+      },
+      { href: "/admin/sql", label: "SQL", icon: Database, match: "prefix" },
+    ],
   },
-  { href: "/admin/events", label: "Events", icon: PartyPopper, match: "prefix" },
-  { href: "/admin/shops", label: "COMP shop", icon: Store, match: "prefix" },
-  { href: "/admin/store", label: "Store", icon: ShoppingCart, match: "prefix" },
-  { href: "/admin/promos", label: "Promos", icon: Ticket, match: "prefix" },
-  { href: "/admin/payouts", label: "Payouts", icon: Coins, match: "prefix" },
-  {
-    href: "/admin/dungeon-loot",
-    label: "Dungeon loot",
-    icon: FileText,
-    match: "prefix",
-  },
-  { href: "/admin/studio", label: "Studio", icon: Palette, match: "prefix" },
-  { href: "/admin/sql", label: "SQL", icon: Database, match: "prefix" },
 ]
+
+/** Flat list for title lookup / anything that doesn't need sections. */
+export const ADMIN_NAV: AdminNavItem[] = ADMIN_NAV_SECTIONS.flatMap(
+  (section) => section.items
+)
 
 export function adminPageTitle(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Overview"
@@ -90,7 +134,10 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/commands-info")) return "GM commands"
   if (pathname.startsWith("/admin/events")) return "Events"
   if (pathname.startsWith("/admin/shops")) return "COMP shop"
-  if (pathname.startsWith("/admin/store") || pathname.startsWith("/admin/prices"))
+  if (
+    pathname.startsWith("/admin/store") ||
+    pathname.startsWith("/admin/prices")
+  )
     return "Store"
   if (pathname.startsWith("/admin/promos")) return "Promos"
   if (pathname.startsWith("/admin/payouts")) return "Payouts"
