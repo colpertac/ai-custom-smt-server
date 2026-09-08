@@ -78,8 +78,8 @@ export function GearBuildsPanel({
         <Link href="/login" className="text-gold-dim hover:text-gold-hot">
           Log in
         </Link>{" "}
-        to save builds to your account and create share links. Drafts still
-        autosave in this browser.
+        to save builds, create share links, and buy this loadout with CP
+        (mailbox delivery). Drafts still autosave in this browser.
       </div>
     )
   }

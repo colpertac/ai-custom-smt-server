@@ -11,6 +11,7 @@ import {
   PLANNER_STATS,
   rankEnchantsForStat,
   rankItemsForStat,
+  type CombatFocus,
   type EnchantSide,
   type GearLayer,
   type GearPlannerResult,
@@ -85,6 +86,8 @@ export type OptimizeOptions = {
   weights?: OptimizeSoftWeights
   /** When true, never change S1 / appearance bases. */
   lockS1?: boolean
+  /** Soft / candidate ranking bucket (hard caps stay player/SELF). */
+  focus?: CombatFocus
   budget?: OptimizeBudget
   /** Soft wall-clock limit in ms (overrides budget preset). */
   timeBudgetMs?: number
@@ -202,22 +205,30 @@ export function hardDeficitForStat(
 
 export function softScoreFromResult(
   result: GearPlannerResult,
-  priorities: readonly PlannerStatKey[] = DEFAULT_OPTIMIZE_PRIORITIES
+  priorities: readonly PlannerStatKey[] = DEFAULT_OPTIMIZE_PRIORITIES,
+  focus: CombatFocus = "player"
 ): number {
   let soft = 0
   const n = priorities.length
+  const buckets =
+    focus === "partner"
+      ? [result.partnerByStat]
+      : focus === "both"
+        ? [result.byStat, result.partnerByStat]
+        : [result.byStat]
   priorities.forEach((key, index) => {
     const weight = n - index
     const def = PLANNER_STATS.find((s) => s.key === key)
-    const raw = result.byStat[key]?.raw ?? 0
     if (!def) return
-    if (def.kind === "reduction") {
-      // Lower raw is better (more reduction) → invert around 100.
-      soft += weight * (100 - raw)
-    } else if (def.kind === "lbCap") {
-      soft += weight * (raw - LB_CAP_BASE)
-    } else {
-      soft += weight * raw
+    for (const bucket of buckets) {
+      const raw = bucket[key]?.raw ?? 0
+      if (def.kind === "reduction") {
+        soft += weight * (100 - raw)
+      } else if (def.kind === "lbCap") {
+        soft += weight * (raw - LB_CAP_BASE)
+      } else {
+        soft += weight * raw
+      }
     }
   })
   return soft
@@ -254,10 +265,12 @@ function resolvePriorities(options: {
   return [...DEFAULT_OPTIMIZE_PRIORITIES]
 }
 
-/** Pure fitness from a combat result (hard deficit primary, soft secondary). */
+/** Pure fitness from a combat result (hard deficit primary, soft secondary).
+ * Hard caps always use player/SELF; soft score follows `focus`. */
 export function scoreLoadout(
   result: GearPlannerResult,
-  priorities: readonly PlannerStatKey[] = DEFAULT_OPTIMIZE_PRIORITIES
+  priorities: readonly PlannerStatKey[] = DEFAULT_OPTIMIZE_PRIORITIES,
+  focus: CombatFocus = "player"
 ): LoadoutFitness {
   const deficits = {} as Record<HardCapStat, number>
   const atCap = {} as Record<HardCapStat, boolean>
@@ -272,7 +285,7 @@ export function scoreLoadout(
   return {
     hardDeficit,
     deficits,
-    soft: softScoreFromResult(result, priorities),
+    soft: softScoreFromResult(result, priorities, focus),
     atCap,
   }
 }
@@ -442,7 +455,8 @@ export class CandidateCache {
   constructor(
     private gender: 0 | 1,
     private attrs: PlannerAttrs,
-    private lnc: PlannerLnc
+    private lnc: PlannerLnc,
+    private focus: CombatFocus = "player"
   ) {}
 
   items(
@@ -451,7 +465,7 @@ export class CandidateCache {
     stat: PlannerStatKey,
     limit: number
   ): WikiItem[] {
-    const key = `${stat}|${slot}|${layer ?? "whole"}|${limit}`
+    const key = `${this.focus}|${stat}|${slot}|${layer ?? "whole"}|${limit}`
     const hit = this.itemCache.get(key)
     if (hit) return hit
     const ranked = rankItemsForStat({
@@ -461,6 +475,7 @@ export class CandidateCache {
       gender: this.gender,
       loadout: emptyPlannerLoadout(),
       limit,
+      focus: this.focus,
     }).map((h) => h.item)
     this.itemCache.set(key, ranked)
     return ranked
@@ -502,6 +517,7 @@ export function candidateItemsForSlot(options: {
   loadout: PlannerSlot[]
   limit: number
   cache?: CandidateCache
+  focus?: CombatFocus
 }): WikiItem[] {
   if (options.cache) {
     return options.cache.items(
@@ -518,6 +534,7 @@ export function candidateItemsForSlot(options: {
     gender: options.gender,
     loadout: options.loadout,
     limit: options.limit,
+    focus: options.focus ?? "player",
   })
   return hits.map((h) => h.item)
 }
@@ -610,10 +627,11 @@ function evaluate(
   loadout: PlannerSlot[],
   attrs: PlannerAttrs,
   lnc: PlannerLnc,
-  priorities: readonly PlannerStatKey[]
+  priorities: readonly PlannerStatKey[],
+  focus: CombatFocus = "player"
 ): { result: GearPlannerResult; fitness: LoadoutFitness } {
   const result = computeGearPlannerCombat(loadout, attrs, lnc)
-  return { result, fitness: scoreLoadout(result, priorities) }
+  return { result, fitness: scoreLoadout(result, priorities, focus) }
 }
 
 function itemsForLayerMultiStat(options: {
@@ -683,10 +701,11 @@ function fillSlotLayers(
   lnc: PlannerLnc,
   priorities: readonly PlannerStatKey[],
   lockS1: boolean,
-  cache: CandidateCache
+  cache: CandidateCache,
+  focus: CombatFocus = "player"
 ): PlannerSlot[] {
   let next = cloneLoadout(loadout)
-  const { fitness } = evaluate(next, attrs, lnc, priorities)
+  const { fitness } = evaluate(next, attrs, lnc, priorities, focus)
   const target = slotOf(next, slotKey)
 
   if (!lockS1 || target.s1ItemId == null) {
@@ -708,7 +727,7 @@ function fillSlotLayers(
 
   if (slotOf(next, slotKey).s1ItemId == null) return next
 
-  const afterBase = evaluate(next, attrs, lnc, priorities).fitness
+  const afterBase = evaluate(next, attrs, lnc, priorities, focus).fitness
 
   for (const layer of ["s2", "s3"] as const) {
     const items = itemsForLayerMultiStat({
@@ -761,10 +780,12 @@ function buildGreedySeed(options: {
   lockS1: boolean
   base: PlannerSlot[]
   cache: CandidateCache
+  focus?: CombatFocus
   shouldStop?: () => boolean
   maxSlots?: number
 }): PlannerSlot[] {
   let loadout = cloneLoadout(options.base)
+  const focus = options.focus ?? "player"
   const slots = SLOT_SEARCH_ORDER.slice(
     0,
     options.maxSlots ?? SLOT_SEARCH_ORDER.length
@@ -781,7 +802,8 @@ function buildGreedySeed(options: {
         options.lnc,
         options.priorities,
         true,
-        options.cache
+        options.cache,
+        focus
       )
       continue
     }
@@ -810,7 +832,8 @@ function buildGreedySeed(options: {
       options.lnc,
       options.priorities,
       options.lockS1,
-      options.cache
+      options.cache,
+      focus
     )
   }
   return loadout
@@ -1101,9 +1124,15 @@ export async function optimizeGearLoadout(
 ): Promise<OptimizeResult> {
   const priorities = resolvePriorities(options)
   const lockS1 = Boolean(options.lockS1)
+  const focus = options.focus ?? "player"
   const timeBudgetMs =
     options.timeBudgetMs ?? BUDGET_MS[options.budget ?? "normal"]
-  const cache = new CandidateCache(options.gender, options.attrs, options.lnc)
+  const cache = new CandidateCache(
+    options.gender,
+    options.attrs,
+    options.lnc,
+    focus
+  )
 
   // Warm a small set of ranks before the clock so Quick budgets aren't only cold misses.
   for (const stat of ["cooldown", "lbc", softPrimaryStat(priorities)] as PlannerStatKey[]) {
@@ -1123,7 +1152,8 @@ export async function optimizeGearLoadout(
     startLoadout,
     options.attrs,
     options.lnc,
-    priorities
+    priorities,
+    focus
   )
   evaluations++
 
@@ -1149,7 +1179,8 @@ export async function optimizeGearLoadout(
       loadout,
       options.attrs,
       options.lnc,
-      priorities
+      priorities,
+      focus
     )
     evaluations++
     if (isBetterFitness(fitness, bestFitness)) {
@@ -1168,6 +1199,7 @@ export async function optimizeGearLoadout(
     priorities,
     lockS1,
     cache,
+    focus,
     shouldStop,
   }
 
@@ -1304,7 +1336,8 @@ export async function optimizeGearLoadout(
     bestLoadout,
     options.attrs,
     options.lnc,
-    priorities
+    priorities,
+    focus
   )
   evaluations++
 

@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Coins, Mail } from "lucide-react"
@@ -155,7 +154,14 @@ export function GearBuilderBuyPanel({ loadout }: { loadout: PlannerSlot[] }) {
     }
   }
 
-  if (storeEnabled === null || sessionLoading) {
+  if (sessionLoading) return null
+
+  if (!session) {
+    // Login prompt is combined with builds panel above.
+    return null
+  }
+
+  if (storeEnabled === null) {
     return (
       <div className="border border-border bg-card/40 px-3 py-2 text-xs text-muted-foreground">
         Checking store…
@@ -167,17 +173,6 @@ export function GearBuilderBuyPanel({ loadout }: { loadout: PlannerSlot[] }) {
     return (
       <div className="border border-border bg-card/40 px-3 py-2 text-xs text-muted-foreground">
         Web store checkout is currently disabled by an admin.
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="border border-border bg-card/40 px-3 py-2 text-xs text-muted-foreground">
-        <Link href="/login" className="text-gold-dim hover:text-gold-hot">
-          Log in
-        </Link>{" "}
-        to buy this loadout with CP (mailbox delivery).
       </div>
     )
   }

@@ -1074,7 +1074,13 @@ def _maybe_wiki_after_ingest(
         enchant_count = (info or {}).get("enchantCount")
         ingest_jobs.log(
             job_id,
-            f"wiki catalog written ({item_count} items, {enchant_count} enchants)",
+            f"wiki catalog written ({item_count} items, {enchant_count} enchants"
+            + (
+                "; baked catalog synced"
+                if (info or {}).get("bakedSynced")
+                else ""
+            )
+            + ")",
         )
         return {
             "ok": True,

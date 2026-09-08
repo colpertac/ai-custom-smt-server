@@ -12,7 +12,13 @@ import {
   type WikiItem,
   type WikiItemStat,
 } from "@/content/wiki"
-import { formatWikiStatValue } from "@/content/wiki/format"
+import {
+  formatWikiStatValue,
+  wikiBasicFeatures,
+  wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiSetBonus,
+} from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +28,7 @@ import {
   GEAR_LAYER_MIME,
   layerHasContent,
   plannerSlotDisplay,
+  wikiLayerSetLines,
   type EnchantSide,
   type GearEnchantDragPayload,
   type GearLayer,
@@ -35,17 +42,34 @@ import { cn } from "@/lib/utils"
 function CompactLayerBody({
   layer,
   item,
+  s2Item,
+  s3Item,
+  sitemItem,
 }: {
   layer: GearLayer
   item: WikiItem
+  /** CorrectTbl donors when layer is s2 (may differ from appearance). */
+  s2Item?: WikiItem | null
+  s3Item?: WikiItem | null
+  /** SItem / SpecialEffect donor when layer is s3. */
+  sitemItem?: WikiItem | null
 }) {
-  const stats: WikiItemStat[] | undefined =
-    layer === "s2"
-      ? item.basicFeatures
-      : layer === "s3"
-        ? item.characteristics
-        : undefined
-  const lines = layer === "s1" ? item.setBonus : undefined
+  let stats: WikiItemStat[] | undefined
+  let lines: string[] | undefined
+
+  if (layer === "s1") {
+    lines = wikiLayerSetLines(item.id)
+  } else if (layer === "s2") {
+    const a = s2Item ?? item
+    const b = s3Item ?? item
+    if (a.id === b.id) {
+      stats = wikiClientBasicFeatures(a)
+    } else {
+      stats = [...wikiBasicFeatures(a), ...wikiCharacteristics(b)]
+    }
+  } else {
+    lines = wikiSetBonus(sitemItem ?? item)
+  }
 
   if (stats && stats.length > 0) {
     return (
@@ -77,7 +101,13 @@ function CompactLayerBody({
       </ul>
     )
   }
-  if (!layerHasContent(item, layer)) {
+  if (
+    layer === "s1"
+      ? !layerHasContent(item, "s1")
+      : layer === "s2"
+        ? !(stats && stats.length > 0)
+        : !layerHasContent(sitemItem ?? item, "s3")
+  ) {
     return (
       <p className="text-[11px] text-muted-foreground italic">Vacant</p>
     )
@@ -90,6 +120,9 @@ function LayerDropCard({
   title,
   tag,
   item,
+  s2Item,
+  s3Item,
+  sitemItem,
   emptyHint,
   onDropDonor,
   isBlinking,
@@ -99,6 +132,9 @@ function LayerDropCard({
   title: string
   tag: string
   item: WikiItem | null
+  s2Item?: WikiItem | null
+  s3Item?: WikiItem | null
+  sitemItem?: WikiItem | null
   emptyHint: string
   onDropDonor: (donor: WikiItem, layer: GearLayer) => void
   isBlinking?: boolean
@@ -188,7 +224,13 @@ function LayerDropCard({
       {!item ? (
         <p className="text-[11px] text-muted-foreground">{emptyHint}</p>
       ) : (
-        <CompactLayerBody layer={layer} item={item} />
+        <CompactLayerBody
+          layer={layer}
+          item={item}
+          s2Item={s2Item}
+          s3Item={s3Item}
+          sitemItem={sitemItem}
+        />
       )}
     </div>
   )
@@ -343,12 +385,15 @@ export function GearSlotSidebar({
   const [loading, setLoading] = useState(false)
   const [liveById, setLiveById] = useState<Record<number, WikiItem>>({})
   const slotLabel = wikiSlotLabelForKey(slotKey)
-  const display = plannerSlotDisplay(equipped)
+  const display = plannerSlotDisplay(equipped, (id) => liveById[id])
 
   useEffect(() => {
-    const ids = [equipped.s1ItemId, equipped.s2ItemId, equipped.s3ItemId].filter(
-      (id): id is number => id != null
-    )
+    const ids = [
+      equipped.s1ItemId,
+      equipped.s2ItemId,
+      equipped.s3ItemId,
+      equipped.sitemItemId,
+    ].filter((id): id is number => id != null)
     let cancelled = false
     for (const id of ids) {
       if (liveById[id]) continue
@@ -362,7 +407,12 @@ export function GearSlotSidebar({
     }
     // liveById intentionally omitted — only refetch when equipped ids change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [equipped.s1ItemId, equipped.s2ItemId, equipped.s3ItemId])
+  }, [
+    equipped.s1ItemId,
+    equipped.s2ItemId,
+    equipped.s3ItemId,
+    equipped.sitemItemId,
+  ])
 
   const resolveEquipped = (id: number | null | undefined): WikiItem | null => {
     if (id == null) return null
@@ -371,6 +421,9 @@ export function GearSlotSidebar({
   const s1 = resolveEquipped(equipped.s1ItemId)
   const s2 = resolveEquipped(equipped.s2ItemId)
   const s3 = resolveEquipped(equipped.s3ItemId)
+  const sitem = resolveEquipped(
+    equipped.sitemItemId ?? equipped.s1ItemId
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -491,7 +544,7 @@ export function GearSlotSidebar({
             title="Set bonus"
             tag="S1"
             item={s1}
-            emptyHint="Drop / double-click S1 here."
+            emptyHint="Drop / double-click appearance / set piece here."
             onDropDonor={onDropLayer}
             isBlinking={
               flashTarget?.layer === "s1" || flashTarget?.layer === "all"
@@ -500,10 +553,12 @@ export function GearSlotSidebar({
           />
           <LayerDropCard
             layer="s2"
-            title="Basic"
+            title="Basic features"
             tag="S2"
             item={s2}
-            emptyHint="Drop / double-click S2 here."
+            s2Item={s2}
+            s3Item={s3}
+            emptyHint="Drop / double-click CorrectTbl (basic) here."
             onDropDonor={onDropLayer}
             isBlinking={
               flashTarget?.layer === "s2" || flashTarget?.layer === "all"
@@ -512,10 +567,11 @@ export function GearSlotSidebar({
           />
           <LayerDropCard
             layer="s3"
-            title="Char"
+            title="Characteristics"
             tag="S3"
-            item={s3}
-            emptyHint="Drop / double-click S3 here."
+            item={sitem}
+            sitemItem={sitem}
+            emptyHint="Drop / double-click SItem / SpecialEffect here."
             onDropDonor={onDropLayer}
             isBlinking={
               flashTarget?.layer === "s3" || flashTarget?.layer === "all"

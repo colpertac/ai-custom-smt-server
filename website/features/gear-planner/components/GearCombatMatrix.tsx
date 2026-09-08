@@ -8,9 +8,11 @@ import {
   SET_HEADER_COLORS,
   isCombatPlannerStatKey,
   setHeaderBackground,
+  type CombatFocus,
   type GearPlannerResult,
   type PlannerAttrs,
   type PlannerSlot,
+  type PlannerStatBreakdown,
   type PlannerStatDef,
   type PlannerStatKey,
   plannerSlotDisplay,
@@ -95,6 +97,7 @@ export function GearCombatMatrix({
   combat,
   attrs,
   fullStats,
+  focus = "player",
   onStatClick,
   onSlotHeaderClick,
 }: {
@@ -102,9 +105,30 @@ export function GearCombatMatrix({
   combat: GearPlannerResult
   attrs: PlannerAttrs
   fullStats: boolean
+  focus?: CombatFocus
   onStatClick: (stat: PlannerStatKey) => void
   onSlotHeaderClick: (slot: EquipSlotKey) => void
 }) {
+  const sections: Array<{
+    key: string
+    label: string | null
+    bucket: Record<string, PlannerStatBreakdown>
+  }> =
+    focus === "both"
+      ? [
+          { key: "player", label: "Player", bucket: combat.byStat },
+          {
+            key: "partner",
+            label: "Partner",
+            bucket: combat.partnerByStat,
+          },
+        ]
+      : focus === "partner"
+        ? [{ key: "partner", label: null, bucket: combat.partnerByStat }]
+        : [{ key: "player", label: null, bucket: combat.byStat }]
+
+  const colCount = 3 + EQUIP_SLOTS.length * 5
+
   return (
     <div className="overflow-x-auto border border-border">
       <table className="w-full min-w-[110rem] border-collapse text-[10px]">
@@ -217,131 +241,154 @@ export function GearCombatMatrix({
           </tr>
         </thead>
         <tbody>
-          {combat.visibleStats.map((def) => {
-            const bd = combat.byStat[def.key]
-            if (!bd) return null
-            const combatKey = isCombatPlannerStatKey(def.key)
-              ? def.key
-              : null
-            const rowHover =
-              "group-hover/stat:shadow-[inset_0_0_0_9999px_rgba(232,196,74,0.22)]"
-            return (
-              <tr
-                key={def.key}
-                className="group/stat border-t border-border/60"
-              >
-                <th
-                  className={cn(
-                    "sticky left-0 z-10 bg-card/95 px-2 py-1 text-left font-medium group-hover/stat:bg-muted",
-                    rowHover
-                  )}
-                >
-                  {combatKey ? (
-                    <button
-                      type="button"
-                      className="group/btn inline-flex items-center gap-1 rounded-xs px-1 py-0.5 text-left font-mono font-semibold transition-all hover:bg-gold/15 hover:text-gold-hot hover:ring-1 hover:ring-gold/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                      title={`Filter recommendations for ${def.label} (${def.abbr})`}
-                      onClick={() => onStatClick(combatKey)}
+          {sections.map((section) => (
+            <Fragment key={section.key}>
+              {section.label ? (
+                <tr className="border-t border-border bg-muted/50">
+                  <th
+                    colSpan={colCount}
+                    className="sticky left-0 px-2 py-1 text-left font-heading text-[10px] tracking-[0.12em] text-gold-dim uppercase"
+                  >
+                    {section.label}
+                  </th>
+                </tr>
+              ) : null}
+              {combat.visibleStats.map((def) => {
+                const bd = section.bucket[def.key]
+                if (!bd) return null
+                const combatKey = isCombatPlannerStatKey(def.key)
+                  ? def.key
+                  : null
+                const rowHover =
+                  "group-hover/stat:shadow-[inset_0_0_0_9999px_rgba(232,196,74,0.22)]"
+                return (
+                  <tr
+                    key={`${section.key}-${def.key}`}
+                    className="group/stat border-t border-border/60"
+                  >
+                    <th
+                      className={cn(
+                        "sticky left-0 z-10 bg-card/95 px-2 py-1 text-left font-medium group-hover/stat:bg-muted",
+                        rowHover
+                      )}
                     >
-                      <span>{def.abbr}</span>
-                      <span className="font-sans text-[9px] text-muted-foreground opacity-60 group-hover/btn:text-gold-dim group-hover/btn:opacity-100">
-                        ↗
-                      </span>
-                    </button>
-                  ) : (
-                    <span
-                      className="inline-block px-1 py-0.5 font-mono text-muted-foreground"
-                      title={def.label}
+                      {combatKey ? (
+                        <button
+                          type="button"
+                          className="group/btn inline-flex items-center gap-1 rounded-xs px-1 py-0.5 text-left font-mono font-semibold transition-all hover:bg-gold/15 hover:text-gold-hot hover:ring-1 hover:ring-gold/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                          title={`Filter recommendations for ${def.label} (${def.abbr})`}
+                          onClick={() => onStatClick(combatKey)}
+                        >
+                          <span>{def.abbr}</span>
+                          <span className="font-sans text-[9px] text-muted-foreground opacity-60 group-hover/btn:text-gold-dim group-hover/btn:opacity-100">
+                            ↗
+                          </span>
+                        </button>
+                      ) : (
+                        <span
+                          className="inline-block px-1 py-0.5 font-mono text-muted-foreground"
+                          title={def.label}
+                        >
+                          {def.abbr}
+                        </span>
+                      )}
+                    </th>
+                    <td
+                      className={cn(
+                        "px-2 py-1 text-right font-semibold tabular-nums",
+                        rowHover,
+                        bd.atCap && "bg-emerald-600/35 text-emerald-100"
+                      )}
                     >
-                      {def.abbr}
-                    </span>
-                  )}
-                </th>
-                <td
-                  className={cn(
-                    "px-2 py-1 text-right font-semibold tabular-nums",
-                    rowHover,
-                    bd.atCap && "bg-emerald-600/35 text-emerald-100"
-                  )}
-                >
-                  {formatTotal(def, bd.raw, bd.gearTotal - bd.attrBonus)}
-                </td>
-                <td
-                  className={cn(
-                    "px-2 py-1 text-right tabular-nums text-[#c9a0ff]",
-                    rowHover
-                  )}
-                >
-                  {formatLayerCell(def, bd.setBonus)}
-                </td>
-                {EQUIP_SLOTS.map((slot) => {
-                  const layers = bd.bySlotLayers[slot.key]
-                  const colorIdx = combat.setColorIndexBySlot[slot.key]
-                  const bg =
-                    colorIdx >= 0
-                      ? SET_HEADER_COLORS[colorIdx % SET_HEADER_COLORS.length]
-                      : undefined
-                  const cellTint = bg
-                    ? { backgroundColor: setHeaderBackground(bg, 0.22) }
-                    : undefined
-                  return (
-                    <Fragment key={`${def.key}-${slot.key}`}>
-                      <td
-                        className={cn(
-                          "border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90",
-                          rowHover
-                        )}
-                        style={cellTint}
-                      >
-                        {formatLayerCell(def, layers.s1)}
-                      </td>
-                      <td
-                        className={cn(
-                          "px-0 py-1 text-center tabular-nums text-emerald-300/90",
-                          rowHover
-                        )}
-                        style={cellTint}
-                      >
-                        {formatLayerCell(def, layers.s2)}
-                      </td>
-                      <td
-                        className={cn(
-                          "px-0 py-1 text-center tabular-nums text-rose-300/90",
-                          rowHover
-                        )}
-                        style={cellTint}
-                      >
-                        {formatLayerCell(def, layers.s3)}
-                      </td>
-                      <td
-                        className={cn(
-                          "px-0 py-1 text-center tabular-nums text-violet-300/90",
-                          rowHover
-                        )}
-                        style={cellTint}
-                      >
-                        {formatLayerCell(def, layers.tarot)}
-                      </td>
-                      <td
-                        className={cn(
-                          "px-0 py-1 text-center tabular-nums text-orange-300/90",
-                          rowHover
-                        )}
-                        style={cellTint}
-                      >
-                        {formatLayerCell(def, layers.soul)}
-                      </td>
-                    </Fragment>
-                  )
-                })}
-              </tr>
-            )
-          })}
+                      {formatTotal(def, bd.raw, bd.gearTotal - bd.attrBonus)}
+                    </td>
+                    <td
+                      className={cn(
+                        "px-2 py-1 text-right tabular-nums text-[#c9a0ff]",
+                        rowHover
+                      )}
+                    >
+                      {formatLayerCell(def, bd.setBonus)}
+                    </td>
+                    {EQUIP_SLOTS.map((slot) => {
+                      const layers = bd.bySlotLayers[slot.key]
+                      const colorIdx = combat.setColorIndexBySlot[slot.key]
+                      const bg =
+                        colorIdx >= 0
+                          ? SET_HEADER_COLORS[
+                              colorIdx % SET_HEADER_COLORS.length
+                            ]
+                          : undefined
+                      const cellTint = bg
+                        ? { backgroundColor: setHeaderBackground(bg, 0.22) }
+                        : undefined
+                      return (
+                        <Fragment
+                          key={`${section.key}-${def.key}-${slot.key}`}
+                        >
+                          <td
+                            className={cn(
+                              "border-l border-border/40 px-0 py-1 text-center tabular-nums text-sky-300/90",
+                              rowHover
+                            )}
+                            style={cellTint}
+                          >
+                            {formatLayerCell(def, layers.s1)}
+                          </td>
+                          <td
+                            className={cn(
+                              "px-0 py-1 text-center tabular-nums text-emerald-300/90",
+                              rowHover
+                            )}
+                            style={cellTint}
+                          >
+                            {formatLayerCell(def, layers.s2)}
+                          </td>
+                          <td
+                            className={cn(
+                              "px-0 py-1 text-center tabular-nums text-rose-300/90",
+                              rowHover
+                            )}
+                            style={cellTint}
+                          >
+                            {formatLayerCell(def, layers.s3)}
+                          </td>
+                          <td
+                            className={cn(
+                              "px-0 py-1 text-center tabular-nums text-violet-300/90",
+                              rowHover
+                            )}
+                            style={cellTint}
+                          >
+                            {formatLayerCell(def, layers.tarot)}
+                          </td>
+                          <td
+                            className={cn(
+                              "px-0 py-1 text-center tabular-nums text-orange-300/90",
+                              rowHover
+                            )}
+                            style={cellTint}
+                          >
+                            {formatLayerCell(def, layers.soul)}
+                          </td>
+                        </Fragment>
+                      )
+                    })}
+                  </tr>
+                )
+              })}
+            </Fragment>
+          ))}
         </tbody>
       </table>
       <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
         1/2/3/T/S = S1 / S2 / S3 / Tarot / Soul. Empty chips = vacant.
         Matching header tint = same EquipmentSet.
+        {focus === "partner"
+          ? " Showing partner/demon-targeted bonuses."
+          : focus === "both"
+            ? " Player and partner buckets stacked."
+            : " Showing player (SELF) bonuses."}
         {fullStats
           ? " Extra rows = nonzero bonuses from this loadout."
           : null}

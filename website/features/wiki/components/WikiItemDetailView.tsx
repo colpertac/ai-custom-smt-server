@@ -3,12 +3,11 @@ import Link from "next/link"
 import {
   getWikiItemCategory,
   getWikiItemsPayload,
-  wikiBasicFeatures,
-  wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
   wikiItemSoulFusion,
   wikiItemTarotFusion,
   wikiItemCompShops,
-  wikiSetBonus,
   type WikiItem,
 } from "@/lib/wiki-catalog"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
@@ -25,9 +24,8 @@ import { equipmentSetMembership } from "@/lib/gear-planner-combat"
 export function WikiItemDetailView({ item }: { item: WikiItem }) {
   const category = getWikiItemCategory(item)
   const meta = WIKI_CATEGORY_META[category]
-  const setBonus = wikiSetBonus(item)
-  const basicFeatures = wikiBasicFeatures(item)
-  const characteristics = wikiCharacteristics(item)
+  const basicFeatures = wikiClientBasicFeatures(item)
+  const characteristics = wikiClientCharacteristics(item)
   const tarotFusion = wikiItemTarotFusion(item)
   const soulFusion = wikiItemSoulFusion(item)
   const compShops = wikiItemCompShops(item.id)
@@ -92,24 +90,18 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
 
             <div className="grid gap-3 lg:grid-cols-2">
               <WikiFeatureBox
-                title="Set bonus"
-                tag="S1"
-                hint="This piece alone / transfers as S1 when fused."
-                lines={setBonus}
-              />
-              <WikiEquipmentSetsBox sets={equipmentSets} />
-              <WikiFeatureBox
                 title="Basic features"
                 tag="S2"
-                hint="Core combat stats from game data."
+                hint="ItemData combat stats (includes skill cooldown and other correctTbl modifiers)."
                 stats={basicFeatures}
               />
               <WikiFeatureBox
                 title="Characteristics"
                 tag="S3"
-                hint="Rate bonuses, cooldown, and trait modifiers."
-                stats={characteristics}
+                hint="Special effects and rate modifiers for this piece (SItem / trait lines)."
+                lines={characteristics}
               />
+              <WikiEquipmentSetsBox sets={equipmentSets} />
               {tarotFusion ? (
                 <WikiFusionBox
                   title="Tarot fusion"

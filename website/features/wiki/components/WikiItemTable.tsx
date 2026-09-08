@@ -4,13 +4,13 @@ import type { WikiItem, WikiItemCategory, WikiItemStat } from "@/content/wiki/ty
 import {
   formatWikiStatValue,
   getWikiItemCategory,
-  wikiBasicFeatures,
-  wikiCharacteristics,
-  wikiSetBonus,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
 } from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { WikiItemIcon } from "@/features/wiki/components/WikiItemIcon"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
+import { equipmentSetBrowseLines } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
 const LAYER_COL: Record<"s1" | "s2" | "s3", string> = {
@@ -81,6 +81,10 @@ function showsLayerColumns(category?: WikiItemCategory): boolean {
   return category === "weapons" || category === "armor"
 }
 
+function equipmentSetLines(itemId: number): string[] {
+  return equipmentSetBrowseLines(itemId)
+}
+
 export function WikiItemTable({
   items,
   category,
@@ -136,9 +140,9 @@ export function WikiItemTable({
         <tbody>
           {items.map((item) => {
             const itemCategory = getWikiItemCategory(item)
-            const setBonus = wikiSetBonus(item)
-            const basic = wikiBasicFeatures(item)
-            const chars = wikiCharacteristics(item)
+            const setLines = equipmentSetLines(item.id)
+            const basic = wikiClientBasicFeatures(item)
+            const chars = wikiClientCharacteristics(item)
             const preview = basic
               .slice(0, 3)
               .map(
@@ -197,13 +201,13 @@ export function WikiItemTable({
                 {layers ? (
                   <>
                     <td className="max-w-[14rem] px-2 py-2 align-top">
-                      <LayerLines layer="s1" lines={setBonus} />
+                      <LayerLines layer="s1" lines={setLines} />
                     </td>
                     <td className="max-w-[16rem] px-2 py-2 align-top">
                       <LayerLines layer="s2" stats={basic} />
                     </td>
                     <td className="max-w-[16rem] px-2 py-2 align-top">
-                      <LayerLines layer="s3" stats={chars} />
+                      <LayerLines layer="s3" lines={chars} />
                     </td>
                   </>
                 ) : (

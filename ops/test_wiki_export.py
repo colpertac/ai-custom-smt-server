@@ -94,7 +94,70 @@ class WikiExportTests(unittest.TestCase):
             self.assertEqual(row["sourceName"], "Crystal A")
             self.assertEqual(row["tarot"]["name"], "Tarot Name")
 
-    def test_wiki_catalog_ready(self):
+    def test_tokusei_partner_prefix(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp_path = Path(raw)
+            (tmp_path / "ItemData.tsv").write_text(
+                "id\tequipType\tweaponType\tgender\tbuyPrice\tsellPrice\tlevel\t"
+                "durability\tstackSize\tcorrectTbl\n"
+                "29607\tEQUIP_TYPE_HEAD\tNONE\t2\t60\t1000\t0\t1\t1\t"
+                "{ ID: PDEF, Type: 0, Value: 1 }, "
+                "{ ID: COOLDOWN_TIME, Type: 1, Value: -5 }\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CItemData.tsv").write_text(
+                "ID\tname\tdesc\ticon\n"
+                "29607\tSpirit Crystal Head\tMystery crystal.\t29607\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "SItemData.tsv").write_text(
+                "ID\ttokusei\n"
+                "29607\t{ 10 }, { 11 }, { 0 }\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CIconData_Item.tsv").write_text(
+                "ID\tvalue\n29607\tI33_0001a\n",
+                encoding="utf-8",
+            )
+            tokusei = tmp_path / "tokusei"
+            tokusei.mkdir()
+            (tokusei / "tokusei_00000000.xml").write_text(
+                """
+<object name="Tokusei">
+    <member name="ID">10</member>
+    <member name="CorrectValues">
+        <element>
+            <object>
+                <member name="ID">RATE_CLSR</member>
+                <member name="Value">5</member>
+                <member name="Type">1</member>
+            </object>
+        </element>
+    </member>
+</object>
+<object name="Tokusei">
+    <member name="ID">11</member>
+    <member name="TargetType">PARTNER</member>
+    <member name="CorrectValues">
+        <element>
+            <object>
+                <member name="ID">COOLDOWN_TIME</member>
+                <member name="Value">-5</member>
+                <member name="Type">1</member>
+            </object>
+        </element>
+    </member>
+</object>
+""",
+                encoding="utf-8",
+            )
+
+            payload = build_items_payload(tmp_path, tokusei)
+            item = payload["items"][0]
+            self.assertEqual(item["basicFeatures"][0]["id"], "PDEF")
+            self.assertEqual(item["characteristics"][0]["id"], "COOLDOWN_TIME")
+            self.assertIn("Close-range damage +5%", item["setBonus"])
+            self.assertIn("Partner's Skill cooldown -5%", item["setBonus"])
         with tempfile.TemporaryDirectory() as raw:
             tmp_path = Path(raw)
             self.assertFalse(wiki_catalog_ready(tmp_path))

@@ -56,11 +56,27 @@ const expertiseRankSkills = (
   }
 ).expertises
 
-const tokuseiCorrections = (
+const tokuseiCorrectionsRaw = (
   tokuseiCorrectionsPayload as {
-    tokusei: Record<string, StatAdjustment[]>
+    tokusei: Record<
+      string,
+      StatAdjustment[] | { target?: string; rows?: StatAdjustment[] }
+    >
   }
 ).tokusei
+
+/** Player-side only (SELF/PARTY). Partner tokusei are ignored for armory sheet. */
+function addTokuseiAdjustments(out: StatAdjustment[], tokuseiId: number): void {
+  const raw = tokuseiCorrectionsRaw[String(tokuseiId)]
+  if (!raw) return
+  if (Array.isArray(raw)) {
+    for (const row of raw) out.push(row)
+    return
+  }
+  const target = String(raw.target ?? "SELF").toUpperCase()
+  if (target === "PARTNER") return
+  for (const row of raw.rows ?? []) out.push(row)
+}
 
 const sitemTokusei = (
   sitemTokuseiPayload as { items: Record<string, number[]> }
@@ -278,12 +294,6 @@ export function computeDisabledExpertiseSkills(
     }
   }
   return disabled
-}
-
-function addTokuseiAdjustments(out: StatAdjustment[], tokuseiId: number): void {
-  for (const row of tokuseiCorrections[String(tokuseiId)] ?? []) {
-    out.push(row)
-  }
 }
 
 function addConditionTokusei(

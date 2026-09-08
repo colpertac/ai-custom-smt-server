@@ -6,6 +6,7 @@ import path from "node:path"
 import {
   clearWikiCatalogCache,
   loadWikiItemsPayload,
+  resolveWikiRuntimeRoot,
 } from "@/lib/wiki-catalog-load"
 
 describe("wiki-catalog-load", () => {
@@ -23,6 +24,14 @@ describe("wiki-catalog-load", () => {
       rmSync(tmp, { recursive: true, force: true })
       tmp = null
     }
+  })
+
+  it("defaults to sibling comp_hack/runtime when env is unset", () => {
+    delete process.env.OPS_RUNTIME
+    delete process.env.COMP_RUNTIME
+    expect(resolveWikiRuntimeRoot().replace(/\\/g, "/")).toMatch(
+      /\/comp_hack\/runtime$/
+    )
   })
 
   it("falls back to baked catalog when runtime wiki is missing", () => {

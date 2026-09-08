@@ -1,7 +1,9 @@
 """Export live wiki item/enchant catalogs from uploaded BinaryData.
 
 Writes {runtime}/wiki/{items,enchants}.json for the website to prefer over
-baked website/content/wiki/*.json.
+baked website/content/wiki/*.json. When the website tree is available, also
+mirrors those files into the baked catalog so the gear builder client stays
+in sync after admin wiki regen.
 """
 
 from __future__ import annotations
@@ -33,7 +35,7 @@ STAT_LABELS = {
     "INT": "INT",
     "SPEED": "SPD",
     "LUCK": "LUK",
-    "COOLDOWN_TIME": "Cooldown time",
+    "COOLDOWN_TIME": "Skill cooldown",
     "RES_STATUS": "Resist status",
     "RATE_XP": "XP rate",
     "RATE_MAG": "Magnetite rate",
@@ -41,7 +43,7 @@ STAT_LABELS = {
     "RATE_EXPERTISE": "Expertise rate",
     "RATE_CLSR": "Close-range damage",
     "RATE_LNGR": "Long-range damage",
-    "RATE_SPELL": "Spell damage",
+    "RATE_SPELL": "Magic damage",
     "RATE_SUPPORT": "Support effect",
     "RATE_HEAL": "Healing effect",
     "RATE_CLSR_TAKEN": "Close-range damage taken",
@@ -103,6 +105,30 @@ def wiki_items_path(runtime: Path) -> Path:
 
 def wiki_enchants_path(runtime: Path) -> Path:
     return wiki_dir(runtime) / "enchants.json"
+
+
+def _baked_wiki_dir() -> Path | None:
+    """Repo website/content/wiki when present (local / mounted ops)."""
+    candidate = Path(__file__).resolve().parent.parent / "website" / "content" / "wiki"
+    return candidate if candidate.is_dir() else None
+
+
+def _sync_baked_wiki_catalogs(
+    items_payload: dict[str, Any],
+    enchants_payload: dict[str, Any],
+) -> bool:
+    """Mirror runtime wiki JSON into the Next.js bundled catalog when possible.
+
+    Builder client code imports `@/content/wiki` for combat/display fallbacks.
+    Without this sync, admin wiki regen updates live wiki pages but leaves the
+    builder on stale bundled names/stats until a manual content rebuild.
+    """
+    baked = _baked_wiki_dir()
+    if baked is None:
+        return False
+    _atomic_write_json(baked / "items.json", items_payload)
+    _atomic_write_json(baked / "enchants.json", enchants_payload)
+    return True
 
 
 def binarydata_ready(runtime: Path) -> bool:
@@ -232,6 +258,12 @@ def _load_tokusei_index(tokusei_root: Path) -> dict[int, list[str]]:
         ):
             tid = int(m.group(1))
             body = m.group(2)
+            partner = bool(
+                re.search(
+                    r'<member name="TargetType">\s*PARTNER\s*</member>', body
+                )
+            )
+            prefix = "Partner's " if partner else ""
             lines: list[str] = []
             for cm in re.finditer(
                 r'<member name="ID">([A-Z0-9_]+)</member>\s*<member name="Value">(-?\d+)</member>',
@@ -241,7 +273,9 @@ def _load_tokusei_index(tokusei_root: Path) -> dict[int, list[str]]:
                 sid, val = cm.group(1), int(cm.group(2))
                 if sid.isdigit():
                     continue
-                lines.append(f"{_stat_label(sid)} {_format_stat_value(sid, val)}")
+                lines.append(
+                    f"{prefix}{_stat_label(sid)} {_format_stat_value(sid, val)}"
+                )
             for am in re.finditer(
                 r'<member name="Type">([A-Z0-9_]+)</member>\s*<member name="Value">(-?\d+)</member>',
                 body,
@@ -249,7 +283,7 @@ def _load_tokusei_index(tokusei_root: Path) -> dict[int, list[str]]:
             ):
                 atype, val = am.group(1), int(am.group(2))
                 label = ASPECT_LABELS.get(atype, atype.replace("_", " "))
-                lines.append(f"{label} {val:+d}")
+                lines.append(f"{prefix}{label} {val:+d}")
             if lines:
                 index[tid] = lines
     return index
@@ -758,11 +792,16 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
 
         _atomic_write_json(wiki_enchants_path(runtime), enchants_payload)
 
+        baked_synced = _sync_baked_wiki_catalogs(
+            items_payload, enchants_payload
+        )
+
         info = {
             "detail": enchant_note or "wiki catalogs written",
             "itemCount": len(items_payload["items"]),
             "enchantCount": len(enchants_payload["enchants"]),
             "outDir": str(out_dir),
+            "bakedSynced": baked_synced,
         }
         return True, "", info
     finally:

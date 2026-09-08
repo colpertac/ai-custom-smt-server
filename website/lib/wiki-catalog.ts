@@ -1,6 +1,7 @@
 /**
  * Server-only wiki catalog accessors.
- * Prefers `{OPS_RUNTIME}/wiki/*.json` written by ops after BinaryData ingest;
+ * Prefers `{runtime}/wiki/*.json` written by ops after BinaryData ingest
+ * (OPS_RUNTIME / COMP_RUNTIME, else sibling `comp_hack/runtime`);
  * falls back to baked website/content/wiki JSON.
  */
 import "server-only"
@@ -10,6 +11,8 @@ import {
   getWikiItemCategory,
   wikiBasicFeatures,
   wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
   wikiItemFitsGender,
   wikiSetBonus,
 } from "@/content/wiki/format"
@@ -53,6 +56,8 @@ export {
   getWikiItemCategory,
   wikiBasicFeatures,
   wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
   wikiItemFitsGender,
   wikiSetBonus,
 } from "@/content/wiki/format"

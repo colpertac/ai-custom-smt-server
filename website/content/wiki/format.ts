@@ -53,13 +53,32 @@ export function wikiBasicFeatures(item: WikiItem): WikiItemStat[] {
   return item.stats.filter((row) => row.type === 0)
 }
 
-/** S3 — characteristics (correctTbl type 1/2). */
+/** S3 — characteristics (correctTbl type 1/2). Planner / frankenstein layer. */
 export function wikiCharacteristics(item: WikiItem): WikiItemStat[] {
   if (item.characteristics) return item.characteristics
   return item.stats.filter((row) => row.type === 1 || row.type === 2)
 }
 
-/** S1 — set bonus lines from SItem tokusei. */
+/**
+ * In-game "Basic features" panel: all ItemData correctTbl rows
+ * (type 0 combat stats + type 1/2 modifiers like skill cooldown).
+ */
+export function wikiClientBasicFeatures(item: WikiItem): WikiItemStat[] {
+  const basic = wikiBasicFeatures(item)
+  const chars = wikiCharacteristics(item)
+  if (chars.length === 0) return basic
+  return [...basic, ...chars]
+}
+
+/**
+ * In-game "Characteristics" panel: SItem tokusei (SpecialEffect), including
+ * Partner's lines. Not multi-piece EquipmentSet bonuses.
+ */
+export function wikiClientCharacteristics(item: WikiItem): string[] {
+  return wikiSetBonus(item)
+}
+
+/** S1 — SItem tokusei lines (frankenstein SpecialEffect / wiki setBonus field). */
 export function wikiSetBonus(item: WikiItem): string[] {
   return item.setBonus ?? []
 }

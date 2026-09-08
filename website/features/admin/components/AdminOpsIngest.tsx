@@ -340,7 +340,9 @@ function OpsIngestPanel({
               <span className="text-foreground">Also regenerate wiki catalog</span>
               <span className="block text-xs text-muted-foreground">
                 Rebuild live item/enchant data from Shield BinaryData after
-                merge. Icons stay from the website image.
+                merge (wiki pages + recommend API). Also refreshes the website
+                baked catalog when that tree is mounted so the gear builder
+                stays in sync. Icons stay from the website image.
               </span>
             </span>
           </label>

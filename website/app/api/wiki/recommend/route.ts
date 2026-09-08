@@ -4,11 +4,12 @@ import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
   emptyPlannerLoadout,
   equipWikiItemOntoSlot,
+  parseCombatFocus,
   PLANNER_STATS,
   rankItemsForStat,
   type PlannerStatKey,
 } from "@/lib/gear-planner-combat"
-import { getWikiItem } from "@/lib/wiki-catalog"
+import { getWikiItem, listWikiItems } from "@/lib/wiki-catalog"
 import { isWikiAvailable } from "@/lib/wiki-availability"
 
 const STAT_KEYS = new Set(PLANNER_STATS.map((s) => s.key))
@@ -41,6 +42,7 @@ export async function GET(req: NextRequest) {
   const limit = Number.isFinite(limitRaw)
     ? Math.min(Math.max(1, Math.floor(limitRaw)), 80)
     : 30
+  const focus = parseCombatFocus(req.nextUrl.searchParams.get("focus"))
 
   // equipped=itemType per EQUIP_SLOTS order, comma-separated (0 = empty)
   let loadout = emptyPlannerLoadout()
@@ -68,6 +70,8 @@ export async function GET(req: NextRequest) {
     excludeEquipped: true,
     limit,
     query: q,
+    focus,
+    items: listWikiItems(),
     gender:
       req.nextUrl.searchParams.get("gender") === "0" ||
       req.nextUrl.searchParams.get("gender") === "1"
@@ -83,6 +87,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     total: hits.length,
+    focus,
     items: hits.map((h) => ({
       id: h.item.id,
       name: h.item.name,

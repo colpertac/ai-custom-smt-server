@@ -10,6 +10,7 @@ import {
   listWikiItems,
   wikiBasicFeatures,
   wikiCharacteristics,
+  wikiClientBasicFeatures,
   wikiSetBonus,
   type WikiEnchantCharastic,
   type WikiEnchantRecord,
@@ -228,6 +229,8 @@ export type PlannerStatBreakdown = {
 
 export type GearPlannerResult = {
   byStat: Record<string, PlannerStatBreakdown>
+  /** Partner-targeted SItem + EquipmentSet contributions (same keys as byStat). */
+  partnerByStat: Record<string, PlannerStatBreakdown>
   /** Ordered rows to render (combat always; extras only when nonzero). */
   visibleStats: readonly PlannerStatDef[]
   layerPresence: Record<EquipSlotKey, LayerPresence>
@@ -257,12 +260,53 @@ export type PlannerStoredState = {
 
 type TokuseiRow = StatAdjustment
 
-const tokuseiCorrections = (
-  tokuseiCorrectionsPayload as {
-    tokusei: Record<string, TokuseiRow[]>
+export type TokuseiTarget = "SELF" | "PARTNER" | "PARTY"
+
+/** Builder / recommend focus: which combat bucket to score and display. */
+export type CombatFocus = "player" | "partner" | "both"
+
+export function parseCombatFocus(raw: string | null | undefined): CombatFocus {
+  if (raw === "partner" || raw === "both") return raw
+  return "player"
+}
+
+type TokuseiEntry = {
+  target: TokuseiTarget
+  rows: TokuseiRow[]
+}
+
+type RawTokuseiPayload = Record<
+  string,
+  TokuseiRow[] | { target?: string; rows?: TokuseiRow[] }
+>
+
+function normalizeTokuseiEntry(raw: unknown): TokuseiEntry {
+  if (Array.isArray(raw)) {
+    return { target: "SELF", rows: raw as TokuseiRow[] }
   }
+  if (raw && typeof raw === "object" && "rows" in raw) {
+    const obj = raw as { target?: string; rows?: TokuseiRow[] }
+    const t = String(obj.target ?? "SELF").toUpperCase()
+    const target: TokuseiTarget =
+      t === "PARTNER" ? "PARTNER" : t === "PARTY" ? "PARTY" : "SELF"
+    return { target, rows: obj.rows ?? [] }
+  }
+  return { target: "SELF", rows: [] }
+}
+
+/** SELF + PARTY count as player-side for v1. */
+function isPlayerTarget(target: TokuseiTarget): boolean {
+  return target !== "PARTNER"
+}
+
+const tokuseiCorrectionsRaw = (
+  tokuseiCorrectionsPayload as { tokusei: RawTokuseiPayload }
 ).tokusei
 
+const tokuseiCorrections: Record<string, TokuseiEntry> = {}
+for (const [id, raw] of Object.entries(tokuseiCorrectionsRaw)) {
+  tokuseiCorrections[id] = normalizeTokuseiEntry(raw)
+}
 const sitemTokusei = (
   sitemTokuseiPayload as { items: Record<string, number[]> }
 ).items
@@ -447,7 +491,10 @@ export function parsePlannerState(raw: unknown): {
   }
 }
 
-export function plannerSlotDisplay(slot: PlannerSlot): {
+export function plannerSlotDisplay(
+  slot: PlannerSlot,
+  resolveItem?: (id: number) => WikiItem | null | undefined
+): {
   name: string | null
   iconSrc: string | null
   level: number | null
@@ -456,7 +503,8 @@ export function plannerSlotDisplay(slot: PlannerSlot): {
   if (slot.s1ItemId == null) {
     return { name: null, iconSrc: null, level: null, itemType: null }
   }
-  const item = getWikiItem(slot.s1ItemId)
+  const item =
+    resolveItem?.(slot.s1ItemId) ?? getWikiItem(slot.s1ItemId) ?? null
   return {
     name: item?.name ?? `#${slot.s1ItemId}`,
     iconSrc: item?.iconSrc ?? null,
@@ -504,7 +552,7 @@ export function applyLayerToSlot(
   return loadout.map((slot) => {
     if (slot.slot !== slotKey) return slot
     if (layer === "s1") {
-      // New base: if slot was empty, seed all layers; else only replace appearance+SItem.
+      // Appearance / set membership base. Empty slot seeds CorrectTbl + SItem too.
       if (slot.s1ItemId == null) {
         return {
           ...slot,
@@ -516,10 +564,14 @@ export function applyLayerToSlot(
           soulEnchantId: null,
         }
       }
-      return { ...slot, s1ItemId: item.id, sitemItemId: item.id }
+      return { ...slot, s1ItemId: item.id }
     }
-    if (layer === "s2") return { ...slot, s2ItemId: item.id }
-    return { ...slot, s3ItemId: item.id }
+    if (layer === "s2") {
+      // Wiki "Basic features" = all ItemData CorrectTbl (type 0 + 1/2).
+      return { ...slot, s2ItemId: item.id, s3ItemId: item.id }
+    }
+    // Wiki "Characteristics" = SItem / SpecialEffect.
+    return { ...slot, sitemItemId: item.id }
   })
 }
 
@@ -601,14 +653,34 @@ export function contribFromAdjustments(
   return sum
 }
 
-function tokuseiRows(tokuseiId: number): TokuseiRow[] {
-  return tokuseiCorrections[String(tokuseiId)] ?? []
+function tokuseiEntry(tokuseiId: number): TokuseiEntry {
+  return (
+    tokuseiCorrections[String(tokuseiId)] ?? {
+      target: "SELF",
+      rows: [],
+    }
+  )
 }
 
-function s1Adjustments(itemId: number): TokuseiRow[] {
+function tokuseiRows(
+  tokuseiId: number,
+  filter: "SELF" | "PARTNER" | "ALL" = "ALL"
+): TokuseiRow[] {
+  const entry = tokuseiEntry(tokuseiId)
+  if (filter === "ALL") return entry.rows
+  if (filter === "PARTNER") {
+    return entry.target === "PARTNER" ? entry.rows : []
+  }
+  return isPlayerTarget(entry.target) ? entry.rows : []
+}
+
+function s1Adjustments(
+  itemId: number,
+  filter: "SELF" | "PARTNER" | "ALL" = "ALL"
+): TokuseiRow[] {
   const out: TokuseiRow[] = []
   for (const tokId of sitemTokusei[String(itemId)] ?? []) {
-    out.push(...tokuseiRows(tokId))
+    out.push(...tokuseiRows(tokId, filter))
   }
   return out
 }
@@ -631,13 +703,27 @@ function s3Adjustments(item: WikiItem): TokuseiRow[] {
 
 export function layerHasContent(item: WikiItem, layer: GearLayer): boolean {
   if (layer === "s1") {
-    return (
-      wikiSetBonus(item).length > 0 ||
-      (sitemTokusei[String(item.id)]?.length ?? 0) > 0
-    )
+    return equipmentSetMembership(item.id).length > 0
   }
-  if (layer === "s2") return wikiBasicFeatures(item).length > 0
-  return wikiCharacteristics(item).length > 0
+  if (layer === "s2") {
+    return wikiClientBasicFeatures(item).length > 0
+  }
+  return (
+    wikiSetBonus(item).length > 0 ||
+    (sitemTokusei[String(item.id)]?.length ?? 0) > 0
+  )
+}
+
+/** Display lines for wiki-aligned S1 (EquipmentSet) in recommend/sidebar. */
+export function wikiLayerSetLines(itemId: number): string[] {
+  const lines: string[] = []
+  for (const set of equipmentSetMembership(itemId)) {
+    for (const bonus of set.bonuses) {
+      const text = `${bonus.label} ${bonus.valueText}`.trim()
+      if (text) lines.push(text)
+    }
+  }
+  return lines
 }
 
 function enchantSideHasContent(side: WikiEnchantCharastic): boolean {
@@ -664,7 +750,8 @@ function enchantConditionCtx(attrs: PlannerAttrs, lnc: PlannerLnc) {
   }
 }
 
-/** Tokusei rows from an enchant side, including currently-met conditions. */
+/** Tokusei rows from an enchant side, including currently-met conditions.
+ * Enchants apply to the wearer (player); PARTNER-targeted rows are ignored. */
 export function enchantSideAdjustments(
   side: WikiEnchantCharastic,
   attrs: PlannerAttrs,
@@ -672,13 +759,13 @@ export function enchantSideAdjustments(
 ): TokuseiRow[] {
   const out: TokuseiRow[] = []
   for (const tokId of side.tokuseiIds ?? []) {
-    out.push(...tokuseiRows(tokId))
+    out.push(...tokuseiRows(tokId, "SELF"))
   }
   const ctx = enchantConditionCtx(attrs, lnc)
   for (const condition of side.conditions ?? []) {
     if (!evaluateEnchantCondition(condition, ctx)) continue
     for (const tokId of condition.tokuseiIds) {
-      out.push(...tokuseiRows(tokId))
+      out.push(...tokuseiRows(tokId, "SELF"))
     }
   }
   return out
@@ -721,24 +808,71 @@ export function canApplyEnchant(options: {
 export function itemLayerContribution(
   item: WikiItem,
   layer: GearLayer,
-  statKey: PlannerStatKey
+  statKey: PlannerStatKey,
+  focus: CombatFocus = "player"
 ): number {
   const def = PLANNER_STATS.find((s) => s.key === statKey)
   if (!def) return 0
-  if (layer === "s1") return contribFromAdjustments(s1Adjustments(item.id), def)
-  if (layer === "s2") return contribFromAdjustments(s2Adjustments(item), def)
-  return contribFromAdjustments(s3Adjustments(item), def)
+
+  // Wiki-aligned layers:
+  // S1 = EquipmentSet (solo appearance sets only — multi-piece via setCompletionBonus)
+  // S2 = CorrectTbl (basic + characteristics)
+  // S3 = SItem / SpecialEffect
+  if (layer === "s1") {
+    let sum = 0
+    for (const set of setsForItem(item.id)) {
+      const members = set.equipment.filter((id) => id > 0)
+      if (members.length !== 1 || members[0] !== item.id) continue
+      if (focus === "partner") {
+        sum += contribFromAdjustments(
+          set.tokuseiIds.flatMap((id) => tokuseiRows(id, "PARTNER")),
+          def
+        )
+      } else if (focus === "both") {
+        sum += contribFromAdjustments(
+          set.tokuseiIds.flatMap((id) => tokuseiRows(id, "ALL")),
+          def
+        )
+      } else {
+        sum += contribFromAdjustments(
+          set.tokuseiIds.flatMap((id) => tokuseiRows(id, "SELF")),
+          def
+        )
+      }
+    }
+    return sum
+  }
+
+  if (layer === "s2") {
+    if (focus === "partner") return 0
+    return (
+      contribFromAdjustments(s2Adjustments(item), def) +
+      contribFromAdjustments(s3Adjustments(item), def)
+    )
+  }
+
+  // S3 = SItem
+  if (focus === "partner") {
+    return contribFromAdjustments(s1Adjustments(item.id, "PARTNER"), def)
+  }
+  if (focus === "both") {
+    return (
+      contribFromAdjustments(s1Adjustments(item.id, "SELF"), def) +
+      contribFromAdjustments(s1Adjustments(item.id, "PARTNER"), def)
+    )
+  }
+  return contribFromAdjustments(s1Adjustments(item.id, "SELF"), def)
 }
 
-/** Whole-item contribution (all layers) — used by recommend ranking. */
+/** Whole-item contribution — CorrectTbl + SItem (sets via setCompletionBonus). */
 export function itemPieceContribution(
   item: WikiItem,
-  statKey: PlannerStatKey
+  statKey: PlannerStatKey,
+  focus: CombatFocus = "player"
 ): number {
   return (
-    itemLayerContribution(item, "s1", statKey) +
-    itemLayerContribution(item, "s2", statKey) +
-    itemLayerContribution(item, "s3", statKey)
+    itemLayerContribution(item, "s2", statKey, focus) +
+    itemLayerContribution(item, "s3", statKey, focus)
   )
 }
 
@@ -765,10 +899,20 @@ export type EquipmentSetBonusLine = {
   valueText: string
 }
 
-/** Wiki-facing view of multi-piece EquipmentSetData rows that include this item. */
+export type EquipmentSetKind = "appearance" | "set"
+
+/** Wiki-facing view of EquipmentSetData rows that include this item. */
 export type EquipmentSetMembership = {
+  /** Primary / lowest set id in a collapsed gender-variant group. */
   id: number
+  /** All EquipmentSetData ids represented by this card. */
+  setIds: number[]
+  kind: EquipmentSetKind
+  /** e.g. Appearance bonus, Set bonus, Set bonus 1 */
+  title: string
   members: EquipmentSetMemberView[]
+  /** Human summary of other required pieces (gender variants collapsed). */
+  requiresText: string | null
   bonuses: EquipmentSetBonusLine[]
 }
 
@@ -887,6 +1031,9 @@ export function extraPlannerStats(): readonly PlannerStatDef[] {
 function formatSetBonusValue(row: TokuseiRow): string {
   const id = row.id
   if (id === "SKILL_ADD") return `#${row.value}`
+  if (id.startsWith("NRA_") && Math.abs(row.value) === 100) {
+    return "Null"
+  }
   if (id === "STATUS_INFLICT_ADJUST" || id === "CONSTANT_STATUS") {
     return String(row.value)
   }
@@ -904,15 +1051,104 @@ function formatSetBonusValue(row: TokuseiRow): string {
   return row.value > 0 ? `+${row.value}` : String(row.value)
 }
 
-function formatSetBonusLabel(row: TokuseiRow): string {
-  if (row.id === "SKILL_ADD") return "Adds skill"
-  return humanizeAspectId(row.id)
+const SET_BONUS_LABELS: Record<string, string> = {
+  LB_CHANCE: "Limit break chance",
+  LB_DAMAGE: "Limit break power",
+  LIMIT_BREAK_MAX: "Limit break cap",
+  RATE_CLSR: "Close-range damage",
+  RATE_LNGR: "Long-range damage",
+  RATE_SPELL: "Magic damage",
+  RATE_SUPPORT: "Support effect",
+  FINAL_CRIT_CHANCE: "Final crit chance",
+  CRITICAL: "Critical",
+  COOLDOWN_TIME: "Skill cooldown",
+  NRA_SLASH: "Null Slash",
+  NRA_THRUST: "Null Thrust",
+  NRA_STRIKE: "Null Strike",
+  NRA_FIRE: "Null Fire",
+  NRA_ICE: "Null Ice",
+  NRA_ELEC: "Null Elec",
+  NRA_FORCE: "Null Force",
+  NRA_EXPEL: "Null Expel",
+  NRA_CURSE: "Null Curse",
+  NRA_ALMIGHTY: "Null Almighty",
 }
 
-/** Multi-piece EquipmentSet membership for a wiki item page. */
-export function equipmentSetMembership(
+function formatSetBonusLabel(row: TokuseiRow): string {
+  if (row.id === "SKILL_ADD") return "Adds skill"
+  return SET_BONUS_LABELS[row.id] ?? humanizeAspectId(row.id)
+}
+
+function dedupeSetBonuses(
+  bonuses: EquipmentSetBonusLine[]
+): EquipmentSetBonusLine[] {
+  const seen = new Set<string>()
+  const out: EquipmentSetBonusLine[] = []
+  for (const bonus of bonuses) {
+    const key = `${bonus.id}\0${bonus.label}\0${bonus.valueText}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(bonus)
+  }
+  return out
+}
+
+function bonusSignature(bonuses: EquipmentSetBonusLine[]): string {
+  return dedupeSetBonuses(bonuses)
+    .map((b) => `${b.id}:${b.valueText}`)
+    .sort()
+    .join("|")
+}
+
+function companionRequiresText(
+  companions: EquipmentSetMemberView[]
+): string | null {
+  if (companions.length === 0) return null
+
+  type Group = {
+    name: string
+    slotLabel: string
+    genders: Set<string>
+    itemIds: number[]
+  }
+  const byName = new Map<string, Group>()
+  for (const c of companions) {
+    const item = getWikiItem(c.itemId)
+    const gender =
+      item?.gender === 0 ? "Male" : item?.gender === 1 ? "Female" : null
+    const key = `${c.slotLabel}\0${c.name}`
+    let group = byName.get(key)
+    if (!group) {
+      group = {
+        name: c.name,
+        slotLabel: c.slotLabel,
+        genders: new Set(),
+        itemIds: [],
+      }
+      byName.set(key, group)
+    }
+    if (gender) group.genders.add(gender)
+    if (!group.itemIds.includes(c.itemId)) group.itemIds.push(c.itemId)
+  }
+
+  return [...byName.values()]
+    .map((g) => {
+      if (g.genders.size >= 2) {
+        return `${g.name} (Male or Female)`
+      }
+      if (g.genders.size === 1) {
+        return `${g.name} (${[...g.genders][0]})`
+      }
+      return g.name
+    })
+    .join(" + ")
+}
+
+function buildRawEquipmentSetMembership(
   itemId: number
-): EquipmentSetMembership[] {
+): Omit<EquipmentSetMembership, "title" | "requiresText" | "setIds"> & {
+  setIds: number[]
+}[] {
   return setsForItem(itemId).map((set) => {
     const members: EquipmentSetMemberView[] = []
     for (let i = 0; i < set.equipment.length; i++) {
@@ -934,7 +1170,7 @@ export function equipmentSetMembership(
 
     const bonuses: EquipmentSetBonusLine[] = []
     for (const tid of set.tokuseiIds) {
-      for (const row of tokuseiCorrections[String(tid)] ?? []) {
+      for (const row of tokuseiRows(tid, "ALL")) {
         bonuses.push({
           id: row.id,
           label: formatSetBonusLabel(row),
@@ -943,8 +1179,127 @@ export function equipmentSetMembership(
       }
     }
 
-    return { id: set.id, members, bonuses }
+    const kind: EquipmentSetKind = members.length <= 1 ? "appearance" : "set"
+    return {
+      id: set.id,
+      setIds: [set.id],
+      kind,
+      members,
+      bonuses: dedupeSetBonuses(bonuses),
+    }
   })
+}
+
+/**
+ * Equipment sets for wiki: solo rows become Appearance bonus; multi-piece
+ * rows with identical bonuses (e.g. male/female armor variants) collapse.
+ */
+export function equipmentSetMembership(
+  itemId: number
+): EquipmentSetMembership[] {
+  const raw = buildRawEquipmentSetMembership(itemId)
+  type Acc = {
+    kind: EquipmentSetKind
+    setIds: number[]
+    membersById: Map<number, EquipmentSetMemberView>
+    bonuses: EquipmentSetBonusLine[]
+  }
+  const groups = new Map<string, Acc>()
+
+  for (const row of raw) {
+    const key = `${row.kind}\0${bonusSignature(row.bonuses)}`
+    let acc = groups.get(key)
+    if (!acc) {
+      acc = {
+        kind: row.kind,
+        setIds: [],
+        membersById: new Map(),
+        bonuses: row.bonuses,
+      }
+      groups.set(key, acc)
+    }
+    for (const id of row.setIds) {
+      if (!acc.setIds.includes(id)) acc.setIds.push(id)
+    }
+    for (const member of row.members) {
+      const prev = acc.membersById.get(member.itemId)
+      if (!prev) {
+        acc.membersById.set(member.itemId, member)
+      } else if (member.isCurrent && !prev.isCurrent) {
+        acc.membersById.set(member.itemId, member)
+      }
+    }
+  }
+
+  const appearance: EquipmentSetMembership[] = []
+  const multi: EquipmentSetMembership[] = []
+
+  for (const acc of groups.values()) {
+    acc.setIds.sort((a, b) => a - b)
+    const members = [...acc.membersById.values()].sort(
+      (a, b) => a.slotIndex - b.slotIndex || a.itemId - b.itemId
+    )
+    const companions = members.filter((m) => !m.isCurrent)
+    const entry: EquipmentSetMembership = {
+      id: acc.setIds[0]!,
+      setIds: acc.setIds,
+      kind: acc.kind,
+      title: acc.kind === "appearance" ? "Appearance bonus" : "Set bonus",
+      members,
+      requiresText:
+        acc.kind === "appearance"
+          ? "This piece alone"
+          : companionRequiresText(companions),
+      bonuses: acc.bonuses,
+    }
+    if (acc.kind === "appearance") appearance.push(entry)
+    else multi.push(entry)
+  }
+
+  appearance.sort((a, b) => a.id - b.id)
+  multi.sort((a, b) => a.id - b.id)
+  if (multi.length > 1) {
+    multi.forEach((entry, i) => {
+      entry.title = `Set bonus ${i + 1}`
+    })
+  }
+
+  return [...appearance, ...multi]
+}
+
+/** Compact S1 column lines for weapons/armor browse tables. */
+export function equipmentSetBrowseLines(itemId: number): string[] {
+  const groups = equipmentSetMembership(itemId)
+  const lines: string[] = []
+  for (const group of groups) {
+    if (group.kind === "appearance") {
+      for (const bonus of group.bonuses) {
+        lines.push(
+          bonus.valueText && bonus.valueText !== "Null"
+            ? `${bonus.label} ${bonus.valueText}`
+            : bonus.label
+        )
+      }
+      continue
+    }
+    const req = group.requiresText ? ` w/ ${group.requiresText}` : ""
+    const preview = group.bonuses
+      .slice(0, 2)
+      .map((b) =>
+        b.valueText && b.valueText !== "Null"
+          ? `${b.label} ${b.valueText}`
+          : b.label
+      )
+      .join(", ")
+    const more =
+      group.bonuses.length > 2 ? ` +${group.bonuses.length - 2} more` : ""
+    lines.push(
+      preview
+        ? `${group.title}${req}: ${preview}${more}`
+        : `${group.title}${req}`
+    )
+  }
+  return lines
 }
 
 function requiredSlotsOf(set: EquipmentSetInfo): number[] {
@@ -1059,7 +1414,10 @@ export function canApplyLayer(options: {
   }
 
   if (layer !== "s1" && target.s1ItemId == null) {
-    return { ok: false, reason: "Equip an S1 base piece before swapping S2/S3" }
+    return {
+      ok: false,
+      reason: "Equip an S1 base piece before swapping S2/S3",
+    }
   }
 
   const baseId = target.s1ItemId
@@ -1133,8 +1491,10 @@ export function computeGearPlannerCombat(
     : combatStats
 
   const byStat = {} as Record<string, PlannerStatBreakdown>
+  const partnerByStat = {} as Record<string, PlannerStatBreakdown>
   for (const def of statsToCompute) {
     byStat[def.key] = emptyBreakdown()
+    partnerByStat[def.key] = emptyBreakdown()
   }
   const layerPresence = emptyPresenceMap()
 
@@ -1153,13 +1513,21 @@ export function computeGearPlannerCombat(
         ? getWikiEnchant(slot.soulEnchantId)
         : null
 
-    if (s1 || sitem) {
-      layerPresence[slot.slot].s1 =
-        (s1 ? layerHasContent(s1, "s1") : false) ||
-        (sitem ? layerHasContent(sitem, "s1") : false)
+    if (s1) {
+      layerPresence[slot.slot].s1 = layerHasContent(s1, "s1")
     }
-    if (s2) layerPresence[slot.slot].s2 = layerHasContent(s2, "s2")
-    if (s3) layerPresence[slot.slot].s3 = layerHasContent(s3, "s3")
+    if (s2 || s3) {
+      const same = s2 && s3 && s2.id === s3.id
+      layerPresence[slot.slot].s2 = same
+        ? layerHasContent(s2, "s2")
+        : Boolean(
+            (s2 && wikiBasicFeatures(s2).length > 0) ||
+              (s3 && wikiCharacteristics(s3).length > 0)
+          )
+    }
+    if (sitem) {
+      layerPresence[slot.slot].s3 = layerHasContent(sitem, "s3")
+    }
     if (tarot) {
       layerPresence[slot.slot].tarot = enchantSideHasContent(tarot.tarot)
     }
@@ -1169,8 +1537,16 @@ export function computeGearPlannerCombat(
 
     for (const def of statsToCompute) {
       const layers = byStat[def.key]!.bySlotLayers[slot.slot]
+      const partnerLayers = partnerByStat[def.key]!.bySlotLayers[slot.slot]
       if (sitemId != null) {
-        layers.s1 += contribFromAdjustments(s1Adjustments(sitemId), def)
+        layers.s1 += contribFromAdjustments(
+          s1Adjustments(sitemId, "SELF"),
+          def
+        )
+        partnerLayers.s1 += contribFromAdjustments(
+          s1Adjustments(sitemId, "PARTNER"),
+          def
+        )
       }
       if (s2) {
         layers.s2 += contribFromAdjustments(s2Adjustments(s2), def)
@@ -1192,16 +1568,26 @@ export function computeGearPlannerCombat(
       }
       byStat[def.key]!.bySlot[slot.slot] =
         layers.s1 + layers.s2 + layers.s3 + layers.tarot + layers.soul
+      partnerByStat[def.key]!.bySlot[slot.slot] =
+        partnerLayers.s1 +
+        partnerLayers.s2 +
+        partnerLayers.s3 +
+        partnerLayers.tarot +
+        partnerLayers.soul
     }
   }
 
   const { activeSets, partialSets } = activeAndPartialSets(equipment)
   for (const set of activeSets) {
-    const rows: TokuseiRow[] = []
-    for (const tokId of set.tokuseiIds) rows.push(...tokuseiRows(tokId))
     for (const def of statsToCompute) {
-      const v = contribFromAdjustments(rows, def)
-      if (v !== 0) byStat[def.key]!.setBonus += v
+      let playerV = 0
+      let partnerV = 0
+      for (const tokId of set.tokuseiIds) {
+        playerV += contribFromAdjustments(tokuseiRows(tokId, "SELF"), def)
+        partnerV += contribFromAdjustments(tokuseiRows(tokId, "PARTNER"), def)
+      }
+      if (playerV !== 0) byStat[def.key]!.setBonus += playerV
+      if (partnerV !== 0) partnerByStat[def.key]!.setBonus += partnerV
     }
   }
 
@@ -1214,34 +1600,45 @@ export function computeGearPlannerCombat(
     byStat.cooldown.attrBonus = cdAttr === 0 ? 0 : -cdAttr
   }
 
-  for (const def of statsToCompute) {
-    const bd = byStat[def.key]!
-    let pieceSum = 0
-    for (const slot of EQUIP_SLOTS) pieceSum += bd.bySlot[slot.key]
-    bd.gearTotal = pieceSum + bd.setBonus + bd.attrBonus
+  for (const bucket of [byStat, partnerByStat]) {
+    for (const def of statsToCompute) {
+      const bd = bucket[def.key]!
+      let pieceSum = 0
+      for (const slot of EQUIP_SLOTS) pieceSum += bd.bySlot[slot.key]
+      bd.gearTotal = pieceSum + bd.setBonus + bd.attrBonus
 
-    if (def.kind === "reduction") {
-      bd.raw = 100 + bd.gearTotal
-    } else if (def.kind === "lbCap") {
-      bd.raw = (def.baseTotal ?? LB_CAP_BASE) + pieceSum + bd.setBonus
-    } else {
-      bd.raw = pieceSum + bd.setBonus
+      if (def.kind === "reduction") {
+        bd.raw = 100 + bd.gearTotal
+      } else if (def.kind === "lbCap") {
+        bd.raw = (def.baseTotal ?? LB_CAP_BASE) + pieceSum + bd.setBonus
+      } else {
+        bd.raw = pieceSum + bd.setBonus
+      }
+      bd.atCap = isAtCap(def, bd.raw)
     }
-    bd.atCap = isAtCap(def, bd.raw)
   }
 
   const nonzeroExtras = fullStats
     ? extras.filter((def) => {
         const bd = byStat[def.key]
+        const pd = partnerByStat[def.key]
         if (!bd) return false
-        if (def.kind === "reduction") return bd.gearTotal !== 0
-        if (def.kind === "lbCap") return bd.gearTotal !== 0 || bd.setBonus !== 0
-        return bd.gearTotal !== 0 || bd.setBonus !== 0
+        const playerHit =
+          def.kind === "reduction"
+            ? bd.gearTotal !== 0
+            : bd.gearTotal !== 0 || bd.setBonus !== 0
+        const partnerHit = pd
+          ? def.kind === "reduction"
+            ? pd.gearTotal !== 0
+            : pd.gearTotal !== 0 || pd.setBonus !== 0
+          : false
+        return playerHit || partnerHit
       })
     : []
 
   return {
     byStat,
+    partnerByStat,
     visibleStats: [...combatStats, ...nonzeroExtras],
     layerPresence,
     activeSets,
@@ -1262,6 +1659,23 @@ export type RankedGearHit = {
   completesSetIds: number[]
 }
 
+function setTokuseiForFocus(
+  tokuseiIds: readonly number[],
+  focus: CombatFocus
+): TokuseiRow[] {
+  const rows: TokuseiRow[] = []
+  for (const tokId of tokuseiIds) {
+    if (focus === "partner") {
+      rows.push(...tokuseiRows(tokId, "PARTNER"))
+    } else if (focus === "both") {
+      rows.push(...tokuseiRows(tokId, "ALL"))
+    } else {
+      rows.push(...tokuseiRows(tokId, "SELF"))
+    }
+  }
+  return rows
+}
+
 export function rankItemsForStat(options: {
   stat: PlannerStatKey
   slot?: EquipSlotKey | null
@@ -1274,10 +1688,15 @@ export function rankItemsForStat(options: {
   subcategory?: number | null
   limit?: number
   query?: string
+  /** Which combat bucket to score (default player / SELF). */
+  focus?: CombatFocus
+  /** Optional candidate pool (API may pass runtime wiki catalog). */
+  items?: readonly WikiItem[]
 }): RankedGearHit[] {
   const def = PLANNER_STATS.find((s) => s.key === options.stat)
   if (!def) return []
 
+  const focus = options.focus ?? "player"
   const limit = options.limit ?? 40
   const loadout = options.loadout ?? emptyPlannerLoadout()
   const equippedIds = new Set(
@@ -1287,7 +1706,7 @@ export function rankItemsForStat(options: {
   const gender = options.gender
   const layer = options.layer ?? null
 
-  const pool = listWikiItems().filter((item) => {
+  const pool = (options.items ?? listWikiItems()).filter((item) => {
     const slotKey = equipSlotKeyFromWikiSlot(item.equipSlot)
     if (!slotKey) return false
     if (options.slot && slotKey !== options.slot) return false
@@ -1318,10 +1737,15 @@ export function rankItemsForStat(options: {
     const completesSetIds: number[] = []
 
     if (layer) {
-      pieceContribution = itemLayerContribution(item, layer, options.stat)
+      pieceContribution = itemLayerContribution(
+        item,
+        layer,
+        options.stat,
+        focus
+      )
       if (pieceContribution === 0) continue
     } else {
-      pieceContribution = itemPieceContribution(item, options.stat)
+      pieceContribution = itemPieceContribution(item, options.stat, focus)
 
       const trial = equipWikiItemOntoSlot(loadout, slotKey, item)
       const before = activeAndPartialSets(loadout).activeSets.map((s) => s.id)
@@ -1329,8 +1753,7 @@ export function rankItemsForStat(options: {
       const newlyComplete = after.filter((s) => !before.includes(s.id))
 
       for (const set of newlyComplete) {
-        const rows: TokuseiRow[] = []
-        for (const tokId of set.tokuseiIds) rows.push(...tokuseiRows(tokId))
+        const rows = setTokuseiForFocus(set.tokuseiIds, focus)
         const v = contribFromAdjustments(rows, def)
         if (v !== 0) {
           setCompletionBonus += v

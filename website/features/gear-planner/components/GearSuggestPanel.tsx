@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { GripVertical, Loader2, ListOrdered, Sparkles, Undo2 } from "lucide-react"
+import { GripVertical, Loader2, ListOrdered, WandSparkles, Undo2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
-import { PLANNER_STATS, type PlannerStatKey } from "@/lib/gear-planner-combat"
+import { PLANNER_STATS, type CombatFocus, type PlannerStatKey } from "@/lib/gear-planner-combat"
 import {
   cloneLoadout,
   DEFAULT_OPTIMIZE_PRIORITIES,
@@ -207,12 +207,14 @@ export function GearSuggestPanel({
   attrs,
   lnc,
   gender,
+  focus = "player",
   onApply,
 }: {
   loadout: PlannerSlot[]
   attrs: PlannerAttrs
   lnc: PlannerLnc
   gender: 0 | 1
+  focus?: CombatFocus
   onApply: (next: PlannerSlot[]) => void
 }) {
   const [open, setOpen] = useState(false)
@@ -252,6 +254,7 @@ export function GearSuggestPanel({
         gender,
         priorities,
         lockS1,
+        focus,
         budget,
         signal: cancelRef.current,
         onProgress: setProgress,
@@ -271,6 +274,7 @@ export function GearSuggestPanel({
     gender,
     priorities,
     lockS1,
+    focus,
     budget,
     onApply,
   ])
@@ -347,7 +351,7 @@ export function GearSuggestPanel({
           className={cn(open && "border-gold/60 bg-gold/10 text-gold-hot")}
           onClick={() => setOpen((v) => !v)}
         >
-          <Sparkles className="size-3.5" aria-hidden />
+          <WandSparkles className="size-3.5" aria-hidden />
           Suggest
         </Button>
         {undoSnapshot ? (
@@ -479,7 +483,7 @@ export function GearSuggestPanel({
                 </>
               ) : (
                 <>
-                  <Sparkles className="size-3.5" aria-hidden />
+                  <WandSparkles className="size-3.5" aria-hidden />
                   Run suggest
                 </>
               )}

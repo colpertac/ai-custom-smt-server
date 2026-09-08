@@ -22,13 +22,36 @@ import {
 describe("equipmentSetMembership", () => {
   it("lists Devil Doctor Glove set pieces for wiki linking", () => {
     const sets = equipmentSetMembership(5196)
-    expect(sets.some((s) => s.id === 418)).toBe(true)
-    const set = sets.find((s) => s.id === 418)!
+    expect(sets.some((s) => s.setIds.includes(418) || s.id === 418)).toBe(true)
+    const set = sets.find((s) => s.id === 418 || s.setIds.includes(418))!
     expect(set.members.map((m) => m.itemId).sort((a, b) => a - b)).toEqual([
       5196, 23271, 26139,
     ])
     expect(set.members.find((m) => m.itemId === 5196)?.isCurrent).toBe(true)
     expect(set.members.filter((m) => !m.isCurrent)).toHaveLength(2)
+  })
+
+  it("splits Masakado sword into appearance + collapsed armor set", () => {
+    const sets = equipmentSetMembership(2383)
+    const appearance = sets.filter((s) => s.kind === "appearance")
+    const multi = sets.filter((s) => s.kind === "set")
+    expect(appearance.length).toBe(1)
+    expect(appearance[0]!.title).toBe("Appearance bonus")
+    expect(appearance[0]!.requiresText).toBe("This piece alone")
+    expect(
+      appearance[0]!.bonuses.some((b) => b.id === "LB_CHANCE")
+    ).toBe(true)
+
+    // Male/female armor variants share identical bonuses → one card.
+    expect(multi.length).toBe(1)
+    expect(multi[0]!.title).toBe("Set bonus")
+    expect(multi[0]!.requiresText).toMatch(/Masakado's Armor \(Male or Female\)/)
+    expect(multi[0]!.setIds).toEqual(
+      expect.arrayContaining([2233, 2234, 2241, 2242])
+    )
+    expect(
+      multi[0]!.bonuses.some((b) => b.id === "RATE_CLSR" && b.valueText === "+100%")
+    ).toBe(true)
   })
 })
 
@@ -127,7 +150,7 @@ describe("computeGearPlannerCombat", () => {
 })
 
 describe("applyLayerToSlot / canApplyLayer", () => {
-  it("replaces only S2 and keeps S1 appearance id", () => {
+  it("replaces CorrectTbl donors (S2) and keeps S1 appearance id", () => {
     let loadout = emptyPlannerLoadout()
     const base = getWikiItem(1201)! // Machete
     const donor = getWikiItem(1214)! // Crystal Sword — same subcategory family ideally
@@ -152,7 +175,8 @@ describe("applyLayerToSlot / canApplyLayer", () => {
     const slot = loadout.find((s) => s.slot === "weapon")!
     expect(slot.s1ItemId).toBe(base.id)
     expect(slot.s2ItemId).toBe(poolDonor.id)
-    expect(slot.s3ItemId).toBe(base.id)
+    // Wiki S2 Basic = all CorrectTbl → both s2 and s3 donors update together.
+    expect(slot.s3ItemId).toBe(poolDonor.id)
   })
 
   it("rejects S2 drop onto empty slot", () => {
@@ -201,8 +225,9 @@ describe("applyArmoryEquipmentToSlot", () => {
       ...emptyPlannerLoadout().map((s) => (s.slot === "extra" ? slot : s)),
     ])
     // SItem tokusei come from special (32725), not the Type shell.
+    // Combat matrix column "1" is still the SItem bucket; wiki UI maps that to S3.
     expect(result.byStat.critical.bySlotLayers.extra.s1).toBe(
-      itemLayerContribution(getWikiItem(32725)!, "s1", "critical")
+      itemLayerContribution(getWikiItem(32725)!, "s3", "critical")
     )
   })
 
@@ -252,6 +277,65 @@ describe("rankItemsForStat", () => {
     for (const hit of hits) {
       expect(itemLayerContribution(hit.item, "s2", "cooldown")).not.toBe(0)
     }
+  })
+
+  it("player focus ignores partner-only cooldown SItem", () => {
+    const item = getWikiItem(1649)!
+    expect(itemPieceContribution(item, "cooldown", "player")).toBe(0)
+    expect(itemPieceContribution(item, "cooldown", "partner")).toBe(-20)
+    expect(itemPieceContribution(item, "cooldown", "both")).toBe(-20)
+
+    const playerHits = rankItemsForStat({
+      stat: "cooldown",
+      slot: "weapon",
+      focus: "player",
+      limit: 80,
+    })
+    expect(playerHits.some((h) => h.item.id === 1649)).toBe(false)
+
+    const partnerHits = rankItemsForStat({
+      stat: "cooldown",
+      slot: "weapon",
+      focus: "partner",
+      limit: 80,
+    })
+    const hit = partnerHits.find((h) => h.item.id === 1649)
+    expect(hit).toBeTruthy()
+    expect(hit!.pieceContribution).toBe(-20)
+  })
+})
+
+describe("partner combat split", () => {
+  it("routes SItem PARTNER cooldown into partnerByStat only", () => {
+    let loadout = emptyPlannerLoadout()
+    loadout = equipWikiItemOntoSlot(loadout, "weapon", getWikiItem(1649)!)
+    const result = computeGearPlannerCombat(loadout)
+    expect(result.byStat.cooldown.bySlotLayers.weapon.s1).toBe(0)
+    expect(result.partnerByStat.cooldown.bySlotLayers.weapon.s1).toBe(-20)
+  })
+
+  it("routes solo appearance PARTNER tokusei into partner setBonus", () => {
+    let loadout = emptyPlannerLoadout()
+    loadout = equipWikiItemOntoSlot(loadout, "top", getWikiItem(23636)!)
+    const { activeSets } = activeAndPartialSets(loadout)
+    expect(activeSets.some((s) => s.id === 870)).toBe(true)
+    const result = computeGearPlannerCombat(loadout)
+    expect(result.byStat.cooldown.setBonus).toBe(0)
+    expect(result.partnerByStat.cooldown.setBonus).toBe(-20)
+  })
+
+  it("routes multi-piece PARTNER set bonuses into partnerByStat", () => {
+    let loadout = emptyPlannerLoadout()
+    loadout = equipWikiItemOntoSlot(loadout, "top", getWikiItem(23023)!)
+    loadout = equipWikiItemOntoSlot(loadout, "arms", getWikiItem(5134)!)
+    loadout = equipWikiItemOntoSlot(loadout, "feet", getWikiItem(5976)!)
+    const { activeSets } = activeAndPartialSets(loadout)
+    expect(activeSets.some((s) => s.id === 203)).toBe(true)
+    const result = computeGearPlannerCombat(loadout)
+    expect(result.byStat.critical.setBonus).toBe(0)
+    expect(result.byStat.lbc.setBonus).toBe(0)
+    expect(result.partnerByStat.critical.setBonus).toBe(100)
+    expect(result.partnerByStat.lbc.setBonus).toBe(20)
   })
 })
 

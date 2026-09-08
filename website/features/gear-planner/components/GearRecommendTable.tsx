@@ -1,12 +1,16 @@
 "use client"
 
-import { Layers, Loader2, Sparkles } from "lucide-react"
+import { Layers, Loader2, WandSparkles } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import type { WikiItem, WikiItemStat } from "@/content/wiki/types"
-import { formatWikiStatValue } from "@/content/wiki/format"
+import {
+  formatWikiStatValue,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
+} from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -19,6 +23,8 @@ import { EQUIP_SLOTS, type EquipSlotKey } from "@/lib/armory-equipment"
 import {
   GEAR_LAYER_MIME,
   PLANNER_STATS,
+  wikiLayerSetLines,
+  type CombatFocus,
   type GearLayer,
   type GearLayerDragPayload,
   type PlannerStatKey,
@@ -46,12 +52,12 @@ export type RecommendHit = {
 const LAYER_CONFIG = {
   s1: {
     tag: "S1",
-    label: "Set / SItem",
+    label: "Set",
     border: "border-sky-500/40 hover:border-sky-400",
     bg: "bg-sky-950/20 hover:bg-sky-950/35",
     badge: "text-sky-400 border-sky-500/30 bg-sky-500/10",
     glow: "hover:shadow-[0_0_10px_rgba(56,189,248,0.22)]",
-    emptyLabel: "No S1",
+    emptyLabel: "No set",
   },
   s2: {
     tag: "S2",
@@ -73,24 +79,129 @@ const LAYER_CONFIG = {
   },
 } as const
 
+/** Max lines shown before "+N more" (keeps recommend rows compact). */
+const LAYER_CLAMP = 4
+
+function isPartnerLine(text: string): boolean {
+  return /^Partner'?s\b/i.test(text.trim())
+}
+
+type LayerDisplayLine = {
+  key: string
+  partner: boolean
+  node: React.ReactNode
+}
+
+function linesFromStrings(lines: string[]): LayerDisplayLine[] {
+  return lines.map((line, i) => ({
+    key: `l-${i}-${line}`,
+    partner: isPartnerLine(line),
+    node: <span className="text-foreground/90">{line}</span>,
+  }))
+}
+
+function linesFromStats(stats: WikiItemStat[]): LayerDisplayLine[] {
+  return stats.map((s) => ({
+    key: `s-${s.id}-${s.type}`,
+    partner: isPartnerLine(s.label),
+    node: (
+      <>
+        <span className="text-muted-foreground">{s.label}</span>{" "}
+        <span className="font-mono whitespace-nowrap text-gold-hot">
+          {formatWikiStatValue(s)}
+        </span>
+      </>
+    ),
+  }))
+}
+
+function splitByRankFocus(
+  all: LayerDisplayLine[],
+  rankFocus: CombatFocus
+): {
+  primary: LayerDisplayLine[]
+  secondary: LayerDisplayLine[]
+  secondaryLabel: string | null
+} {
+  if (rankFocus === "both" || all.length === 0) {
+    return { primary: all, secondary: [], secondaryLabel: null }
+  }
+  const partner = all.filter((l) => l.partner)
+  const player = all.filter((l) => !l.partner)
+  if (rankFocus === "partner") {
+    if (partner.length === 0) {
+      return { primary: player, secondary: [], secondaryLabel: null }
+    }
+    return {
+      primary: partner,
+      secondary: player,
+      secondaryLabel: player.length ? "Player" : null,
+    }
+  }
+  if (player.length === 0) {
+    return { primary: partner, secondary: [], secondaryLabel: null }
+  }
+  return {
+    primary: player,
+    secondary: partner,
+    secondaryLabel: partner.length ? "Partner" : null,
+  }
+}
+
+function LayerLineList({ lines }: { lines: LayerDisplayLine[] }) {
+  if (lines.length === 0) return null
+  return (
+    <ul className="flex flex-col gap-y-0.5 text-xs">
+      {lines.map((line) => (
+        <li key={line.key} className="min-w-0 leading-snug break-words">
+          {line.node}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function DraggableLayerCell({
   hit,
   layer,
   lines,
   stats,
+  rankFocus,
   onApplyLayer,
 }: {
   hit: RecommendHit
   layer: GearLayer
   lines?: string[]
   stats?: WikiItemStat[]
+  rankFocus: CombatFocus
   onApplyLayer?: (hit: RecommendHit, layer: GearLayer) => void
 }) {
   const [justApplied, setJustApplied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [showSecondary, setShowSecondary] = useState(false)
   const cfg = LAYER_CONFIG[layer]
-  const hasContent = Boolean(
-    (stats && stats.length > 0) || (lines && lines.length > 0)
+
+  const allLines = useMemo(() => {
+    if (stats && stats.length > 0) return linesFromStats(stats)
+    if (lines && lines.length > 0) return linesFromStrings(lines)
+    return []
+  }, [stats, lines])
+
+  useEffect(() => {
+    setExpanded(false)
+    setShowSecondary(false)
+  }, [hit.id, rankFocus, layer])
+
+  const { primary, secondary, secondaryLabel } = splitByRankFocus(
+    allLines,
+    rankFocus
   )
+  const hasContent = allLines.length > 0
+
+  const visiblePrimary = expanded
+    ? primary
+    : primary.slice(0, LAYER_CLAMP)
+  const hiddenPrimary = Math.max(0, primary.length - visiblePrimary.length)
 
   const handleDoubleClick = () => {
     setJustApplied(true)
@@ -100,7 +211,7 @@ function DraggableLayerCell({
 
   if (!hasContent) {
     return (
-      <td className="min-w-[9.5rem] p-1.5 align-top">
+      <td className="min-w-[10.5rem] p-1.5 align-top">
         <div className="flex h-full min-h-[3.25rem] items-center justify-center rounded-xs border border-dashed border-border/40 bg-muted/5 px-2 py-1 text-[11px] text-muted-foreground/45 italic select-none">
           {cfg.emptyLabel}
         </div>
@@ -109,7 +220,7 @@ function DraggableLayerCell({
   }
 
   return (
-    <td className="min-w-[9.5rem] p-1.5 align-top">
+    <td className="min-w-[10.5rem] p-1.5 align-top">
       <div
         className={cn(
           "group/layer flex h-full min-h-[3.25rem] cursor-grab flex-col justify-start rounded-xs border p-2 transition-all select-none active:cursor-grabbing",
@@ -153,42 +264,65 @@ function DraggableLayerCell({
           </span>
         </div>
 
-        {stats && stats.length > 0 ? (
-          <ul
-            className={cn(
-              "gap-x-2.5 gap-y-0.5 text-xs",
-              stats.length > 3 ? "grid grid-cols-2" : "flex flex-col"
-            )}
-          >
-            {stats.map((s) => (
-              <li
-                key={`${s.id}-${s.type}`}
-                className="min-w-0 leading-snug break-words"
+        <div className="space-y-1">
+          <LayerLineList lines={visiblePrimary} />
+          {hiddenPrimary > 0 ? (
+            <button
+              type="button"
+              className="text-left text-[10px] font-medium text-gold-dim hover:text-gold-hot"
+              onClick={(e) => {
+                e.stopPropagation()
+                setExpanded(true)
+              }}
+              onDoubleClick={(e) => e.stopPropagation()}
+            >
+              +{hiddenPrimary} more
+            </button>
+          ) : null}
+          {expanded && primary.length > LAYER_CLAMP ? (
+            <button
+              type="button"
+              className="text-left text-[10px] text-muted-foreground hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation()
+                setExpanded(false)
+              }}
+              onDoubleClick={(e) => e.stopPropagation()}
+            >
+              Show less
+            </button>
+          ) : null}
+          {secondaryLabel && secondary.length > 0 ? (
+            showSecondary ? (
+              <div className="space-y-1 border-t border-border/40 pt-1">
+                <LayerLineList lines={secondary} />
+                <button
+                  type="button"
+                  className="text-left text-[10px] text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowSecondary(false)
+                  }}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                >
+                  Hide {secondaryLabel}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="rounded-xs border border-border/50 bg-muted/30 px-1.5 py-0.5 text-left text-[10px] font-medium text-muted-foreground hover:border-gold-dim/50 hover:text-gold-dim"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowSecondary(true)
+                }}
+                onDoubleClick={(e) => e.stopPropagation()}
               >
-                <span className="text-muted-foreground">{s.label}</span>{" "}
-                <span className="font-mono whitespace-nowrap text-gold-hot">
-                  {formatWikiStatValue(s)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : lines && lines.length > 0 ? (
-          <ul
-            className={cn(
-              "gap-x-2.5 gap-y-0.5 text-xs",
-              lines.length > 2 ? "grid grid-cols-2" : "flex flex-col"
-            )}
-          >
-            {lines.map((line) => (
-              <li
-                key={line}
-                className="min-w-0 leading-snug break-words text-foreground/90"
-              >
-                {line}
-              </li>
-            ))}
-          </ul>
-        ) : null}
+                {secondaryLabel} ×{secondary.length}
+              </button>
+            )
+          ) : null}
+        </div>
       </div>
     </td>
   )
@@ -217,6 +351,8 @@ export function GearRecommendTable({
 }) {
   const [q, setQ] = useState("")
   const [layer, setLayer] = useState<GearLayer | "">("")
+  /** Ranking bucket — independent of combat-matrix focus. */
+  const [rankFocus, setRankFocus] = useState<CombatFocus>("player")
   const [hits, setHits] = useState<RecommendHit[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -228,6 +364,7 @@ export function GearRecommendTable({
       limit: "30",
       equipped: equippedParam,
       gender: String(gender),
+      focus: rankFocus,
     })
     if (slot) params.set("slot", slot)
     if (layer) params.set("layer", layer)
@@ -252,11 +389,17 @@ export function GearRecommendTable({
       cancelled = true
       window.clearTimeout(handle)
     }
-  }, [stat, slot, layer, q, equippedParam, gender, subcategory])
+  }, [stat, slot, layer, q, equippedParam, gender, subcategory, rankFocus])
 
   const def = PLANNER_STATS.find((s) => s.key === stat)!
   const layerLabel =
     layer === "s1" ? "S1" : layer === "s2" ? "S2" : layer === "s3" ? "S3" : null
+  const rankFocusLabel =
+    rankFocus === "partner"
+      ? "Partner"
+      : rankFocus === "both"
+        ? "Player + Partner"
+        : "Player"
 
   return (
     <div className="space-y-3 border border-border bg-card/40 p-4">
@@ -271,7 +414,7 @@ export function GearRecommendTable({
           </span>
         ) : null}
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Field>
           <FieldLabel htmlFor="gp-rec-stat">Target stat</FieldLabel>
           <select
@@ -285,6 +428,22 @@ export function GearRecommendTable({
                 {s.abbr} — {s.label}
               </option>
             ))}
+          </select>
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="gp-rec-rank">Rank for</FieldLabel>
+          <select
+            id="gp-rec-rank"
+            className="flex h-9 w-full border border-border bg-background px-2 text-sm"
+            value={rankFocus}
+            onChange={(e) =>
+              setRankFocus(e.target.value as CombatFocus)
+            }
+            title="Which combat bucket recommendations score against"
+          >
+            <option value="player">Player</option>
+            <option value="partner">Partner / demon</option>
+            <option value="both">Both (combined)</option>
           </select>
         </Field>
         <Field>
@@ -314,8 +473,8 @@ export function GearRecommendTable({
             onChange={(e) => setLayer((e.target.value || "") as GearLayer | "")}
           >
             <option value="">Any layer</option>
-            <option value="s1">S1 — Set / SItem</option>
-            <option value="s2">S2 — Basic</option>
+            <option value="s1">S1 — Set bonus</option>
+            <option value="s2">S2 — Basic features</option>
             <option value="s3">S3 — Characteristics</option>
           </select>
         </Field>
@@ -331,7 +490,7 @@ export function GearRecommendTable({
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xs border border-gold-dim/30 bg-gold-dim/10 px-3 py-2 text-xs text-foreground/90">
         <div className="flex items-center gap-2">
-          <Sparkles className="size-4 shrink-0 text-gold-dim" aria-hidden />
+          <WandSparkles className="size-4 shrink-0 text-gold-dim" aria-hidden />
           <span>
             <strong className="font-medium text-foreground">
               Interactive layers:
@@ -339,14 +498,14 @@ export function GearRecommendTable({
             Each colored box below is an independent layer.{" "}
             <span className="font-medium text-gold-dim">Double-click</span> or{" "}
             <span className="font-medium text-gold-dim">drag</span> any{" "}
-            <span className="font-semibold text-sky-400">S1</span>,{" "}
-            <span className="font-semibold text-emerald-400">S2</span>, or{" "}
-            <span className="font-semibold text-rose-400">S3</span> card into the
-            open sidebar slot.
+            <span className="font-semibold text-sky-400">S1 Set</span>,{" "}
+            <span className="font-semibold text-emerald-400">S2 Basic</span>, or{" "}
+            <span className="font-semibold text-rose-400">S3 Char</span> card
+            into the open sidebar slot (same buckets as the wiki item page).
           </span>
         </div>
         <span className="text-[11px] text-muted-foreground">
-          Ranked for {def.label}
+          Ranked for {def.label} · {rankFocusLabel}
           {layerLabel ? ` on ${layerLabel}` : ""}.
           {subcategory != null ? " Filtered to slot subcategory." : ""}
         </span>
@@ -380,13 +539,12 @@ export function GearRecommendTable({
               loading && "opacity-50"
             )}
           >
-            <table className="w-full min-w-[40rem] table-fixed border-collapse text-xs">
+            <table className="w-full min-w-[36rem] table-fixed border-collapse text-xs">
               <colgroup>
-                <col className="w-[11rem]" />
+                <col className="w-[12rem]" />
                 <col />
                 <col />
                 <col />
-                <col className="w-10" />
               </colgroup>
               <thead>
                 <tr className="bg-muted/40 text-left">
@@ -395,7 +553,7 @@ export function GearRecommendTable({
                     <span className="inline-flex items-center gap-1 font-mono font-semibold text-sky-400">
                       <span>S1</span>
                       <span className="font-sans text-[10px] font-normal text-muted-foreground">
-                        Set / SItem
+                        Set
                       </span>
                     </span>
                   </th>
@@ -411,17 +569,16 @@ export function GearRecommendTable({
                     <span className="inline-flex items-center gap-1 font-mono font-semibold text-rose-400">
                       <span>S3</span>
                       <span className="font-sans text-[10px] font-normal text-muted-foreground">
-                        Characteristics
+                        Char
                       </span>
                     </span>
-                  </th>
-                  <th className="w-10 px-1 py-1.5 text-center text-[10px] font-normal text-muted-foreground">
-                    Equip
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {hits.map((hit) => (
+                {hits.map((hit) => {
+                  const asItem = recommendHitToWikiItem(hit)
+                  return (
                   <tr
                     key={hit.id}
                     className="border-t border-border/60 hover:bg-muted/20"
@@ -446,7 +603,7 @@ export function GearRecommendTable({
                               href={`/wiki/items/${hit.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="truncate text-xs text-[#c9a0ff] no-underline hover:text-gold-hot hover:underline"
+                              className="min-w-0 truncate text-xs text-[#c9a0ff] no-underline hover:text-gold-hot hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {hit.name}
@@ -458,50 +615,57 @@ export function GearRecommendTable({
                               className="shrink-0 [&_svg]:size-3"
                             />
                           </p>
-                          <p className="truncate text-[10px] text-muted-foreground">
-                            {hit.equipSlot}
-                            {hit.completesSetIds.length
-                              ? ` · set ${hit.completesSetIds.join(",")}`
-                              : ""}
-                          </p>
+                          <div className="mt-0.5 flex items-center gap-1.5">
+                            <p className="min-w-0 flex-1 truncate text-[10px] text-muted-foreground">
+                              {hit.equipSlot}
+                              {hit.completesSetIds.length
+                                ? ` · set ${hit.completesSetIds.join(",")}`
+                                : ""}
+                            </p>
+                            <Tooltip>
+                              <TooltipTrigger
+                                type="button"
+                                className="inline-flex size-6 shrink-0 items-center justify-center rounded-xs border border-border/80 bg-muted/40 text-muted-foreground transition-all hover:border-gold hover:bg-gold/15 hover:text-gold-hot hover:shadow-xs active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                                aria-label="Equip whole piece"
+                                onClick={() => onEquipWhole(hit)}
+                              >
+                                <Layers className="size-3" aria-hidden />
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="bottom"
+                                className="max-w-[14rem] text-center"
+                              >
+                                Equip base piece + all layers (S1, S2, S3)
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
                         </div>
                       </div>
                     </td>
                     <DraggableLayerCell
                       hit={hit}
                       layer="s1"
-                      lines={hit.setBonus}
+                      lines={wikiLayerSetLines(hit.id)}
+                      rankFocus={rankFocus}
                       onApplyLayer={onApplyLayer}
                     />
                     <DraggableLayerCell
                       hit={hit}
                       layer="s2"
-                      stats={hit.basicFeatures}
+                      stats={wikiClientBasicFeatures(asItem)}
+                      rankFocus={rankFocus}
                       onApplyLayer={onApplyLayer}
                     />
                     <DraggableLayerCell
                       hit={hit}
                       layer="s3"
-                      stats={hit.characteristics}
+                      lines={wikiClientCharacteristics(asItem)}
+                      rankFocus={rankFocus}
                       onApplyLayer={onApplyLayer}
                     />
-                    <td className="px-1 py-1.5 align-middle text-center">
-                      <Tooltip>
-                        <TooltipTrigger
-                          type="button"
-                          className="inline-flex size-7 items-center justify-center rounded-xs border border-border/80 bg-muted/40 text-muted-foreground transition-all hover:border-gold hover:bg-gold/15 hover:text-gold-hot hover:shadow-xs active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                          aria-label="Equip whole piece"
-                          onClick={() => onEquipWhole(hit)}
-                        >
-                          <Layers className="size-3.5" aria-hidden />
-                        </TooltipTrigger>
-                        <TooltipContent side="left" className="max-w-[14rem] text-center">
-                          Equip base piece + all layers (S1, S2, S3)
-                        </TooltipContent>
-                      </Tooltip>
-                    </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

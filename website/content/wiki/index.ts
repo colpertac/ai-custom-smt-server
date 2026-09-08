@@ -6,6 +6,8 @@ import {
   getWikiItemCategory,
   wikiBasicFeatures,
   wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
   wikiItemFitsGender,
   wikiSetBonus,
 } from "@/content/wiki/format"
@@ -45,6 +47,8 @@ export {
   getWikiItemCategory,
   wikiBasicFeatures,
   wikiCharacteristics,
+  wikiClientBasicFeatures,
+  wikiClientCharacteristics,
   wikiItemFitsGender,
   wikiSetBonus,
 } from "@/content/wiki/format"

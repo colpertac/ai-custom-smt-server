@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 import bakedItems from "@/content/wiki/items.json"
 import bakedEnchants from "@/content/wiki/enchants.json"
@@ -21,10 +22,18 @@ type CacheEntry<T> = {
 let itemsCache: CacheEntry<WikiItemsPayload> | null = null
 let enchantsCache: CacheEntry<WikiEnchantsPayload> | null = null
 
-function runtimeRoot(): string | null {
-  const runtime =
+const LIB_DIR = path.dirname(fileURLToPath(import.meta.url))
+const REPO_ROOT = path.resolve(LIB_DIR, "../..")
+
+/**
+ * Same default as lane-A / report-rewards: env override, else sibling
+ * `comp_hack/runtime` (Docker compose sets OPS_RUNTIME=/comp).
+ */
+export function resolveWikiRuntimeRoot(): string {
+  const custom =
     process.env.OPS_RUNTIME?.trim() || process.env.COMP_RUNTIME?.trim()
-  return runtime ? path.resolve(runtime) : null
+  if (custom) return path.resolve(custom)
+  return path.resolve(REPO_ROOT, "../comp_hack/runtime")
 }
 
 function readJsonFile<T>(filePath: string): T | null {
@@ -79,13 +88,12 @@ function loadCached<T>(
   }
 }
 
-/** Prefer `{OPS_RUNTIME}/wiki/*.json` when present; else baked website content. */
+/** Prefer `{runtime}/wiki/*.json` when present; else baked website content. */
 export function loadWikiItemsPayload(): {
   data: WikiItemsPayload
   source: WikiCatalogSource
 } {
-  const root = runtimeRoot()
-  const filePath = root ? path.join(root, "wiki", "items.json") : null
+  const filePath = path.join(resolveWikiRuntimeRoot(), "wiki", "items.json")
   itemsCache = loadCached(itemsCache, filePath, bakedItems as WikiItemsPayload)
   return { data: itemsCache.data, source: itemsCache.source }
 }
@@ -94,8 +102,7 @@ export function loadWikiEnchantsPayload(): {
   data: WikiEnchantsPayload
   source: WikiCatalogSource
 } {
-  const root = runtimeRoot()
-  const filePath = root ? path.join(root, "wiki", "enchants.json") : null
+  const filePath = path.join(resolveWikiRuntimeRoot(), "wiki", "enchants.json")
   enchantsCache = loadCached(
     enchantsCache,
     filePath,

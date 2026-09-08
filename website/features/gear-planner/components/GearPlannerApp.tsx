@@ -60,6 +60,7 @@ import {
   type EnchantSide,
   type GearLayer,
   type PlannerAttrs,
+  type CombatFocus,
   type PlannerLnc,
   type PlannerSlot,
   type PlannerStatKey,
@@ -190,6 +191,7 @@ function GearPlannerAppClient({
     null
   )
   const [fullStats, setFullStats] = useState(false)
+  const [combatFocus, setCombatFocus] = useState<CombatFocus>("player")
   const [guideOpen, setGuideOpen] = useState(false)
   const [flashTarget, setFlashTarget] = useState<SidebarFlashTarget>(null)
 
@@ -464,11 +466,17 @@ function GearPlannerAppClient({
                           playsInline
                           controls
                           preload="metadata"
-                          poster="/media/planner-guide-poster.webp"
+                          poster="/media/planner-guide-poster.webp?v=2"
                           className="aspect-[1920/830] w-full bg-black/80 object-cover"
                         >
-                          <source src="/media/planner-guide.webm" type="video/webm" />
-                          <source src="/media/planner-guide.mp4" type="video/mp4" />
+                          <source
+                            src="/media/planner-guide.webm?v=2"
+                            type="video/webm"
+                          />
+                          <source
+                            src="/media/planner-guide.mp4?v=2"
+                            type="video/mp4"
+                          />
                           Your browser does not support the video tag.
                         </video>
                       </div>
@@ -482,7 +490,10 @@ function GearPlannerAppClient({
                             <span>Pick a Gear Slot</span>
                           </div>
                           <p className="text-[11px] leading-relaxed text-muted-foreground">
-                            Click any slot header in the <strong>Combat Matrix</strong> (e.g. <em>Head</em>, <em>Top</em>, <em>Weapon</em>) to open its sidebar on the right.
+                            Click any slot header in the{" "}
+                            <strong>Combat Matrix</strong> (e.g.{" "}
+                            <em>Head</em>, <em>Top</em>, <em>Weapon</em>) to
+                            open its sidebar on the right.
                           </p>
                         </div>
 
@@ -494,7 +505,10 @@ function GearPlannerAppClient({
                             <span>Equip a Base Piece</span>
                           </div>
                           <p className="text-[11px] leading-relaxed text-muted-foreground">
-                            Under <em>Equip whole piece</em> in the sidebar, pick a base item. This sets your appearance shell and activates multi-piece <strong>Equipment Set</strong> bonuses.
+                            Use <em>Equip whole piece</em> in the sidebar or the
+                            layers button on a recommend row. That sets
+                            appearance, CorrectTbl, and SpecialEffect together
+                            (and activates any Equipment Set for that piece).
                           </p>
                         </div>
 
@@ -503,10 +517,13 @@ function GearPlannerAppClient({
                             <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
                               3
                             </span>
-                            <span>Mix & Match S1, S2, S3</span>
+                            <span>Mix S1 / S2 / S3 Layers</span>
                           </div>
                           <p className="text-[11px] leading-relaxed text-muted-foreground">
-                            In the <strong>Recommendations</strong> table below, every item shows distinct colored cards. <strong>Double-click</strong> or <strong>drag & drop</strong> any layer directly into your open sidebar!
+                            Recommendations use the same buckets as the wiki
+                            item page. <strong>Double-click</strong> or{" "}
+                            <strong>drag</strong> a layer card into the open
+                            sidebar to frankenstein that layer only.
                           </p>
                         </div>
 
@@ -518,22 +535,64 @@ function GearPlannerAppClient({
                             <span>Enchants & Combat Caps</span>
                           </div>
                           <p className="text-[11px] leading-relaxed text-muted-foreground">
-                            Apply <strong>Tarot</strong> & <strong>Soul</strong> crystal enchants. Watch the Combat Matrix: numbers highlighted in <span className="font-semibold text-emerald-400">green</span> have reached their hard cap (e.g. 100% LBC or 5s CD).
+                            Apply <strong>Tarot</strong> & <strong>Soul</strong>{" "}
+                            crystals. Matrix cells in{" "}
+                            <span className="font-semibold text-emerald-400">
+                              green
+                            </span>{" "}
+                            are at hard cap (e.g. 100% LBC or ≤5s CD).
+                          </p>
+                        </div>
+
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              5
+                            </span>
+                            <span>Player / Partner / Both</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            Above the matrix, choose whose stats to show:{" "}
+                            <strong>Player</strong> (SELF),{" "}
+                            <strong>Partner</strong> (demon / Partner&apos;s
+                            lines), or <strong>Both</strong> (stacked
+                            sections). Recommendations have a separate{" "}
+                            <em>Rank for</em> control so you can hunt player CD
+                            while the matrix stays on Both.
+                          </p>
+                        </div>
+
+                        <div className="space-y-1 rounded-xs border border-border/80 bg-muted/20 p-2.5">
+                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-gold/20 font-mono text-[10px] text-gold-dim">
+                              6
+                            </span>
+                            <span>Computer Suggest</span>
+                          </div>
+                          <p className="text-[11px] leading-relaxed text-muted-foreground">
+                            <strong>Suggest</strong> searches layer swaps within
+                            a time budget. It fills hard caps first (LBC / TAC /
+                            PC / PP / CD / Incant), then soft stats in your
+                            priority order. You can lock S1 appearance, undo,
+                            and it respects the current Player / Partner / Both
+                            focus for soft scoring and candidates.
                           </p>
                         </div>
                       </div>
 
                       <div className="rounded-xs border border-border bg-card/60 p-2.5">
                         <h4 className="mb-2 font-heading text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                          Understanding the 5 Slot Layers
+                          Understanding the layers (same as wiki)
                         </h4>
                         <div className="grid gap-1.5 text-[11px] sm:grid-cols-3">
                           <div className="rounded-xs border border-sky-500/40 bg-sky-950/20 p-1.5">
                             <span className="font-mono font-semibold text-sky-400 uppercase">
-                              S1 · Set / SItem
+                              S1 · Set
                             </span>
                             <p className="mt-0.5 text-[10px] text-muted-foreground">
-                              Appearance shell, SItem tokusei, and multi-piece set activator.
+                              EquipmentSet bonuses (appearance solo or
+                              multi-piece partners). Empty when the piece has no
+                              set.
                             </p>
                           </div>
                           <div className="rounded-xs border border-emerald-500/40 bg-emerald-950/20 p-1.5">
@@ -541,15 +600,17 @@ function GearPlannerAppClient({
                               S2 · Basic
                             </span>
                             <p className="mt-0.5 text-[10px] text-muted-foreground">
-                              Base attributes, physical / magic defense, and core stats.
+                              ItemData CorrectTbl — defenses, damage %, skill
+                              cooldown, and other combat modifiers.
                             </p>
                           </div>
                           <div className="rounded-xs border border-rose-500/40 bg-rose-950/20 p-1.5">
                             <span className="font-mono font-semibold text-rose-400 uppercase">
-                              S3 · Characteristics
+                              S3 · Char
                             </span>
                             <p className="mt-0.5 text-[10px] text-muted-foreground">
-                              Special weapon or armor characteristics, procs, and mods.
+                              SItem / SpecialEffect lines (including Partner&apos;s
+                              bonuses).
                             </p>
                           </div>
                           <div className="rounded-xs border border-violet-500/40 bg-violet-950/20 p-1.5">
@@ -557,7 +618,7 @@ function GearPlannerAppClient({
                               T · Tarot
                             </span>
                             <p className="mt-0.5 text-[10px] text-muted-foreground">
-                              Arcana crystal enchant modifying combat stats.
+                              Arcana crystal enchant on the equipped piece.
                             </p>
                           </div>
                           <div className="rounded-xs border border-amber-500/40 bg-amber-950/20 p-1.5">
@@ -565,7 +626,8 @@ function GearPlannerAppClient({
                               S · Soul
                             </span>
                             <p className="mt-0.5 text-[10px] text-muted-foreground">
-                              Soul crystal fusion providing passive bonuses.
+                              Soul crystal fusion; LNC/stat conditions may gate
+                              bonuses.
                             </p>
                           </div>
                         </div>
@@ -586,8 +648,9 @@ function GearPlannerAppClient({
                 </Dialog>
               </div>
               <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
-                S1–S3, Tarot (T), and Soul (S). Drag or double-click recommend /
-                fusion rows onto the open sidebar.
+                Wiki-aligned S1–S3 layers, Tarot/Soul, Player/Partner focus, and
+                Suggest. Drag or double-click recommend rows onto the open
+                sidebar.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -723,14 +786,44 @@ function GearPlannerAppClient({
             <h3 className="font-heading text-xs tracking-[0.14em] text-gold-dim uppercase">
               Combat matrix
             </h3>
-            <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
-              <Switch
-                size="sm"
-                checked={fullStats}
-                onCheckedChange={setFullStats}
-              />
-              <span>Full stats</span>
-            </label>
+            <div className="flex flex-wrap items-center gap-3">
+              <div
+                className="inline-flex rounded-xs border border-border/80 bg-card/60 p-0.5"
+                role="group"
+                aria-label="Combat focus"
+              >
+                {(
+                  [
+                    ["player", "Player"],
+                    ["partner", "Partner"],
+                    ["both", "Both"],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={cn(
+                      "rounded-xs px-2 py-1 text-[11px] font-medium transition-colors",
+                      combatFocus === value
+                        ? "bg-gold/20 text-gold-hot"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-pressed={combatFocus === value}
+                    onClick={() => setCombatFocus(value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+                <Switch
+                  size="sm"
+                  checked={fullStats}
+                  onCheckedChange={setFullStats}
+                />
+                <span>Full stats</span>
+              </label>
+            </div>
           </div>
 
           <GearSuggestPanel
@@ -738,6 +831,7 @@ function GearPlannerAppClient({
             attrs={attrs}
             lnc={lnc}
             gender={gender}
+            focus={combatFocus}
             onApply={(next) => {
               setLoadout(next)
               setFlashTarget({ layer: "all", key: Date.now() })
@@ -750,6 +844,7 @@ function GearPlannerAppClient({
             combat={combat}
             attrs={attrs}
             fullStats={fullStats}
+            focus={combatFocus}
             onStatClick={(stat) => {
               setRecommendStat(stat)
               if (selectedSlot) setRecommendSlot(selectedSlot)
