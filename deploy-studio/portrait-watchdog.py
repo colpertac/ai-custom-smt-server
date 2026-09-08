@@ -2,10 +2,11 @@
 """Poll studio health; detect login screen; auto-relog; Discord on failure.
 
 Flow per watched role (default vam1,vaf1):
-  1. If in-world (studio health) → clear timers
+  1. If in-world (studio health) → clear timers; idle-nudge windows
   2. If offline for PORTRAIT_WATCH_OFFLINE_SEC:
-       snap → classify (login / character_select / in_world / unknown)
+       snap → classify (login / character_select / in_world / black / …)
        if login or character_select → credentials + Start Game (no new launch)
+       if black → kill + orch restart that role
        if still offline after retries → Discord alert (website webhook API
        and/or PORTRAIT_DISCORD_WEBHOOK)
 
@@ -17,8 +18,8 @@ Env:
   PORTRAIT_WATCH              comma list (default vam1,vaf1)
   PORTRAIT_WATCH_INTERVAL     poll seconds (default 30)
   PORTRAIT_WATCH_OFFLINE_SEC  offline before recover (default 45)
-  PORTRAIT_WATCH_RELOG_TRIES  relog attempts before Discord (default 2)
-  PORTRAIT_WATCH_RECOVER      1/0 enable auto-relog (default 1)
+  PORTRAIT_WATCH_RELOG_TRIES  relog/restart attempts before Discord (default 2)
+  PORTRAIT_WATCH_RECOVER      1/0 enable auto-relog/restart (default 1)
 
 Examples:
   ./studio up                 # backgrounds this watchdog
@@ -43,7 +44,10 @@ sys.path.insert(0, str(HERE))
 from portrait_common import (  # noqa: E402
     WORK_DIR,
     debug_snap,
+    ensure_display,
+    kill_role_client,
     load_portrait_env,
+    nudge_mannequin_windows,
     queue_base_url,
     resolve_mannequin_window,
     worker_token,
@@ -303,6 +307,33 @@ def try_relog(role: str) -> bool:
     return False
 
 
+def try_restart_role(role: str) -> bool:
+    """Kill hung GL client and orch-up that role alone (black-screen recovery)."""
+    orch = HERE / "portrait-orch.py"
+    if not orch.is_file():
+        print(f"{role}: missing portrait-orch.py", file=sys.stderr)
+        return False
+    try:
+        ensure_display()
+        kill_role_client(role)
+    except Exception as e:
+        print(f"{role}: kill before restart failed: {e}", file=sys.stderr)
+    time.sleep(1.0)
+    cmd = [sys.executable, str(orch), "up", "--roles", role]
+    print(f"$ {' '.join(cmd)}")
+    try:
+        subprocess.check_call(cmd, cwd=str(HERE), timeout=300)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+        print(f"{role}: restart orch failed: {e}", file=sys.stderr)
+        return False
+    health = studio_health()
+    if is_online(health, role):
+        print(f"{role}: restart success — in-world")
+        return True
+    print(f"{role}: restart finished but still offline", file=sys.stderr)
+    return False
+
+
 def classify_role(role: str) -> dict:
     path = debug_snap(role, "watchdog", upload=True)
     if not path or not path.is_file():
@@ -318,6 +349,16 @@ def classify_role(role: str) -> dict:
 
 def tick(st: WatchState, *, now: float | None = None) -> None:
     now = time.time() if now is None else now
+    try:
+        ensure_display(recover=False)
+    except Exception:
+        pass
+    # Keep Wine GL from idling out while mannequins are online.
+    try:
+        nudge_mannequin_windows()
+    except Exception as e:
+        print(f"idle nudge: {e}", file=sys.stderr)
+
     health = studio_health()
     if not health.get("ok") and "error" in health:
         print(f"health error: {health.get('error')}")
@@ -372,6 +413,50 @@ def tick(st: WatchState, *, now: float | None = None) -> None:
         if kind == "in_world":
             # Health lag — give studio a moment
             print(f"{name}: snap looks in-world; waiting for health")
+            continue
+
+        if kind == "server_down":
+            # Channel/lobby restart — credentials won't help until servers are up.
+            if not slot.alerted:
+                send_alert(
+                    title=f"Mannequin {name}: server disconnect UI",
+                    message=(
+                        "Client shows the red disconnect dialog (server-down). "
+                        "Fix/restart lobby-world-channel, then Kill + Start clients "
+                        "or wait for auto-relog after channel is healthy."
+                    ),
+                    role=name,
+                    screen=kind,
+                )
+                slot.alerted = True
+            continue
+
+        # Hung GL / blank frame — relog won't help; kill + relaunch.
+        if kind == "black":
+            if RECOVER and slot.relog_attempts < RELOG_TRIES:
+                slot.relog_attempts += 1
+                print(
+                    f"{name}: black screen — restart "
+                    f"{slot.relog_attempts}/{RELOG_TRIES}"
+                )
+                save_state(st)
+                if try_restart_role(name):
+                    slot.offline_since = None
+                    slot.relog_attempts = 0
+                    slot.alerted = False
+                continue
+            if not slot.alerted:
+                send_alert(
+                    title=f"Mannequin {name}: black screen",
+                    message=(
+                        f"Client frame is black after {slot.relog_attempts}/"
+                        f"{RELOG_TRIES} restart attempt(s). "
+                        "Use Admin → Restart on that role."
+                    ),
+                    role=name,
+                    screen=kind,
+                )
+                slot.alerted = True
             continue
 
         needs_login = kind in {"login", "character_select", "unknown"}

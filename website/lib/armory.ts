@@ -514,7 +514,10 @@ function statsFromRow(row: CharacterRow): ArmoryStats | null {
  * Exact-name public profile from world DB.
  * Returns null when the character does not exist.
  */
-export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
+export function loadArmoryProfile(
+  rawName: string,
+  opts?: { enqueuePortrait?: boolean }
+): ArmoryProfile | null {
   const name = rawName.trim()
   if (!isValidCharacterName(name)) return null
   if (isArmoryHiddenCharacter(name)) return null
@@ -727,7 +730,7 @@ export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
   }
   const portrait = resolveArmoryPortrait(portraitInput, row.Name)
   let portraitStatus: ArmoryProfile["portraitStatus"] = portrait.status
-  if (portraitStatus === "missing") {
+  if (portraitStatus === "missing" && opts?.enqueuePortrait !== false) {
     try {
       enqueuePortraitJob(row.Name, portraitInput)
       portraitStatus = "queued"

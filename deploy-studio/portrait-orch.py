@@ -335,13 +335,15 @@ def cmd_up(args: argparse.Namespace) -> None:
             die("studio required (--require-studio)")
 
     roles = ["vam1"]
-    if not args.male_only:
+    if getattr(args, "roles", None):
+        roles = [r.strip() for r in str(args.roles).split(",") if r.strip()]
+    elif not args.male_only:
         custom = os.environ.get("PORTRAIT_ORCH_ROLES", "").strip()
         if custom:
             roles = [r.strip() for r in custom.split(",") if r.strip()]
         else:
             roles = list(ALLOWED_MANNEQUIN_ROLES)
-    roles = normalize_mannequin_roles(roles, male_only=args.male_only)
+    roles = normalize_mannequin_roles(roles, male_only=False if getattr(args, "roles", None) else args.male_only)
     if len(roles) > MAX_MANNEQUIN_CLIENTS:
         roles = roles[:MAX_MANNEQUIN_CLIENTS]
     print(f"roles (capped ≤{MAX_MANNEQUIN_CLIENTS}): {roles}")
@@ -349,21 +351,37 @@ def cmd_up(args: argparse.Namespace) -> None:
     retries = args.login_retries if args.login_retries is not None else LOGIN_RETRIES
 
     # --- launch / pin (one client at a time so the first can finish login) ---
-    mapped: dict[str, str] = {}
+    # Preserve pins for roles we are not (re)launching.
+    mapped: dict[str, str] = dict(load_window_map())
     if args.reuse_windows:
-        mapped = load_window_map()
         missing = [r for r in roles if r not in mapped]
         if missing:
             die(f"--reuse-windows but missing roles in state: {missing}")
         print(f"reusing windows: {mapped}")
     else:
-        try:
-            assert_room_to_launch(
-                want=len(roles),
-                force=bool(args.ok_existing),
-            )
-        except RuntimeError as e:
-            die(str(e))
+        # Full dual Start: refuse if anything already running.
+        # Single-role Start (e.g. restart vaf1 while vam1 lives): allow under cap.
+        single = len(roles) == 1
+        live_n = count_imagine_clients()["count"]
+        if single:
+            role0 = roles[0]
+            live_wins = find_imagine_windows()
+            if role0 in mapped and mapped[role0] in live_wins:
+                die(f"{role0} already has a live window — Stop it first")
+            if live_n >= MAX_MANNEQUIN_CLIENTS:
+                die(
+                    f"already at {live_n}/{MAX_MANNEQUIN_CLIENTS} Imagine "
+                    "client(s) — Stop another role before Start"
+                )
+        else:
+            try:
+                assert_room_to_launch(
+                    want=len(roles),
+                    force=bool(args.ok_existing),
+                )
+            except RuntimeError as e:
+                die(str(e))
+            mapped = {}
 
     online_roles: list[str] = []
 
@@ -462,6 +480,11 @@ def main() -> None:
 
     p_up = sub.add_parser("up", help="Launch, pin, login one-by-one, init-camera")
     p_up.add_argument("--male-only", action="store_true", help="Only vam1")
+    p_up.add_argument(
+        "--roles",
+        metavar="LIST",
+        help="Comma list of roles (e.g. vaf1 or vam1,vaf1)",
+    )
     p_up.add_argument("--skip-login", action="store_true", help="Launch + pin only")
     p_up.add_argument("--skip-camera", action="store_true")
     p_up.add_argument(

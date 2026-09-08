@@ -15,6 +15,8 @@ const putSchema = z.object({
   splashEscGapSec: z.number().optional(),
   splashSettleSec: z.number().optional(),
   afterEnterSec: z.number().optional(),
+  fieldGapSec: z.number().optional(),
+  typeDelayMs: z.number().optional(),
   startXFrac: z.number().optional(),
   startYFrac: z.number().optional(),
   startClickCount: z.number().optional(),

@@ -8,6 +8,7 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { StudioLoginDebugPanel } from "@/features/admin/components/StudioLoginDebugPanel"
 import { StudioClientsPanel } from "@/features/admin/components/StudioClientsPanel"
+import { StudioPortraitClearCard } from "@/features/admin/components/StudioPortraitClearCard"
 import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { api } from "@/lib/kyClient"
 
@@ -664,6 +665,8 @@ export function StudioDressPanel() {
           </div>
 
           <StudioClientsPanel />
+
+          <StudioPortraitClearCard />
 
           <form
             className="border border-border bg-card/60 p-3 space-y-3"

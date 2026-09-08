@@ -15,6 +15,10 @@ export type StudioLoginTunables = {
   splashEscGapSec: number
   splashSettleSec: number
   afterEnterSec: number
+  /** Pause after Tab / Shift+Tab before typing (Wine often drops a fast Tab). */
+  fieldGapSec: number
+  /** Per-character delay for xdotool type (ms). */
+  typeDelayMs: number
   startXFrac: number
   startYFrac: number
   startClickCount: number
@@ -33,6 +37,8 @@ export const DEFAULT_STUDIO_LOGIN_TUNABLES: StudioLoginTunables = {
   splashEscGapSec: 0.6,
   splashSettleSec: 2.0,
   afterEnterSec: 8.0,
+  fieldGapSec: 0.55,
+  typeDelayMs: 35,
   startXFrac: 0.05127,
   startYFrac: 0.936719,
   startClickCount: 8,
@@ -81,6 +87,15 @@ export function parseStudioLoginTunables(
     afterEnterSec: num(o.afterEnterSec, d.afterEnterSec, {
       min: 0,
       max: 120,
+    }),
+    fieldGapSec: num(o.fieldGapSec, d.fieldGapSec, {
+      min: 0,
+      max: 5,
+    }),
+    typeDelayMs: num(o.typeDelayMs, d.typeDelayMs, {
+      int: true,
+      min: 0,
+      max: 200,
     }),
     startXFrac: num(o.startXFrac, d.startXFrac, { min: 0, max: 1 }),
     startYFrac: num(o.startYFrac, d.startYFrac, { min: 0, max: 1 }),
@@ -152,6 +167,8 @@ export function studioLoginTunablesToEnv(
     PORTRAIT_LOGIN_SPLASH_ESC_GAP: String(t.splashEscGapSec),
     PORTRAIT_LOGIN_SPLASH_SETTLE: String(t.splashSettleSec),
     PORTRAIT_LOGIN_AFTER_ENTER_SEC: String(t.afterEnterSec),
+    PORTRAIT_LOGIN_FIELD_GAP_SEC: String(t.fieldGapSec),
+    PORTRAIT_LOGIN_TYPE_DELAY_MS: String(t.typeDelayMs),
     PORTRAIT_START_X_FRAC: String(t.startXFrac),
     PORTRAIT_START_Y_FRAC: String(t.startYFrac),
     PORTRAIT_LOGIN_START_CLICKS: String(t.startClickCount),

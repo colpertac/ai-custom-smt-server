@@ -141,3 +141,39 @@ export async function stopOrchClients(): Promise<{ ok: boolean; detail?: string 
     detail: typeof data.detail === "string" ? data.detail : undefined,
   }
 }
+
+export type LoginStep = "login" | "credentials" | "start" | "full"
+
+export async function startLoginStep(input: {
+  role: "vam1" | "vaf1"
+  step?: LoginStep
+}): Promise<OrchJob> {
+  const res = await agentFetch("/login", {
+    method: "POST",
+    body: JSON.stringify({
+      role: input.role,
+      step: input.step ?? "login",
+    }),
+    timeoutMs: DEFAULT_TIMEOUT_MS,
+  })
+  const data = await readAgentJson(res)
+  return (data.loginJob as OrchJob) || { state: "running" }
+}
+
+export type ClientAction = "start" | "stop" | "restart"
+
+export async function clientAction(input: {
+  role: "vam1" | "vaf1"
+  action: ClientAction
+}): Promise<Record<string, unknown>> {
+  const res = await agentFetch("/client", {
+    method: "POST",
+    body: JSON.stringify({
+      role: input.role,
+      action: input.action,
+    }),
+    timeoutMs:
+      input.action === "stop" ? ORCH_DOWN_TIMEOUT_MS : DEFAULT_TIMEOUT_MS,
+  })
+  return readAgentJson(res)
+}

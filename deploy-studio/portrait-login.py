@@ -5,7 +5,7 @@ Flow (as on your PC):
   1. Optional: launch client via PORTRAIT_CLIENT_CMD
   2. Esc (×N) — skip splash / intro (cave, ATLUS, …)
   3. Shift+Tab — username field (client may remember last user)
-  4. Ctrl+A, type username, Tab, type password, Enter
+  4. Ctrl+A, type username, Tab (+ field gap), type password, Enter
   5. Wait for char-select (black screen)
   6. Spam-click bottom-left "Start Game" (cluster around the button)
 
@@ -41,11 +41,13 @@ START_X_FRAC = 0.051270
 START_Y_FRAC = 0.936719
 AFTER_ENTER_SEC = 8.0
 AFTER_LAUNCH_SEC = 8.0
-TYPE_DELAY_MS = 25
+TYPE_DELAY_MS = 35
 # Splash (cave/ATLUS) — Esc skips; may need several presses + settle time.
 SPLASH_ESC_COUNT = 3
 SPLASH_ESC_GAP_SEC = 0.6
 SPLASH_SETTLE_SEC = 2.0
+# Pause after Tab / Shift+Tab so Wine focus actually moves before typing.
+FIELD_GAP_SEC = 0.55
 # Char-select Start Game — spam-click a small cluster (Wine/Xvfb often drops one).
 START_CLICK_COUNT = 8
 START_CLICK_GAP_SEC = 0.25
@@ -68,16 +70,18 @@ def reload_login_config() -> None:
     global START_X_FRAC, START_Y_FRAC, AFTER_ENTER_SEC, AFTER_LAUNCH_SEC
     global TYPE_DELAY_MS, SPLASH_ESC_COUNT, SPLASH_ESC_GAP_SEC, SPLASH_SETTLE_SEC
     global START_CLICK_COUNT, START_CLICK_GAP_SEC, START_CLICK_JITTER_PX
+    global FIELD_GAP_SEC
     WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
     CLIENT_CMD = os.environ.get("PORTRAIT_CLIENT_CMD", "").strip()
     START_X_FRAC = float(os.environ.get("PORTRAIT_START_X_FRAC", "0.051270"))
     START_Y_FRAC = float(os.environ.get("PORTRAIT_START_Y_FRAC", "0.936719"))
     AFTER_ENTER_SEC = float(os.environ.get("PORTRAIT_LOGIN_AFTER_ENTER_SEC", "8.0"))
     AFTER_LAUNCH_SEC = float(os.environ.get("PORTRAIT_LOGIN_AFTER_LAUNCH_SEC", "8.0"))
-    TYPE_DELAY_MS = int(os.environ.get("PORTRAIT_LOGIN_TYPE_DELAY_MS", "25"))
+    TYPE_DELAY_MS = int(os.environ.get("PORTRAIT_LOGIN_TYPE_DELAY_MS", "35"))
     SPLASH_ESC_COUNT = int(os.environ.get("PORTRAIT_LOGIN_SPLASH_ESC", "3"))
     SPLASH_ESC_GAP_SEC = float(os.environ.get("PORTRAIT_LOGIN_SPLASH_ESC_GAP", "0.6"))
     SPLASH_SETTLE_SEC = float(os.environ.get("PORTRAIT_LOGIN_SPLASH_SETTLE", "2.0"))
+    FIELD_GAP_SEC = float(os.environ.get("PORTRAIT_LOGIN_FIELD_GAP_SEC", "0.55"))
     START_CLICK_COUNT = int(os.environ.get("PORTRAIT_LOGIN_START_CLICKS", "8"))
     START_CLICK_GAP_SEC = float(os.environ.get("PORTRAIT_LOGIN_START_CLICK_GAP", "0.25"))
     START_CLICK_JITTER_PX = int(os.environ.get("PORTRAIT_LOGIN_START_JITTER", "12"))
@@ -149,11 +153,26 @@ def shift_tab() -> None:
     Wine/Xwayland often drops xdotool's `shift+Tab` chord and `--window`
     modifiers; holding Shift_L then Tab on the focused window works.
     """
+    hold = max(0.05, min(0.25, FIELD_GAP_SEC * 0.2))
     xdo("keydown", "--clearmodifiers", "Shift_L")
-    time.sleep(0.08)
+    time.sleep(hold)
     xdo("key", "Tab")
-    time.sleep(0.08)
+    time.sleep(hold)
     xdo("keyup", "Shift_L")
+    time.sleep(FIELD_GAP_SEC)
+
+
+def press_tab() -> None:
+    """Move focus forward (username → password).
+
+    Same Wine flakiness as Shift+Tab: a bare ``key Tab`` is often dropped when
+    sent immediately after typing, so we clear modifiers and wait afterward.
+    """
+    hold = max(0.05, min(0.25, FIELD_GAP_SEC * 0.2))
+    xdo("key", "--clearmodifiers", "Tab")
+    time.sleep(hold)
+    # Second Tab is harmful (would leave password). Just settle.
+    time.sleep(FIELD_GAP_SEC)
 
 
 def type_text(text: str) -> None:
@@ -291,6 +310,7 @@ def login(
     do_launch: bool,
     window: str | None = None,
     credentials_only: bool = False,
+    skip_splash_screens: bool = False,
 ) -> None:
     need_xdotool()
     user, password = resolve_creds(role)
@@ -301,22 +321,23 @@ def login(
     print(f"login as {user} (window {wid})")
 
     try:
-        skip_splash(wid, role=role)
+        if skip_splash_screens:
+            print("skip splash: already on login (--no-splash)")
+        else:
+            skip_splash(wid, role=role)
 
         # Default focus is the password field. Back-tab → username.
         shift_tab()
-        time.sleep(0.35)
         key_focus("ctrl+a")
-        time.sleep(0.15)
+        time.sleep(max(0.1, FIELD_GAP_SEC * 0.35))
         type_text(user)
-        time.sleep(0.25)
+        time.sleep(max(0.15, FIELD_GAP_SEC * 0.5))
 
-        key_focus("Tab")
-        time.sleep(0.35)
+        press_tab()
         key_focus("ctrl+a")
-        time.sleep(0.15)
+        time.sleep(max(0.1, FIELD_GAP_SEC * 0.35))
         type_text(password)
-        time.sleep(0.25)
+        time.sleep(max(0.15, FIELD_GAP_SEC * 0.5))
 
         key_focus("Return")
         print(f"submitted login; waiting {AFTER_ENTER_SEC}s for char select…")
@@ -379,6 +400,11 @@ def main() -> None:
         help="Type user/pass + Enter only (skip Start Game; orch uses this)",
     )
     ap.add_argument(
+        "--no-splash",
+        action="store_true",
+        help="Already on login screen — skip Esc splash sequence",
+    )
+    ap.add_argument(
         "--measure-mask",
         metavar="PNG",
         help="Find black rect center in a white-canvas mask PNG; print fracs and exit",
@@ -407,6 +433,7 @@ def main() -> None:
         do_launch=do_launch,
         window=args.window,
         credentials_only=args.credentials_only,
+        skip_splash_screens=bool(args.no_splash),
     )
 
 

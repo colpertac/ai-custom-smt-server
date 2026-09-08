@@ -15,6 +15,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 
@@ -128,7 +129,7 @@ def _load_portrait_env_fallback() -> list[Path]:
     return loaded
 
 
-def _display_works(display: str) -> bool:
+def _display_works(display: str, *, timeout_sec: float = 2.0) -> bool:
     env = os.environ.copy()
     env["DISPLAY"] = display
     try:
@@ -137,22 +138,85 @@ def _display_works(display: str) -> bool:
             env=env,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            timeout=3,
+            timeout=timeout_sec,
         )
         return True
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return False
 
 
-def ensure_display() -> str:
+def _xvfb_lock_path(display: str) -> Path:
+    # :99 → /tmp/.X99-lock
+    num = display.lstrip(":").split(".", 1)[0]
+    return Path(f"/tmp/.X{num}-lock")
+
+
+def _xvfb_socket_path(display: str) -> Path:
+    num = display.lstrip(":").split(".", 1)[0]
+    return Path(f"/tmp/.X11-unix/X{num}")
+
+
+def _kill_display_server(display: str) -> None:
+    """Best-effort tear-down of a wedged Xvfb for ``display`` (and its lock)."""
+    num = display.lstrip(":").split(".", 1)[0]
+    # Prefer killing by cmdline match so we don't touch a real desktop :0.
+    try:
+        out = subprocess.check_output(
+            ["pgrep", "-af", f"Xvfb :{num}"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+            timeout=3,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        out = ""
+    for line in out.splitlines():
+        parts = line.split(None, 1)
+        if not parts:
+            continue
+        try:
+            pid = int(parts[0])
+        except ValueError:
+            continue
+        if pid == os.getpid():
+            continue
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except ProcessLookupError:
+            continue
+        except PermissionError:
+            continue
+    time.sleep(0.4)
+    for line in out.splitlines():
+        parts = line.split(None, 1)
+        if not parts:
+            continue
+        try:
+            pid = int(parts[0])
+        except ValueError:
+            continue
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError, OSError):
+            pass
+    for path in (_xvfb_lock_path(display), _xvfb_socket_path(display)):
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def ensure_display(*, recover: bool = True) -> str:
     """Ensure a usable X display (start Xvfb if SSH/headless has none).
 
     Order: existing $DISPLAY → PORTRAIT_XVFB_DISPLAY (default :99) → start Xvfb.
+    If the target display is wedged (lock present but xdpyinfo hangs/fails),
+    kill that Xvfb and restart it when ``recover`` is True.
     """
     current = os.environ.get("DISPLAY", "").strip()
     if current and _display_works(current):
         os.environ["DISPLAY"] = current
         _maybe_start_wm(current)
+        _disable_display_sleep(current)
         return current
 
     target = os.environ.get("PORTRAIT_XVFB_DISPLAY", ":99").strip() or ":99"
@@ -160,9 +224,25 @@ def ensure_display() -> str:
         target = f":{target}"
 
     if not _display_works(target):
+        lock = _xvfb_lock_path(target)
+        if recover and (lock.is_file() or _xvfb_socket_path(target).exists()):
+            print(
+                f"display {target} not responding — recovering Xvfb "
+                f"(stale lock/socket)",
+                flush=True,
+            )
+            _kill_display_server(target)
+            time.sleep(0.3)
+
+        if _display_works(target):
+            os.environ["DISPLAY"] = target
+            _maybe_start_wm(target)
+            _disable_display_sleep(target)
+            return target
+
         if not shutil.which("Xvfb"):
-            raise SystemExit(
-                "error: no usable DISPLAY and Xvfb not installed. "
+            raise RuntimeError(
+                "no usable DISPLAY and Xvfb not installed. "
                 "Set DISPLAY to a real X session, or install xvfb."
             )
         log = WORK_DIR / "xvfb.log"
@@ -182,6 +262,7 @@ def ensure_display() -> str:
         ]
         with log.open("a", encoding="utf-8") as fh:
             fh.write(f"\n# starting {' '.join(cmd)}\n")
+            fh.flush()
             proc = subprocess.Popen(
                 cmd,
                 stdout=fh,
@@ -189,24 +270,115 @@ def ensure_display() -> str:
                 start_new_session=True,
             )
         # Wait briefly for the socket.
-        for _ in range(20):
+        for _ in range(25):
             if _display_works(target):
                 break
             if proc.poll() is not None:
-                raise SystemExit(
-                    f"error: Xvfb failed to start ({target}); see {log}"
+                # Immediate fail often means lock still held — one more recover.
+                if recover:
+                    _kill_display_server(target)
+                    with log.open("a", encoding="utf-8") as fh:
+                        fh.write(f"\n# retry starting {' '.join(cmd)}\n")
+                        fh.flush()
+                        proc = subprocess.Popen(
+                            cmd,
+                            stdout=fh,
+                            stderr=subprocess.STDOUT,
+                            start_new_session=True,
+                        )
+                    recover = False
+                    continue
+                raise RuntimeError(
+                    f"Xvfb failed to start ({target}); see {log}"
                 )
             time.sleep(0.1)
         else:
-            raise SystemExit(
-                f"error: Xvfb started but display {target} not ready; see {log}"
+            raise RuntimeError(
+                f"Xvfb started but display {target} not ready; see {log}"
             )
         print(f"started Xvfb on {target} (pid {proc.pid})", flush=True)
 
     os.environ["DISPLAY"] = target
     # Optional WM if present (helps wmctrl / focus); openbox etc.
     _maybe_start_wm(target)
+    _disable_display_sleep(target)
     return target
+
+
+def _disable_display_sleep(display: str) -> None:
+    """Turn off X screensaver / DPMS so idle Wine clients don't blank.
+
+    Wine does not emulate Windows sleep; blank frames are usually DPMS or a
+    dead GL context. Safe on Xvfb; no-op if ``xset`` is missing.
+    """
+    if os.environ.get("PORTRAIT_KEEP_DPMS", "").strip() in ("1", "true", "yes"):
+        return
+    if not shutil.which("xset"):
+        return
+    env = os.environ.copy()
+    env["DISPLAY"] = display
+    try:
+        subprocess.run(
+            ["xset", "s", "off"],
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=3,
+            check=False,
+        )
+        subprocess.run(
+            ["xset", "-dpms"],
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=3,
+            check=False,
+        )
+        subprocess.run(
+            ["xset", "s", "noblank"],
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=3,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+
+
+def nudge_mannequin_windows() -> None:
+    """Tiny mouse wiggle on live Imagine windows to keep Wine GL presenting."""
+    if os.environ.get("PORTRAIT_SKIP_IDLE_NUDGE", "").strip() in (
+        "1",
+        "true",
+        "yes",
+    ):
+        return
+    if not shutil.which("xdotool"):
+        return
+    try:
+        ensure_display(recover=False)
+    except Exception:
+        return
+    for wid in find_imagine_windows():
+        try:
+            focus_x_window(wid)
+            subprocess.run(
+                ["xdotool", "mousemove", "--window", wid, "40", "40"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=2,
+            )
+            subprocess.run(
+                ["xdotool", "mousemove", "--window", wid, "42", "41"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=2,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            continue
 
 
 def _maybe_start_wm(display: str) -> None:
@@ -264,9 +436,12 @@ def _find_windows_wmctrl(needle: str) -> list[str]:
         return []
     try:
         out = subprocess.check_output(
-            ["wmctrl", "-l"], text=True, stderr=subprocess.DEVNULL
+            ["wmctrl", "-l"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+            timeout=3,
         )
-    except subprocess.CalledProcessError:
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return []
     hits: list[str] = []
     for line in out.splitlines():
@@ -288,8 +463,9 @@ def _find_windows_xdotool(needle: str) -> list[str]:
             ["xdotool", "search", "--name", needle],
             text=True,
             stderr=subprocess.DEVNULL,
+            timeout=3,
         ).split()
-    except subprocess.CalledProcessError:
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return []
     return [_norm_wid(i) for i in ids if i.strip()]
 
@@ -302,8 +478,9 @@ def _find_windows_xwininfo(needle: str) -> list[str]:
             ["xwininfo", "-root", "-tree"],
             text=True,
             stderr=subprocess.DEVNULL,
+            timeout=3,
         )
-    except subprocess.CalledProcessError:
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return []
     hits: list[str] = []
     for line in out.splitlines():
@@ -606,6 +783,108 @@ def kill_imagine_clients(*, force: bool = False, clear_windows: bool = True) -> 
     else:
         print("all Imagine client processes gone")
     return killed
+
+
+def _x_window_pid(wid: str) -> int | None:
+    """Best-effort PID for an X window id (xdotool / xprop)."""
+    if not wid:
+        return None
+    if shutil.which("xdotool"):
+        try:
+            out = subprocess.check_output(
+                ["xdotool", "getwindowpid", wid],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=5,
+            ).strip()
+            return int(out) if out else None
+        except (OSError, subprocess.CalledProcessError, ValueError, subprocess.TimeoutExpired):
+            pass
+    if shutil.which("xprop"):
+        try:
+            out = subprocess.check_output(
+                ["xprop", "-id", wid, "_NET_WM_PID"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=5,
+            )
+            # _NET_WM_PID(CARDINAL) = 12345
+            for part in out.replace("=", " ").split():
+                if part.isdigit():
+                    return int(part)
+        except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            pass
+    return None
+
+
+def kill_role_client(role: str, *, force: bool = False) -> dict[str, Any]:
+    """Kill one mannequin's Imagine window/process; keep other pinned roles."""
+    role_n = role.strip().lower()
+    if role_n == "vam":
+        role_n = "vam1"
+    elif role_n == "vaf":
+        role_n = "vaf1"
+    if role_n not in ALLOWED_MANNEQUIN_ROLES:
+        raise RuntimeError("role must be vam1 or vaf1")
+
+    mapped = load_window_map()
+    wid = mapped.get(role_n) or resolve_mannequin_window(role_n)
+    live = find_imagine_windows()
+    killed = 0
+    pid = _x_window_pid(wid) if wid else None
+
+    if pid:
+        print(f"kill {role_n}: window {wid} pid {pid}")
+        sig = signal.SIGKILL if force else signal.SIGTERM
+        try:
+            os.kill(pid, sig)
+            killed = 1
+        except ProcessLookupError:
+            pass
+        except PermissionError as e:
+            raise RuntimeError(f"cannot kill pid {pid}: {e}") from e
+        if not force and killed:
+            time.sleep(0.8)
+            try:
+                os.kill(pid, 0)
+                os.kill(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            except PermissionError:
+                pass
+    elif wid and wid in live:
+        # Fallback: close via xdotool when PID unknown
+        if shutil.which("xdotool"):
+            subprocess.run(
+                ["xdotool", "windowkill", wid],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            killed = 1
+            print(f"kill {role_n}: xdotool windowkill {wid}")
+        else:
+            raise RuntimeError(f"no PID for {role_n} window {wid}")
+    else:
+        print(f"kill {role_n}: no live window (cleared pin only)")
+
+    if role_n in mapped:
+        del mapped[role_n]
+        if mapped:
+            save_window_map(mapped)
+        elif WINDOWS_PATH.is_file():
+            WINDOWS_PATH.unlink(missing_ok=True)
+            print(f"cleared {WINDOWS_PATH}")
+        else:
+            save_window_map({})
+
+    return {
+        "role": role_n,
+        "wid": wid,
+        "pid": pid,
+        "killed": killed,
+        "mapped": mapped,
+    }
 
 
 def _proc_environ(pid: int) -> dict[str, str]:

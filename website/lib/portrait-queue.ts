@@ -414,3 +414,96 @@ export function clearPortraitCache(opts?: {
   resetPortraitQueueForTests()
   return { removedFiles, queueReset: true }
 }
+
+function unlinkPortraitBasename(basename: string): string[] {
+  const dir = portraitsDir()
+  const removed: string[] = []
+  if (!basename.trim() || !fs.existsSync(dir)) return removed
+  for (const ext of [".png", ".webp"] as const) {
+    const file = `${basename}${ext}`
+    const full = path.join(dir, file)
+    try {
+      if (fs.existsSync(full)) {
+        fs.unlinkSync(full)
+        removed.push(file)
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return removed
+}
+
+/**
+ * Clear portrait cache + queue rows for one character so `/armory/{name}`
+ * shows the placeholder and re-enqueues a capture on next visit.
+ */
+export function clearPortraitForCharacter(
+  rawName: string,
+  opts?: { extraFingerprints?: string[] }
+): {
+  characterName: string
+  removedFiles: string[]
+  removedJobs: number
+  fingerprints: string[]
+} {
+  const characterName = rawName.trim()
+  if (!characterName) {
+    throw new Error("character name required")
+  }
+
+  const db = getDb()
+  const rows = db
+    .prepare(
+      `SELECT fingerprint FROM portrait_jobs
+       WHERE lower(character_name) = lower(?)`
+    )
+    .all(characterName) as { fingerprint: string }[]
+
+  const fingerprints = new Set<string>()
+  for (const row of rows) {
+    if (row.fingerprint) fingerprints.add(row.fingerprint.toLowerCase())
+  }
+  for (const fp of opts?.extraFingerprints ?? []) {
+    const n = fp.trim().toLowerCase()
+    if (/^[0-9a-f]{16}$/.test(n)) fingerprints.add(n)
+  }
+
+  const removedFiles: string[] = []
+  for (const fp of fingerprints) {
+    removedFiles.push(...unlinkPortraitBasename(fp))
+  }
+  // PoC name-keyed stubs (catm.png)
+  removedFiles.push(...unlinkPortraitBasename(characterName))
+  if (characterName.toLowerCase() !== characterName) {
+    removedFiles.push(...unlinkPortraitBasename(characterName.toLowerCase()))
+  }
+
+  let removedJobs = 0
+  if (fingerprints.size) {
+    const fps = [...fingerprints]
+    const placeholders = fps.map(() => "?").join(",")
+    const r = db
+      .prepare(
+        `DELETE FROM portrait_jobs
+         WHERE lower(character_name) = lower(?)
+            OR fingerprint IN (${placeholders})`
+      )
+      .run(characterName, ...fps)
+    removedJobs = Number(r.changes ?? 0)
+  } else {
+    const r = db
+      .prepare(
+        `DELETE FROM portrait_jobs WHERE lower(character_name) = lower(?)`
+      )
+      .run(characterName)
+    removedJobs = Number(r.changes ?? 0)
+  }
+
+  return {
+    characterName,
+    removedFiles: [...new Set(removedFiles)],
+    removedJobs,
+    fingerprints: [...fingerprints],
+  }
+}

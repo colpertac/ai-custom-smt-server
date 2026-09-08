@@ -699,6 +699,58 @@ def cmd_nameplate(args: argparse.Namespace) -> None:
         raise SystemExit(1)
 
 
+def classify_mannequin_screen(mannequin: str, *, wid: str | None = None) -> dict:
+    """Best-effort screen kind for the mannequin window (Pillow heuristics)."""
+    try:
+        from portrait_common import debug_snap
+        from portrait_screen_detect import classify_image
+
+        path = debug_snap(mannequin, "pre-shot", wid=wid, upload=False)
+        if not path or not path.is_file():
+            return {"kind": "unknown", "error": "no snap"}
+        return classify_image(path, use_ocr=False)
+    except Exception as e:
+        return {"kind": "unknown", "error": str(e)[:200]}
+
+
+def assert_capture_usable(path: Path, *, label: str = "capture") -> None:
+    """Reject empty / near-black PNGs so we never mark a hung GL shot ready."""
+    if not path.is_file():
+        raise RuntimeError(f"{label} missing: {path}")
+    size = path.stat().st_size
+    if size < 8_000:
+        raise RuntimeError(
+            f"{label} too small ({size} bytes) — likely black/empty frame"
+        )
+    try:
+        from PIL import Image
+
+        im = Image.open(path).convert("RGB")
+        w, h = im.size
+        if w < 64 or h < 64:
+            raise RuntimeError(f"{label} tiny geometry {w}x{h}")
+        # Sample mid crop for mean luminance.
+        px = im.load()
+        step = max(4, min(w, h) // 80)
+        n = s = 0
+        x0, x1 = int(0.2 * w), int(0.8 * w)
+        y0, y1 = int(0.15 * h), int(0.9 * h)
+        for y in range(y0, y1, step):
+            for x in range(x0, x1, step):
+                rr, gg, bb = px[x, y][:3]
+                n += 1
+                s += (rr + gg + bb) / 3.0
+        mean = s / n if n else 0.0
+        if mean < 12.0:
+            raise RuntimeError(
+                f"{label} near-black (mean={mean:.1f}) — hung GL / wrong screen"
+            )
+    except RuntimeError:
+        raise
+    except Exception as e:
+        print(f"warn: {label} luminance check skipped: {e}", file=sys.stderr)
+
+
 def process_job(
     job: dict, out_dir: Path, *, hold_s_each_job: bool = True
 ) -> None:
@@ -731,11 +783,23 @@ def process_job(
                 f'"plate":false (got {dress!r})'
             )
         plate_hidden = True
-        print("nameplate hidden for shot")
+        print(f"dressed {name} → {mannequin} (plate hidden)")
 
         time.sleep(SETTLE_SEC)
         wid = resolve_window(mannequin)
         focus_window(wid)
+
+        # Don't waste a shot on hung GL / login — fail so the job can retry.
+        pre = classify_mannequin_screen(mannequin, wid=wid)
+        kind = str(pre.get("kind") or "unknown")
+        if kind in {"black", "login", "character_select", "server_down"}:
+            reason = (
+                f"mannequin screen={kind} after dress "
+                f"(need in-world; restart {mannequin} if black)"
+            )
+            fail_job(fp, reason)
+            die(reason)
+
         if hold_s_each_job:
             print(f"hold S {HOLD_S_SEC}s (face camera)")
             hold_s(HOLD_S_SEC, wid)
@@ -748,9 +812,14 @@ def process_job(
         raw = out_dir / f"{fp}_raw.png"
         screenshot_window(wid, raw)
         print(f"shot {raw}")
-
-        crop = crop_one(raw, out_dir, CROP_PRESET)
-        print(f"crop {crop}  (preset={CROP_PRESET})")
+        try:
+            assert_capture_usable(raw, label="raw")
+            crop = crop_one(raw, out_dir, CROP_PRESET)
+            print(f"crop {crop}  (preset={CROP_PRESET})")
+            assert_capture_usable(crop, label="crop")
+        except RuntimeError as e:
+            fail_job(fp, str(e))
+            die(str(e))
         ingest(crop, fp)
         print(f"ready {fp}")
     finally:

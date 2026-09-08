@@ -21,6 +21,8 @@ type Tunables = {
   splashEscGapSec: number
   splashSettleSec: number
   afterEnterSec: number
+  fieldGapSec: number
+  typeDelayMs: number
   startXFrac: number
   startYFrac: number
   startClickCount: number
@@ -50,6 +52,12 @@ const FIELD_META: {
   { key: "splashEscGapSec", label: "Gap between Esc (s)", step: "0.1" },
   { key: "splashSettleSec", label: "Splash settle wait (s)", step: "0.1" },
   { key: "afterEnterSec", label: "Wait after login Enter (s)", step: "0.5" },
+  {
+    key: "fieldGapSec",
+    label: "Gap after Tab / Shift+Tab (s)",
+    step: "0.05",
+  },
+  { key: "typeDelayMs", label: "Type delay per char (ms)", step: "1" },
   { key: "startXFrac", label: "Start Game X (0–1)", step: "0.001" },
   { key: "startYFrac", label: "Start Game Y (0–1)", step: "0.001" },
   { key: "startClickCount", label: "Start Game click count", step: "1" },
