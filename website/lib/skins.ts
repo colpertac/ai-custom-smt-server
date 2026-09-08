@@ -29,7 +29,7 @@ export const SKINS = [
 
 export type SkinId = (typeof SKINS)[number]["id"]
 
-export const DEFAULT_SKIN: SkinId = "banner"
+export const DEFAULT_SKIN: SkinId = "stage"
 
 export const SKIN_IDS = SKINS.map((s) => s.id) as SkinId[]
 
