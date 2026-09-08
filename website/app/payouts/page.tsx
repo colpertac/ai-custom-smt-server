@@ -19,8 +19,8 @@ export default async function PayoutsPage() {
       </h1>
       <div className="gold-rule mt-3 max-w-xs" />
       <p className="mt-4 text-sm text-muted-foreground">
-        CP value of each dungeon clear. Click a family with a chevron to expand
-        variants (bearcat, bosses, and other paths). Boss-crate item drops are
+        Switch between CP and Magical Golden Apples (Golden Light). Click a
+        family with a chevron to expand variants. Boss-crate item drops are
         configured separately.
       </p>
 

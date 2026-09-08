@@ -7,11 +7,18 @@ import { ChevronDown, ChevronRight, Plus, Settings2, TriangleAlert } from "lucid
 import {
   downloadAdminPayoutsZipAll,
   fetchAdminPayout,
+  type GoldenApplesFile,
 } from "@/features/admin-payouts/api"
 import { CpPresetsManageDialog } from "@/features/admin-payouts/components/CpPresetsManageDialog"
 import { FamilyWeightsDialog } from "@/features/admin-payouts/components/FamilyWeightsDialog"
 import { PayoutDetailDrawer } from "@/features/admin-payouts/components/PayoutDetailDrawer"
 import { applyEconomyPreset } from "@/features/admin-payouts/cpPresets"
+import {
+  APPLE_PRESET_BUTTONS,
+  applyApplePreset,
+  applyWeightedApples,
+  weightedApples,
+} from "@/features/admin-payouts/applePresets"
 import {
   groupPayoutsByFamily,
   variantDisplayLabel,
@@ -25,8 +32,10 @@ import {
 import {
   useAdminCpPresets,
   useAdminFamilyWeights,
+  useAdminGoldenApples,
   useAdminPayoutConflicts,
   useAdminPayouts,
+  useBatchSaveAdminGoldenApples,
   useBatchSaveAdminPayoutCp,
   useBatchSaveAdminPayoutWeights,
   useCreateAdminPayout,
@@ -85,17 +94,6 @@ function displayCp(
   return cpOverrides[item.id] ?? item.cp
 }
 
-function isCpDirty(
-  item: PayoutListItem | undefined,
-  cpOverrides: Record<string, number>
-): boolean {
-  if (!item) return false
-  return (
-    Object.prototype.hasOwnProperty.call(cpOverrides, item.id) &&
-    cpOverrides[item.id] !== item.cp
-  )
-}
-
 function displayWeight(
   item: PayoutListItem | undefined,
   weightOverrides: Record<string, number>
@@ -115,6 +113,31 @@ function isWeightDirty(
   )
 }
 
+type SheetMode = "cp" | "apples"
+
+function displayApples(
+  item: PayoutListItem | undefined,
+  appleById: Record<string, { apples: number | null } | undefined>,
+  appleOverrides: Record<string, number>
+): number | null {
+  if (!item) return null
+  if (Object.prototype.hasOwnProperty.call(appleOverrides, item.id)) {
+    return appleOverrides[item.id]!
+  }
+  const link = appleById[item.id]
+  return link?.apples ?? null
+}
+
+function isAppleDirty(
+  item: PayoutListItem | undefined,
+  appleById: Record<string, { apples: number | null } | undefined>,
+  appleOverrides: Record<string, number>
+): boolean {
+  if (!item) return false
+  if (!Object.prototype.hasOwnProperty.call(appleOverrides, item.id)) return false
+  return appleOverrides[item.id] !== (appleById[item.id]?.apples ?? null)
+}
+
 export function DungeonPayoutsPanel() {
   const confirm = useConfirm()
   const queryClient = useQueryClient()
@@ -123,18 +146,24 @@ export function DungeonPayoutsPanel() {
   const retireConflicts = useRetireAdminPayoutConflictPackages()
   const { data: cpPresets = [] } = useAdminCpPresets()
   const { data: familyWeightsFile } = useAdminFamilyWeights()
+  const { data: goldenApples } = useAdminGoldenApples()
   const liveConflicts = conflictData?.conflicts ?? []
   const createMutation = useCreateAdminPayout()
   const saveMutation = useSaveAdminPayout()
   const batchCpMutation = useBatchSaveAdminPayoutCp()
   const batchWeightsMutation = useBatchSaveAdminPayoutWeights()
+  const batchApplesMutation = useBatchSaveAdminGoldenApples()
   const saveFamilyWeightsMutation = useSaveAdminFamilyWeights()
   const deleteMutation = useDeleteAdminPayout()
 
+  const [sheetMode, setSheetMode] = useState<SheetMode>("cp")
   const [filter, setFilter] = useState("")
   const [enabledOnly, setEnabledOnly] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [cpOverrides, setCpOverrides] = useState<Record<string, number>>({})
+  const [appleOverrides, setAppleOverrides] = useState<Record<string, number>>(
+    {}
+  )
   const [weightOverrides, setWeightOverrides] = useState<
     Record<string, number>
   >({})
@@ -156,6 +185,7 @@ export function DungeonPayoutsPanel() {
 
   const draftRef = useRef(draft)
   const cpOverridesRef = useRef(cpOverrides)
+  const appleOverridesRef = useRef(appleOverrides)
   const weightOverridesRef = useRef(weightOverrides)
   const familyWeightOverridesRef = useRef(familyWeightOverrides)
   const flushInFlightRef = useRef(false)
@@ -163,10 +193,12 @@ export function DungeonPayoutsPanel() {
   const skipAutoSaveRef = useRef(false)
   draftRef.current = draft
   cpOverridesRef.current = cpOverrides
+  appleOverridesRef.current = appleOverrides
   weightOverridesRef.current = weightOverrides
   familyWeightOverridesRef.current = familyWeightOverrides
 
   const savedFamilyWeights = familyWeightsFile?.weights ?? {}
+  const appleById = goldenApples?.byPayoutId ?? {}
 
   /** Weight recalculate always uses Grindy tier bases (Normal/Generous are linear scales). */
   const grindyPreset = useMemo(
@@ -206,15 +238,26 @@ export function DungeonPayoutsPanel() {
     [familyWeightOverrides, savedFamilyWeights]
   )
 
+  const dirtyAppleIds = useMemo(
+    () =>
+      Object.keys(appleOverrides).filter((id) => {
+        const row = list?.find((p) => p.id === id)
+        return isAppleDirty(row, appleById, appleOverrides)
+      }),
+    [appleOverrides, appleById, list]
+  )
+
   const anyDirty =
     dirtyDrawer ||
     dirtyCpIds.length > 0 ||
     dirtyWeightIds.length > 0 ||
-    dirtyFamilyKeys.length > 0
+    dirtyFamilyKeys.length > 0 ||
+    dirtyAppleIds.length > 0
   const saving =
     saveMutation.isPending ||
     batchCpMutation.isPending ||
     batchWeightsMutation.isPending ||
+    batchApplesMutation.isPending ||
     saveFamilyWeightsMutation.isPending ||
     flushInFlightRef.current
   const dirtyRef = useRef(false)
@@ -237,11 +280,16 @@ export function DungeonPayoutsPanel() {
 
     const currentDraft = draftRef.current
     const currentCpOverrides = cpOverridesRef.current
+    const currentAppleOverrides = appleOverridesRef.current
     const currentWeightOverrides = weightOverridesRef.current
     const currentFamilyWeightOverrides = familyWeightOverridesRef.current
     const cpDirty = Object.keys(currentCpOverrides).filter((id) => {
       const row = list?.find((p) => p.id === id)
       return row != null && currentCpOverrides[id] !== row.cp
+    })
+    const appleDirty = Object.keys(currentAppleOverrides).filter((id) => {
+      const row = list?.find((p) => p.id === id)
+      return isAppleDirty(row, appleById, currentAppleOverrides)
     })
     const weightDirty = Object.keys(currentWeightOverrides).filter((id) => {
       const row = list?.find((p) => p.id === id)
@@ -262,6 +310,7 @@ export function DungeonPayoutsPanel() {
 
     if (
       cpDirty.length === 0 &&
+      appleDirty.length === 0 &&
       weightDirty.length === 0 &&
       familyDirty.length === 0 &&
       !drawerDirty
@@ -277,6 +326,10 @@ export function DungeonPayoutsPanel() {
       const cpUpdates = cpDirty
         .filter((id) => id !== drawerId)
         .map((id) => ({ id, cp: currentCpOverrides[id]! }))
+      const appleUpdates = appleDirty.map((id) => ({
+        id,
+        apples: currentAppleOverrides[id]!,
+      }))
       const weightUpdates = weightDirty
         .filter((id) => id !== drawerId)
         .map((id) => ({ id, cpWeight: currentWeightOverrides[id]! }))
@@ -291,6 +344,47 @@ export function DungeonPayoutsPanel() {
               cpById.has(row.id) ? { ...row, cp: cpById.get(row.id)! } : row
             )
         )
+      }
+      if (appleUpdates.length > 0) {
+        await batchApplesMutation.mutateAsync(appleUpdates)
+        // Patch cache before clearing overrides so blur doesn't flash the old amount.
+        queryClient.setQueryData<GoldenApplesFile>(
+          ["admin", "payouts", "golden-apples"],
+          (prev) => {
+            if (!prev) return prev
+            const byPayoutId = { ...prev.byPayoutId }
+            for (const { id, apples } of appleUpdates) {
+              const cur = byPayoutId[id] ?? appleById[id]
+              const shared = cur?.sharedWith ?? []
+              byPayoutId[id] = {
+                apples,
+                partialId: cur?.partialId ?? null,
+                sharedWith: shared,
+                dynamicMapIds: cur?.dynamicMapIds ?? [],
+              }
+              for (const other of shared) {
+                const o = byPayoutId[other] ?? appleById[other]
+                byPayoutId[other] = {
+                  apples,
+                  partialId: o?.partialId ?? null,
+                  sharedWith: o?.sharedWith ?? [],
+                  dynamicMapIds: o?.dynamicMapIds ?? [],
+                }
+              }
+            }
+            return { ...prev, byPayoutId }
+          }
+        )
+        setAppleOverrides((prev) => {
+          const next = { ...prev }
+          for (const { id } of appleUpdates) {
+            delete next[id]
+            for (const other of appleById[id]?.sharedWith ?? []) {
+              delete next[other]
+            }
+          }
+          return next
+        })
       }
       if (weightUpdates.length > 0) {
         await batchWeightsMutation.mutateAsync(weightUpdates)
@@ -381,6 +475,7 @@ export function DungeonPayoutsPanel() {
       saveMutation.reset()
       batchCpMutation.reset()
       batchWeightsMutation.reset()
+      batchApplesMutation.reset()
       saveFamilyWeightsMutation.reset()
     } catch (err) {
       setBatchError(err instanceof Error ? err.message : "Save failed")
@@ -389,7 +484,9 @@ export function DungeonPayoutsPanel() {
       flushInFlightRef.current = false
     }
   }, [
+    appleById,
     baseline,
+    batchApplesMutation,
     batchCpMutation,
     batchWeightsMutation,
     list,
@@ -463,6 +560,10 @@ export function DungeonPayoutsPanel() {
         payout: { ...draft.payout, cp: value },
       })
     }
+  }
+
+  const setApples = (item: PayoutListItem, value: number) => {
+    setAppleOverrides((prev) => ({ ...prev, [item.id]: value }))
   }
 
   const setFamilyWeight = (family: string, value: number) => {
@@ -576,6 +677,85 @@ export function DungeonPayoutsPanel() {
     })()
   }
 
+  const applyAppleScalePreset = (presetId: string, label: string) => {
+    void (async () => {
+      const rows = list ?? []
+      if (!rows.length) return
+      const next = applyApplePreset(rows, presetId)
+      const count = Object.keys(next).length
+      if (!count) {
+        setBatchError("No Grindy apple baselines mapped for current payouts")
+        return
+      }
+      const ok = await confirm({
+        title: `Apply “${label}” apple preset?`,
+        description:
+          `Set Magical Golden Apple amounts on ${count} mapped payout(s).\n\n` +
+          `Grindy = stock Golden Light · Normal = ×5 · Generous = ×10.\n` +
+          `Writes NPC3401.xml (channel reload needed for live).`,
+        confirmLabel: "Apply preset",
+      })
+      if (!ok) return
+      try {
+        await flushPendingChanges()
+      } catch {
+        return
+      }
+      skipAutoSaveRef.current = true
+      setAppleOverrides(next)
+      appleOverridesRef.current = next
+      try {
+        await flushPendingChanges()
+      } catch {
+        // already surfaced
+      } finally {
+        skipAutoSaveRef.current = false
+      }
+    })()
+  }
+
+  const recalculateApplesFromWeights = () => {
+    void (async () => {
+      const rows = list ?? []
+      if (!rows.length) return
+      const weightedRows = rows.map((r) => ({
+        ...r,
+        cpWeight: weightOverrides[r.id] ?? r.cpWeight ?? 1,
+      }))
+      const next = applyWeightedApples(weightedRows, effectiveFamilyWeights)
+      const count = Object.keys(next).length
+      if (!count) {
+        setBatchError("No Grindy apple baselines mapped for current payouts")
+        return
+      }
+      const ok = await confirm({
+        title: "Recalculate apples from weights?",
+        description:
+          `Fill Golden Light apples for ${count} mapped payout(s):\n\n` +
+          `apples = grindyBase × familyWeight × payoutWeight\n\n` +
+          `Uses the same family × and drawer payout weights as CP. ` +
+          `Apply Normal/Generous afterward for a global scale.`,
+        confirmLabel: "Recalculate",
+      })
+      if (!ok) return
+      try {
+        await flushPendingChanges()
+      } catch {
+        return
+      }
+      skipAutoSaveRef.current = true
+      setAppleOverrides(next)
+      appleOverridesRef.current = next
+      try {
+        await flushPendingChanges()
+      } catch {
+        // already surfaced
+      } finally {
+        skipAutoSaveRef.current = false
+      }
+    })()
+  }
+
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Loading payouts…</p>
   }
@@ -589,6 +769,50 @@ export function DungeonPayoutsPanel() {
 
   return (
     <div className="mt-8 space-y-4">
+      <div
+        className="inline-flex border-2 border-border"
+        role="tablist"
+        aria-label="Payout sheet mode"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={sheetMode === "cp"}
+          className={`px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
+            sheetMode === "cp"
+              ? "bg-muted text-foreground"
+              : "bg-transparent text-muted-foreground hover:text-foreground"
+          }`}
+          onClick={() => {
+            void flushPendingChanges().then(() => setSheetMode("cp"))
+          }}
+        >
+          CP
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={sheetMode === "apples"}
+          className={`border-l-2 border-border px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
+            sheetMode === "apples"
+              ? "bg-muted text-foreground"
+              : "bg-transparent text-muted-foreground hover:text-foreground"
+          }`}
+          onClick={() => {
+            void flushPendingChanges().then(() => setSheetMode("apples"))
+          }}
+        >
+          Magical Golden Apples
+        </button>
+      </div>
+      {sheetMode === "apples" ? (
+        <p className="text-xs text-muted-foreground">
+          Golden Light click amounts (item 21941) from NPC3401.xml — not boss-crate
+          loot. Shared map partials update together. Channel reload needed after
+          save for live play.
+        </p>
+      ) : null}
+
       <div className="space-y-3 border-2 border-border bg-muted/20 p-3">
         <div className="flex flex-wrap items-end gap-3">
           <Field className="min-w-[12rem] flex-1">
@@ -669,6 +893,8 @@ export function DungeonPayoutsPanel() {
           </Button>
         </div>
 
+        {sheetMode === "cp" ? (
+          <>
         <div className="flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-3">
           <span className="mr-1 text-xs tracking-wide text-muted-foreground uppercase">
             CP presets
@@ -731,6 +957,64 @@ export function DungeonPayoutsPanel() {
             CP presets = global bases · family × = dungeon amp · preview →N
           </p>
         </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-3">
+              <span className="mr-1 text-xs tracking-wide text-muted-foreground uppercase">
+                Apple presets
+              </span>
+              {APPLE_PRESET_BUTTONS.map((p) => (
+                <Button
+                  key={p.id}
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  title={p.blurb}
+                  disabled={!list?.length || saving}
+                  onClick={() => applyAppleScalePreset(p.id, p.label)}
+                >
+                  {p.label}
+                </Button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
+              <span className="mr-1 text-xs tracking-wide text-muted-foreground uppercase">
+                Family weights
+              </span>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  void (async () => {
+                    try {
+                      await flushPendingChanges()
+                    } catch {
+                      return
+                    }
+                    setFamilyWeightsOpen(true)
+                  })()
+                }}
+              >
+                Manage weights
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={!list?.length || saving}
+                onClick={() => recalculateApplesFromWeights()}
+              >
+                Recalculate from weights
+              </Button>
+              <p className="text-[0.65rem] text-muted-foreground">
+                Grindy = stock Golden Light · family × + drawer weight · Normal/Generous =
+                ×5/×10
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       <CpPresetsManageDialog
@@ -914,6 +1198,7 @@ export function DungeonPayoutsPanel() {
                 <FamilyBlock
                   key={row.family}
                   family={row.family}
+                  sheetMode={sheetMode}
                   bronze={row.bronze}
                   silver={row.silver}
                   gold={row.gold}
@@ -921,6 +1206,8 @@ export function DungeonPayoutsPanel() {
                   expanded={open}
                   hasVariants={hasVariants}
                   cpOverrides={cpOverrides}
+                  appleOverrides={appleOverrides}
+                  appleById={appleById}
                   weightOverrides={weightOverrides}
                   familyWeight={
                     familyWeightOverrides[row.family] ??
@@ -936,6 +1223,7 @@ export function DungeonPayoutsPanel() {
                   }
                   onAdvanced={(id) => void openPayout(id)}
                   onCp={setCp}
+                  onApples={setApples}
                   onFamilyWeight={setFamilyWeight}
                   onFlushBlur={() => {
                     void flushPendingChanges()
@@ -1068,6 +1356,16 @@ function previewCp(
   return weightedCp(item, preset, familyWeight, pw)
 }
 
+function previewApples(
+  item: PayoutListItem | undefined,
+  familyWeight: number,
+  weightOverrides: Record<string, number>
+): number | null {
+  if (!item) return null
+  const pw = displayWeight(item, weightOverrides) ?? 1
+  return weightedApples(item, familyWeight, pw)
+}
+
 function showCpPreview(
   item: PayoutListItem | undefined,
   familyWeight: number,
@@ -1085,8 +1383,26 @@ function showCpPreview(
   return preview !== currentCp
 }
 
+function showApplePreview(
+  item: PayoutListItem | undefined,
+  familyWeight: number,
+  familyWeightDirty: boolean,
+  weightOverrides: Record<string, number>,
+  preview: number | null,
+  currentApples: number | null
+): boolean {
+  if (!item || preview == null || currentApples == null) return false
+  const pw = displayWeight(item, weightOverrides) ?? 1
+  const weightDirty = isWeightDirty(item, weightOverrides)
+  if (familyWeight === 1 && !familyWeightDirty && pw === 1 && !weightDirty) {
+    return false
+  }
+  return preview !== currentApples
+}
+
 function FamilyBlock({
   family,
+  sheetMode,
   bronze,
   silver,
   gold,
@@ -1094,6 +1410,8 @@ function FamilyBlock({
   expanded,
   hasVariants,
   cpOverrides,
+  appleOverrides,
+  appleById,
   weightOverrides,
   familyWeight,
   familyWeightDirty,
@@ -1101,10 +1419,12 @@ function FamilyBlock({
   onToggle,
   onAdvanced,
   onCp,
+  onApples,
   onFamilyWeight,
   onFlushBlur,
 }: {
   family: string
+  sheetMode: SheetMode
   bronze?: PayoutListItem
   silver?: PayoutListItem
   gold?: PayoutListItem
@@ -1112,6 +1432,11 @@ function FamilyBlock({
   expanded: boolean
   hasVariants: boolean
   cpOverrides: Record<string, number>
+  appleOverrides: Record<string, number>
+  appleById: Record<
+    string,
+    { apples: number | null; sharedWith?: string[]; partialId?: number | null }
+  >
   weightOverrides: Record<string, number>
   familyWeight: number
   familyWeightDirty: boolean
@@ -1119,6 +1444,7 @@ function FamilyBlock({
   onToggle: () => void
   onAdvanced: (id: string) => void
   onCp: (item: PayoutListItem, value: number) => void
+  onApples: (item: PayoutListItem, value: number) => void
   onFamilyWeight: (family: string, value: number) => void
   onFlushBlur: () => void
 }) {
@@ -1159,7 +1485,7 @@ function FamilyBlock({
               step={0.1}
               value={familyWeight}
               aria-label={`Family weight for ${family}`}
-              title="Family weight (amp all tiers/variants in this dungeon)"
+              title="Family weight (amp CP and Golden Light apples on Recalculate)"
               onChange={(e) =>
                 onFamilyWeight(family, Number(e.target.value))
               }
@@ -1171,6 +1497,35 @@ function FamilyBlock({
         {TIERS.map((t) => {
           const item =
             t.key === "bronze" ? bronze : t.key === "silver" ? silver : gold
+          if (sheetMode === "apples") {
+            const apples = displayApples(item, appleById, appleOverrides)
+            const link = item ? appleById[item.id] : undefined
+            const applePreview = previewApples(
+              item,
+              familyWeight,
+              weightOverrides
+            )
+            return (
+              <AppleCell
+                key={t.key}
+                item={item}
+                apples={apples}
+                sharedWith={link?.sharedWith ?? []}
+                preview={applePreview}
+                showPreview={showApplePreview(
+                  item,
+                  familyWeight,
+                  familyWeightDirty,
+                  weightOverrides,
+                  applePreview,
+                  apples
+                )}
+                onAdvanced={onAdvanced}
+                onApples={onApples}
+                onFlushBlur={onFlushBlur}
+              />
+            )
+          }
           const cp = displayCp(item, cpOverrides)
           const preview = previewCp(
             item,
@@ -1183,7 +1538,6 @@ function FamilyBlock({
               key={t.key}
               item={item}
               cp={cp}
-              dirty={isCpDirty(item, cpOverrides)}
               preview={preview}
               showPreview={showCpPreview(
                 item,
@@ -1202,6 +1556,70 @@ function FamilyBlock({
       </tr>
       {expanded &&
         variants.map((v) => {
+          if (sheetMode === "apples") {
+            const apples = displayApples(v, appleById, appleOverrides)
+            const link = appleById[v.id]
+            const applePreview = previewApples(
+              v,
+              familyWeight,
+              weightOverrides
+            )
+            return (
+              <tr key={v.id} className="bg-muted/20">
+                <td className="sticky left-0 z-[1] border-2 border-border bg-muted/40 px-2 py-1 pl-7 text-xs text-muted-foreground">
+                  <span className="text-foreground">
+                    {variantDisplayLabel(v)}
+                  </span>
+                  {v.mode && v.mode !== "normal" ? (
+                    <span className="ml-1 opacity-70">· {v.mode}</span>
+                  ) : null}
+                </td>
+                <td colSpan={3} className="border-2 border-border px-2 py-1">
+                  <div className="flex items-center gap-2 px-1 py-0.5">
+                    <AppleInput
+                      item={v}
+                      apples={apples}
+                      sharedWith={link?.sharedWith ?? []}
+                      onApples={onApples}
+                      onFlushBlur={onFlushBlur}
+                    />
+                    <span className="text-xs text-muted-foreground">apples</span>
+                    {showApplePreview(
+                      v,
+                      familyWeight,
+                      familyWeightDirty,
+                      weightOverrides,
+                      applePreview,
+                      apples
+                    ) && applePreview != null ? (
+                      <span
+                        className="text-[0.65rem] text-muted-foreground"
+                        title="Preview after Recalculate from weights"
+                      >
+                        → {applePreview}
+                      </span>
+                    ) : null}
+                    {!v.enabled && (
+                      <span className="text-xs text-muted-foreground">
+                        disabled
+                      </span>
+                    )}
+                    <Button
+                      type="button"
+                      size="icon-xs"
+                      variant="ghost"
+                      className="ml-auto text-muted-foreground"
+                      title="Advanced payout settings"
+                      aria-label={`Advanced settings for ${v.name}`}
+                      onClick={() => onAdvanced(v.id)}
+                    >
+                      <Settings2 className="size-3" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            )
+          }
           const cp = displayCp(v, cpOverrides)
           const preview = previewCp(
             v,
@@ -1224,7 +1642,6 @@ function FamilyBlock({
                   <CpInput
                     item={v}
                     cp={cp ?? 0}
-                    dirty={isCpDirty(v, cpOverrides)}
                     onCp={onCp}
                     onFlushBlur={onFlushBlur}
                   />
@@ -1269,10 +1686,109 @@ function FamilyBlock({
   )
 }
 
+function AppleCell({
+  item,
+  apples,
+  sharedWith,
+  preview,
+  showPreview,
+  onAdvanced,
+  onApples,
+  onFlushBlur,
+}: {
+  item?: PayoutListItem
+  apples: number | null
+  sharedWith: string[]
+  preview: number | null
+  showPreview: boolean
+  onAdvanced: (id: string) => void
+  onApples: (item: PayoutListItem, value: number) => void
+  onFlushBlur: () => void
+}) {
+  if (!item || apples == null) {
+    return (
+      <td className="border-2 border-border bg-background/30 px-2 py-1 text-center text-muted-foreground">
+        —
+      </td>
+    )
+  }
+  return (
+    <td className="border-2 border-border px-1 py-1 text-center">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="flex items-center justify-center gap-0.5">
+          <AppleInput
+            item={item}
+            apples={apples}
+            sharedWith={sharedWith}
+            onApples={onApples}
+            onFlushBlur={onFlushBlur}
+          />
+          <Button
+            type="button"
+            size="icon-xs"
+            variant="ghost"
+            className="text-muted-foreground opacity-60 hover:opacity-100"
+            title="Advanced payout settings"
+            aria-label={`Advanced settings for ${item.name}`}
+            onClick={() => onAdvanced(item.id)}
+          >
+            <Settings2 className="size-3" />
+          </Button>
+        </div>
+        {showPreview && preview != null ? (
+          <span
+            className="text-[0.6rem] text-muted-foreground"
+            title="Preview after Recalculate from weights"
+          >
+            → {preview}
+          </span>
+        ) : null}
+      </div>
+    </td>
+  )
+}
+
+function AppleInput({
+  item,
+  apples,
+  sharedWith,
+  onApples,
+  onFlushBlur,
+}: {
+  item: PayoutListItem
+  apples: number | null
+  sharedWith: string[]
+  onApples: (item: PayoutListItem, value: number) => void
+  onFlushBlur: () => void
+}) {
+  if (apples == null) {
+    return <span className="text-muted-foreground">—</span>
+  }
+  const sharedNote =
+    sharedWith.length > 0
+      ? ` Shared Golden Light partial with: ${sharedWith.join(", ")}`
+      : ""
+  return (
+    <Input
+      className="h-7 w-16 text-center tabular-nums"
+      type="number"
+      min={0}
+      step={1}
+      value={apples}
+      title={`Magical Golden Apples from Golden Light.${sharedNote}`}
+      aria-label={`Golden apples for ${item.name}`}
+      onChange={(e) =>
+        onApples(item, Math.max(0, Number(e.target.value) || 0))
+      }
+      onBlur={onFlushBlur}
+      onClick={(e) => e.stopPropagation()}
+    />
+  )
+}
+
 function CpCell({
   item,
   cp,
-  dirty,
   preview,
   showPreview,
   onAdvanced,
@@ -1281,7 +1797,6 @@ function CpCell({
 }: {
   item?: PayoutListItem
   cp: number | null
-  dirty: boolean
   preview: number | null
   showPreview: boolean
   onAdvanced: (id: string) => void
@@ -1302,7 +1817,6 @@ function CpCell({
           <CpInput
             item={item}
             cp={cp}
-            dirty={dirty}
             onCp={onCp}
             onFlushBlur={onFlushBlur}
           />
@@ -1334,28 +1848,24 @@ function CpCell({
 function CpInput({
   item,
   cp,
-  dirty,
   onCp,
   onFlushBlur,
 }: {
   item: PayoutListItem
   cp: number
-  dirty: boolean
   onCp: (item: PayoutListItem, value: number) => void
   onFlushBlur: () => void
 }) {
   return (
-    <div className="flex items-center justify-center gap-0.5">
-      <Input
-        className="h-7 w-16 text-center"
-        type="number"
-        min={0}
-        value={cp}
-        aria-label={`CP for ${item.name}`}
-        onChange={(e) => onCp(item, Number(e.target.value))}
-        onBlur={onFlushBlur}
-      />
-      {dirty ? <span className="text-gold-hot">*</span> : null}
-    </div>
+    <Input
+      className="h-7 w-16 text-center"
+      type="number"
+      min={0}
+      value={cp}
+      aria-label={`CP for ${item.name}`}
+      onChange={(e) => onCp(item, Number(e.target.value))}
+      onBlur={onFlushBlur}
+      onClick={(e) => e.stopPropagation()}
+    />
   )
 }

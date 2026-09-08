@@ -411,7 +411,7 @@ export async function restartOpsChannel(
   if (status === 401) {
     return { ok: false, error: "unauthorized" }
   }
-  return {
+  const result: OpsRestartChannelResult = {
     ok: Boolean(json.ok),
     service: typeof json.service === "string" ? json.service : undefined,
     backend: typeof json.backend === "string" ? json.backend : undefined,
@@ -419,6 +419,17 @@ export async function restartOpsChannel(
     detail: typeof json.detail === "string" ? json.detail : undefined,
     error: typeof json.error === "string" ? json.error : undefined,
   }
+  if (result.ok) {
+    try {
+      const { clearGoldenApplesRestartPending } = await import(
+        "@/lib/golden-apple-fs"
+      )
+      await clearGoldenApplesRestartPending()
+    } catch {
+      /* non-fatal */
+    }
+  }
+  return result
 }
 
 export type OpsLaneAConfigPublishResult = {

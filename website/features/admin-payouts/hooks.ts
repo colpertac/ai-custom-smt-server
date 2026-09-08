@@ -3,17 +3,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
+  batchSaveAdminGoldenApples,
   batchSaveAdminPayoutCp,
   batchSaveAdminPayoutWeights,
   createAdminPayout,
   deleteAdminPayout,
   fetchAdminFamilyWeights,
+  fetchAdminGoldenApples,
   fetchAdminPayout,
   fetchAdminPayoutConflicts,
   fetchAdminPayouts,
   retireAdminPayoutConflictPackages,
   saveAdminFamilyWeights,
   saveAdminPayout,
+  type GoldenApplesFile,
 } from "@/features/admin-payouts/api"
 import {
   createAdminCpPreset,
@@ -137,6 +140,46 @@ export function useBatchSaveAdminPayoutWeights() {
           queryKey: ["admin", "payouts", id],
         })
       }
+    },
+  })
+}
+
+const GOLDEN_APPLES_KEY = ["admin", "payouts", "golden-apples"] as const
+
+export function useAdminGoldenApples() {
+  return useQuery({
+    queryKey: GOLDEN_APPLES_KEY,
+    queryFn: fetchAdminGoldenApples,
+  })
+}
+
+export function useBatchSaveAdminGoldenApples() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (updates: { id: string; apples: number }[]) =>
+      batchSaveAdminGoldenApples(updates),
+    onSuccess: (_result, updates) => {
+      // Optimistic cache before refetch so blur doesn't flash the old amount.
+      queryClient.setQueryData<GoldenApplesFile>(GOLDEN_APPLES_KEY, (prev) => {
+        if (!prev) return prev
+        const byPayoutId = { ...prev.byPayoutId }
+        for (const { id, apples } of updates) {
+          const cur = byPayoutId[id]
+          byPayoutId[id] = {
+            apples,
+            partialId: cur?.partialId ?? null,
+            sharedWith: cur?.sharedWith ?? [],
+            dynamicMapIds: cur?.dynamicMapIds ?? [],
+          }
+          for (const other of cur?.sharedWith ?? []) {
+            const o = byPayoutId[other]
+            if (!o) continue
+            byPayoutId[other] = { ...o, apples }
+          }
+        }
+        return { ...prev, byPayoutId }
+      })
+      void queryClient.invalidateQueries({ queryKey: GOLDEN_APPLES_KEY })
     },
   })
 }

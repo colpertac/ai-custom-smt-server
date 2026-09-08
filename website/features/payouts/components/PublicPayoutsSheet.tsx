@@ -14,7 +14,6 @@ import {
   type PublicPayoutRow,
 } from "@/lib/public-payout-types"
 import { Button } from "@/components/ui/button"
-import type { PayoutListItem } from "@/lib/dungeon-payout-types"
 
 const TIERS: { key: SheetDifficulty; label: string; headClass: string }[] = [
   {
@@ -34,12 +33,20 @@ const TIERS: { key: SheetDifficulty; label: string; headClass: string }[] = [
   },
 ]
 
+type SheetMode = "cp" | "apples"
+
 export function PublicPayoutsSheet({ rows }: { rows: PublicPayoutRow[] }) {
   const familyRows = useMemo(
     () => groupPayoutsByFamily(asPayoutListItems(rows)),
     [rows]
   )
+  const applesById = useMemo(() => {
+    const map = new Map<string, number | null>()
+    for (const r of rows) map.set(r.id, r.apples)
+    return map
+  }, [rows])
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
+  const [sheetMode, setSheetMode] = useState<SheetMode>("cp")
 
   if (!familyRows.length) {
     return (
@@ -51,6 +58,39 @@ export function PublicPayoutsSheet({ rows }: { rows: PublicPayoutRow[] }) {
 
   return (
     <div className="mt-8 space-y-3">
+      <div
+        className="inline-flex border-2 border-border"
+        role="tablist"
+        aria-label="Payout sheet mode"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={sheetMode === "cp"}
+          className={`px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
+            sheetMode === "cp"
+              ? "bg-muted text-foreground"
+              : "bg-transparent text-muted-foreground hover:text-foreground"
+          }`}
+          onClick={() => setSheetMode("cp")}
+        >
+          CP
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={sheetMode === "apples"}
+          className={`border-l-2 border-border px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
+            sheetMode === "apples"
+              ? "bg-muted text-foreground"
+              : "bg-transparent text-muted-foreground hover:text-foreground"
+          }`}
+          onClick={() => setSheetMode("apples")}
+        >
+          Magical Golden Apples
+        </button>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <Button
           type="button"
@@ -101,6 +141,8 @@ export function PublicPayoutsSheet({ rows }: { rows: PublicPayoutRow[] }) {
                 <FamilyBlock
                   key={row.family}
                   row={row}
+                  sheetMode={sheetMode}
+                  applesById={applesById}
                   expanded={open}
                   hasVariants={hasVariants}
                   onToggle={() =>
@@ -121,11 +163,15 @@ export function PublicPayoutsSheet({ rows }: { rows: PublicPayoutRow[] }) {
 
 function FamilyBlock({
   row,
+  sheetMode,
+  applesById,
   expanded,
   hasVariants,
   onToggle,
 }: {
   row: PayoutFamilyRow
+  sheetMode: SheetMode
+  applesById: Map<string, number | null>
   expanded: boolean
   hasVariants: boolean
   onToggle: () => void
@@ -165,13 +211,22 @@ function FamilyBlock({
               : t.key === "silver"
                 ? row.silver
                 : row.gold
-          return <CpCell key={t.key} item={item} />
+          if (sheetMode === "apples") {
+            return (
+              <ValueCell
+                key={t.key}
+                value={item ? (applesById.get(item.id) ?? null) : null}
+                title={item?.name}
+              />
+            )
+          }
+          return <ValueCell key={t.key} value={item?.cp ?? null} title={item?.name} />
         })}
       </tr>
       {expanded
         ? row.variants.map((v) => (
             <tr key={v.id} className="bg-muted/20">
-                    <td className="sticky left-0 z-[1] border-2 border-border bg-muted/40 px-2 py-1 pl-7 text-xs text-muted-foreground">
+              <td className="sticky left-0 z-[1] border-2 border-border bg-muted/40 px-2 py-1 pl-7 text-xs text-muted-foreground">
                 <span className="text-foreground">
                   {variantDisplayLabel(v)}
                 </span>
@@ -183,7 +238,14 @@ function FamilyBlock({
                 colSpan={3}
                 className="border-2 border-border px-2 py-1 text-center"
               >
-                <span className="tabular-nums">{v.cp} CP</span>
+                {sheetMode === "apples" ? (
+                  <VariantValue
+                    value={applesById.get(v.id) ?? null}
+                    unit="apples"
+                  />
+                ) : (
+                  <VariantValue value={v.cp} unit="CP" />
+                )}
               </td>
             </tr>
           ))
@@ -192,8 +254,14 @@ function FamilyBlock({
   )
 }
 
-function CpCell({ item }: { item?: PayoutListItem }) {
-  if (!item) {
+function ValueCell({
+  value,
+  title,
+}: {
+  value: number | null | undefined
+  title?: string
+}) {
+  if (value == null) {
     return (
       <td className="border-2 border-border bg-background/30 px-2 py-1 text-center text-muted-foreground">
         —
@@ -203,9 +271,26 @@ function CpCell({ item }: { item?: PayoutListItem }) {
   return (
     <td
       className="border-2 border-border px-2 py-1.5 text-center tabular-nums"
-      title={item.name}
+      title={title}
     >
-      {item.cp}
+      {value}
     </td>
+  )
+}
+
+function VariantValue({
+  value,
+  unit,
+}: {
+  value: number | null
+  unit: string
+}) {
+  if (value == null) {
+    return <span className="text-muted-foreground">—</span>
+  }
+  return (
+    <span className="tabular-nums">
+      {value} {unit}
+    </span>
   )
 }

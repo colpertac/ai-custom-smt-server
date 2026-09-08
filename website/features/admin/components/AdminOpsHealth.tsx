@@ -704,6 +704,16 @@ export function AdminOpsHealth() {
                   (Power → Channel, or Publish &amp; restart) to apply
                 </li>
               ) : null}
+              {laneAPending.goldenApplesDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">
+                    Magical Golden Apples
+                  </span>{" "}
+                  — Golden Light amounts (
+                  <code className="text-cyan-50">NPC3401.xml</code>) changed;
+                  restart the game channel to reload (Power → Channel)
+                </li>
+              ) : null}
             </ul>
           </div>
         ) : (

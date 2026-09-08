@@ -31,6 +31,7 @@ import { validateCompShop } from "./comp-shops-fs.ts"
 import { getEventScheduleStatus } from "./events/event-schedule-fs.ts"
 import { setsEqual } from "./events/event-schedule-math.ts"
 import { listConfigStatus } from "./server-config/fs.ts"
+import { isGoldenApplesRestartPending } from "./golden-apple-fs.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
 export const LANE_A_REPORT_REWARDS_ZIP = "zzz_ai_custom_report_rewards_admin.zip"
@@ -465,6 +466,8 @@ export type LaneAPendingStatus = {
    * Next daily flip alone does not count (that is expected schedule, not drift).
    */
   eventsSchedulePending: boolean
+  /** Golden Light apple amounts (NPC3401.xml) edited — channel restart needed. */
+  goldenApplesDirty: boolean
 }
 
 /**
@@ -488,6 +491,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     publishedReports,
     configStatuses,
     scheduleStatus,
+    goldenApplesDirty,
   ] = await Promise.all([
     shopsTreeDigest(shopsWorkingDir()),
     shopsTreeDigest(shopsLive),
@@ -497,6 +501,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     readPublishedReportRewardsDigest(),
     listConfigStatus(),
     getEventScheduleStatus().catch(() => null),
+    isGoldenApplesRestartPending(),
   ])
 
   const shopsDirty = shopsWorking !== shopsLiveDigest
@@ -530,12 +535,14 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
       payoutsDirty ||
       reportRewardsDirty ||
       channelDirty ||
-      eventsSchedulePending,
+      eventsSchedulePending ||
+      goldenApplesDirty,
     shopsDirty,
     payoutsDirty,
     reportRewardsDirty,
     channelDirty,
     eventsSchedulePending,
+    goldenApplesDirty,
   }
 }
 

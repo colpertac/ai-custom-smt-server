@@ -92,6 +92,38 @@ export const batchSaveAdminPayoutWeights = async (
   return result
 }
 
+export type GoldenApplesFile = {
+  path: string
+  byPayoutId: Record<
+    string,
+    {
+      apples: number | null
+      partialId: number | null
+      sharedWith: string[]
+      dynamicMapIds: number[]
+    }
+  >
+  partialCount: number
+}
+
+export const fetchAdminGoldenApples = () =>
+  fetcher<GoldenApplesFile>("admin/payouts/golden-apples")
+
+export const batchSaveAdminGoldenApples = async (
+  updates: { id: string; apples: number }[]
+) => {
+  const result = await fetcher<{
+    updated: string[]
+    skipped: string[]
+    sharedTouched: string[]
+  }>("admin/payouts/golden-apples", {
+    method: "POST",
+    json: { updates },
+  })
+  notifyLaneAPendingChanged()
+  return result
+}
+
 export const deleteAdminPayout = async (id: string) => {
   const result = await fetcher<{ id: string }>(
     `admin/payouts/${encodeURIComponent(id)}`,

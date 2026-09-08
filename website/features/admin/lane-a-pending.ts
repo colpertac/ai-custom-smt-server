@@ -13,6 +13,7 @@ export type LaneAPendingClientStatus = {
   reportRewardsDirty: boolean
   channelDirty: boolean
   eventsSchedulePending: boolean
+  goldenApplesDirty: boolean
 }
 
 export function notifyLaneAPendingChanged(): void {
@@ -28,6 +29,7 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
     reportRewardsDirty: false,
     channelDirty: false,
     eventsSchedulePending: false,
+    goldenApplesDirty: false,
   })
 
   const refresh = useCallback(async () => {
@@ -45,6 +47,7 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
         reportRewardsDirty: Boolean(json.data.reportRewardsDirty),
         channelDirty: Boolean(json.data.channelDirty),
         eventsSchedulePending: Boolean(json.data.eventsSchedulePending),
+        goldenApplesDirty: Boolean(json.data.goldenApplesDirty),
       })
     } catch {
       /* ignore transient errors */

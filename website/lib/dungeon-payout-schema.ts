@@ -118,6 +118,23 @@ export const batchPayoutCpSchema = z.object({
     .max(200),
 })
 
+/** Golden Light Magical Golden Apple amounts (NPC3401 flag 340102). */
+export const batchGoldenApplesSchema = z.object({
+  updates: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .min(1)
+          .max(64)
+          .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id must be kebab-case"),
+        apples: z.number().int().min(0).max(1_000_000),
+      })
+    )
+    .min(1)
+    .max(200),
+})
+
 export const batchPayoutWeightsSchema = z.object({
   updates: z
     .array(

@@ -5,6 +5,8 @@ export type PublicPayoutRow = {
   id: string
   name: string
   cp: number
+  /** Magical Golden Apples from Golden Light (null if unmapped). */
+  apples: number | null
   enabled: boolean
   family?: string
   difficulty?: string
