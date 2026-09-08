@@ -260,9 +260,9 @@ export function PayoutDetailDrawer({
             Boss crate drops
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Items in the normal boss crate (machete, gems, reports) are configured
-            in Dungeon loot — not here. This payout editor is for instant CP on
-            clear and bonus-crate wiring.
+            Saving CP here updates the tradable report drop on Dungeon loot
+            (item id / name from global report config, stacks = CP × itemsPerCp,
+            rate 100). Extra crate loot stays on Dungeon loot.
           </p>
           <Link
             href={`/admin/dungeon-loot?dungeon=${encodeURIComponent(p.id)}`}

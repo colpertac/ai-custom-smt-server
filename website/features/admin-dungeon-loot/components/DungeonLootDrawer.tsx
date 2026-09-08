@@ -365,11 +365,11 @@ export function DungeonLootDrawer({
         ) : null}
 
         <p className="text-[0.65rem] text-muted-foreground">
-          Need instant CP on clear instead of trading? Use{" "}
+          Report stack size follows CP on{" "}
           <Link href="/admin/payouts" className="text-cyan-300 hover:underline">
             Payouts
-          </Link>{" "}
-          (advanced wiring).
+          </Link>
+          . Extra crate loot stays editable here.
         </p>
       </div>
 

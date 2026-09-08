@@ -8,6 +8,7 @@ import {
   defaultAppendDropSetId,
   defaultReportEnabled,
   defaultReportStacks,
+  reportStacksForPayoutCp,
 } from "./report-reward-append-catalog.ts"
 import {
   putReportRewardDungeonSchema,
@@ -20,6 +21,7 @@ import {
   tradableReportItemId,
   dropsFingerprint,
   dungeonBossDrops,
+  applyGlobalReportItemToDrops,
 } from "./report-reward-normalize.ts"
 import type { ReportRewardDungeonInput } from "./report-reward-normalize.ts"
 import { pickCanonicalLootDungeon } from "./report-reward-generate.ts"
@@ -231,6 +233,13 @@ export async function writeReportRewardGlobal(file: {
   version: typeof REPORT_REWARD_SCHEMA_VERSION
   global: Parameters<typeof normalizeGlobalFile>[0]["global"]
 }): Promise<void> {
+  let previous: ReportRewardGlobalFile | null = null
+  try {
+    previous = await readReportRewardGlobal()
+  } catch {
+    /* first write */
+  }
+
   const normalized = normalizeGlobalFile(file)
   const parsed = putReportRewardGlobalSchema.safeParse(normalized)
   if (!parsed.success) {
@@ -243,6 +252,74 @@ export async function writeReportRewardGlobal(file: {
     `${JSON.stringify(toWrite, null, 2)}\n`,
     "utf8"
   )
+
+  const nextId = toWrite.global.reportItemId
+  const nextLabel =
+    toWrite.global.reportItemLabel?.trim() || "Dungeon report"
+  const prevId = previous?.global.reportItemId ?? nextId
+  const prevLabel =
+    previous?.global.reportItemLabel?.trim() || "Dungeon report"
+  if (previous && prevId === nextId && prevLabel === nextLabel) return
+
+  await rematerializeReportItemOnAllDungeons(prevId, nextId, nextLabel)
+}
+
+/**
+ * Update every dungeon row's tradable report drop to the global item id/name.
+ * Uses direct writes (not writeReportRewardDungeon) to avoid re-entering global save.
+ */
+async function rematerializeReportItemOnAllDungeons(
+  previousItemId: number,
+  reportItemId: number,
+  label: string
+): Promise<void> {
+  const dir = reportRewardsDungeonsDir()
+  let entries: string[]
+  try {
+    entries = (await fs.readdir(dir)).filter((e) => e.endsWith(".json"))
+  } catch {
+    return
+  }
+
+  for (const filename of entries) {
+    const pathName = path.join(dir, filename)
+    let raw: string
+    try {
+      raw = await fs.readFile(pathName, "utf8")
+    } catch {
+      continue
+    }
+    let json: unknown
+    try {
+      json = JSON.parse(raw)
+    } catch {
+      continue
+    }
+    const parsed = putReportRewardDungeonSchema.safeParse(json)
+    if (!parsed.success) continue
+
+    const before = dungeonBossDrops(parsed.data.dungeon, previousItemId)
+    const drops = applyGlobalReportItemToDrops(
+      before,
+      previousItemId,
+      reportItemId,
+      label
+    )
+    if (dropsFingerprint(before) === dropsFingerprint(drops)) continue
+
+    const next = normalizeDungeonFile(
+      {
+        ...parsed.data,
+        dungeon: { ...parsed.data.dungeon, drops },
+      },
+      reportItemId
+    )
+    await fs.writeFile(
+      pathName,
+      `${JSON.stringify(next, null, 2)}\n`,
+      "utf8"
+    )
+  }
 }
 
 export async function listReportRewardDungeons(): Promise<ReportRewardListItem[]> {
@@ -329,11 +406,13 @@ export async function writeReportRewardDungeon(
     normalized.dungeon,
     globalFile.global.reportItemId
   )
+  let effectiveReportItemId = globalFile.global.reportItemId
   if (tradableId && tradableId !== globalFile.global.reportItemId) {
     await writeReportRewardGlobal({
       ...globalFile,
       global: { ...globalFile.global, reportItemId: tradableId },
     })
+    effectiveReportItemId = tradableId
   }
   const parsed = putReportRewardDungeonSchema.safeParse(normalized)
   if (!parsed.success) {
@@ -349,8 +428,87 @@ export async function writeReportRewardDungeon(
     normalized.dungeon.appendDropSetId,
     normalized.dungeon.drops,
     normalized.dungeon.id,
-    globalFile.global.reportItemId
+    effectiveReportItemId
   )
+}
+
+/**
+ * Keep dungeon-loot tradable report stacks in sync with admin/payouts CP.
+ * Upserts the global report item as the sole tradableForCp drop (rate 100).
+ */
+export async function syncPayoutCpToDungeonLoot(
+  payoutId: string,
+  cp: number
+): Promise<void> {
+  await ensureDirs()
+  await seedReportRewardsFromPayouts()
+
+  const globalFile = await readReportRewardGlobal()
+  const reportItemId = globalFile.global.reportItemId
+  const label = globalFile.global.reportItemLabel?.trim() || "Dungeon report"
+  const stacks = reportStacksForPayoutCp(cp, globalFile.global.itemsPerCp)
+
+  let file: ReportRewardDungeonFile
+  try {
+    file = await readReportRewardDungeon(payoutId)
+  } catch (error) {
+    if (!(error instanceof ReportRewardNotFoundError)) throw error
+    const appendId = defaultAppendDropSetId(payoutId)
+    if (!appendId) return
+    let payoutName = payoutId
+    let family: string | undefined
+    let difficulty: string | undefined
+    try {
+      const payoutFile = await readPayout(payoutId)
+      payoutName = payoutFile.payout.name
+      family = payoutFile.payout.family
+      difficulty = payoutFile.payout.difficulty
+    } catch {
+      /* create minimal row */
+    }
+    file = {
+      version: REPORT_REWARD_SCHEMA_VERSION,
+      dungeon: {
+        id: payoutId,
+        name: payoutName,
+        family,
+        difficulty: difficulty as ReportRewardDungeon["difficulty"],
+        enabled: defaultReportEnabled(payoutId),
+        appendDropSetId: appendId,
+        drops: [],
+      },
+    }
+  }
+
+  const reportDrop: BossCrateDrop = {
+    itemId: reportItemId,
+    label,
+    minStack: stacks.minStack,
+    maxStack: stacks.maxStack,
+    rate: 100,
+    tradableForCp: true,
+  }
+
+  const existing = file.dungeon.drops ?? []
+  const idx = existing.findIndex(
+    (d) => d.tradableForCp || d.itemId === reportItemId
+  )
+  const drops: BossCrateDrop[] =
+    idx >= 0
+      ? existing.map((d, i) =>
+          i === idx
+            ? {
+                ...d,
+                ...reportDrop,
+              }
+            : { ...d, tradableForCp: false }
+        )
+      : [reportDrop, ...existing.map((d) => ({ ...d, tradableForCp: false }))]
+
+  await writeReportRewardDungeon({
+    version: REPORT_REWARD_SCHEMA_VERSION,
+    dungeon: { ...file.dungeon, drops },
+  })
 }
 
 /**

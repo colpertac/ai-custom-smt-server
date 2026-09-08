@@ -124,7 +124,7 @@ export function FamilyWeightsDialog({
                 <span className="shrink-0 text-xs text-muted-foreground">×</span>
                 <Input
                   id={`fam-w-${family}`}
-                  className="h-8 w-20 shrink-0 text-center"
+                  className="h-9 w-24 shrink-0 px-2 text-center tabular-nums"
                   type="number"
                   min={0}
                   step={0.1}

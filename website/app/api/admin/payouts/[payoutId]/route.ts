@@ -91,6 +91,10 @@ export async function PUT(request: Request, { params }: Params) {
   try {
     await readPayout(payoutId)
     await writePayout(parsed.data)
+    const { syncPayoutCpToDungeonLoot } = await import(
+      "@/lib/report-rewards-fs"
+    )
+    await syncPayoutCpToDungeonLoot(payoutId, parsed.data.payout.cp)
     return apiOk({ id: payoutId })
   } catch (error) {
     if (error instanceof PayoutNotFoundError) {

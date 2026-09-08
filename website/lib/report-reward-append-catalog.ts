@@ -85,4 +85,17 @@ export function defaultReportEnabled(payoutId: string): boolean {
   )
 }
 
+/**
+ * Report stacks so one clear trades for ~`cp` at the NPC
+ * (items needed = cp × itemsPerCp).
+ */
+export function reportStacksForPayoutCp(
+  cp: number,
+  itemsPerCp: number
+): { minStack: number; maxStack: number } {
+  const rate = Math.max(1, Math.floor(itemsPerCp))
+  const stack = Math.max(1, Math.round(Math.max(0, cp) * rate))
+  return { minStack: stack, maxStack: stack }
+}
+
 export const REPORT_TRADER_PARTIAL_ID = 90050

@@ -185,6 +185,8 @@ export async function createPayout(payout: DungeonPayout): Promise<void> {
     throw new PayoutConflictError(payout.id)
   }
   await writePayout({ version: PAYOUT_SCHEMA_VERSION, payout })
+  const { syncPayoutCpToDungeonLoot } = await import("./report-rewards-fs.ts")
+  await syncPayoutCpToDungeonLoot(payout.id, payout.cp)
 }
 
 export async function deletePayout(id: string): Promise<void> {
@@ -220,6 +222,8 @@ export async function updatePayoutCpBatch(
       version: PAYOUT_SCHEMA_VERSION,
       payout: { ...file.payout, cp },
     })
+    const { syncPayoutCpToDungeonLoot } = await import("./report-rewards-fs.ts")
+    await syncPayoutCpToDungeonLoot(id, cp)
     updated.push(id)
   }
 

@@ -1153,7 +1153,7 @@ function FamilyBlock({
               ×
             </span>
             <Input
-              className="h-7 w-14 shrink-0 text-center text-xs"
+              className="h-8 w-[4.25rem] shrink-0 px-1.5 text-center text-xs tabular-nums"
               type="number"
               min={0}
               step={0.1}

@@ -155,6 +155,15 @@ export function SiteHeader() {
             Events
           </Link>
           <Link
+            href="/payouts"
+            className={cn(
+              navClass,
+              pathname.startsWith("/payouts") && "text-gold"
+            )}
+          >
+            Payouts
+          </Link>
+          <Link
             href="/about"
             className={cn(
               navClass,

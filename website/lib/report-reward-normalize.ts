@@ -61,6 +61,49 @@ export function dropsFingerprint(drops: BossCrateDrop[]): string {
   )
 }
 
+/**
+ * Rewrite / dedupe the tradable report drop when global item id or name changes.
+ * Keeps stacks/rate on the primary report row; drops duplicate old/new report ids.
+ */
+export function applyGlobalReportItemToDrops(
+  drops: BossCrateDrop[],
+  previousItemId: number,
+  reportItemId: number,
+  label: string
+): BossCrateDrop[] {
+  const idxTradable = drops.findIndex((d) => d.tradableForCp)
+  const idx =
+    idxTradable >= 0
+      ? idxTradable
+      : drops.findIndex(
+          (d) => d.itemId === previousItemId || d.itemId === reportItemId
+        )
+  if (idx < 0) return drops.map((d) => ({ ...d }))
+
+  const primary = drops[idx]!
+  const next: BossCrateDrop[] = [
+    {
+      ...primary,
+      itemId: reportItemId,
+      label,
+      tradableForCp: true,
+    },
+  ]
+  for (let i = 0; i < drops.length; i++) {
+    if (i === idx) continue
+    const d = drops[i]!
+    if (
+      d.tradableForCp ||
+      d.itemId === previousItemId ||
+      d.itemId === reportItemId
+    ) {
+      continue
+    }
+    next.push({ ...d, tradableForCp: false })
+  }
+  return next
+}
+
 export function normalizeDungeon(
   dungeon: ReportRewardDungeonInput,
   reportItemId: number
