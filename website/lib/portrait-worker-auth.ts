@@ -1,21 +1,16 @@
 import { timingSafeEqual } from "node:crypto"
 
 import { apiFail } from "@/lib/api-response"
+import { getEffectivePortraitWorkerToken } from "@/lib/studio-settings-store"
 
 /**
  * Shared secret for the remote portrait worker (homelab).
  * Header: `X-Portrait-Worker-Token: …`
  *
- * Prefer `PORTRAIT_WORKER_TOKEN`. Falls back to `PORTRAIT_STUDIO_TOKEN` so
- * local/dev can reuse one secret.
+ * Prefer dedicated worker token. Falls back to studio token.
  */
 export function portraitWorkerToken(): string {
-  return (
-    process.env.PORTRAIT_WORKER_TOKEN?.trim() ||
-    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
-    process.env.COMP_STUDIO_TOKEN?.trim() ||
-    ""
-  )
+  return getEffectivePortraitWorkerToken()
 }
 
 function tokensEqual(a: string, b: string): boolean {
@@ -32,7 +27,7 @@ export function requirePortraitWorker(
   const expected = portraitWorkerToken()
   if (!expected) {
     return apiFail(
-      "PORTRAIT_WORKER_TOKEN (or PORTRAIT_STUDIO_TOKEN) is not set on the website",
+      "Portrait worker token is not set (Admin → Studio, or website .env)",
       503,
       "CONFIG"
     )

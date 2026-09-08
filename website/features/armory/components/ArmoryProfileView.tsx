@@ -286,6 +286,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
         <ArmoryHero
           name={profile.name}
           portraitUrl={profile.portraitUrl}
+          portraitStatus={profile.portraitStatus}
           className="order-first lg:order-none"
         />
 

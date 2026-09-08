@@ -1,8 +1,15 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type ReactNode } from "react"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { api } from "@/lib/kyClient"
+import { cn } from "@/lib/utils"
 
 type LiveMetrics = {
   ok?: boolean
@@ -13,6 +20,10 @@ type LiveMetrics = {
     worlds: { worldId: number; characterCount: number }[]
     error?: string
   }
+  mannequins?: {
+    online: number
+    names: string[]
+  } | null
   host?: {
     cpuPercent?: number | null
     memUsedBytes?: number | null
@@ -47,18 +58,21 @@ function MetricCell({
   label,
   value,
   hint,
+  badge,
 }: {
   label: string
   value: string
   hint?: string
+  badge?: ReactNode
 }) {
   return (
     <div className="min-w-[6.5rem]">
       <div className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
         {label}
       </div>
-      <div className="mt-0.5 font-mono text-lg tabular-nums text-foreground">
+      <div className="mt-0.5 flex items-center gap-1.5 font-mono text-lg tabular-nums text-foreground">
         {value}
+        {badge}
       </div>
       {hint ? (
         <div className="mt-0.5 text-[0.65rem] text-muted-foreground">{hint}</div>
@@ -99,6 +113,7 @@ export function AdminOpsMetrics() {
   }, [refresh])
 
   const players = live?.players
+  const mannequins = live?.mannequins
   const host = live?.host
   const memHint =
     host?.memTotalBytes != null
@@ -127,6 +142,44 @@ export function AdminOpsMetrics() {
         ? "This PC"
         : undefined
 
+  const mannequinOnline = mannequins?.online ?? 0
+  const mannequinNames = mannequins?.names ?? []
+  const realPlayers =
+    players && !players.error
+      ? Math.max(0, players.total - mannequinOnline)
+      : null
+
+  const playersBadge =
+    mannequinOnline > 0 ? (
+      <TooltipProvider delay={150}>
+        <Tooltip>
+          <TooltipTrigger
+            type="button"
+            className={cn(
+              "inline-flex size-2.5 shrink-0 rounded-full",
+              "bg-sky-400 shadow-[0_0_0_2px] shadow-sky-400/25",
+              "cursor-help align-middle"
+            )}
+            aria-label={`${mannequinOnline} studio mannequin${mannequinOnline === 1 ? "" : "s"} online`}
+          />
+          <TooltipContent side="top" sideOffset={6}>
+            <p>
+              {mannequinOnline} of {players?.total ?? "?"} are studio
+              mannequins ({mannequinNames.join(", ") || "vam / vaf"}
+              ).
+              {realPlayers != null ? (
+                <>
+                  {" "}
+                  ~{realPlayers} real player
+                  {realPlayers === 1 ? "" : "s"}.
+                </>
+              ) : null}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : null
+
   return (
     <div className="border border-border/80 bg-muted/20 px-4 py-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -151,6 +204,7 @@ export function AdminOpsMetrics() {
             players && !players.error ? String(players.total) : "—"
           }
           hint={worldHint}
+          badge={playersBadge}
         />
         <MetricCell
           label="CPU"

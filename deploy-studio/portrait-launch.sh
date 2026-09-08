@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Launch one Imagine client under Wine (mannequin box / local QA).
+#
+# Usage:
+#   ./portrait-launch.sh           # one client
+#   ./portrait-launch.sh --second  # 2nd process (same install)
+#
+# Env overrides:
+#   Prefer deploy-studio/.env (see .env.example) via ./studio / orch.
+#   PORTRAIT_CLIENT_DIR   default /home/cat/software/smt/game/reimagine
+#   PORTRAIT_CLIENT_EXE   default ImagineClient.exe
+#   PORTRAIT_WINE         default wine
+#   WINEPREFIX            optional separate prefix per mannequin
+#
+# After launch, login with:
+#   ./studio   # or: PORTRAIT_VAM1_PASS=… python portrait-login.py vam1
+# Two windows need PORTRAIT_WINDOW_VAM1 / PORTRAIT_WINDOW_VAF1 (wmctrl -l).
+
+set -euo pipefail
+
+CLIENT_DIR="${PORTRAIT_CLIENT_DIR:-/home/cat/software/smt/game/reimagine}"
+CLIENT_EXE="${PORTRAIT_CLIENT_EXE:-ImagineClient.exe}"
+WINE_BIN="${PORTRAIT_WINE:-wine}"
+
+if [[ -z "${DISPLAY:-}" ]]; then
+  echo "error: DISPLAY is unset (Wine needs X11). Use portrait-orch/cli (starts Xvfb) or export DISPLAY=:99" >&2
+  exit 1
+fi
+
+if [[ ! -d "$CLIENT_DIR" ]]; then
+  echo "error: client dir not found: $CLIENT_DIR" >&2
+  echo "set PORTRAIT_CLIENT_DIR" >&2
+  exit 1
+fi
+if [[ ! -f "$CLIENT_DIR/$CLIENT_EXE" ]]; then
+  echo "error: missing $CLIENT_DIR/$CLIENT_EXE" >&2
+  exit 1
+fi
+
+cd "$CLIENT_DIR"
+echo "launch: $WINE_BIN $CLIENT_EXE  (cwd=$CLIENT_DIR)"
+if [[ -n "${WINEPREFIX:-}" ]]; then
+  echo "WINEPREFIX=$WINEPREFIX"
+fi
+# Detach so the shell returns; logs go to portrait-client.log in cwd.
+nohup "$WINE_BIN" "$CLIENT_EXE" >>portrait-client.log 2>&1 &
+echo "pid $!  (tail -f $CLIENT_DIR/portrait-client.log)"
+echo "Next: wait for login UI, then ./studio (login) or portrait-orch.py up"

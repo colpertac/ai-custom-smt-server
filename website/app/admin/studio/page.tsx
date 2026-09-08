@@ -11,11 +11,11 @@ export default async function AdminStudioPage() {
   await requireAdmin()
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-2">
       <p className="text-xs text-muted-foreground">
-        Copy gear onto mannequin characters that are logged into the game world
-        (for armory portrait captures). Offline here means the character is not
-        in-world yet.
+        Ops console for Wine mannequins — connection, clients, dress, preview,
+        login debug. Agent on the Wine host:{" "}
+        <span className="font-mono text-foreground">./studio up</span>.
       </p>
       <StudioDressPanel />
     </div>

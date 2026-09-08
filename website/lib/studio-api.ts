@@ -1,7 +1,12 @@
 /**
- * Server-only proxy to channel loopback studio API
- * (`127.0.0.1:StudioHttpPort`). Never expose StudioToken to the browser.
+ * Server-only proxy to channel studio API.
+ * Never expose StudioToken to the browser.
  */
+
+import {
+  getEffectiveStudioToken,
+  getEffectiveStudioUrl,
+} from "@/lib/studio-settings-store"
 
 export type StudioHealth = {
   ok: boolean
@@ -23,17 +28,11 @@ export type StudioDressResult = {
 }
 
 function studioBaseUrl(): string {
-  const custom = process.env.PORTRAIT_STUDIO_URL?.trim()
-  if (custom) return custom.replace(/\/$/, "")
-  return "http://127.0.0.1:14700"
+  return getEffectiveStudioUrl()
 }
 
 function studioToken(): string {
-  return (
-    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
-    process.env.COMP_STUDIO_TOKEN?.trim() ||
-    ""
-  )
+  return getEffectiveStudioToken()
 }
 
 async function studioFetch(
@@ -43,7 +42,7 @@ async function studioFetch(
   const token = studioToken()
   if (!token) {
     throw new Error(
-      "PORTRAIT_STUDIO_TOKEN (or COMP_STUDIO_TOKEN) is not set on the website"
+      "PORTRAIT_STUDIO_TOKEN is not set (Admin → Studio, or website .env)"
     )
   }
   const url = `${studioBaseUrl()}${path}`

@@ -2,6 +2,7 @@ import { adminGetOnline } from "@/lib/comp-api"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { getOpsMetrics } from "@/lib/ops-sidecar"
+import { getStudioHealth } from "@/lib/studio-api"
 import {
   CompSessionMissingError,
   requireWebSession,
@@ -37,6 +38,20 @@ export async function GET() {
     }
   }
 
+  /** Studio mannequins in-world (count toward lobby “players”). */
+  let mannequins: { online: number; names: string[] } | null = null
+  try {
+    const health = await getStudioHealth()
+    if (health.ok || health.vam1 || health.vaf1 || health.vam || health.vaf) {
+      const names: string[] = []
+      if (health.vam1 || health.vam) names.push("vam")
+      if (health.vaf1 || health.vaf) names.push("vaf")
+      mannequins = { online: names.length, names }
+    }
+  } catch {
+    mannequins = null
+  }
+
   try {
     const metrics = await getOpsMetrics(gate.username)
     if (!metrics.ok && metrics.error === "unauthorized") {
@@ -44,6 +59,7 @@ export async function GET() {
     }
     return apiOk({
       players,
+      mannequins,
       host: metrics.host ?? null,
       processes: metrics.processes ?? [],
       backend: metrics.backend ?? null,
@@ -53,6 +69,7 @@ export async function GET() {
   } catch (error) {
     return apiOk({
       players,
+      mannequins,
       host: null,
       processes: [],
       backend: null,

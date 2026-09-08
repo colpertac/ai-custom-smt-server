@@ -113,10 +113,10 @@ function ArmoryGenderIcon({ gender }: { gender: number }) {
 
 function ArmoryCharacterRow({ hit }: { hit: ArmoryCharacterHit }) {
   return (
-    <li className="border border-border bg-card/40 px-3 py-2.5">
+    <li>
       <Link
         href={`/armory/${encodeURIComponent(hit.name)}`}
-        className="flex flex-wrap items-center justify-between gap-2 hover:text-gold-dim"
+        className="flex flex-wrap items-center justify-between gap-2 border border-border bg-card/40 px-3 py-2.5 hover:border-gold/40 hover:bg-card/70 hover:text-gold-dim"
       >
         <span className="font-medium text-[#e8ecf4]">{hit.name}</span>
         <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">

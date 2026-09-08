@@ -6,6 +6,10 @@ import type {
   ArmoryStats,
 } from "@/lib/armory"
 import { getDevilName } from "@/lib/armory"
+import {
+  getEffectiveStudioToken,
+  getEffectiveStudioUrl,
+} from "@/lib/studio-settings-store"
 
 export type LiveArmorySummonedDemon = {
   id?: string
@@ -28,17 +32,11 @@ export type LiveArmoryStatsResponse = {
 }
 
 function studioBaseUrl(): string {
-  const custom = process.env.PORTRAIT_STUDIO_URL?.trim()
-  if (custom) return custom.replace(/\/$/, "")
-  return "http://127.0.0.1:14700"
+  return getEffectiveStudioUrl()
 }
 
 function studioToken(): string {
-  return (
-    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
-    process.env.COMP_STUDIO_TOKEN?.trim() ||
-    ""
-  )
+  return getEffectiveStudioToken()
 }
 
 /** Query channel loopback API for live recalculated stats (character must be online). */

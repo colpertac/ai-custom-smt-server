@@ -34,6 +34,35 @@ export {
   type EquipSlotKey,
 } from "@/lib/armory-equipment"
 
+/** Studio mannequin chars — not real players; hidden from public armory. */
+const DEFAULT_ARMORY_HIDDEN_NAMES = ["vam", "vaf", "vam1", "vaf1"] as const
+
+function armoryHiddenNameSet(): Set<string> {
+  const fromEnv = process.env.ARMORY_HIDDEN_NAMES?.trim()
+  const names = fromEnv
+    ? fromEnv.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
+    : [...DEFAULT_ARMORY_HIDDEN_NAMES]
+  return new Set(names)
+}
+
+/** True when this character should not appear in public armory browse/search. */
+export function isArmoryHiddenCharacter(name: string): boolean {
+  return armoryHiddenNameSet().has(name.trim().toLowerCase())
+}
+
+/** SQL fragment + bind params: `AND lower(c.Name) NOT IN (?,?,…)` (or empty). */
+function armoryHiddenNameSql(
+  column = "c.Name"
+): { sql: string; params: string[] } {
+  const names = [...armoryHiddenNameSet()]
+  if (names.length === 0) return { sql: "", params: [] }
+  const placeholders = names.map(() => "?").join(", ")
+  return {
+    sql: ` AND lower(${column}) NOT IN (${placeholders})`,
+    params: names,
+  }
+}
+
 
 export type ArmoryAppearance = {
   gender: number
@@ -247,12 +276,13 @@ function searchArmoryCharactersFuzzy(
   limit: number,
   offset: number
 ): ArmorySearchResult {
+  const hidden = armoryHiddenNameSql()
   const rows = db
     .prepare(
-      `${CHARACTER_SEARCH_SELECT} 1=1
+      `${CHARACTER_SEARCH_SELECT} 1=1${hidden.sql}
        ORDER BY c.Name COLLATE NOCASE ASC`
     )
-    .all(NULL_UUID) as CharacterSearchRow[]
+    .all(NULL_UUID, ...hidden.params) as CharacterSearchRow[]
 
   const ranked = rows
     .map((row) => ({
@@ -294,19 +324,21 @@ export function searchArmoryCharacters(
   const db = getWorldDb()
   const likePattern = `%${query}%`
   const prefixPattern = `${query}%`
+  const hidden = armoryHiddenNameSql("Name")
+  const hiddenC = armoryHiddenNameSql("c.Name")
 
   const substringTotal = db
     .prepare(
       `SELECT COUNT(*) AS total
        FROM Character
-       WHERE Name LIKE ? COLLATE NOCASE`
+       WHERE Name LIKE ? COLLATE NOCASE${hidden.sql}`
     )
-    .get(likePattern) as { total: number }
+    .get(likePattern, ...hidden.params) as { total: number }
 
   if (substringTotal.total > 0) {
     const rows = db
       .prepare(
-        `${CHARACTER_SEARCH_SELECT} c.Name LIKE ? COLLATE NOCASE
+        `${CHARACTER_SEARCH_SELECT} c.Name LIKE ? COLLATE NOCASE${hiddenC.sql}
          ORDER BY
            CASE
              WHEN lower(c.Name) = lower(?) THEN 0
@@ -319,6 +351,7 @@ export function searchArmoryCharacters(
       .all(
         NULL_UUID,
         likePattern,
+        ...hiddenC.params,
         query,
         prefixPattern,
         limit,
@@ -355,17 +388,21 @@ export function listArmoryCharacters(
   const offset = Math.max(0, Math.floor(options.offset ?? 0))
 
   const db = getWorldDb()
+  const hidden = armoryHiddenNameSql("Name")
+  const hiddenC = armoryHiddenNameSql("c.Name")
   const totalRow = db
-    .prepare(`SELECT COUNT(*) AS total FROM Character`)
-    .get() as { total: number }
+    .prepare(
+      `SELECT COUNT(*) AS total FROM Character WHERE 1=1${hidden.sql}`
+    )
+    .get(...hidden.params) as { total: number }
 
   const rows = db
     .prepare(
-      `${CHARACTER_SEARCH_SELECT} 1=1
+      `${CHARACTER_SEARCH_SELECT} 1=1${hiddenC.sql}
        ORDER BY c.Name COLLATE NOCASE ASC
        LIMIT ? OFFSET ?`
     )
-    .all(NULL_UUID, limit, offset) as CharacterSearchRow[]
+    .all(NULL_UUID, ...hiddenC.params, limit, offset) as CharacterSearchRow[]
 
   return {
     total: totalRow.total,
@@ -480,6 +517,7 @@ function statsFromRow(row: CharacterRow): ArmoryStats | null {
 export function loadArmoryProfile(rawName: string): ArmoryProfile | null {
   const name = rawName.trim()
   if (!isValidCharacterName(name)) return null
+  if (isArmoryHiddenCharacter(name)) return null
 
   const db = getWorldDb()
   const row = db

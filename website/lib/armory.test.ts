@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import {
   decodeEquippedItemUids,
+  isArmoryHiddenCharacter,
   isValidCharacterName,
   loadArmoryProfile,
   listArmoryCharacters,
@@ -52,6 +53,14 @@ describe("isValidCharacterName", () => {
     expect(isValidCharacterName("a".repeat(33))).toBe(false)
     expect(isValidCharacterName("../etc")).toBe(false)
     expect(isValidCharacterName("a/b")).toBe(false)
+  })
+})
+
+describe("isArmoryHiddenCharacter", () => {
+  it("hides studio mannequin names", () => {
+    expect(isArmoryHiddenCharacter("vam")).toBe(true)
+    expect(isArmoryHiddenCharacter("VAF1")).toBe(true)
+    expect(isArmoryHiddenCharacter("admin")).toBe(false)
   })
 })
 
