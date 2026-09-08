@@ -183,6 +183,26 @@ export function PayoutDetailDrawer({
             />
           </Field>
           <Field>
+            <FieldLabel htmlFor="drawer-cp-weight">CP weight</FieldLabel>
+            <Input
+              id="drawer-cp-weight"
+              type="number"
+              min={0}
+              step={0.1}
+              value={p.cpWeight ?? 1}
+              onChange={(e) =>
+                onChange(
+                  updatePayout(draft, {
+                    cpWeight: Number(e.target.value),
+                  })
+                )
+              }
+            />
+            <p className="text-[0.65rem] text-muted-foreground">
+              Used by Recalculate: CP = tierBase × family × this weight
+            </p>
+          </Field>
+          <Field>
             <FieldLabel htmlFor="drawer-inst">Instance ID</FieldLabel>
             <Input
               id="drawer-inst"

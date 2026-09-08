@@ -4,10 +4,11 @@ import { api } from "@/lib/kyClient"
 import type { PayoutLiveConflict } from "@/lib/lane-a-publish"
 import type {
   DungeonPayoutFile,
+  FamilyWeightsFile,
   PayoutListItem,
 } from "@/lib/dungeon-payout-types"
 
-export type { PayoutListItem, PayoutLiveConflict }
+export type { FamilyWeightsFile, PayoutListItem, PayoutLiveConflict }
 
 export const fetchAdminPayouts = () =>
   fetcher<PayoutListItem[]>("admin/payouts")
@@ -53,6 +54,35 @@ export const saveAdminPayout = async (id: string, body: DungeonPayoutFile) => {
 export const batchSaveAdminPayoutCp = async (updates: { id: string; cp: number }[]) => {
   const result = await fetcher<{ updated: string[]; skipped: string[] }>(
     "admin/payouts/batch-cp",
+    {
+      method: "POST",
+      json: { updates },
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
+
+export const fetchAdminFamilyWeights = () =>
+  fetcher<FamilyWeightsFile>("admin/payouts/family-weights")
+
+export const saveAdminFamilyWeights = async (body: FamilyWeightsFile) => {
+  const result = await fetcher<FamilyWeightsFile>(
+    "admin/payouts/family-weights",
+    {
+      method: "PUT",
+      json: body,
+    }
+  )
+  notifyLaneAPendingChanged()
+  return result
+}
+
+export const batchSaveAdminPayoutWeights = async (
+  updates: { id: string; cpWeight: number }[]
+) => {
+  const result = await fetcher<{ updated: string[]; skipped: string[] }>(
+    "admin/payouts/batch-weights",
     {
       method: "POST",
       json: { updates },

@@ -65,6 +65,11 @@ export type DungeonPayout = {
   crateCount: number
   /** CP granted to party members still in the instance. */
   cp: number
+  /**
+   * Per-payout weight for sheet recalculate:
+   * cp = round(tierBase × familyWeight × cpWeight). Default 1 when omitted.
+   */
+  cpWeight?: number
   crateDrops: PayoutCrateDrop[]
   clearItems: PayoutClearItem[]
   hooks: PayoutHooks
@@ -83,6 +88,8 @@ export type PayoutListItem = {
   instanceId: number
   enabled: boolean
   cp: number
+  /** Effective weight (defaults to 1 when unset on disk). */
+  cpWeight: number
   family?: string
   difficulty?: string
   mode?: string
@@ -98,4 +105,12 @@ export type PayoutListItem = {
     | "unwired_stub"
   wireLiveEffect?: string
   wireIssues?: string[]
+}
+
+export const FAMILY_WEIGHTS_SCHEMA_VERSION = 1 as const
+
+export type FamilyWeightsFile = {
+  version: typeof FAMILY_WEIGHTS_SCHEMA_VERSION
+  /** family name → weight (missing key = 1) */
+  weights: Record<string, number>
 }

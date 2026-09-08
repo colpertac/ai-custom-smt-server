@@ -46,6 +46,7 @@ export const dungeonPayoutSchema = z
     spotId: z.number().int().positive(),
     crateCount: z.number().int().min(0).max(20),
     cp: z.number().int().min(0).max(10000),
+    cpWeight: z.number().finite().min(0).max(1000).optional(),
     crateDrops: z.array(crateDropSchema).max(64),
     clearItems: z.array(clearItemSchema).max(16),
     hooks: hooksSchema,
@@ -116,3 +117,26 @@ export const batchPayoutCpSchema = z.object({
     .min(1)
     .max(200),
 })
+
+export const batchPayoutWeightsSchema = z.object({
+  updates: z
+    .array(
+      z.object({
+        id: z
+          .string()
+          .min(1)
+          .max(64)
+          .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id must be kebab-case"),
+        cpWeight: z.number().finite().min(0).max(1000),
+      })
+    )
+    .min(1)
+    .max(200),
+})
+
+export const familyWeightsFileSchema = z.object({
+  version: z.literal(1),
+  weights: z.record(z.string().min(1).max(64), z.number().finite().min(0).max(1000)),
+})
+
+export const putFamilyWeightsSchema = familyWeightsFileSchema

@@ -61,7 +61,10 @@ export async function listPayouts(): Promise<PayoutListItem[]> {
   const out: PayoutListItem[] = []
   for (const filename of entries) {
     if (!filename.endsWith(".json") || filename.startsWith(".")) continue
-    if (filename === "clear-loot-catalog.json") continue
+    // Skip meta files (_family-weights.json) and catalog
+    if (filename.startsWith("_") || filename === "clear-loot-catalog.json") {
+      continue
+    }
     try {
       const raw = await fs.readFile(path.join(dir, filename), "utf8")
       const parsed = putPayoutSchema.safeParse(JSON.parse(raw))
@@ -74,6 +77,7 @@ export async function listPayouts(): Promise<PayoutListItem[]> {
         instanceId: p.instanceId,
         enabled: p.enabled,
         cp: p.cp,
+        cpWeight: p.cpWeight ?? 1,
         family: p.family,
         difficulty: p.difficulty,
         mode: p.mode,
@@ -215,6 +219,39 @@ export async function updatePayoutCpBatch(
     await writePayout({
       version: PAYOUT_SCHEMA_VERSION,
       payout: { ...file.payout, cp },
+    })
+    updated.push(id)
+  }
+
+  return { updated, skipped }
+}
+
+/** Update cpWeight on many payouts (sheet weight edits). */
+export async function updatePayoutWeightBatch(
+  updates: { id: string; cpWeight: number }[]
+): Promise<{ updated: string[]; skipped: string[] }> {
+  const updated: string[] = []
+  const skipped: string[] = []
+
+  for (const { id, cpWeight } of updates) {
+    let file: DungeonPayoutFile
+    try {
+      file = await readPayout(id)
+    } catch (error) {
+      if (error instanceof PayoutNotFoundError) {
+        skipped.push(id)
+        continue
+      }
+      throw error
+    }
+    const current = file.payout.cpWeight ?? 1
+    if (current === cpWeight) {
+      skipped.push(id)
+      continue
+    }
+    await writePayout({
+      version: PAYOUT_SCHEMA_VERSION,
+      payout: { ...file.payout, cpWeight },
     })
     updated.push(id)
   }

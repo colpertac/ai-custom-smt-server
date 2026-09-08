@@ -13,6 +13,7 @@ function item(
     instanceId: 1,
     enabled: false,
     cp: 0,
+    cpWeight: 1,
     crateDropCount: 0,
     clearItemCount: 0,
     filename: `${partial.id}.json`,

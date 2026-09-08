@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { ChevronDown, ChevronRight, Plus, Settings2, TriangleAlert } from "lucide-react"
 
 import {
@@ -8,6 +9,7 @@ import {
   fetchAdminPayout,
 } from "@/features/admin-payouts/api"
 import { CpPresetsManageDialog } from "@/features/admin-payouts/components/CpPresetsManageDialog"
+import { FamilyWeightsDialog } from "@/features/admin-payouts/components/FamilyWeightsDialog"
 import { PayoutDetailDrawer } from "@/features/admin-payouts/components/PayoutDetailDrawer"
 import { applyEconomyPreset } from "@/features/admin-payouts/cpPresets"
 import {
@@ -16,13 +18,21 @@ import {
   type SheetDifficulty,
 } from "@/features/admin-payouts/groupPayouts"
 import {
+  applyWeightedEconomy,
+  familyWeightOf,
+  weightedCp,
+} from "@/features/admin-payouts/payout-weights"
+import {
   useAdminCpPresets,
+  useAdminFamilyWeights,
   useAdminPayoutConflicts,
   useAdminPayouts,
   useBatchSaveAdminPayoutCp,
+  useBatchSaveAdminPayoutWeights,
   useCreateAdminPayout,
   useDeleteAdminPayout,
   useRetireAdminPayoutConflictPackages,
+  useSaveAdminFamilyWeights,
   useSaveAdminPayout,
 } from "@/features/admin-payouts/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
@@ -38,9 +48,12 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import type { EconomyPreset } from "@/lib/cp-presets-store"
-import type { DungeonPayoutFile, PayoutListItem } from "@/lib/dungeon-payout-types"
-
-const AUTO_SAVE_MS = 800
+import { FAMILY_WEIGHTS_SCHEMA_VERSION } from "@/lib/dungeon-payout-types"
+import type {
+  DungeonPayoutFile,
+  FamilyWeightsFile,
+  PayoutListItem,
+} from "@/lib/dungeon-payout-types"
 
 const TIERS: { key: SheetDifficulty; label: string; headClass: string }[] = [
   {
@@ -83,22 +96,51 @@ function isCpDirty(
   )
 }
 
+function displayWeight(
+  item: PayoutListItem | undefined,
+  weightOverrides: Record<string, number>
+): number | null {
+  if (!item) return null
+  return weightOverrides[item.id] ?? item.cpWeight ?? 1
+}
+
+function isWeightDirty(
+  item: PayoutListItem | undefined,
+  weightOverrides: Record<string, number>
+): boolean {
+  if (!item) return false
+  return (
+    Object.prototype.hasOwnProperty.call(weightOverrides, item.id) &&
+    weightOverrides[item.id] !== (item.cpWeight ?? 1)
+  )
+}
+
 export function DungeonPayoutsPanel() {
   const confirm = useConfirm()
+  const queryClient = useQueryClient()
   const { data: list, isLoading, isError, error } = useAdminPayouts()
   const { data: conflictData } = useAdminPayoutConflicts()
   const retireConflicts = useRetireAdminPayoutConflictPackages()
   const { data: cpPresets = [] } = useAdminCpPresets()
+  const { data: familyWeightsFile } = useAdminFamilyWeights()
   const liveConflicts = conflictData?.conflicts ?? []
   const createMutation = useCreateAdminPayout()
   const saveMutation = useSaveAdminPayout()
   const batchCpMutation = useBatchSaveAdminPayoutCp()
+  const batchWeightsMutation = useBatchSaveAdminPayoutWeights()
+  const saveFamilyWeightsMutation = useSaveAdminFamilyWeights()
   const deleteMutation = useDeleteAdminPayout()
 
   const [filter, setFilter] = useState("")
   const [enabledOnly, setEnabledOnly] = useState(false)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [cpOverrides, setCpOverrides] = useState<Record<string, number>>({})
+  const [weightOverrides, setWeightOverrides] = useState<
+    Record<string, number>
+  >({})
+  const [familyWeightOverrides, setFamilyWeightOverrides] = useState<
+    Record<string, number>
+  >({})
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [draft, setDraft] = useState<DungeonPayoutFile | null>(null)
   const [baseline, setBaseline] = useState<string | null>(null)
@@ -110,14 +152,27 @@ export function DungeonPayoutsPanel() {
   const [retireOk, setRetireOk] = useState(false)
   const [exportAllPending, setExportAllPending] = useState(false)
   const [presetsManageOpen, setPresetsManageOpen] = useState(false)
+  const [familyWeightsOpen, setFamilyWeightsOpen] = useState(false)
 
   const draftRef = useRef(draft)
   const cpOverridesRef = useRef(cpOverrides)
+  const weightOverridesRef = useRef(weightOverrides)
+  const familyWeightOverridesRef = useRef(familyWeightOverrides)
   const flushInFlightRef = useRef(false)
-  /** Preset apply / explicit flush — skip debounced auto-save to avoid duplicate batch-cp. */
+  /** Preset/recalculate flush — avoid overlapping batch saves. */
   const skipAutoSaveRef = useRef(false)
   draftRef.current = draft
   cpOverridesRef.current = cpOverrides
+  weightOverridesRef.current = weightOverrides
+  familyWeightOverridesRef.current = familyWeightOverrides
+
+  const savedFamilyWeights = familyWeightsFile?.weights ?? {}
+
+  /** Weight recalculate always uses Grindy tier bases (Normal/Generous are linear scales). */
+  const grindyPreset = useMemo(
+    () => cpPresets.find((p) => p.id === "grindy") ?? cpPresets[0],
+    [cpPresets]
+  )
 
   const dirtyDrawer = useMemo(() => {
     if (!draft || baseline == null) return false
@@ -133,9 +188,35 @@ export function DungeonPayoutsPanel() {
     [cpOverrides, list]
   )
 
-  const anyDirty = dirtyDrawer || dirtyCpIds.length > 0
+  const dirtyWeightIds = useMemo(
+    () =>
+      Object.keys(weightOverrides).filter((id) => {
+        const row = list?.find((p) => p.id === id)
+        return row != null && weightOverrides[id] !== (row.cpWeight ?? 1)
+      }),
+    [weightOverrides, list]
+  )
+
+  const dirtyFamilyKeys = useMemo(
+    () =>
+      Object.keys(familyWeightOverrides).filter((family) => {
+        const saved = familyWeightOf(savedFamilyWeights, family)
+        return familyWeightOverrides[family] !== saved
+      }),
+    [familyWeightOverrides, savedFamilyWeights]
+  )
+
+  const anyDirty =
+    dirtyDrawer ||
+    dirtyCpIds.length > 0 ||
+    dirtyWeightIds.length > 0 ||
+    dirtyFamilyKeys.length > 0
   const saving =
-    saveMutation.isPending || batchCpMutation.isPending || flushInFlightRef.current
+    saveMutation.isPending ||
+    batchCpMutation.isPending ||
+    batchWeightsMutation.isPending ||
+    saveFamilyWeightsMutation.isPending ||
+    flushInFlightRef.current
   const dirtyRef = useRef(false)
   useEffect(() => {
     dirtyRef.current = anyDirty || saving
@@ -156,16 +237,37 @@ export function DungeonPayoutsPanel() {
 
     const currentDraft = draftRef.current
     const currentCpOverrides = cpOverridesRef.current
+    const currentWeightOverrides = weightOverridesRef.current
+    const currentFamilyWeightOverrides = familyWeightOverridesRef.current
     const cpDirty = Object.keys(currentCpOverrides).filter((id) => {
       const row = list?.find((p) => p.id === id)
       return row != null && currentCpOverrides[id] !== row.cp
     })
+    const weightDirty = Object.keys(currentWeightOverrides).filter((id) => {
+      const row = list?.find((p) => p.id === id)
+      return (
+        row != null && currentWeightOverrides[id] !== (row.cpWeight ?? 1)
+      )
+    })
+    const familyDirty = Object.keys(currentFamilyWeightOverrides).filter(
+      (family) => {
+        const saved = familyWeightOf(savedFamilyWeights, family)
+        return currentFamilyWeightOverrides[family] !== saved
+      }
+    )
     const drawerDirty =
       currentDraft &&
       baseline != null &&
       fingerprint(currentDraft) !== baseline
 
-    if (cpDirty.length === 0 && !drawerDirty) return
+    if (
+      cpDirty.length === 0 &&
+      weightDirty.length === 0 &&
+      familyDirty.length === 0 &&
+      !drawerDirty
+    ) {
+      return
+    }
 
     flushInFlightRef.current = true
     setBatchError(null)
@@ -175,9 +277,58 @@ export function DungeonPayoutsPanel() {
       const cpUpdates = cpDirty
         .filter((id) => id !== drawerId)
         .map((id) => ({ id, cp: currentCpOverrides[id]! }))
+      const weightUpdates = weightDirty
+        .filter((id) => id !== drawerId)
+        .map((id) => ({ id, cpWeight: currentWeightOverrides[id]! }))
 
       if (cpUpdates.length > 0) {
         await batchCpMutation.mutateAsync(cpUpdates)
+        const cpById = new Map(cpUpdates.map((u) => [u.id, u.cp]))
+        queryClient.setQueryData<PayoutListItem[]>(
+          ["admin", "payouts"],
+          (prev) =>
+            prev?.map((row) =>
+              cpById.has(row.id) ? { ...row, cp: cpById.get(row.id)! } : row
+            )
+        )
+      }
+      if (weightUpdates.length > 0) {
+        await batchWeightsMutation.mutateAsync(weightUpdates)
+        const wById = new Map(weightUpdates.map((u) => [u.id, u.cpWeight]))
+        queryClient.setQueryData<PayoutListItem[]>(
+          ["admin", "payouts"],
+          (prev) =>
+            prev?.map((row) =>
+              wById.has(row.id)
+                ? { ...row, cpWeight: wById.get(row.id)! }
+                : row
+            )
+        )
+      }
+      if (familyDirty.length > 0) {
+        const nextWeights = { ...savedFamilyWeights }
+        for (const family of familyDirty) {
+          const w = currentFamilyWeightOverrides[family]!
+          if (w === 1) {
+            delete nextWeights[family]
+          } else {
+            nextWeights[family] = w
+          }
+        }
+        const savedFile: FamilyWeightsFile = {
+          version: FAMILY_WEIGHTS_SCHEMA_VERSION,
+          weights: nextWeights,
+        }
+        await saveFamilyWeightsMutation.mutateAsync(savedFile)
+        queryClient.setQueryData<FamilyWeightsFile>(
+          ["admin", "payouts", "family-weights"],
+          savedFile
+        )
+        setFamilyWeightOverrides((prev) => {
+          const next = { ...prev }
+          for (const family of familyDirty) delete next[family]
+          return next
+        })
       }
       if (drawerDirty && currentDraft) {
         await saveMutation.mutateAsync({
@@ -185,44 +336,68 @@ export function DungeonPayoutsPanel() {
           body: currentDraft,
         })
         setBaseline(fingerprint(currentDraft))
+        queryClient.setQueryData<PayoutListItem[]>(
+          ["admin", "payouts"],
+          (prev) =>
+            prev?.map((row) =>
+              row.id === currentDraft.payout.id
+                ? {
+                    ...row,
+                    cp: currentDraft.payout.cp,
+                    cpWeight: currentDraft.payout.cpWeight ?? 1,
+                    name: currentDraft.payout.name,
+                    enabled: currentDraft.payout.enabled,
+                  }
+                : row
+            )
+        )
       }
 
       const savedIds = new Set([
         ...cpUpdates.map((u) => u.id),
+        ...weightUpdates.map((u) => u.id),
         ...(drawerId ? [drawerId] : []),
       ])
       setCpOverrides((prev) => {
         const next = { ...prev }
-        for (const id of savedIds) delete next[id]
+        for (const id of savedIds) {
+          if (Object.prototype.hasOwnProperty.call(currentCpOverrides, id)) {
+            delete next[id]
+          }
+        }
+        return next
+      })
+      setWeightOverrides((prev) => {
+        const next = { ...prev }
+        for (const id of savedIds) {
+          if (
+            Object.prototype.hasOwnProperty.call(currentWeightOverrides, id)
+          ) {
+            delete next[id]
+          }
+        }
         return next
       })
       saveMutation.reset()
       batchCpMutation.reset()
+      batchWeightsMutation.reset()
+      saveFamilyWeightsMutation.reset()
     } catch (err) {
       setBatchError(err instanceof Error ? err.message : "Save failed")
       throw err
     } finally {
       flushInFlightRef.current = false
     }
-  }, [baseline, batchCpMutation, list, saveMutation])
-
-  useEffect(() => {
-    if (!anyDirty || skipAutoSaveRef.current) return
-    const timer = window.setTimeout(() => {
-      if (
-        skipAutoSaveRef.current ||
-        flushInFlightRef.current ||
-        saveMutation.isPending ||
-        batchCpMutation.isPending
-      ) {
-        return
-      }
-      void flushPendingChanges()
-    }, AUTO_SAVE_MS)
-    return () => window.clearTimeout(timer)
-    // Intentionally omit `saving` — when a save fails, flipping saving back to false
-    // must not schedule another auto-save (that burned the batch-cp rate limit).
-  }, [anyDirty, draft, cpOverrides, flushPendingChanges, batchCpMutation, saveMutation])
+  }, [
+    baseline,
+    batchCpMutation,
+    batchWeightsMutation,
+    list,
+    queryClient,
+    saveFamilyWeightsMutation,
+    saveMutation,
+    savedFamilyWeights,
+  ])
 
   const openPayout = useCallback(
     async (id: string) => {
@@ -275,6 +450,11 @@ export function DungeonPayoutsPanel() {
     [filteredList]
   )
 
+  const allFamilyNames = useMemo(
+    () => groupPayoutsByFamily(list ?? []).map((r) => r.family),
+    [list]
+  )
+
   const setCp = (item: PayoutListItem, value: number) => {
     setCpOverrides((prev) => ({ ...prev, [item.id]: value }))
     if (draft?.payout.id === item.id) {
@@ -284,6 +464,14 @@ export function DungeonPayoutsPanel() {
       })
     }
   }
+
+  const setFamilyWeight = (family: string, value: number) => {
+    setFamilyWeightOverrides((prev) => ({ ...prev, [family]: value }))
+  }
+
+  const effectiveFamilyWeights = useMemo(() => {
+    return { ...savedFamilyWeights, ...familyWeightOverrides }
+  }, [savedFamilyWeights, familyWeightOverrides])
 
   const applyPreset = (preset: EconomyPreset) => {
     void (async () => {
@@ -327,6 +515,61 @@ export function DungeonPayoutsPanel() {
         await flushPendingChanges()
       } catch {
         // flushPendingChanges already surfaced the error
+      } finally {
+        skipAutoSaveRef.current = false
+      }
+    })()
+  }
+
+  const recalculateFromWeights = () => {
+    void (async () => {
+      const rows = list ?? []
+      if (!rows.length) return
+      const preset = grindyPreset
+      if (!preset) {
+        setBatchError("No CP presets available for weight recalculate")
+        return
+      }
+      const ok = await confirm({
+        title: `Recalculate CP from weights?`,
+        description:
+          `Fill CP for all ${rows.length} payouts using Grindy tier bases × weights:\n\n` +
+          `CP = tierBase × familyWeight × payoutWeight\n\n` +
+          `Bronze ${preset.bronze} · Silver ${preset.silver} · Gold ${preset.gold}` +
+          ` (bearcat ×${preset.bearcatMult}). Use Normal/Generous presets afterward if you want a global scale. Manual CP edits remain possible.`,
+        confirmLabel: "Recalculate",
+      })
+      if (!ok) return
+      try {
+        await flushPendingChanges()
+      } catch {
+        return
+      }
+      const weightedRows = rows.map((r) => ({
+        ...r,
+        cpWeight: weightOverrides[r.id] ?? r.cpWeight ?? 1,
+      }))
+      const next = applyWeightedEconomy(
+        weightedRows,
+        preset,
+        effectiveFamilyWeights
+      )
+      let nextDraft = draft
+      if (draft && next[draft.payout.id] != null) {
+        nextDraft = {
+          ...draft,
+          payout: { ...draft.payout, cp: next[draft.payout.id] },
+        }
+        setDraft(nextDraft)
+      }
+      skipAutoSaveRef.current = true
+      setCpOverrides(next)
+      draftRef.current = nextDraft
+      cpOverridesRef.current = next
+      try {
+        await flushPendingChanges()
+      } catch {
+        // already surfaced
       } finally {
         skipAutoSaveRef.current = false
       }
@@ -453,6 +696,41 @@ export function DungeonPayoutsPanel() {
             Manage
           </Button>
         </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
+          <span className="mr-1 text-xs tracking-wide text-muted-foreground uppercase">
+            Family weights
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              void (async () => {
+                try {
+                  await flushPendingChanges()
+                } catch {
+                  return
+                }
+                setFamilyWeightsOpen(true)
+              })()
+            }}
+          >
+            Manage weights
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!list?.length || !grindyPreset || saving}
+            onClick={() => recalculateFromWeights()}
+          >
+            Recalculate from weights
+          </Button>
+          <p className="text-[0.65rem] text-muted-foreground">
+            CP presets = global bases · family × = dungeon amp · preview →N
+          </p>
+        </div>
       </div>
 
       <CpPresetsManageDialog
@@ -461,6 +739,13 @@ export function DungeonPayoutsPanel() {
         presets={cpPresets}
       />
 
+      <FamilyWeightsDialog
+        open={familyWeightsOpen}
+        onOpenChange={setFamilyWeightsOpen}
+        families={allFamilyNames}
+        savedWeights={savedFamilyWeights}
+        onSaved={() => setFamilyWeightOverrides({})}
+      />
       {liveConflicts.length > 0 ? (
         <FormAlert
           variant="warning"
@@ -636,6 +921,13 @@ export function DungeonPayoutsPanel() {
                   expanded={open}
                   hasVariants={hasVariants}
                   cpOverrides={cpOverrides}
+                  weightOverrides={weightOverrides}
+                  familyWeight={
+                    familyWeightOverrides[row.family] ??
+                    familyWeightOf(savedFamilyWeights, row.family)
+                  }
+                  familyWeightDirty={dirtyFamilyKeys.includes(row.family)}
+                  grindyPreset={grindyPreset}
                   onToggle={() =>
                     setExpanded((prev) => ({
                       ...prev,
@@ -644,6 +936,10 @@ export function DungeonPayoutsPanel() {
                   }
                   onAdvanced={(id) => void openPayout(id)}
                   onCp={setCp}
+                  onFamilyWeight={setFamilyWeight}
+                  onFlushBlur={() => {
+                    void flushPendingChanges()
+                  }}
                 />
               )
             })}
@@ -662,9 +958,11 @@ export function DungeonPayoutsPanel() {
       </div>
 
       <p className="text-[0.65rem] text-muted-foreground">
-        Edit CP in the cells. Use the gear only for advanced payout settings
-        (enable, clear grants, export). Boss crate items live under Dungeon
-        loot.
+        Edit CP cells manually anytime (saves when the field loses focus). Family
+        × amps all ranks on Recalculate (Grindy bases × family × optional drawer
+        payout weight). Manage CP presets = global bases; Manage weights =
+        dungeon amp. Gear = advanced (enable, clear grants, per-payout weight,
+        export).
       </p>
 
       <Dialog
@@ -709,6 +1007,10 @@ export function DungeonPayoutsPanel() {
               setCpOverrides((prev) => ({
                 ...prev,
                 [next.payout.id]: next.payout.cp,
+              }))
+              setWeightOverrides((prev) => ({
+                ...prev,
+                [next.payout.id]: next.payout.cpWeight ?? 1,
               }))
             }}
             onFlushSave={flushPendingChanges}
@@ -755,6 +1057,34 @@ export function DungeonPayoutsPanel() {
   )
 }
 
+function previewCp(
+  item: PayoutListItem | undefined,
+  preset: EconomyPreset | undefined,
+  familyWeight: number,
+  weightOverrides: Record<string, number>
+): number | null {
+  if (!item || !preset) return null
+  const pw = displayWeight(item, weightOverrides) ?? 1
+  return weightedCp(item, preset, familyWeight, pw)
+}
+
+function showCpPreview(
+  item: PayoutListItem | undefined,
+  familyWeight: number,
+  familyWeightDirty: boolean,
+  weightOverrides: Record<string, number>,
+  preview: number | null,
+  currentCp: number | null
+): boolean {
+  if (!item || preview == null || currentCp == null) return false
+  const pw = displayWeight(item, weightOverrides) ?? 1
+  const weightDirty = isWeightDirty(item, weightOverrides)
+  if (familyWeight === 1 && !familyWeightDirty && pw === 1 && !weightDirty) {
+    return false
+  }
+  return preview !== currentCp
+}
+
 function FamilyBlock({
   family,
   bronze,
@@ -764,9 +1094,15 @@ function FamilyBlock({
   expanded,
   hasVariants,
   cpOverrides,
+  weightOverrides,
+  familyWeight,
+  familyWeightDirty,
+  grindyPreset,
   onToggle,
   onAdvanced,
   onCp,
+  onFamilyWeight,
+  onFlushBlur,
 }: {
   family: string
   bronze?: PayoutListItem
@@ -776,90 +1112,159 @@ function FamilyBlock({
   expanded: boolean
   hasVariants: boolean
   cpOverrides: Record<string, number>
+  weightOverrides: Record<string, number>
+  familyWeight: number
+  familyWeightDirty: boolean
+  grindyPreset?: EconomyPreset
   onToggle: () => void
   onAdvanced: (id: string) => void
   onCp: (item: PayoutListItem, value: number) => void
+  onFamilyWeight: (family: string, value: number) => void
+  onFlushBlur: () => void
 }) {
   return (
     <>
       <tr>
         <td className="sticky left-0 z-[1] border-2 border-border bg-card px-2 py-1.5 font-medium">
-          <button
-            type="button"
-            className="flex w-full items-center gap-1 text-left"
-            onClick={hasVariants ? onToggle : undefined}
-            disabled={!hasVariants}
-          >
-            {hasVariants ? (
-              expanded ? (
-                <ChevronDown className="size-3.5 shrink-0 opacity-70" />
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              className="flex min-w-0 flex-1 items-center gap-1 text-left"
+              onClick={hasVariants ? onToggle : undefined}
+              disabled={!hasVariants}
+            >
+              {hasVariants ? (
+                expanded ? (
+                  <ChevronDown className="size-3.5 shrink-0 opacity-70" />
+                ) : (
+                  <ChevronRight className="size-3.5 shrink-0 opacity-70" />
+                )
               ) : (
-                <ChevronRight className="size-3.5 shrink-0 opacity-70" />
-              )
-            ) : (
-              <span className="inline-block size-3.5" />
-            )}
-            <span className="truncate">{family}</span>
-            {hasVariants && (
-              <span className="ml-1 text-xs font-normal text-muted-foreground">
-                ({variants.length})
-              </span>
-            )}
-          </button>
+                <span className="inline-block size-3.5" />
+              )}
+              <span className="truncate">{family}</span>
+              {hasVariants && (
+                <span className="ml-1 text-xs font-normal text-muted-foreground">
+                  ({variants.length})
+                </span>
+              )}
+            </button>
+            <span className="shrink-0 text-[0.65rem] text-muted-foreground">
+              ×
+            </span>
+            <Input
+              className="h-7 w-14 shrink-0 text-center text-xs"
+              type="number"
+              min={0}
+              step={0.1}
+              value={familyWeight}
+              aria-label={`Family weight for ${family}`}
+              title="Family weight (amp all tiers/variants in this dungeon)"
+              onChange={(e) =>
+                onFamilyWeight(family, Number(e.target.value))
+              }
+              onBlur={onFlushBlur}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
         </td>
         {TIERS.map((t) => {
           const item =
             t.key === "bronze" ? bronze : t.key === "silver" ? silver : gold
+          const cp = displayCp(item, cpOverrides)
+          const preview = previewCp(
+            item,
+            grindyPreset,
+            familyWeight,
+            weightOverrides
+          )
           return (
             <CpCell
               key={t.key}
               item={item}
-              cp={displayCp(item, cpOverrides)}
+              cp={cp}
               dirty={isCpDirty(item, cpOverrides)}
+              preview={preview}
+              showPreview={showCpPreview(
+                item,
+                familyWeight,
+                familyWeightDirty,
+                weightOverrides,
+                preview,
+                cp
+              )}
               onAdvanced={onAdvanced}
               onCp={onCp}
+              onFlushBlur={onFlushBlur}
             />
           )
         })}
       </tr>
       {expanded &&
-        variants.map((v) => (
-          <tr key={v.id} className="bg-muted/20">
-            <td className="sticky left-0 z-[1] border-2 border-border bg-muted/40 px-2 py-1 pl-7 text-xs text-muted-foreground">
-              <span className="text-foreground">
-                {variantDisplayLabel(v)}
-              </span>
-              {v.mode && v.mode !== "normal" ? (
-                <span className="ml-1 opacity-70">· {v.mode}</span>
-              ) : null}
-            </td>
-            <td colSpan={3} className="border-2 border-border px-2 py-1">
-              <div className="flex items-center gap-2 px-1 py-0.5">
-                <CpInput
-                  item={v}
-                  cp={displayCp(v, cpOverrides) ?? 0}
-                  dirty={isCpDirty(v, cpOverrides)}
-                  onCp={onCp}
-                />
-                <span className="text-xs text-muted-foreground">CP</span>
-                {!v.enabled && (
-                  <span className="text-xs text-muted-foreground">disabled</span>
-                )}
-                <Button
-                  type="button"
-                  size="icon-xs"
-                  variant="ghost"
-                  className="ml-auto text-muted-foreground"
-                  title="Advanced payout settings"
-                  aria-label={`Advanced settings for ${v.name}`}
-                  onClick={() => onAdvanced(v.id)}
-                >
-                  <Settings2 className="size-3" />
-                </Button>
-              </div>
-            </td>
-          </tr>
-        ))}
+        variants.map((v) => {
+          const cp = displayCp(v, cpOverrides)
+          const preview = previewCp(
+            v,
+            grindyPreset,
+            familyWeight,
+            weightOverrides
+          )
+          return (
+            <tr key={v.id} className="bg-muted/20">
+              <td className="sticky left-0 z-[1] border-2 border-border bg-muted/40 px-2 py-1 pl-7 text-xs text-muted-foreground">
+                <span className="text-foreground">
+                  {variantDisplayLabel(v)}
+                </span>
+                {v.mode && v.mode !== "normal" ? (
+                  <span className="ml-1 opacity-70">· {v.mode}</span>
+                ) : null}
+              </td>
+              <td colSpan={3} className="border-2 border-border px-2 py-1">
+                <div className="flex items-center gap-2 px-1 py-0.5">
+                  <CpInput
+                    item={v}
+                    cp={cp ?? 0}
+                    dirty={isCpDirty(v, cpOverrides)}
+                    onCp={onCp}
+                    onFlushBlur={onFlushBlur}
+                  />
+                  <span className="text-xs text-muted-foreground">CP</span>
+                  {showCpPreview(
+                    v,
+                    familyWeight,
+                    familyWeightDirty,
+                    weightOverrides,
+                    preview,
+                    cp
+                  ) ? (
+                    <span
+                      className="text-[0.65rem] text-muted-foreground"
+                      title="Preview after Recalculate from weights"
+                    >
+                      → {preview}
+                    </span>
+                  ) : null}
+                  {!v.enabled && (
+                    <span className="text-xs text-muted-foreground">
+                      disabled
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    size="icon-xs"
+                    variant="ghost"
+                    className="ml-auto text-muted-foreground"
+                    title="Advanced payout settings"
+                    aria-label={`Advanced settings for ${v.name}`}
+                    onClick={() => onAdvanced(v.id)}
+                  >
+                    <Settings2 className="size-3" />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          )
+        })}
     </>
   )
 }
@@ -868,14 +1273,20 @@ function CpCell({
   item,
   cp,
   dirty,
+  preview,
+  showPreview,
   onAdvanced,
   onCp,
+  onFlushBlur,
 }: {
   item?: PayoutListItem
   cp: number | null
   dirty: boolean
+  preview: number | null
+  showPreview: boolean
   onAdvanced: (id: string) => void
   onCp: (item: PayoutListItem, value: number) => void
+  onFlushBlur: () => void
 }) {
   if (!item || cp == null) {
     return (
@@ -886,19 +1297,35 @@ function CpCell({
   }
   return (
     <td className="border-2 border-border px-1 py-1 text-center">
-      <div className="flex items-center justify-center gap-0.5">
-        <CpInput item={item} cp={cp} dirty={dirty} onCp={onCp} />
-        <Button
-          type="button"
-          size="icon-xs"
-          variant="ghost"
-          className="text-muted-foreground opacity-60 hover:opacity-100"
-          title="Advanced payout settings"
-          aria-label={`Advanced settings for ${item.name}`}
-          onClick={() => onAdvanced(item.id)}
-        >
-          <Settings2 className="size-3" />
-        </Button>
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="flex items-center justify-center gap-0.5">
+          <CpInput
+            item={item}
+            cp={cp}
+            dirty={dirty}
+            onCp={onCp}
+            onFlushBlur={onFlushBlur}
+          />
+          <Button
+            type="button"
+            size="icon-xs"
+            variant="ghost"
+            className="text-muted-foreground opacity-60 hover:opacity-100"
+            title="Advanced payout settings"
+            aria-label={`Advanced settings for ${item.name}`}
+            onClick={() => onAdvanced(item.id)}
+          >
+            <Settings2 className="size-3" />
+          </Button>
+        </div>
+        {showPreview && preview != null ? (
+          <span
+            className="text-[0.6rem] text-muted-foreground"
+            title="Preview after Recalculate from weights"
+          >
+            → {preview}
+          </span>
+        ) : null}
       </div>
     </td>
   )
@@ -909,11 +1336,13 @@ function CpInput({
   cp,
   dirty,
   onCp,
+  onFlushBlur,
 }: {
   item: PayoutListItem
   cp: number
   dirty: boolean
   onCp: (item: PayoutListItem, value: number) => void
+  onFlushBlur: () => void
 }) {
   return (
     <div className="flex items-center justify-center gap-0.5">
@@ -924,6 +1353,7 @@ function CpInput({
         value={cp}
         aria-label={`CP for ${item.name}`}
         onChange={(e) => onCp(item, Number(e.target.value))}
+        onBlur={onFlushBlur}
       />
       {dirty ? <span className="text-gold-hot">*</span> : null}
     </div>

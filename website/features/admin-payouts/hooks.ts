@@ -4,12 +4,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   batchSaveAdminPayoutCp,
+  batchSaveAdminPayoutWeights,
   createAdminPayout,
   deleteAdminPayout,
+  fetchAdminFamilyWeights,
   fetchAdminPayout,
   fetchAdminPayoutConflicts,
   fetchAdminPayouts,
   retireAdminPayoutConflictPackages,
+  saveAdminFamilyWeights,
   saveAdminPayout,
 } from "@/features/admin-payouts/api"
 import {
@@ -22,7 +25,10 @@ import {
 } from "@/features/admin-payouts/cp-presets-api"
 import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import type { EconomyPresetInput } from "@/lib/cp-presets-store"
-import type { DungeonPayoutFile } from "@/lib/dungeon-payout-types"
+import type {
+  DungeonPayoutFile,
+  FamilyWeightsFile,
+} from "@/lib/dungeon-payout-types"
 
 export function useAdminPayouts() {
   return useQuery({
@@ -89,6 +95,41 @@ export function useBatchSaveAdminPayoutCp() {
   return useMutation({
     mutationFn: (updates: { id: string; cp: number }[]) =>
       batchSaveAdminPayoutCp(updates),
+    onSuccess: (result) => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "payouts"] })
+      for (const id of result.updated) {
+        void queryClient.invalidateQueries({
+          queryKey: ["admin", "payouts", id],
+        })
+      }
+    },
+  })
+}
+
+const FAMILY_WEIGHTS_KEY = ["admin", "payouts", "family-weights"] as const
+
+export function useAdminFamilyWeights() {
+  return useQuery({
+    queryKey: FAMILY_WEIGHTS_KEY,
+    queryFn: fetchAdminFamilyWeights,
+  })
+}
+
+export function useSaveAdminFamilyWeights() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: FamilyWeightsFile) => saveAdminFamilyWeights(body),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: FAMILY_WEIGHTS_KEY })
+    },
+  })
+}
+
+export function useBatchSaveAdminPayoutWeights() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (updates: { id: string; cpWeight: number }[]) =>
+      batchSaveAdminPayoutWeights(updates),
     onSuccess: (result) => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "payouts"] })
       for (const id of result.updated) {
