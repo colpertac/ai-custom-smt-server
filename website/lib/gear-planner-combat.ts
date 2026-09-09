@@ -1146,9 +1146,11 @@ function companionRequiresText(
 
 function buildRawEquipmentSetMembership(
   itemId: number
-): Omit<EquipmentSetMembership, "title" | "requiresText" | "setIds"> & {
-  setIds: number[]
-}[] {
+): Array<
+  Omit<EquipmentSetMembership, "title" | "requiresText" | "setIds"> & {
+    setIds: number[]
+  }
+> {
   return setsForItem(itemId).map((set) => {
     const members: EquipmentSetMemberView[] = []
     for (let i = 0; i < set.equipment.length; i++) {

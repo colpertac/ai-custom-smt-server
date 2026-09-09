@@ -34,5 +34,10 @@ export const createShopSchema = z.object({
   name: z.string().trim().min(1).max(128),
 })
 
+export const reorderShopsSchema = z.object({
+  shopIds: z.array(z.number().int().positive()).max(500),
+})
+
 export type PutShopBody = z.infer<typeof putShopSchema>
 export type CreateShopBody = z.infer<typeof createShopSchema>
+export type ReorderShopsBody = z.infer<typeof reorderShopsSchema>

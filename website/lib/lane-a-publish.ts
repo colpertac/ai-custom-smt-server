@@ -174,6 +174,52 @@ async function mirrorShops(
   return { copied: sourceFiles.length, removed }
 }
 
+/**
+ * Delete non-managed shop XML in dest whose ShopID collides with a managed
+ * `compshop-{id}.xml` we just published (e.g. legacy "compshop 1 reku DCO.xml").
+ */
+async function purgeUnmanagedShopIdConflicts(
+  destDir: string,
+  managedShopIds: Set<number>
+): Promise<string[]> {
+  if (managedShopIds.size === 0) return []
+  let entries: string[]
+  try {
+    entries = await fs.readdir(destDir)
+  } catch {
+    return []
+  }
+  const removed: string[] = []
+  for (const filename of entries) {
+    if (!filename.toLowerCase().endsWith(".xml")) continue
+    if (/^compshop-\d+\.xml$/i.test(filename)) continue
+    const full = path.join(destDir, filename)
+    let xml: string
+    try {
+      xml = await fs.readFile(full, "utf8")
+    } catch {
+      continue
+    }
+    const match = /<member name="ShopID">(\d+)<\/member>/.exec(xml)
+    if (!match) continue
+    const shopId = Number.parseInt(match[1]!, 10)
+    if (!managedShopIds.has(shopId)) continue
+    await fs.unlink(full)
+    removed.push(filename)
+  }
+  return removed
+}
+
+function managedShopIdsFromFilenames(filenames: string[]): Set<number> {
+  const ids = new Set<number>()
+  for (const filename of filenames) {
+    const m = /^compshop-(\d+)\.xml$/i.exec(filename)
+    if (!m) continue
+    ids.add(Number.parseInt(m[1]!, 10))
+  }
+  return ids
+}
+
 async function readPayoutJson(id: string): Promise<DungeonPayoutFile> {
   const raw = await fs.readFile(
     path.join(payoutsWorkingDir(), `${id}.json`),
@@ -1130,6 +1176,10 @@ export async function applyLaneA(
 
     // Full mirror: copy candidate shops, delete live shops absent from candidate.
     const mirror = await mirrorShops(candidateShops, shopsLive)
+    const purged = await purgeUnmanagedShopIdConflicts(
+      shopsLive,
+      managedShopIdsFromFilenames(await listShopFiles(candidateShops))
+    )
 
     // Apply or remove payout zip.
     if (await pathExists(candidateZip)) {
@@ -1148,7 +1198,7 @@ export async function applyLaneA(
       typeof manifest.shopsCopied === "number"
         ? manifest.shopsCopied
         : mirror.copied
-    const shopsRemoved = mirror.removed.length
+    const shopsRemoved = mirror.removed.length + purged.length
     const payoutsPackaged =
       typeof manifest.payoutsPackaged === "number"
         ? manifest.payoutsPackaged
@@ -1170,6 +1220,11 @@ export async function applyLaneA(
         `Removed ${mirror.removed.length} shop(s) from live: ${mirror.removed.join(", ")}`
       )
     }
+    if (purged.length) {
+      warnings.push(
+        `Removed ${purged.length} legacy shop file(s) that collided on ShopID: ${purged.join(", ")}`
+      )
+    }
 
     await writeManifest(releasePath, {
       ...manifest,
@@ -1177,7 +1232,7 @@ export async function applyLaneA(
       appliedAt: new Date().toISOString(),
       shopsCopied,
       shopsRemoved,
-      shopsRemovedFiles: mirror.removed,
+      shopsRemovedFiles: [...mirror.removed, ...purged],
       payoutsPackaged,
       reportRewardsPackaged,
       warnings,

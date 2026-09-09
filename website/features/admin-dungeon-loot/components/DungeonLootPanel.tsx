@@ -560,10 +560,10 @@ export function DungeonLootPanel() {
                       : {
                           label: "CP trader",
                           dynamicMapId: 20101,
-                          npcId: 393,
-                          x: 172,
-                          y: 603,
-                          rotation: 4.71239,
+                          npcId: 398,
+                          x: -1324,
+                          y: -263,
+                          rotation: 5.43,
                         }
                     setGlobalDraft({
                       ...globalDraft,

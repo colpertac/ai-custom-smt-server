@@ -22,7 +22,8 @@ Usage:
 
 Options:
   --ip IP            Public IP or hostname clients use (required)
-  --domain HOST      Optional DNS name for SITE_URL / PUBLIC_UPDATER_URL
+  --domain HOST      Optional: enable Caddy HTTPS (COMPOSE_PROFILES=https + DOMAIN).
+                     Without this, stack stays HTTP on :3000 / :8765 (no Caddy).
   --prefix PATH      Install root (default: /opt/smt → deploy/ + ops/ under it)
   --dir PATH         Use this deploy/ directly (skip prefix prompt / copy)
   --website-port N   Host port for website (default: 3000)
@@ -417,10 +418,17 @@ PULL_SERVICES=(lobby world channel website updater)
 if [[ "$OPS_BUILD_LOCAL" -eq 0 ]]; then
   PULL_SERVICES+=(ops)
 fi
-if ! docker compose pull "${PULL_SERVICES[@]}" 2>&1; then
+if ! PULL_OUT="$(docker compose pull "${PULL_SERVICES[@]}" 2>&1)"; then
+  echo "$PULL_OUT" >&2
   echo >&2
-  echo "error: docker pull failed (often VM clock not synced — see timedatectl status)" >&2
-  echo "  sudo timedatectl set-ntp true" >&2
+  if echo "$PULL_OUT" | grep -qiE 'DOMAIN|interpolat'; then
+    echo "error: docker compose failed while reading .env / compose (Caddy is optional)." >&2
+    echo "  IP-only install: do not set COMPOSE_PROFILES=https or DOMAIN." >&2
+    echo "  HTTPS: ./install.sh --ip … --domain your.domain.com" >&2
+  else
+    echo "error: docker pull failed (often VM clock not synced — see timedatectl status)" >&2
+    echo "  sudo timedatectl set-ntp true" >&2
+  fi
   echo "  cd $DEPLOY_DIR && docker compose pull && docker compose up -d --build" >&2
   exit 1
 fi

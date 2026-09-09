@@ -33,6 +33,8 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Runtime fs reads (catalog + schedule defaults); not always NFT-traced.
+COPY --from=builder --chown=nextjs:nodejs /app/content/events ./content/events
 
 USER nextjs
 EXPOSE 3000

@@ -7,6 +7,9 @@ import {
   serializeCompShop,
   type CompShop,
 } from "./comp-shop-xml.ts"
+import { applyShopSlotRemapToList, planShopSlotRemap } from "./comp-shop-order.ts"
+
+export { applyShopSlotRemapToList, planShopSlotRemap } from "./comp-shop-order.ts"
 
 const MAX_TABS = 100
 
@@ -37,7 +40,178 @@ export type ShopListItem = {
   filename: string
 }
 
-export async function listWorkingShops(): Promise<ShopListItem[]> {
+/** Admin UI list order only — not published to the channel datastore. */
+export const SHOP_ORDER_FILENAME = "shop-order.json"
+
+function shopOrderPath(): string {
+  return path.join(getShopsDir(), SHOP_ORDER_FILENAME)
+}
+
+async function readShopOrderIds(): Promise<number[]> {
+  try {
+    const raw = await fs.readFile(shopOrderPath(), "utf8")
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter(
+      (id): id is number => Number.isInteger(id) && (id as number) > 0
+    )
+  } catch {
+    return []
+  }
+}
+
+async function writeShopOrderIds(shopIds: number[]): Promise<void> {
+  const dir = getShopsDir()
+  await fs.mkdir(dir, { recursive: true })
+  await fs.writeFile(
+    shopOrderPath(),
+    `${JSON.stringify(shopIds, null, 2)}\n`,
+    "utf8"
+  )
+}
+
+/** Keep known IDs in saved order; append any new IDs by ascending ShopID. */
+export function mergeShopOrder(
+  savedOrder: number[],
+  shopIds: number[]
+): number[] {
+  const idSet = new Set(shopIds)
+  const kept = savedOrder.filter((id) => idSet.has(id))
+  const keptSet = new Set(kept)
+  const missing = shopIds
+    .filter((id) => !keptSet.has(id))
+    .sort((a, b) => a - b)
+  return [...kept, ...missing]
+}
+
+function sortShopsByOrder(
+  shops: ShopListItem[],
+  order: number[]
+): ShopListItem[] {
+  const byId = new Map(shops.map((s) => [s.shopId, s] as const))
+  const result: ShopListItem[] = []
+  const seen = new Set<number>()
+  for (const id of order) {
+    const shop = byId.get(id)
+    if (!shop || seen.has(id)) continue
+    result.push(shop)
+    seen.add(id)
+  }
+  for (const shop of shops) {
+    if (!seen.has(shop.shopId)) result.push(shop)
+  }
+  return result
+}
+
+async function appendShopToOrder(shopId: number): Promise<void> {
+  const shops = await listWorkingShopsRaw()
+  const ids = shops.map((s) => s.shopId)
+  if (!ids.includes(shopId)) ids.push(shopId)
+  const next = mergeShopOrder(await readShopOrderIds(), ids)
+  await writeShopOrderIds(next)
+}
+
+async function removeShopFromOrder(shopId: number): Promise<void> {
+  const shops = await listWorkingShopsRaw()
+  const next = mergeShopOrder(
+    (await readShopOrderIds()).filter((id) => id !== shopId),
+    shops.map((s) => s.shopId)
+  )
+  await writeShopOrderIds(next)
+}
+
+/**
+ * Reorder shops and reassign ShopIDs to match row slots.
+ *
+ * `contentOrderIds` = ShopIDs of shop *content* in the desired visual order
+ * (ids before remapping). Position i keeps the ShopID that was previously at
+ * position i; the shop that lands there is rewritten to that id / filename.
+ *
+ * Must be a permutation of every working-copy shop.
+ */
+export async function reorderWorkingShops(
+  contentOrderIds: number[]
+): Promise<ShopListItem[]> {
+  const currentList = await listWorkingShops()
+  const slotIds = currentList.map((s) => s.shopId)
+  const current = new Set(slotIds)
+
+  if (contentOrderIds.length !== current.size) {
+    throw new ShopOrderValidationError(
+      "shopIds must include every working-copy shop exactly once"
+    )
+  }
+  const seen = new Set<number>()
+  for (const id of contentOrderIds) {
+    if (!current.has(id)) {
+      throw new ShopOrderValidationError(`Unknown shop id ${id}`)
+    }
+    if (seen.has(id)) {
+      throw new ShopOrderValidationError(`Duplicate shop id ${id}`)
+    }
+    seen.add(id)
+  }
+
+  const remap = planShopSlotRemap(slotIds, contentOrderIds)
+  const changes = [...remap.entries()].filter(([from, to]) => from !== to)
+
+  if (changes.length === 0) {
+    await writeShopOrderIds(slotIds)
+    return currentList
+  }
+
+  const maxExisting = Math.max(9_000_000, ...slotIds)
+  const temps: { temp: number; to: number }[] = []
+  let nextTemp = maxExisting + 1
+
+  try {
+    for (const [from, to] of changes) {
+      const temp = nextTemp++
+      await relocateShopId(from, temp)
+      temps.push({ temp, to })
+    }
+    for (const { temp, to } of temps) {
+      await relocateShopId(temp, to)
+    }
+  } catch (error) {
+    throw error instanceof ShopOrderValidationError
+      ? error
+      : new ShopOrderValidationError(
+          error instanceof Error
+            ? `Shop ID remapping failed: ${error.message}`
+            : "Shop ID remapping failed"
+        )
+  }
+
+  await writeShopOrderIds(slotIds)
+  return applyShopSlotRemapToList(currentList, contentOrderIds)
+}
+
+/** Move a shop XML to a new ShopID (file + member). Target must not exist. */
+async function relocateShopId(fromId: number, toId: number): Promise<void> {
+  if (fromId === toId) return
+  if (await shopExists(toId)) {
+    throw new ShopOrderValidationError(
+      `Cannot move shop ${fromId} → ${toId}: target already exists`
+    )
+  }
+  const shop = await readWorkingShop(fromId)
+  await writeWorkingShop({
+    ...shop,
+    shopId: toId,
+    filename: shopFilename(toId),
+  })
+  await fs.unlink(shopPath(fromId))
+}
+
+export class ShopOrderValidationError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "ShopOrderValidationError"
+  }
+}
+
+async function listWorkingShopsRaw(): Promise<ShopListItem[]> {
   const dir = getShopsDir()
   let entries: string[]
   try {
@@ -62,6 +236,16 @@ export async function listWorkingShops(): Promise<ShopListItem[]> {
   }
   shops.sort((a, b) => a.shopId - b.shopId)
   return shops
+}
+
+export async function listWorkingShops(): Promise<ShopListItem[]> {
+  const shops = await listWorkingShopsRaw()
+  if (!shops.length) return shops
+  const order = mergeShopOrder(
+    await readShopOrderIds(),
+    shops.map((s) => s.shopId)
+  )
+  return sortShopsByOrder(shops, order)
 }
 
 export async function readWorkingShop(shopId: number): Promise<CompShop> {
@@ -202,6 +386,7 @@ export async function createWorkingShop(shop: CompShop): Promise<void> {
     throw new ShopConflictError(shop.shopId)
   }
   await writeWorkingShop(shop)
+  await appendShopToOrder(shop.shopId)
 }
 
 export async function deleteWorkingShop(shopId: number): Promise<void> {
@@ -209,6 +394,7 @@ export async function deleteWorkingShop(shopId: number): Promise<void> {
     throw new ShopNotFoundError(shopId)
   }
   await fs.unlink(shopPath(shopId))
+  await removeShopFromOrder(shopId)
 }
 
 export class ShopImportValidationError extends Error {
@@ -232,6 +418,20 @@ export type ImportWorkingShopResult = {
   warnings: string[]
 }
 
+/**
+ * Floor for auto-assigned import ShopIDs — keeps uploads out of stock
+ * world/COMP ranges (301–647) unless those ids are already in the working copy.
+ */
+export const IMPORT_SHOP_ID_FLOOR = 6000
+
+/** Next free ShopID for imports (always above floor and existing shops). */
+export async function allocateNextImportShopId(): Promise<number> {
+  const shops = await listWorkingShopsRaw()
+  const maxExisting =
+    shops.length > 0 ? Math.max(...shops.map((s) => s.shopId)) : 0
+  return Math.max(IMPORT_SHOP_ID_FLOOR, maxExisting) + 1
+}
+
 /** Next free ShopID when `preferred` is taken (max existing + 1). */
 export async function resolveAvailableShopId(
   preferred: number
@@ -239,13 +439,13 @@ export async function resolveAvailableShopId(
   if (Number.isInteger(preferred) && preferred > 0 && !(await shopExists(preferred))) {
     return { shopId: preferred, changed: false }
   }
-  const shops = await listWorkingShops()
+  const shops = await listWorkingShopsRaw()
   const next =
     shops.length > 0
       ? Math.max(...shops.map((s) => s.shopId), preferred > 0 ? preferred : 0) + 1
       : preferred > 0
         ? preferred
-        : 9000
+        : IMPORT_SHOP_ID_FLOOR + 1
   return { shopId: next, changed: preferred !== next }
 }
 
@@ -264,13 +464,17 @@ export async function importWorkingShopFromXml(
 
   const warnings: string[] = []
   const originalShopId = parsed.shopId
-  const { shopId, changed } = await resolveAvailableShopId(parsed.shopId)
+  // Always allocate a fresh id on upload so legacy loose-named live files
+  // (e.g. "compshop 1 reku DCO.xml") cannot collide after publish.
+  const shopId = await allocateNextImportShopId()
   if (!Number.isInteger(originalShopId) || originalShopId <= 0) {
     warnings.push(
       `XML had invalid ShopID (${String(originalShopId)}); assigned ${shopId}`
     )
-  } else if (changed) {
-    warnings.push(`ShopID ${originalShopId} already exists; assigned ${shopId}`)
+  } else {
+    warnings.push(
+      `Assigned ShopID ${shopId} (XML had ${originalShopId}; uploads always get a fresh id)`
+    )
   }
 
   const shop: CompShop = {
@@ -285,11 +489,12 @@ export async function importWorkingShopFromXml(
   }
 
   await writeWorkingShop(shop)
+  await appendShopToOrder(shopId)
 
   return {
     shopId,
     originalShopId,
-    shopIdChanged: shopId !== originalShopId,
+    shopIdChanged: true,
     name: shop.name,
     filename: shop.filename,
     tabCount: shop.tabs.length,

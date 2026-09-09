@@ -298,6 +298,9 @@ export function nextScheduleChangeAt(
 export function defaultEventScheduleConfig(
   now: Date = new Date()
 ): EventScheduleConfig {
+  // Fresh installs / missing schedule file: Manual control (enabled:false),
+  // empty loop+calendar, Shinjuku Under Wonderground always-on preference.
+  // Live active set still comes from channel.xml DataStore partials.
   const anchorDate = formatDateInTimeZone(now, DEFAULT_TIMEZONE)
   return {
     version: 2,

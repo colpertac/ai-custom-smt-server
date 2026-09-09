@@ -238,11 +238,13 @@ export function softScoreFromResult(
 export function prioritiesFromWeights(
   weights: OptimizeSoftWeights
 ): PlannerStatKey[] {
-  const ranked: Array<{ key: PlannerStatKey; w: number }> = [
-    { key: "critical", w: weights.critical },
-    { key: "lbp", w: weights.lbp },
-    { key: "lbCap", w: weights.lbCap },
-  ]
+  const ranked = (
+    [
+      { key: "critical", w: weights.critical },
+      { key: "lbp", w: weights.lbp },
+      { key: "lbCap", w: weights.lbCap },
+    ] as Array<{ key: PlannerStatKey; w: number }>
+  )
     .filter((x) => x.w > 0)
     .sort((a, b) => b.w - a.w || a.key.localeCompare(b.key))
   const keys = ranked.map((r) => r.key)

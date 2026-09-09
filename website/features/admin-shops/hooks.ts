@@ -7,9 +7,12 @@ import {
   deleteAdminShop,
   fetchAdminShop,
   fetchAdminShops,
+  reorderAdminShops,
   saveAdminShop,
   uploadAdminShopXml,
+  type ShopListItem,
 } from "@/features/admin-shops/api"
+import { applyShopSlotRemapToList } from "@/lib/comp-shop-order"
 import type { CompShop } from "@/lib/comp-shop-xml"
 
 export function useAdminShops() {
@@ -59,6 +62,44 @@ export function useDeleteAdminShop() {
     onSuccess: (_data, shopId) => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
       void queryClient.removeQueries({ queryKey: ["admin", "shops", shopId] })
+    },
+  })
+}
+
+export function useReorderAdminShops() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (shopIds: number[]) => reorderAdminShops(shopIds),
+    onMutate: async (contentOrderIds) => {
+      await queryClient.cancelQueries({ queryKey: ["admin", "shops"] })
+      const previous = queryClient.getQueryData<ShopListItem[]>([
+        "admin",
+        "shops",
+      ])
+      if (previous?.length) {
+        try {
+          const next = applyShopSlotRemapToList(previous, contentOrderIds)
+          queryClient.setQueryData<ShopListItem[]>(["admin", "shops"], next)
+        } catch {
+          /* keep previous until server responds */
+        }
+      }
+      return { previous }
+    },
+    onError: (_err, _ids, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(["admin", "shops"], ctx.previous)
+      }
+    },
+    onSuccess: (shops) => {
+      queryClient.setQueryData(["admin", "shops"], shops)
+      void queryClient.invalidateQueries({
+        queryKey: ["admin", "shops"],
+        exact: false,
+      })
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
     },
   })
 }

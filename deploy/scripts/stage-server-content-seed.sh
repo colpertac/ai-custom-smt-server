@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # Refresh deploy/seed/server-content for install bundles.
-# - shops: official COMP shops from comp_hack/datastore/shops/compshop-*.xml only
+# - shops: working CP shops from server-content/shops (override with COMP_SHOPS_SRC)
 # - payouts + report-rewards: working copies from server-content/ (gitignored dev tree)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEPLOY_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$DEPLOY_DIR/.." && pwd)"
-COMP_SHOPS_SRC="${COMP_SHOPS_SRC:-$REPO_ROOT/../comp_hack/datastore/shops}"
 WORKING_SRC="$REPO_ROOT/server-content"
+COMP_SHOPS_SRC="${COMP_SHOPS_SRC:-$WORKING_SRC/shops}"
 DEST="$DEPLOY_DIR/seed/server-content"
 
 if [[ ! -d "$COMP_SHOPS_SRC" ]]; then
-  echo "error: comp_hack shops dir not found at $COMP_SHOPS_SRC" >&2
+  echo "error: shops dir not found at $COMP_SHOPS_SRC" >&2
   exit 1
 fi
 if [[ ! -d "$WORKING_SRC/payouts" || ! -d "$WORKING_SRC/report-rewards" ]]; then
@@ -27,8 +27,11 @@ if [[ ${#shop_files[@]} -eq 0 ]]; then
   echo "error: no compshop-*.xml in $COMP_SHOPS_SRC" >&2
   exit 1
 fi
-rm -f "$DEST/shops"/compshop-*.xml
+rm -f "$DEST/shops"/compshop-*.xml "$DEST/shops"/shop-order.json
 cp -a "${shop_files[@]}" "$DEST/shops/"
+if [[ -f "$COMP_SHOPS_SRC/shop-order.json" ]]; then
+  cp -a "$COMP_SHOPS_SRC/shop-order.json" "$DEST/shops/"
+fi
 echo "staged ${#shop_files[@]} COMP shops from $COMP_SHOPS_SRC"
 
 for sub in payouts report-rewards; do

@@ -1,12 +1,20 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Plus, Trash2, Upload } from "lucide-react"
+import {
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react"
 
 import {
   downloadAdminShopXml,
   downloadAdminShopsZipAll,
   type ShopDetail,
+  type ShopListItem,
   type ShopProductRow,
 } from "@/features/admin-shops/api"
 import { lookupShopProducts } from "@/features/admin/promos-api"
@@ -15,6 +23,7 @@ import {
   useAdminShops,
   useCreateAdminShop,
   useDeleteAdminShop,
+  useReorderAdminShops,
   useSaveAdminShop,
   useUploadAdminShop,
 } from "@/features/admin-shops/hooks"
@@ -31,6 +40,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import type { CompShop, CompShopTab } from "@/lib/comp-shop-xml"
+import { planShopSlotRemap } from "@/lib/comp-shop-order"
+import { cn } from "@/lib/utils"
 
 function CurrencyBadge({ preview }: { preview: ShopProductRow["preview"] }) {
   if (!preview) {
@@ -102,6 +113,7 @@ export function CompShopsPanel() {
   const createMutation = useCreateAdminShop()
   const saveMutation = useSaveAdminShop()
   const deleteMutation = useDeleteAdminShop()
+  const reorderMutation = useReorderAdminShops()
   const uploadMutation = useUploadAdminShop()
   const [draft, setDraft] = useState<ShopDetail | null>(null)
   const [baseline, setBaseline] = useState<string | null>(null)
@@ -109,6 +121,8 @@ export function CompShopsPanel() {
   const [newShopId, setNewShopId] = useState("")
   const [newShopName, setNewShopName] = useState("")
   const [importMessage, setImportMessage] = useState<string | null>(null)
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [overIndex, setOverIndex] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dirtyRef = useRef(false)
   const loadedShopKey = useRef<string | null>(null)
@@ -250,6 +264,41 @@ export function CompShopsPanel() {
     )
   }, [list, filter])
 
+  const canReorder = filter.trim() === "" && (list?.length ?? 0) > 1
+
+  const moveShop = useCallback(
+    (from: number, to: number) => {
+      void (async () => {
+        const rows = list ?? []
+        if (to < 0 || to >= rows.length || from === to) return
+        if (!(await confirmDiscard())) return
+
+        const next: ShopListItem[] = [...rows]
+        const [item] = next.splice(from, 1)
+        if (!item) return
+        next.splice(to, 0, item)
+
+        const slotIds = rows.map((s) => s.shopId)
+        const contentOrderIds = next.map((s) => s.shopId)
+        const remap = planShopSlotRemap(slotIds, contentOrderIds)
+        const prevSelected = selectedId
+
+        reorderMutation.mutate(contentOrderIds, {
+          onSuccess: () => {
+            if (prevSelected == null) return
+            const newId = remap.get(prevSelected)
+            if (newId == null || newId === prevSelected) return
+            loadedShopKey.current = null
+            setDraft(null)
+            setBaseline(null)
+            setSelectedId(newId)
+          },
+        })
+      })()
+    },
+    [confirmDiscard, list, reorderMutation, selectedId]
+  )
+
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">Loading shops…</p>
   }
@@ -282,18 +331,77 @@ export function CompShopsPanel() {
               placeholder="id or name"
             />
           </Field>
+          <p className="text-[11px] text-muted-foreground">
+            {canReorder
+              ? "Drag or ↑ / ↓ to reorder. ShopIDs follow the row (content keeps the ID of the slot it lands in). Publish shops & restart channel for in-game COMP order."
+              : filter.trim()
+                ? "Clear the filter to reorder shops."
+                : "Add another shop to enable reordering."}
+          </p>
+          {reorderMutation.isError && (
+            <FormAlert variant="error">
+              {reorderMutation.error instanceof Error
+                ? reorderMutation.error.message
+                : "Reorder failed"}
+            </FormAlert>
+          )}
           <div className="max-h-[28rem] space-y-2 overflow-y-auto pr-0.5 text-sm">
-            {shops.map((s) => {
+            {shops.map((s, index) => {
               const selected = selectedId === s.shopId
+              const dragging = canReorder && dragIndex === index
+              const dropTarget =
+                canReorder &&
+                overIndex === index &&
+                dragIndex != null &&
+                dragIndex !== index
               return (
                 <div
                   key={s.shopId}
-                  className={`flex items-stretch gap-1 border-2 transition-colors ${
+                  onDragOver={(e) => {
+                    if (!canReorder) return
+                    e.preventDefault()
+                    e.dataTransfer.dropEffect = "move"
+                    if (overIndex !== index) setOverIndex(index)
+                  }}
+                  onDragLeave={() => {
+                    if (overIndex === index) setOverIndex(null)
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    if (!canReorder || dragIndex == null) return
+                    moveShop(dragIndex, index)
+                    setDragIndex(null)
+                    setOverIndex(null)
+                  }}
+                  className={cn(
+                    "flex items-stretch gap-1 border-2 transition-colors",
                     selected
                       ? "border-gold-dim bg-muted/80"
-                      : "border-border bg-background/40 hover:border-gold-dim/70 hover:bg-muted/40"
-                  }`}
+                      : "border-border bg-background/40 hover:border-gold-dim/70 hover:bg-muted/40",
+                    dragging && "opacity-50",
+                    dropTarget && "border-gold ring-1 ring-gold/40"
+                  )}
                 >
+                  {canReorder ? (
+                    <button
+                      type="button"
+                      draggable
+                      aria-label={`Reorder shop ${s.shopId}`}
+                      title="Drag to reorder"
+                      className="flex shrink-0 cursor-grab items-center px-1 text-muted-foreground/70 active:cursor-grabbing"
+                      onDragStart={(e) => {
+                        setDragIndex(index)
+                        e.dataTransfer.effectAllowed = "move"
+                        e.dataTransfer.setData("text/plain", String(s.shopId))
+                      }}
+                      onDragEnd={() => {
+                        setDragIndex(null)
+                        setOverIndex(null)
+                      }}
+                    >
+                      <GripVertical className="size-3.5" aria-hidden />
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => selectShop(s.shopId)}
@@ -307,6 +415,39 @@ export function CompShopsPanel() {
                       {s.tabCount} tabs · {s.productCount} products
                     </span>
                   </button>
+                  {canReorder ? (
+                    <div className="flex shrink-0 flex-col justify-center gap-0.5 py-1">
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={`Move shop ${s.shopId} up`}
+                        title="Move up"
+                        className="size-6 text-muted-foreground"
+                        disabled={
+                          index === 0 || reorderMutation.isPending
+                        }
+                        onClick={() => moveShop(index, index - 1)}
+                      >
+                        <ChevronUp className="size-3.5" />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={`Move shop ${s.shopId} down`}
+                        title="Move down"
+                        className="size-6 text-muted-foreground"
+                        disabled={
+                          index >= shops.length - 1 ||
+                          reorderMutation.isPending
+                        }
+                        onClick={() => moveShop(index, index + 1)}
+                      >
+                        <ChevronDown className="size-3.5" />
+                      </Button>
+                    </div>
+                  ) : null}
                   <Button
                     type="button"
                     size="icon-sm"
@@ -366,8 +507,9 @@ export function CompShopsPanel() {
             </p>
             <p className="text-xs text-muted-foreground">
               Upload one or more channel compshop XML files (e.g.{" "}
-              <code className="text-[10px]">mycompshop.xml</code>). If a ShopID
-              is already taken, a new ID is assigned automatically.
+              <code className="text-[10px]">mycompshop.xml</code>). Each upload
+              always gets a new ShopID (next free above 6000) so it cannot
+              collide with legacy live shop files.
             </p>
             <input
               ref={fileInputRef}

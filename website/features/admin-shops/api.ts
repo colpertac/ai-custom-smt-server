@@ -66,6 +66,15 @@ export const deleteAdminShop = async (shopId: number) => {
   return result
 }
 
+export const reorderAdminShops = async (shopIds: number[]) => {
+  const result = await fetcher<ShopListItem[]>("admin/shops/reorder", {
+    method: "PUT",
+    json: { shopIds },
+  })
+  notifyLaneAPendingChanged()
+  return result
+}
+
 export type ImportAdminShopResult = {
   shopId: number
   originalShopId: number
