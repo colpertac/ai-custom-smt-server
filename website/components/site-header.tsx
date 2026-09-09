@@ -149,28 +149,12 @@ export function SiteHeader() {
             href="/events"
             className={cn(
               navClass,
-              pathname.startsWith("/events") && "text-gold"
+              (pathname.startsWith("/events") ||
+                pathname.startsWith("/payouts")) &&
+                "text-gold"
             )}
           >
             Events
-          </Link>
-          <Link
-            href="/payouts"
-            className={cn(
-              navClass,
-              pathname.startsWith("/payouts") && "text-gold"
-            )}
-          >
-            Payouts
-          </Link>
-          <Link
-            href="/about"
-            className={cn(
-              navClass,
-              pathname.startsWith("/about") && "text-gold"
-            )}
-          >
-            About
           </Link>
           <Link
             href="/download"
@@ -180,15 +164,6 @@ export function SiteHeader() {
             )}
           >
             Download
-          </Link>
-          <Link
-            href="/status"
-            className={cn(
-              navClass,
-              pathname.startsWith("/status") && "text-gold"
-            )}
-          >
-            Status
           </Link>
           <Link
             href="/armory"

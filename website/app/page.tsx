@@ -1,7 +1,9 @@
 import Link from "next/link"
 
+import { NewsMarkdown } from "@/components/news-markdown"
 import { buttonVariants } from "@/components/ui/button"
 import { listPublishedNews } from "@/lib/news-store"
+import { getAboutMarkdown } from "@/lib/site-settings-store"
 import { cn } from "@/lib/utils"
 import { readSession } from "@/lib/session"
 
@@ -10,6 +12,7 @@ export const dynamic = "force-dynamic"
 export default async function HomePage() {
   const session = await readSession()
   const latest = listPublishedNews().slice(0, 3)
+  const about = getAboutMarkdown()
 
   return (
     <>
@@ -152,6 +155,26 @@ export default async function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section
+        id="about"
+        className="mx-auto max-w-5xl border-t border-chrome-border px-4 py-(--density-section-y)"
+      >
+        <div className="flex items-end justify-between gap-4 border-b border-chrome-border pb-3">
+          <h2 className="font-heading text-xl tracking-[0.15em] uppercase">
+            About
+          </h2>
+          <Link
+            href="/about"
+            className="text-xs text-muted-foreground hover:text-gold-dim"
+          >
+            Full page
+          </Link>
+        </div>
+        <div className="mt-4 max-w-2xl">
+          <NewsMarkdown source={about} />
+        </div>
       </section>
     </>
   )
