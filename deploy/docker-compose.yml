@@ -179,9 +179,10 @@ services:
       CHANNEL_PROBE_HOST: ${CHANNEL_PROBE_HOST:-channel}
       OPS_URL: ${OPS_URL:-http://ops:14710}
       OPS_TOKEN: ${OPS_TOKEN:?set OPS_TOKEN in .env}
-      # Lane A publish/apply must use the ops sidecar (RW /comp). Native mode
-      # writes releases/lane-a from the website process and fails on :ro mounts.
-      OPS_BACKEND: ${OPS_BACKEND:-docker}
+      # Lane A file publish runs in the website (native TS). Hub ops has no
+      # website/scripts tree — only set OPS_BACKEND=docker when ops can exec those.
+      # Channel restart still goes through OPS_URL (ops container uses docker).
+      OPS_BACKEND: ${OPS_BACKEND:-native}
       # Standalone image has no repo tree — pin writable paths (nextjs uid 1001).
       WEBSITE_DATA_DIR: /website-data
       OPS_RUNTIME: /comp
@@ -200,10 +201,8 @@ services:
       RESEND_FROM_NAME: ${RESEND_FROM_NAME:-SMT}
       RESEND_SUPPORT_EMAIL: ${RESEND_SUPPORT_EMAIL:-}
     volumes:
-      - ${COMP_RUNTIME:-./data}:/comp:ro
-      # Casino SWF uploads (Admin → Casino) need a writable webroot; keep the
-      # rest of /comp read-only for the website.
-      - ${COMP_RUNTIME:-./data}/webroot:/comp/webroot
+      # Website publishes Lane A releases/shops/packages/config + casino SWFs.
+      - ${COMP_RUNTIME:-./data}:/comp
       - ${WEBSITE_DATA:-./website-data}:/website-data
     ports:
       - "${WEBSITE_PORT:-3000}:3000"

@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { rollbackOpsLaneAConfig } from "@/lib/ops-sidecar"
+import { rollbackLaneAConfigOps } from "@/lib/lane-a-config-ops"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await rollbackOpsLaneAConfig(session.username, {
+    const result = await rollbackLaneAConfigOps(session.username, {
       releaseId,
       restart,
     })

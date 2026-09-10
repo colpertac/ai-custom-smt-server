@@ -10,9 +10,9 @@ import {
 } from "./event-schedule-fs"
 import { setsEqual } from "./event-schedule-math"
 import {
-  applyOpsLaneAConfig,
-  validateOpsLaneAConfig,
-} from "../ops-sidecar"
+  applyLaneAConfigOps,
+  validateLaneAConfigOps,
+} from "../lane-a-config-ops"
 import { setPlannedMaintenance } from "../planned-maintenance"
 
 export type SyncScheduleResult = {
@@ -72,7 +72,7 @@ export async function syncEventScheduleToLive(
 
   await updateActiveEvents(desiredIds)
 
-  const validated = await validateOpsLaneAConfig(actor, { only: ["channel"] })
+  const validated = await validateLaneAConfigOps(actor, { only: ["channel"] })
   if (!validated.ok || !validated.releaseId) {
     return {
       synced: false,
@@ -97,7 +97,7 @@ export async function syncEventScheduleToLive(
     )
   }
 
-  const applied = await applyOpsLaneAConfig(validated.releaseId, actor, {
+  const applied = await applyLaneAConfigOps(validated.releaseId, actor, {
     restart: opts.restart,
   })
   if (!applied.ok) {

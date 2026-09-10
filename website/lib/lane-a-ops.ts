@@ -23,14 +23,13 @@ function opsBackend(): string {
   return (process.env.OPS_BACKEND || "native").trim().toLowerCase()
 }
 
-/** File publish can run in the website process when not Docker-separated. */
+/** File publish runs in the website process by default.
+ * Hub ops images do not ship website/scripts/publish-lane-a*.ts — only use the
+ * ops HTTP path when OPS_BACKEND is explicitly docker/sidecar/remote (dev
+ * sidecar with a sibling website checkout). */
 export function useNativeLaneAPublish(): boolean {
   const b = opsBackend()
   if (b === "docker" || b === "sidecar" || b === "remote") return false
-  if (b === "native" || b === "local") return true
-  // Unset: prefer ops when OPS_URL points at the compose sidecar.
-  const opsUrl = (process.env.OPS_URL || "").trim().toLowerCase()
-  if (opsUrl.includes("://ops:") || opsUrl.includes("://ops/")) return false
   return true
 }
 

@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { validateOpsLaneAConfig } from "@/lib/ops-sidecar"
+import { validateLaneAConfigOps } from "@/lib/lane-a-config-ops"
 import { requireWebSession } from "@/lib/web-session"
 
 export async function POST(request: Request) {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await validateOpsLaneAConfig(session.username, { only })
+    const result = await validateLaneAConfigOps(session.username, { only })
     if (!result.ok) {
       const msg =
         result.error === "not_allowed"

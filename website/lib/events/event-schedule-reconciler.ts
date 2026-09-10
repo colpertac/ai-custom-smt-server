@@ -26,9 +26,9 @@ import {
 } from "./event-schedule-fs"
 import { sendScheduleAnnounce } from "./schedule-announce"
 import {
-  applyOpsLaneAConfig,
-  validateOpsLaneAConfig,
-} from "../ops-sidecar"
+  applyLaneAConfigOps,
+  validateLaneAConfigOps,
+} from "../lane-a-config-ops"
 import { setPlannedMaintenance } from "../planned-maintenance"
 import { getRuntimeDir } from "../server-config/fs"
 
@@ -95,7 +95,7 @@ async function applyDesired(
 ): Promise<{ ok: boolean; error?: string }> {
   await updateActiveEvents(desiredIds)
 
-  const validated = await validateOpsLaneAConfig(ACTOR, {
+  const validated = await validateLaneAConfigOps(ACTOR, {
     only: ["channel"],
   })
   if (!validated.ok || !validated.releaseId) {
@@ -116,7 +116,7 @@ async function applyDesired(
     `Event schedule flip (${validated.releaseId})`
   )
 
-  const applied = await applyOpsLaneAConfig(validated.releaseId, ACTOR, {
+  const applied = await applyLaneAConfigOps(validated.releaseId, ACTOR, {
     restart: true,
   })
   if (!applied.ok) {

@@ -1,7 +1,7 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { guardApiMutation } from "@/lib/api-guard"
-import { applyOpsLaneAConfig } from "@/lib/ops-sidecar"
+import { applyLaneAConfigOps } from "@/lib/lane-a-config-ops"
 import { setPlannedMaintenance } from "@/lib/planned-maintenance"
 import { requireWebSession } from "@/lib/web-session"
 
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await applyOpsLaneAConfig(releaseId, session.username, {
+    const result = await applyLaneAConfigOps(releaseId, session.username, {
       restart,
     })
     if (!result.ok) {

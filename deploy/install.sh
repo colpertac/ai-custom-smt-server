@@ -297,6 +297,9 @@ seed_webroot_if_needed() {
 
 seed_webroot_if_needed
 
+# nextjs (uid 1001) publishes Lane A into data/releases and datastore packages.
+chmod -R a+rwX "$DATA_DIR" 2>/dev/null || true
+
 seed_server_content_subdir() {
   local sub="$1"
   local dest="$WEBSITE_DATA/server-content/$sub"
