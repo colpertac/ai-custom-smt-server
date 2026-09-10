@@ -395,9 +395,9 @@ export function AdminEventsPanel() {
   const busy = mutating || modeSwitching
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Top Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/80 pb-3">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl font-bold tracking-tight text-foreground">
@@ -419,12 +419,10 @@ export function AdminEventsPanel() {
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground max-w-2xl">
-            Activate modular event partials in{" "}
-            <code className="text-foreground">channel.xml</code>. Manual and
-            Schedule modes are exclusive — only one owns the active set at a
-            time. Edits persist as draft; Publish &amp; restart on Overview to
-            apply live.
+          <p className="mt-0.5 text-[11px] text-muted-foreground">
+            Manual or Schedule owns{" "}
+            <code className="text-foreground">channel.xml</code> partials —
+            Publish &amp; restart on Overview to go live.
           </p>
         </div>
 
@@ -445,17 +443,8 @@ export function AdminEventsPanel() {
       </div>
 
       {/* Manual vs Schedule ownership */}
-      <div className="flex flex-col gap-2 rounded-lg border border-border/80 bg-muted/15 p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold text-foreground">Control mode</p>
-          <p className="text-[11px] text-muted-foreground">
-            {isSchedule
-              ? "Schedule owns event partials. Edits autosave; restart the channel on Overview (or wait for the daily flip) to apply live."
-              : isManual
-                ? "Manual owns event partials. Toggle cards or presets autosave the draft; Publish & restart on Overview to apply live."
-                : "Loading ownership…"}
-          </p>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 bg-muted/10 px-3 py-2">
+        <p className="text-xs font-medium text-foreground">Control</p>
         <div
           className="inline-flex rounded-md border border-border/70 bg-background p-0.5"
           role="group"
@@ -466,7 +455,7 @@ export function AdminEventsPanel() {
             disabled={!controlMode || modeSwitching}
             onClick={() => void switchControlMode("manual")}
             className={cn(
-              "rounded px-3 py-1.5 text-xs font-medium transition-colors",
+              "rounded px-3 py-1 text-xs font-medium transition-colors",
               isManual
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -479,7 +468,7 @@ export function AdminEventsPanel() {
             disabled={!controlMode || modeSwitching}
             onClick={() => void switchControlMode("schedule")}
             className={cn(
-              "rounded px-3 py-1.5 text-xs font-medium transition-colors",
+              "rounded px-3 py-1 text-xs font-medium transition-colors",
               isSchedule
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"

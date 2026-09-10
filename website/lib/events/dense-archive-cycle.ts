@@ -17,7 +17,7 @@ export {
   DENSE_ARCHIVE_PROFILE_ID,
   cloneProfileDays,
 } from "./loop-profile-utils"
-const DEFAULT_ALWAYS_ON = ["201604_misc"]
+const DEFAULT_ALWAYS_ON = ["201506_wonder", "201604_misc"]
 
 /** Companion overlays that should share a day with their parent. */
 const COMPANION_OF: Record<string, string> = {

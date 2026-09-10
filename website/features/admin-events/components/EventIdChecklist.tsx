@@ -31,6 +31,15 @@ const CATEGORY_PILLS: { id: EventCategory; label: string }[] = [
   { id: "special", label: "Special" },
 ]
 
+/** Category pills plus “Active” (currently checked / turned on). */
+type ChecklistFilter = EventCategory | "active"
+
+const FILTER_PILLS: { id: ChecklistFilter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "active", label: "Active" },
+  ...CATEGORY_PILLS.filter((p) => p.id !== "all"),
+]
+
 interface EventIdChecklistProps {
   options: EventChecklistOption[]
   selectedIds: string[]
@@ -70,7 +79,7 @@ export function EventIdChecklist({
   onInspect,
 }: EventIdChecklistProps) {
   const [query, setQuery] = useState("")
-  const [category, setCategory] = useState<EventCategory>("all")
+  const [filter, setFilter] = useState<ChecklistFilter>("all")
   const [localNotice, setLocalNotice] = useState<string | null>(null)
   const [flashIds, setFlashIds] = useState<string[]>([])
   const [flashKey, setFlashKey] = useState(0)
@@ -107,16 +116,21 @@ export function EventIdChecklist({
     const present = new Set(
       options.map((o) => o.category).filter(Boolean) as string[]
     )
-    return CATEGORY_PILLS.filter(
-      (p) => p.id === "all" || present.has(p.id)
+    return FILTER_PILLS.filter(
+      (p) =>
+        p.id === "all" ||
+        p.id === "active" ||
+        present.has(p.id)
     )
   }, [options])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     let matched = options
-    if (category !== "all") {
-      matched = matched.filter((o) => o.category === category)
+    if (filter === "active") {
+      matched = matched.filter((o) => selected.has(o.id))
+    } else if (filter !== "all") {
+      matched = matched.filter((o) => o.category === filter)
     }
     if (q) {
       matched = matched.filter(
@@ -132,9 +146,12 @@ export function EventIdChecklist({
       const aConflict = conflictIds.has(a.id) ? 0 : 1
       const bConflict = conflictIds.has(b.id) ? 0 : 1
       if (aConflict !== bConflict) return aConflict - bConflict
+      const aOn = selected.has(a.id) ? 0 : 1
+      const bOn = selected.has(b.id) ? 0 : 1
+      if (filter === "all" && aOn !== bOn) return aOn - bOn
       return a.label.localeCompare(b.label)
     })
-  }, [options, query, category, conflictIds])
+  }, [options, query, filter, conflictIds, selected])
 
   const triggerConflict = (reason: string, eventIds: string[]) => {
     setLocalNotice(reason)
@@ -164,7 +181,7 @@ export function EventIdChecklist({
     setLocalNotice(null)
     onChange([])
   }
-  const filtering = Boolean(query.trim()) || category !== "all"
+  const filtering = Boolean(query.trim()) || filter !== "all"
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -208,17 +225,22 @@ export function EventIdChecklist({
 
       <div
         role="toolbar"
-        aria-label="Filter by event type"
+        aria-label="Filter events"
         className="flex flex-wrap gap-1"
       >
         {availablePills.map((pill) => {
-          const active = category === pill.id
+          const active = filter === pill.id
           return (
             <button
               key={pill.id}
               type="button"
-              onClick={() => setCategory(pill.id)}
+              onClick={() => setFilter(pill.id)}
               aria-pressed={active}
+              title={
+                pill.id === "active"
+                  ? "Show only events turned on in this list"
+                  : undefined
+              }
               className={cn(
                 "rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-wide transition-colors",
                 active
@@ -227,6 +249,9 @@ export function EventIdChecklist({
               )}
             >
               {pill.label}
+              {pill.id === "active" && selectedIds.length > 0
+                ? ` (${selectedIds.length})`
+                : ""}
             </button>
           )
         })}

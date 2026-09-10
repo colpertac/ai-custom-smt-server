@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { BookmarkPlus, Loader2, Trash2 } from "lucide-react"
+import { BookmarkPlus, ChevronDown, Loader2, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,6 +24,7 @@ import type {
   EventScheduleLoopDay,
   EventScheduleLoopProfile,
 } from "@/lib/events/types"
+import { cn } from "@/lib/utils"
 
 type Props = {
   alwaysOnIds: string[]
@@ -42,6 +43,7 @@ export function LoopScheduleProfilesBar({
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [selectedId, setSelectedId] = useState<string>(DENSE_ARCHIVE_PROFILE_ID)
+  const [saveOpen, setSaveOpen] = useState(false)
   const [saveName, setSaveName] = useState("")
   const [saveDescription, setSaveDescription] = useState("")
 
@@ -86,7 +88,22 @@ export function LoopScheduleProfilesBar({
     })
     onMessage(
       "success",
-      `Loaded “${selected.name}” (${selected.days.length} loop days) — autosaving. Restart on Overview (or wait for flip) to apply live.`
+      `Loaded “${selected.name}” (${selected.days.length} days) — autosaving.`
+    )
+  }
+
+  const applyDense = () => {
+    const dense = profiles.find((p) => p.id === DENSE_ARCHIVE_PROFILE_ID)
+    if (!dense) return
+    setSelectedId(dense.id)
+    onApplyProfile({
+      ...dense,
+      alwaysOnIds: [...dense.alwaysOnIds],
+      days: cloneProfileDays(dense.days),
+    })
+    onMessage(
+      "success",
+      `Loaded Dense archive cycle (${dense.days.length} days) — autosaving.`
     )
   }
 
@@ -108,6 +125,7 @@ export function LoopScheduleProfilesBar({
       setSelectedId(result.profile.id)
       setSaveName("")
       setSaveDescription("")
+      setSaveOpen(false)
       onMessage("success", `Saved loop profile “${result.profile.name}”.`)
     } catch (err) {
       onMessage(
@@ -169,26 +187,44 @@ export function LoopScheduleProfilesBar({
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 rounded border border-border/60 bg-muted/15 px-3 py-2 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-2 rounded border border-border/60 bg-muted/15 px-3 py-1.5 text-[11px] text-muted-foreground">
         <Loader2 className="size-3.5 animate-spin" />
-        Loading loop profiles…
+        Loading profiles…
       </div>
     )
   }
 
   return (
-    <div className="space-y-3 rounded border border-border/60 bg-muted/10 p-3">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0 space-y-0.5">
-          <div className="text-xs font-medium text-foreground">
-            Loop profiles & presets
-          </div>
-          <p className="max-w-2xl text-[11px] text-muted-foreground">
-            Applying a profile does not change live events until the channel
-            restarts (Overview or daily flip). The plan autosaves into the
-            schedule.
-          </p>
-        </div>
+    <div className="rounded border border-border/60 bg-muted/10 px-2.5 py-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="shrink-0 text-[11px] font-medium text-muted-foreground">
+          Profile
+        </span>
+        <select
+          className="h-8 min-w-[10rem] flex-1 rounded-md border border-input bg-background px-2 text-xs text-foreground sm:max-w-xs"
+          value={selectedId}
+          onChange={(e) => setSelectedId(e.target.value)}
+          disabled={busy}
+          aria-label="Loop profile"
+          title={selected?.description || undefined}
+        >
+          {profiles.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.builtin ? "★ " : ""}
+              {p.name}
+              {p.builtin ? " (built-in)" : ""} · {p.days.length}d
+            </option>
+          ))}
+        </select>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={busy || !selected}
+          onClick={applySelected}
+        >
+          Load
+        </Button>
         <TooltipProvider delay={200}>
           <Tooltip>
             <TooltipTrigger
@@ -198,26 +234,11 @@ export function LoopScheduleProfilesBar({
                   size="sm"
                   variant="secondary"
                   disabled={busy || !profiles.some((p) => p.builtin)}
-                  onClick={() => {
-                    const dense = profiles.find(
-                      (p) => p.id === DENSE_ARCHIVE_PROFILE_ID
-                    )
-                    if (!dense) return
-                    setSelectedId(dense.id)
-                    onApplyProfile({
-                      ...dense,
-                      alwaysOnIds: [...dense.alwaysOnIds],
-                      days: cloneProfileDays(dense.days),
-                    })
-                    onMessage(
-                      "success",
-                      `Loaded Dense archive cycle (${dense.days.length} days) — autosaving. Restart on Overview when you want it live.`
-                    )
-                  }}
+                  onClick={applyDense}
                 />
               }
             >
-              Dense archive cycle
+              Dense cycle
             </TooltipTrigger>
             <TooltipContent
               side="bottom"
@@ -225,42 +246,12 @@ export function LoopScheduleProfilesBar({
               className="max-w-sm text-left leading-snug"
             >
               Built-in preset: rotate through as much of the catalog as possible
-              in a short loop. Not seasonal — Christmas can appear any day; miss
-              today and it returns next cycle (~2 weeks). Separates main/post,
-              shared NPC spots (Saien, etc.), and hard conflicts. Always-on:
-              Under Wonderground + Daily Mission chests / hack limits.
+              in a short loop. Not seasonal. Separates main/post, shared NPC
+              spots, and hard conflicts. Always-on: Under Wonderground + Daily
+              Mission chests / hack limits.
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-      </div>
-
-      <div className="flex flex-wrap items-end gap-2">
-        <label className="min-w-[12rem] flex-1 space-y-1 text-[11px]">
-          <span className="text-muted-foreground">Profile</span>
-          <select
-            className="h-8 w-full rounded-md border border-input bg-background px-2 text-xs text-foreground"
-            value={selectedId}
-            onChange={(e) => setSelectedId(e.target.value)}
-            disabled={busy}
-          >
-            {profiles.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.builtin ? "★ " : ""}
-                {p.name}
-                {p.builtin ? " (built-in)" : ""} · {p.days.length}d
-              </option>
-            ))}
-          </select>
-        </label>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={busy || !selected}
-          onClick={applySelected}
-        >
-          Load into editor
-        </Button>
         <Button
           type="button"
           size="sm"
@@ -268,7 +259,7 @@ export function LoopScheduleProfilesBar({
           disabled={busy || !selected || selected.builtin}
           onClick={() => void onOverwrite()}
         >
-          Overwrite saved
+          Overwrite
         </Button>
         <Button
           type="button"
@@ -280,36 +271,43 @@ export function LoopScheduleProfilesBar({
         >
           <Trash2 className="size-3.5" />
         </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          disabled={busy}
+          onClick={() => setSaveOpen((v) => !v)}
+          aria-expanded={saveOpen}
+          className="ml-auto gap-1"
+        >
+          Save as…
+          <ChevronDown
+            className={cn(
+              "size-3.5 transition-transform",
+              saveOpen && "rotate-180"
+            )}
+          />
+        </Button>
       </div>
 
-      {selected?.description ? (
-        <p className="text-[11px] leading-snug text-muted-foreground">
-          {selected.description}
-        </p>
-      ) : null}
-
-      <div className="grid gap-2 border-t border-border/50 pt-3 sm:grid-cols-[1fr_1fr_auto]">
-        <label className="space-y-1 text-[11px]">
-          <span className="text-muted-foreground">Save current loop as</span>
+      {saveOpen ? (
+        <div className="mt-2 grid gap-2 border-t border-border/50 pt-2 sm:grid-cols-[1fr_1fr_auto]">
           <Input
             value={saveName}
             onChange={(e) => setSaveName(e.target.value)}
             placeholder="Profile name"
             className="h-8 text-xs"
             disabled={busy}
+            aria-label="New profile name"
           />
-        </label>
-        <label className="space-y-1 text-[11px]">
-          <span className="text-muted-foreground">Description (optional)</span>
           <Input
             value={saveDescription}
             onChange={(e) => setSaveDescription(e.target.value)}
-            placeholder="Short note for GMs"
+            placeholder="Note (optional)"
             className="h-8 text-xs"
             disabled={busy}
+            aria-label="Profile description"
           />
-        </label>
-        <div className="flex items-end">
           <Button
             type="button"
             size="sm"
@@ -321,10 +319,10 @@ export function LoopScheduleProfilesBar({
             ) : (
               <BookmarkPlus className="size-3.5" />
             )}
-            Save profile
+            Save
           </Button>
         </div>
-      </div>
+      ) : null}
     </div>
   )
 }

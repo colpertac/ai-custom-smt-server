@@ -383,59 +383,50 @@ export function EventSchedulePanel({
   }
 
   return (
-    <div className="space-y-4 rounded border border-border/70 bg-card/40 p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">
-            Event schedule
-          </h2>
-          <p className="mt-1 max-w-xl text-xs text-muted-foreground">
-            Schedule owns <code className="text-foreground">channel.xml</code>{" "}
-            event partials. Edits and profile loads autosave the plan; restart
-            the channel on Overview (or wait for the daily flip) to apply live.
-          </p>
-        </div>
-      </div>
-
-      {/* Mode toggle */}
-      <div className="flex items-center justify-center gap-3 text-xs">
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 font-medium",
-            mode === "loop" ? "text-foreground" : "text-muted-foreground"
-          )}
-        >
-          <Repeat className="size-3.5 shrink-0" aria-hidden />
-          Loop mode
-        </span>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={mode === "calendar"}
-          onClick={() => setMode((m) => (m === "loop" ? "calendar" : "loop"))}
-          className={cn(
-            "relative h-6 w-11 rounded-full border transition-colors",
-            mode === "calendar"
-              ? "border-primary bg-primary/30"
-              : "border-border bg-muted/50"
-          )}
-        >
+    <div className="space-y-3 rounded border border-border/70 bg-card/40 p-3 sm:p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold text-foreground">
+          Event schedule
+        </h2>
+        <div className="flex items-center gap-2 text-xs">
           <span
             className={cn(
-              "absolute top-0.5 size-4 rounded-full bg-foreground transition-transform",
-              mode === "calendar" ? "left-6" : "left-0.5"
+              "inline-flex items-center gap-1 font-medium",
+              mode === "loop" ? "text-foreground" : "text-muted-foreground"
             )}
-          />
-        </button>
-        <span
-          className={cn(
-            "inline-flex items-center gap-1.5 font-medium",
-            mode === "calendar" ? "text-foreground" : "text-muted-foreground"
-          )}
-        >
-          <CalendarDays className="size-3.5 shrink-0" aria-hidden />
-          Calendar mode
-        </span>
+          >
+            <Repeat className="size-3.5 shrink-0" aria-hidden />
+            Loop
+          </span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={mode === "calendar"}
+            onClick={() => setMode((m) => (m === "loop" ? "calendar" : "loop"))}
+            className={cn(
+              "relative h-5 w-9 rounded-full border transition-colors",
+              mode === "calendar"
+                ? "border-primary bg-primary/30"
+                : "border-border bg-muted/50"
+            )}
+          >
+            <span
+              className={cn(
+                "absolute top-0.5 size-3.5 rounded-full bg-foreground transition-transform",
+                mode === "calendar" ? "left-[18px]" : "left-0.5"
+              )}
+            />
+          </button>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 font-medium",
+              mode === "calendar" ? "text-foreground" : "text-muted-foreground"
+            )}
+          >
+            <CalendarDays className="size-3.5 shrink-0" aria-hidden />
+            Calendar
+          </span>
+        </div>
       </div>
 
       {error && <FormAlert variant="error">{error}</FormAlert>}
@@ -450,7 +441,7 @@ export function EventSchedulePanel({
         />
       ) : null}
 
-      <div className="grid gap-3 text-xs sm:grid-cols-3">
+      <div className="grid gap-2 text-xs sm:grid-cols-3">
         <label className="space-y-1">
           <span className="text-muted-foreground">Timezone</span>
           <Input
@@ -460,9 +451,7 @@ export function EventSchedulePanel({
           />
         </label>
         <label className="space-y-1">
-          <span className="text-muted-foreground">
-            Daily flip / restart time
-          </span>
+          <span className="text-muted-foreground">Daily flip time</span>
           <Input
             type="time"
             value={flipTime}
@@ -486,24 +475,16 @@ export function EventSchedulePanel({
               onChange={(e) => setAnchorDate(e.target.value)}
               className="h-8 text-xs"
             />
-            <p className="text-[10px] leading-snug text-muted-foreground">
-              Date when Day 1 is active. The cycle wraps forever. Changes
-              autosave; restart the channel on Overview to apply today.
-            </p>
           </label>
         ) : (
           <div className="self-end pb-2 text-[11px] text-muted-foreground">
-            Assign events per real calendar date.
+            Assign events per calendar date.
           </div>
         )}
       </div>
 
       <div className="space-y-1.5 text-xs">
         <div className="font-medium text-foreground">Always on every day</div>
-        <p className="text-muted-foreground">
-          Stay active across every loop/calendar day (e.g. Daily Mission chests /
-          hack limits). Prefer QoL here — not festival clerks.
-        </p>
         <EventIdChecklist
           label="Always-on events"
           options={catalogOptions}

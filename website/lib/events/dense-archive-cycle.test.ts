@@ -33,7 +33,10 @@ describe("dense-archive-cycle", () => {
   it("packs catalog without same-day hard/soft/lifecycle conflicts", () => {
     const events = loadCatalogEvents()
     const result = buildDenseArchiveCycle(events)
-    expect(result.alwaysOnIds).toContain("201604_misc")
+    expect(result.alwaysOnIds).toEqual(
+      expect.arrayContaining(["201506_wonder", "201604_misc"])
+    )
+    expect(result.alwaysOnIds).toHaveLength(2)
     expect(result.days.length).toBeGreaterThanOrEqual(7)
     expect(result.days.length).toBeLessThanOrEqual(40)
 
@@ -46,6 +49,7 @@ describe("dense-archive-cycle", () => {
     }
     expect(rotating.has("all_halloween")).toBe(false)
     expect(rotating.has("201604_misc")).toBe(false)
+    expect(rotating.has("201506_wonder")).toBe(false)
 
     const soft = [
       ...buildSpotConflictGroups(events),
