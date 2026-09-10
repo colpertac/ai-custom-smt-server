@@ -780,7 +780,7 @@ export function DungeonPayoutsPanel() {
           aria-selected={sheetMode === "cp"}
           className={`px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
             sheetMode === "cp"
-              ? "bg-muted text-foreground"
+              ? "bg-primary text-primary-foreground"
               : "bg-transparent text-muted-foreground hover:text-foreground"
           }`}
           onClick={() => {
@@ -795,7 +795,7 @@ export function DungeonPayoutsPanel() {
           aria-selected={sheetMode === "apples"}
           className={`border-l-2 border-border px-3 py-1.5 text-xs font-semibold tracking-wide uppercase ${
             sheetMode === "apples"
-              ? "bg-muted text-foreground"
+              ? "bg-primary text-primary-foreground"
               : "bg-transparent text-muted-foreground hover:text-foreground"
           }`}
           onClick={() => {
