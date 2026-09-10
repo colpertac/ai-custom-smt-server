@@ -219,7 +219,7 @@ export function EventSchedulePanel({
           applyStatus(next)
           setError(null)
           setSaveHint(
-            "Saved · restart Overview (or wait for flip) to apply live"
+            "Saved · apply on Overview (or wait for flip)"
           )
         })
         .catch((err) => {

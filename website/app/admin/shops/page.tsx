@@ -13,8 +13,8 @@ export default async function AdminShopsPage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Edit shop prices, tabs, and products in your draft. Use{" "}
-        <span className="text-foreground">Publish shops &amp; payouts</span> on
+        Edit shop prices, tabs, and products — drafts autosave. Use{" "}
+        <span className="text-foreground">Publish &amp; restart</span> on
         Overview to push them live.
       </p>
       <CompShopsPanel />

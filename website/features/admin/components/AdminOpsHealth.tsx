@@ -292,7 +292,7 @@ export function AdminOpsHealth() {
             setPublishPhase("failed")
             setError(
               cfgValidateJson.message ||
-                "Shops published but channel.xml failed validation — fix Events/Config, then Apply & Restart on Events"
+                "Shops published but channel.xml failed validation — fix Events/Config, then Publish & restart again"
             )
             return
           }
@@ -311,7 +311,7 @@ export function AdminOpsHealth() {
             setPublishPhase("failed")
             setError(
               cfgApplyJson.message ||
-                "Shops published but channel.xml did not copy live — use Events → Apply & Restart Channel"
+                "Shops published but channel.xml did not copy live — fix Config/Events drafts, then Publish & restart again"
             )
             return
           }
@@ -762,8 +762,8 @@ export function AdminOpsHealth() {
                 <li>
                   <span className="font-medium text-cyan-50">Events / channel</span>{" "}
                   — draft <code className="text-cyan-50">channel.xml</code>{" "}
-                  differs from live; Publish &amp; restart copies it, or use
-                  Events → Apply &amp; Restart Channel
+                  differs from live; Publish &amp; restart copies it and
+                  restarts the channel
                 </li>
               ) : null}
               {laneAPending.eventsSchedulePending ? (

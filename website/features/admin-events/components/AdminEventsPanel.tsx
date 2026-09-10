@@ -8,7 +8,6 @@ import {
   Ghost,
   Gift,
   Loader2,
-  RefreshCw,
   RotateCcw,
   Search,
   PartyPopper,
@@ -23,8 +22,6 @@ import { Switch } from "@/components/ui/switch"
 import {
   fetchAdminEventSchedule,
   fetchAdminEvents,
-  publishAndRestartChannel,
-  restartChannelWithScheduleSync,
   updateAdminEventSchedule,
   updateAdminEvents,
 } from "@/features/admin-events/api"
@@ -94,7 +91,6 @@ export function AdminEventsPanel() {
   const [isDirty, setIsDirty] = useState(false)
   const [loading, setLoading] = useState(true)
   const [mutating, setMutating] = useState(false)
-  const [publishing, setPublishing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
@@ -159,7 +155,7 @@ export function AdminEventsPanel() {
         ? {
             title: "Switch to Schedule mode?",
             description:
-              "The scheduler will own channel.xml event partials. Manual toggles and presets will be locked. Save the schedule to plan days; restart the channel on Overview (or Apply schedule & restart) to push live. Daily flip still auto-applies.",
+              "The scheduler will own channel.xml event partials. Manual toggles and presets will be locked. Schedule edits autosave; restart the channel on Overview (or wait for the daily flip) to apply live.",
             confirmLabel: "Use Schedule",
           }
         : {
@@ -296,7 +292,9 @@ export function AdminEventsPanel() {
       )
       setActiveCount(res.activeCount)
       setIsDirty(res.isDirty)
-      setSuccess(`Preset "${name}" applied to draft! Remember to Apply & Restart Channel.`)
+      setSuccess(
+        `Preset "${name}" applied to draft. Publish & restart on Overview to apply live.`
+      )
     } catch (err) {
       const e = err as Error & {
         data?: { conflicts?: { reason: string; eventIds: string[] }[] }
@@ -331,62 +329,13 @@ export function AdminEventsPanel() {
       setEvents((prev) => prev.map((e) => ({ ...e, active: false })))
       setActiveCount(0)
       setIsDirty(res.isDirty)
-      setSuccess("All event partials disabled in draft. Remember to Apply & Restart Channel.")
+      setSuccess(
+        "All event partials disabled in draft. Publish & restart on Overview to apply live."
+      )
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to reset events")
     } finally {
       setMutating(false)
-    }
-  }
-
-  const handlePublishAndRestart = async () => {
-    const ok = await confirm({
-      title: "Apply Configuration & Restart Channel Server?",
-      description:
-        "This will publish working channel.xml to live and restart comp_channel. Connected players will briefly disconnect while the server reloads the new PhysicsFS DataStore search paths.",
-      confirmLabel: "Apply & Restart Channel",
-    })
-    if (!ok) return
-
-    setPublishing(true)
-    setError(null)
-    setSuccess(null)
-    try {
-      await publishAndRestartChannel()
-      setIsDirty(false)
-      setSuccess("Successfully published channel.xml and restarted comp_channel!")
-      await loadEvents()
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to publish and restart channel"
-      )
-    } finally {
-      setPublishing(false)
-    }
-  }
-
-  const handleScheduleApplyRestart = async () => {
-    const ok = await confirm({
-      title: "Apply schedule & restart channel?",
-      description:
-        "Writes today's scheduled events to channel.xml and restarts the channel. Same as Overview → Power → Channel restart when the schedule cyan pending dot is lit.",
-      confirmLabel: "Apply & Restart",
-    })
-    if (!ok) return
-
-    setPublishing(true)
-    setError(null)
-    setSuccess(null)
-    try {
-      await restartChannelWithScheduleSync()
-      setSuccess("Schedule applied and channel restarted.")
-      await loadEvents()
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to apply schedule / restart"
-      )
-    } finally {
-      setPublishing(false)
     }
   }
 
@@ -443,7 +392,7 @@ export function AdminEventsPanel() {
 
   const isSchedule = controlMode === "schedule"
   const isManual = controlMode === "manual"
-  const busy = mutating || publishing || modeSwitching
+  const busy = mutating || modeSwitching
 
   return (
     <div className="space-y-6">
@@ -466,7 +415,7 @@ export function AdminEventsPanel() {
             {isDirty && isManual && (
               <span className="flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-400 border border-amber-500/30 animate-pulse">
                 <AlertTriangle className="size-3" />
-                Draft Unapplied
+                Draft unpublished
               </span>
             )}
           </div>
@@ -474,7 +423,8 @@ export function AdminEventsPanel() {
             Activate modular event partials in{" "}
             <code className="text-foreground">channel.xml</code>. Manual and
             Schedule modes are exclusive — only one owns the active set at a
-            time.
+            time. Edits persist as draft; Publish &amp; restart on Overview to
+            apply live.
           </p>
         </div>
 
@@ -490,40 +440,6 @@ export function AdminEventsPanel() {
               <RotateCcw className="size-3.5" />
               Reset to Vanilla
             </Button>
-
-            <Button
-              size="sm"
-              onClick={handlePublishAndRestart}
-              disabled={busy}
-              className={`text-xs gap-1.5 ${
-                isDirty
-                  ? "bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-600/20"
-                  : ""
-              }`}
-            >
-              {publishing ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <RefreshCw className="size-3.5" />
-              )}
-              Apply &amp; Restart Channel
-            </Button>
-          </div>
-        ) : isSchedule ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              size="sm"
-              onClick={() => void handleScheduleApplyRestart()}
-              disabled={busy}
-              className="text-xs gap-1.5"
-            >
-              {publishing ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <RefreshCw className="size-3.5" />
-              )}
-              Apply schedule &amp; restart
-            </Button>
           </div>
         ) : null}
       </div>
@@ -534,9 +450,9 @@ export function AdminEventsPanel() {
           <p className="text-xs font-semibold text-foreground">Control mode</p>
           <p className="text-[11px] text-muted-foreground">
             {isSchedule
-              ? "Schedule owns event partials. Save the plan, then restart the channel on Overview (or Apply schedule & restart) when you want live to change. Daily flip still auto-applies."
+              ? "Schedule owns event partials. Edits autosave; restart the channel on Overview (or wait for the daily flip) to apply live."
               : isManual
-                ? "Manual owns event partials. Toggle cards or presets, then Apply & Restart."
+                ? "Manual owns event partials. Toggle cards or presets autosave the draft; Publish & restart on Overview to apply live."
                 : "Loading ownership…"}
           </p>
         </div>

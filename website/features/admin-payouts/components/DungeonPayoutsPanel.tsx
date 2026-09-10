@@ -1246,7 +1246,7 @@ export function DungeonPayoutsPanel() {
       </div>
 
       <p className="text-[0.65rem] text-muted-foreground">
-        Edit CP cells manually anytime (saves when the field loses focus). Family
+        Edit CP cells manually anytime (autosaves when the field loses focus). Family
         × amps all ranks on Recalculate (Grindy bases × family × optional drawer
         payout weight). Manage CP presets = global bases; Manage weights =
         dungeon amp. Gear = advanced (enable, clear grants, per-payout weight,

@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import {
   ChevronDown,
   ChevronUp,
@@ -13,6 +14,7 @@ import {
 import {
   downloadAdminShopXml,
   downloadAdminShopsZipAll,
+  saveAdminShop,
   type ShopDetail,
   type ShopListItem,
   type ShopProductRow,
@@ -24,7 +26,6 @@ import {
   useCreateAdminShop,
   useDeleteAdminShop,
   useReorderAdminShops,
-  useSaveAdminShop,
   useUploadAdminShop,
 } from "@/features/admin-shops/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
@@ -100,10 +101,11 @@ function shopFingerprint(shop: ShopDetail): string {
   return JSON.stringify(toSaveBody(shop))
 }
 
-const UNSAVED_MSG = "You have unsaved shop changes. Leave without saving?"
+const AUTOSAVE_MS = 500
 
 export function CompShopsPanel() {
   const confirm = useConfirm()
+  const queryClient = useQueryClient()
   const { data: list, isLoading, isError, error } = useAdminShops()
   const [filter, setFilter] = useState("")
   const [exportPending, setExportPending] = useState(false)
@@ -111,7 +113,6 @@ export function CompShopsPanel() {
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const detailQuery = useAdminShop(selectedId)
   const createMutation = useCreateAdminShop()
-  const saveMutation = useSaveAdminShop()
   const deleteMutation = useDeleteAdminShop()
   const reorderMutation = useReorderAdminShops()
   const uploadMutation = useUploadAdminShop()
@@ -123,15 +124,24 @@ export function CompShopsPanel() {
   const [importMessage, setImportMessage] = useState<string | null>(null)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveHint, setSaveHint] = useState("Autosave on")
+  const [saveError, setSaveError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dirtyRef = useRef(false)
   const loadedShopKey = useRef<string | null>(null)
   const previewGen = useRef(0)
+  const draftRef = useRef<ShopDetail | null>(null)
+  const baselineRef = useRef<string | null>(null)
+  const saveSeq = useRef(0)
 
   const isDirty = useMemo(() => {
     if (!draft || baseline == null) return false
     return shopFingerprint(draft) !== baseline
   }, [draft, baseline])
+
+  draftRef.current = draft
+  baselineRef.current = baseline
 
   const productIdsKey = useMemo(() => {
     if (!draft) return ""
@@ -180,8 +190,8 @@ export function CompShopsPanel() {
   }, [productIdsKey, refreshPreviews])
 
   useEffect(() => {
-    dirtyRef.current = isDirty
-  }, [isDirty])
+    dirtyRef.current = isDirty || saving
+  }, [isDirty, saving])
 
   useEffect(() => {
     if (!detailQuery.data) {
@@ -200,9 +210,58 @@ export function CompShopsPanel() {
     setBaseline(shopFingerprint(next))
     setActiveTab(0)
     loadedShopKey.current = String(selectedId)
-    saveMutation.reset()
+    setSaveError(null)
+    setSaveHint("Autosave on")
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sync from server when shop selection loads
   }, [detailQuery.data, selectedId])
+
+  const flushSave = useCallback(async (): Promise<boolean> => {
+    const current = draftRef.current
+    const saved = baselineRef.current
+    if (!current || saved == null) return true
+    if (shopFingerprint(current) === saved) return true
+
+    const seq = ++saveSeq.current
+    const body = toSaveBody(current)
+    const fp = shopFingerprint(current)
+    setSaving(true)
+    setSaveHint("Saving…")
+    setSaveError(null)
+    try {
+      await saveAdminShop(current.shopId, body)
+      if (seq !== saveSeq.current) return true
+      void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
+      void queryClient.invalidateQueries({
+        queryKey: ["admin", "shops", current.shopId],
+      })
+      // Only clear dirty if the user hasn't edited further.
+      if (
+        draftRef.current &&
+        shopFingerprint(draftRef.current) === fp
+      ) {
+        setBaseline(fp)
+      }
+      setSaveHint("Saved draft · apply on Overview")
+      return true
+    } catch (err) {
+      if (seq !== saveSeq.current) return false
+      setSaveError(err instanceof Error ? err.message : "Autosave failed")
+      setSaveHint("Autosave failed")
+      return false
+    } finally {
+      if (seq === saveSeq.current) setSaving(false)
+    }
+  }, [queryClient])
+
+  useEffect(() => {
+    if (!isDirty || !draft) return
+    const shopKey = loadedShopKey.current
+    const timer = window.setTimeout(() => {
+      if (loadedShopKey.current !== shopKey) return
+      void flushSave()
+    }, AUTOSAVE_MS)
+    return () => window.clearTimeout(timer)
+  }, [draft, isDirty, flushSave])
 
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -214,24 +273,14 @@ export function CompShopsPanel() {
     return () => window.removeEventListener("beforeunload", onBeforeUnload)
   }, [])
 
-  const confirmDiscard = useCallback(async () => {
-    if (!dirtyRef.current) return true
-    return confirm({
-      title: "Discard unsaved changes?",
-      description: UNSAVED_MSG,
-      confirmLabel: "Discard",
-      variant: "destructive",
-    })
-  }, [confirm])
-
   const selectShop = useCallback(
     async (shopId: number) => {
       if (shopId === selectedId) return
-      if (!(await confirmDiscard())) return
+      if (!(await flushSave())) return
       loadedShopKey.current = null
       setSelectedId(shopId)
     },
-    [confirmDiscard, selectedId]
+    [flushSave, selectedId]
   )
 
   const nextSuggestedId = useMemo(() => {
@@ -271,7 +320,7 @@ export function CompShopsPanel() {
       void (async () => {
         const rows = list ?? []
         if (to < 0 || to >= rows.length || from === to) return
-        if (!(await confirmDiscard())) return
+        if (!(await flushSave())) return
 
         const next: ShopListItem[] = [...rows]
         const [item] = next.splice(from, 1)
@@ -296,7 +345,7 @@ export function CompShopsPanel() {
         })
       })()
     },
-    [confirmDiscard, list, reorderMutation, selectedId]
+    [flushSave, list, reorderMutation, selectedId]
   )
 
   if (isLoading) {
@@ -318,7 +367,8 @@ export function CompShopsPanel() {
         <CardHeader>
           <CardTitle className="text-base">COMP shops</CardTitle>
           <CardDescription>
-            Working copy only — download XML to install into channel datastore.
+            Working copy only — edits autosave. Publish &amp; restart on
+            Overview to push live.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -333,7 +383,7 @@ export function CompShopsPanel() {
           </Field>
           <p className="text-[11px] text-muted-foreground">
             {canReorder
-              ? "Drag or ↑ / ↓ to reorder. ShopIDs follow the row (content keeps the ID of the slot it lands in). Publish shops & restart channel for in-game COMP order."
+              ? "Drag or ↑ / ↓ to reorder. ShopIDs follow the row (content keeps the ID of the slot it lands in). Publish & restart on Overview for in-game COMP order."
               : filter.trim()
                 ? "Clear the filter to reorder shops."
                 : "Add another shop to enable reordering."}
@@ -460,7 +510,7 @@ export function CompShopsPanel() {
                       void (async () => {
                         if (
                           selectedId === s.shopId &&
-                          !(await confirmDiscard())
+                          !(await flushSave())
                         ) {
                           return
                         }
@@ -522,7 +572,7 @@ export function CompShopsPanel() {
                 e.target.value = ""
                 if (!files.length) return
                 void (async () => {
-                  if (!(await confirmDiscard())) return
+                  if (!(await flushSave())) return
                   setImportMessage(null)
                   uploadMutation.reset()
                   uploadMutation.mutate(files, {
@@ -644,7 +694,7 @@ export function CompShopsPanel() {
               disabled={createMutation.isPending}
               onClick={() => {
                 void (async () => {
-                  if (!(await confirmDiscard())) return
+                  if (!(await flushSave())) return
                   const shopId = Number.parseInt(
                     newShopId.trim() || String(nextSuggestedId),
                     10
@@ -688,9 +738,13 @@ export function CompShopsPanel() {
         <CardHeader>
           <CardTitle className="text-base">
             {draft ? `Edit shop ${draft.shopId}` : "Select a shop"}
-            {isDirty ? (
-              <span className="ml-2 text-sm font-normal text-gold-hot">
-                Unsaved
+            {draft ? (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                {saving
+                  ? "Saving…"
+                  : isDirty
+                    ? "Pending…"
+                    : saveHint}
               </span>
             ) : null}
           </CardTitle>
@@ -718,12 +772,9 @@ export function CompShopsPanel() {
           )}
           {draft && tab && (
             <div className="space-y-4">
-              {isDirty && (
-                <FormAlert variant="error">
-                  Unsaved changes — save before switching shops or leaving this
-                  page.
-                </FormAlert>
-              )}
+              {saveError ? (
+                <FormAlert variant="error">{saveError}</FormAlert>
+              ) : null}
               {!draft.productExtractPresent && (
                 <FormAlert variant="error">
                   shop-products.json missing — run
@@ -955,36 +1006,11 @@ export function CompShopsPanel() {
                 Add product
               </Button>
 
-              {saveMutation.isError && (
-                <FormAlert variant="error">
-                  {saveMutation.error instanceof Error
-                    ? saveMutation.error.message
-                    : "Save failed"}
-                </FormAlert>
-              )}
-              {saveMutation.isSuccess && !isDirty && (
-                <FormAlert variant="success">Saved draft.</FormAlert>
-              )}
-
-              <div className="flex flex-wrap gap-2 pt-2">
-                <Button
-                  type="button"
-                  disabled={saveMutation.isPending || !isDirty}
-                  onClick={() => {
-                    saveMutation.reset()
-                    const body = toSaveBody(draft)
-                    saveMutation.mutate(
-                      { shopId: draft.shopId, body },
-                      {
-                        onSuccess: () => {
-                          setBaseline(shopFingerprint(draft))
-                        },
-                      }
-                    )
-                  }}
-                >
-                  {saveMutation.isPending ? "Saving…" : "Save"}
-                </Button>
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                <p className="text-xs text-muted-foreground">
+                  Edits autosave to the draft. Publish &amp; restart on Overview
+                  when players should see them.
+                </p>
                 <Button
                   type="button"
                   size="sm"

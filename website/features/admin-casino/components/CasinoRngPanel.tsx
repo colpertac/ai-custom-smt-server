@@ -2,23 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { Dices, Upload } from "lucide-react"
+import { Upload } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { signOutAfterLobbyRestart } from "@/features/auth/lobby-restart"
-import {
   fetchAdminCasino,
   fetchAdminCasinoAssets,
-  restartLobbyForCasino,
   saveAdminCasinoGame,
   uploadAdminCasinoSwf,
   type CasinoFlashAsset,
@@ -33,6 +25,8 @@ import {
   type WebGameSettingsMap,
 } from "@/lib/webgames-types"
 import { cn } from "@/lib/utils"
+
+const AUTOSAVE_MS = 500
 
 const SLOT_PAYOUT_LABELS = [
   "Symbol 0",
@@ -408,8 +402,17 @@ export function CasinoRngPanel() {
   const queryClient = useQueryClient()
   const [game, setGame] = useState<WebGameId>("slot")
   const [drafts, setDrafts] = useState<Partial<WebGameSettingsMap>>({})
+  const [baselines, setBaselines] = useState<Partial<Record<WebGameId, string>>>(
+    {}
+  )
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveHint, setSaveHint] = useState("Autosave on")
+  const draftsRef = useRef(drafts)
+  const saveSeq = useRef(0)
+
+  draftsRef.current = drafts
 
   const listQuery = useQuery({
     queryKey: ["admin-casino"],
@@ -427,6 +430,15 @@ export function CasinoRngPanel() {
       }
       return next
     })
+    setBaselines((prev) => {
+      const next = { ...prev }
+      for (const file of listQuery.data.games) {
+        if (!next[file.game]) {
+          next[file.game] = JSON.stringify(file.settings)
+        }
+      }
+      return next
+    })
   }, [listQuery.data])
 
   const currentSettings = useMemo(() => {
@@ -435,40 +447,72 @@ export function CasinoRngPanel() {
     return listQuery.data?.games.find((g) => g.game === game)?.settings
   }, [drafts, game, listQuery.data])
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!currentSettings) throw new Error("Nothing to save")
-      return saveAdminCasinoGame(game, currentSettings as never)
-    },
-    onSuccess: async (file) => {
-      setMessage(
-        `Saved ${file.game === "slot" ? "Slots" : file.game === "roulette" ? "Roulette" : "Kino"}. Click “Apply to players” so the live casino reloads.`
-      )
-      setError(null)
-      setDrafts((prev) => ({ ...prev, [file.game]: file.settings }))
-      notifyLaneAPendingChanged()
-      await queryClient.invalidateQueries({ queryKey: ["admin-casino"] })
-    },
-    onError: (err: Error) => {
-      setError(err.message || "Save failed")
-      setMessage(null)
-    },
-  })
+  const dirtyGamesKey = useMemo(() => {
+    const ids: WebGameId[] = []
+    for (const id of ["slot", "roulette", "kino"] as const) {
+      const draft = drafts[id]
+      const saved = baselines[id]
+      if (draft && saved != null && JSON.stringify(draft) !== saved) {
+        ids.push(id)
+      }
+    }
+    return ids.join(",")
+  }, [baselines, drafts])
 
-  const restartMutation = useMutation({
-    mutationFn: restartLobbyForCasino,
-    onSuccess: async () => {
-      setMessage("Applied — signing you out so login can reconnect.")
+  const isDirty = dirtyGamesKey
+    .split(",")
+    .filter(Boolean)
+    .includes(game)
+
+  useEffect(() => {
+    if (!dirtyGamesKey) return
+    const toSave = dirtyGamesKey.split(",").filter(Boolean) as WebGameId[]
+    const snapshots = toSave.map((id) => ({
+      id,
+      settings: draftsRef.current[id]!,
+      fp: JSON.stringify(draftsRef.current[id]),
+    }))
+    const timer = window.setTimeout(() => {
+      const seq = ++saveSeq.current
+      setSaving(true)
+      setSaveHint("Saving…")
       setError(null)
-      notifyLaneAPendingChanged()
-      await queryClient.invalidateQueries({ queryKey: ["admin-casino"] })
-      await signOutAfterLobbyRestart()
-    },
-    onError: (err: Error) => {
-      setError(err.message || "Could not apply changes")
-      setMessage(null)
-    },
-  })
+      void (async () => {
+        try {
+          for (const snap of snapshots) {
+            const live = draftsRef.current[snap.id]
+            const liveFp = live ? JSON.stringify(live) : null
+            // Prefer latest draft if the user kept typing.
+            const settings =
+              liveFp && liveFp !== snap.fp ? live! : snap.settings
+            const fp = JSON.stringify(settings)
+            const file = await saveAdminCasinoGame(snap.id, settings as never)
+            if (seq !== saveSeq.current) return
+            const savedFp = JSON.stringify(file.settings)
+            setBaselines((prev) => ({ ...prev, [file.game]: savedFp }))
+            setDrafts((prev) => {
+              const current = prev[file.game]
+              if (current && JSON.stringify(current) !== fp) return prev
+              return { ...prev, [file.game]: file.settings }
+            })
+          }
+          if (seq !== saveSeq.current) return
+          setSaveHint("Saved draft · apply on Overview")
+          setMessage(null)
+          notifyLaneAPendingChanged()
+          await queryClient.invalidateQueries({ queryKey: ["admin-casino"] })
+        } catch (err) {
+          if (seq !== saveSeq.current) return
+          setError(err instanceof Error ? err.message : "Autosave failed")
+          setSaveHint("Autosave failed")
+          setMessage(null)
+        } finally {
+          if (seq === saveSeq.current) setSaving(false)
+        }
+      })()
+    }, AUTOSAVE_MS)
+    return () => window.clearTimeout(timer)
+  }, [dirtyGamesKey, queryClient])
 
   if (listQuery.isLoading) {
     return <p className="text-sm text-muted-foreground">Loading…</p>
@@ -485,6 +529,8 @@ export function CasinoRngPanel() {
   }
 
   const restartPending = listQuery.data?.restartPending ?? false
+  const gameLabel =
+    game === "slot" ? "Slots" : game === "roulette" ? "Roulette" : "Kino"
 
   return (
     <div className="space-y-4">
@@ -502,54 +548,31 @@ export function CasinoRngPanel() {
       {message ? <FormAlert variant="success">{message}</FormAlert> : null}
       {restartPending ? (
         <FormAlert variant="warning">
-          Odds were saved but not live yet. Click “Apply to players” (this
-          briefly restarts login — you will need to sign in again).
+          Odds are saved as draft but not live yet. Use{" "}
+          <strong className="font-medium text-foreground">
+            Publish &amp; restart
+          </strong>{" "}
+          on Overview (restarts login/lobby, then the game channel).
         </FormAlert>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          type="button"
-          size="sm"
-          disabled={saveMutation.isPending || !currentSettings}
-          onClick={() => saveMutation.mutate()}
-        >
-          {saveMutation.isPending ? "Saving…" : "Save"}
-        </Button>
-        <TooltipProvider delay={200}>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={restartPending ? "default" : "outline"}
-                  disabled={restartMutation.isPending}
-                  onClick={() => restartMutation.mutate()}
-                />
-              }
-            >
-              <Dices className="size-3.5" aria-hidden />
-              {restartMutation.isPending ? "Applying…" : "Apply to players"}
-            </TooltipTrigger>
-            <TooltipContent side="top" sideOffset={6}>
-              Restarts lobby (login). You will need to sign in again.
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      <div className="flex flex-wrap items-center gap-3">
+        <SegmentedTabs
+          label="Casino game"
+          value={game}
+          options={GAME_TABS}
+          onChange={(next) => {
+            setGame(next)
+            setMessage(null)
+            setError(null)
+            setSaveHint("Autosave on")
+          }}
+        />
+        <p className="text-xs text-muted-foreground">
+          {gameLabel}:{" "}
+          {saving ? "Saving…" : isDirty ? "Pending…" : saveHint}
+        </p>
       </div>
-
-      <SegmentedTabs
-        label="Casino game"
-        value={game}
-        options={GAME_TABS}
-        onChange={(next) => {
-          setGame(next)
-          setMessage(null)
-          setError(null)
-        }}
-      />
-
       {game === "slot" ? (
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">

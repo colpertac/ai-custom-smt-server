@@ -373,7 +373,9 @@ export function DungeonLootDrawer({
 
         {saveError ? <FormAlert variant="error">{saveError}</FormAlert> : null}
         {saveOk ? (
-          <FormAlert variant="success">Saved draft.</FormAlert>
+          <FormAlert variant="success">
+            Saved draft · apply on Overview
+          </FormAlert>
         ) : null}
 
         <p className="text-[0.65rem] text-muted-foreground">
