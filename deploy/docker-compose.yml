@@ -198,6 +198,9 @@ services:
       RESEND_SUPPORT_EMAIL: ${RESEND_SUPPORT_EMAIL:-}
     volumes:
       - ${COMP_RUNTIME:-./data}:/comp:ro
+      # Casino SWF uploads (Admin → Casino) need a writable webroot; keep the
+      # rest of /comp read-only for the website.
+      - ${COMP_RUNTIME:-./data}/webroot:/comp/webroot
       - ${WEBSITE_DATA:-./website-data}:/website-data
     ports:
       - "${WEBSITE_PORT:-3000}:3000"

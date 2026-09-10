@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Golden Ark Slots</title>
+  <link rel="stylesheet" href="../common.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Golden Ark Slots</h1>
+    <p class="meta" id="who">Loading…</p>
+    <div id="err" class="error" style="display:none;"></div>
+    <div class="panel">
+      <div class="row coins">Coins: <span id="coins">—</span></div>
+      <div class="row">Cost / spin: <span id="cost">—</span></div>
+      <div class="row" id="reels">
+        <span class="reel" id="r0">?</span>
+        <span class="reel" id="r1">?</span>
+        <span class="reel" id="r2">?</span>
+      </div>
+      <div class="row">
+        <button id="btnStart" type="button">Start</button>
+        <button id="btnSpin" type="button" disabled="disabled">Spin</button>
+        <button id="btnStop0" type="button" disabled="disabled">Stop 1</button>
+        <button id="btnStop1" type="button" disabled="disabled">Stop 2</button>
+        <button id="btnStop2" type="button" disabled="disabled">Stop 3</button>
+      </div>
+      <div class="row" id="result">Ready.</div>
+    </div>
+    <p class="hint">Stop timing affects the reels. Use Start once per machine session, then Spin.</p>
+  </div>
+  <script src="../common.js"></script>
+  <script type="text/javascript">
+    (function () {
+      var C = casinoCommon;
+      var q = C.getQuery();
+      var session = new C.Session(q);
+      var spinning = false;
+      var pending = [false, false, false];
+      var autoTimers = [null, null, null];
+
+      function showErr(msg) {
+        var el = document.getElementById("err");
+        if (!msg) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        el.style.display = "block";
+        el.innerHTML = String(msg);
+      }
+
+      function setCoins(v) {
+        C.setText("coins", v == null ? "—" : v);
+      }
+
+      function setReel(i, v) {
+        C.setText("r" + i, v == null ? "?" : v);
+      }
+
+      function clearAutos() {
+        var i;
+        for (i = 0; i < 3; i++) {
+          if (autoTimers[i]) {
+            clearTimeout(autoTimers[i]);
+            autoTimers[i] = null;
+          }
+        }
+      }
+
+      function enableStops(on) {
+        document.getElementById("btnStop0").disabled = !on;
+        document.getElementById("btnStop1").disabled = !on;
+        document.getElementById("btnStop2").disabled = !on;
+      }
+
+      function onStop(idx) {
+        if (!pending[idx]) return;
+        pending[idx] = false;
+        document.getElementById("btnStop" + idx).disabled = true;
+        if (autoTimers[idx]) {
+          clearTimeout(autoTimers[idx]);
+          autoTimers[idx] = null;
+        }
+        C.updateGame(
+          session,
+          "stop",
+          { reel: String(idx) },
+          function (res) {
+            setReel(idx, res.reelResult);
+            if (res.coins != null) setCoins(res.coins);
+            if (String(res.spinResult) === "-1") {
+              C.setText("result", "Reel " + (idx + 1) + " locked…");
+              return;
+            }
+            spinning = false;
+            document.getElementById("btnSpin").disabled = false;
+            enableStops(false);
+            if (res.error && res.error !== "Success") {
+              showErr(res.error);
+              return;
+            }
+            if (res.coinDelta) {
+              C.setText(
+                "result",
+                '<span class="ok">Win line ' +
+                  res.spinResult +
+                  " — +" +
+                  res.coinDelta +
+                  " coins (symbol " +
+                  res.matchItem +
+                  ")</span>"
+              );
+            } else {
+              C.setText("result", "No line. Try again.");
+            }
+          },
+          function (err) {
+            spinning = false;
+            document.getElementById("btnSpin").disabled = false;
+            enableStops(false);
+            showErr(err);
+          }
+        );
+      }
+
+      function doSpin() {
+        if (spinning) return;
+        showErr("");
+        spinning = true;
+        document.getElementById("btnSpin").disabled = true;
+        C.updateGame(
+          session,
+          "spin",
+          {},
+          function (res) {
+            if (res.coins != null) setCoins(res.coins);
+            if (res.reel1 != null) setReel(0, res.reel1);
+            if (res.reel2 != null) setReel(1, res.reel2);
+            if (res.reel3 != null) setReel(2, res.reel3);
+            pending = [true, true, true];
+            enableStops(true);
+            C.setText("result", "Reels spinning — stop them!");
+            autoTimers[0] = setTimeout(function () { onStop(0); }, 900);
+            autoTimers[1] = setTimeout(function () { onStop(1); }, 1600);
+            autoTimers[2] = setTimeout(function () { onStop(2); }, 2300);
+          },
+          function (err) {
+            spinning = false;
+            document.getElementById("btnSpin").disabled = false;
+            showErr(err);
+          }
+        );
+      }
+
+      function doStart() {
+        showErr("");
+        if (!session.valid()) {
+          showErr("Missing user_id / session_id in URL (open from in-game machine).");
+          return;
+        }
+        C.setBusy(true);
+        C.startGame(
+          session,
+          "slot",
+          function (res) {
+            C.setBusy(false);
+            setCoins(res.coins);
+            C.setText("cost", res.coinCost || "10");
+            if (res.reel1 != null) setReel(0, res.reel1);
+            if (res.reel2 != null) setReel(1, res.reel2);
+            if (res.reel3 != null) setReel(2, res.reel3);
+            document.getElementById("btnStart").disabled = true;
+            document.getElementById("btnSpin").disabled = false;
+            C.setText("result", "Session ready. Spin when you want.");
+          },
+          function (err) {
+            C.setBusy(false);
+            showErr(err);
+          }
+        );
+      }
+
+      C.setText(
+        "who",
+        (session.character || session.username || "?") +
+          (session.mid ? " · machine " + session.mid : "")
+      );
+      document.getElementById("btnStart").onclick = function () { doStart(); };
+      document.getElementById("btnSpin").onclick = function () { doSpin(); };
+      document.getElementById("btnStop0").onclick = function () { onStop(0); };
+      document.getElementById("btnStop1").onclick = function () { onStop(1); };
+      document.getElementById("btnStop2").onclick = function () { onStop(2); };
+
+      if (session.valid()) {
+        doStart();
+      } else {
+        showErr("Missing user_id / session_id in URL (open from in-game machine).");
+      }
+    })();
+  </script>
+</body>
+</html>

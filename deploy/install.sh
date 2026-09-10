@@ -276,9 +276,26 @@ mkdir -p \
   "$WEBSITE_DATA/server-content/shops" \
   "$WEBSITE_DATA/server-content/payouts" \
   "$WEBSITE_DATA/server-content/report-rewards" \
-  "$WEBSITE_DATA/server-content/report-rewards/dungeons"
+  "$WEBSITE_DATA/server-content/report-rewards/dungeons" \
+  "$DATA_DIR/webroot"
 # Website image runs as uid 1001 (nextjs); open perms so bind-mount writes work.
 chmod -R a+rwX "$WEBSITE_DATA" || true
+
+seed_webroot_if_needed() {
+  local seed="$DEPLOY_DIR/seed/webroot"
+  local dest="$DATA_DIR/webroot"
+  [[ -d "$seed" ]] || return 0
+  # Wrappers live under casino/; SWFs are uploaded later via Admin → Casino.
+  if [[ ! -f "$dest/casino/slot/index.html" ]]; then
+    mkdir -p "$dest"
+    cp -a "$seed/." "$dest/"
+    echo "Seeded data/webroot from deploy/seed/webroot (casino HTML wrappers)"
+  fi
+  # nextjs uid 1001 must create casino/*/Slots.swf etc.
+  chmod -R a+rwX "$dest" || true
+}
+
+seed_webroot_if_needed
 
 seed_server_content_subdir() {
   local sub="$1"

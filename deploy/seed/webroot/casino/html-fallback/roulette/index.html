@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Golden Ark Roulette</title>
+  <link rel="stylesheet" href="../common.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Golden Ark Roulette</h1>
+    <p class="meta" id="who">Loading…</p>
+    <div id="err" class="error" style="display:none;"></div>
+    <div class="panel">
+      <div class="row coins">Coins: <span id="coins">—</span></div>
+      <div class="row">Jackpot: <span id="jackpot">—</span> · Cost: <span id="cost">—</span></div>
+      <div class="wheel" id="wheel">—</div>
+      <div class="row">
+        <label for="betKind">Bet</label>
+        <select id="betKind">
+          <option value="inside">Inside (number 0–37)</option>
+          <option value="out0">Outside: Black</option>
+          <option value="out1" selected="selected">Outside: Red</option>
+          <option value="out2">Outside: Even</option>
+          <option value="out3">Outside: Odd</option>
+          <option value="out4">Outside: 1–18</option>
+          <option value="out5">Outside: 19–36</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="insideNum">Inside #</label>
+        <input id="insideNum" type="text" value="17" size="4" />
+        <label for="doubleUp">Double-up</label>
+        <select id="doubleUp">
+          <option value="0" selected="selected">×1</option>
+          <option value="1">×2</option>
+          <option value="2">×4</option>
+          <option value="3">×8</option>
+          <option value="4">×16</option>
+        </select>
+      </div>
+      <div class="row">
+        <button id="btnStart" type="button">Start</button>
+        <button id="btnSpin" type="button" disabled="disabled">Place bet &amp; spin</button>
+      </div>
+      <div class="row" id="result">Ready.</div>
+    </div>
+    <p class="hint">37 is 00. Outside bets ignore 0/00. Inside hit pays the jackpot.</p>
+  </div>
+  <script src="../common.js"></script>
+  <script type="text/javascript">
+    (function () {
+      var C = casinoCommon;
+      var q = C.getQuery();
+      var session = new C.Session(q);
+      var maxDouble = 4;
+
+      function showErr(msg) {
+        var el = document.getElementById("err");
+        if (!msg) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        el.style.display = "block";
+        el.innerHTML = String(msg);
+      }
+
+      function fillDouble(max) {
+        maxDouble = max;
+        var sel = document.getElementById("doubleUp");
+        sel.innerHTML = "";
+        var i, opt, mult;
+        for (i = 0; i <= max; i++) {
+          mult = 1;
+          var j;
+          for (j = 0; j < i; j++) mult = mult * 2;
+          opt = document.createElement("option");
+          opt.value = String(i);
+          opt.innerHTML = "×" + mult;
+          if (i === 0) opt.selected = true;
+          sel.appendChild(opt);
+        }
+      }
+
+      function parseBet() {
+        var kind = document.getElementById("betKind").value;
+        var doubleUp = document.getElementById("doubleUp").value;
+        if (kind === "inside") {
+          var n = parseInt(document.getElementById("insideNum").value, 10);
+          if (isNaN(n) || n < 0 || n > 37) {
+            return { error: "Inside number must be 0–37 (37 = 00)" };
+          }
+          return { betType: "0", betValue: String(n), doubleUp: "0" };
+        }
+        var outVal = kind.replace("out", "");
+        return { betType: "1", betValue: outVal, doubleUp: doubleUp };
+      }
+
+      function doStart() {
+        showErr("");
+        if (!session.valid()) {
+          showErr("Missing user_id / session_id in URL (open from in-game machine).");
+          return;
+        }
+        C.setBusy(true);
+        C.startGame(
+          session,
+          "roulette",
+          function (res) {
+            C.setBusy(false);
+            C.setText("coins", res.coins);
+            C.setText("cost", res.cost || "50");
+            C.setText("jackpot", res.jackpot || "—");
+            if (res.maxDoubleUp != null) fillDouble(parseInt(res.maxDoubleUp, 10) || 4);
+            document.getElementById("btnStart").disabled = true;
+            document.getElementById("btnSpin").disabled = false;
+            C.setText("result", "Session ready.");
+          },
+          function (err) {
+            C.setBusy(false);
+            showErr(err);
+          }
+        );
+      }
+
+      function doSpin() {
+        showErr("");
+        var bet = parseBet();
+        if (bet.error) {
+          showErr(bet.error);
+          return;
+        }
+        document.getElementById("btnSpin").disabled = true;
+        C.updateGame(
+          session,
+          "bet",
+          bet,
+          function () {
+            C.updateGame(
+              session,
+              "spin",
+              {},
+              function (res) {
+                document.getElementById("btnSpin").disabled = false;
+                if (res.coins != null) C.setText("coins", res.coins);
+                if (res.jackpot != null) C.setText("jackpot", res.jackpot);
+                var shown = res.spinResult;
+                if (String(shown) === "37") shown = "00";
+                C.setText("wheel", shown);
+                var msg = res.resultType || "";
+                if (res.coinsWon) msg += " (+" + res.coinsWon + ")";
+                if (res.resultType === "LOSE") msg = "LOSE";
+                C.setText(
+                  "result",
+                  res.resultType === "LOSE"
+                    ? msg
+                    : '<span class="ok">' + msg + "</span>"
+                );
+              },
+              function (err) {
+                document.getElementById("btnSpin").disabled = false;
+                showErr(err);
+              }
+            );
+          },
+          function (err) {
+            document.getElementById("btnSpin").disabled = false;
+            showErr(err);
+          }
+        );
+      }
+
+      C.setText("who", session.character || session.username || "?");
+      document.getElementById("btnStart").onclick = function () { doStart(); };
+      document.getElementById("btnSpin").onclick = function () { doSpin(); };
+      if (session.valid()) doStart();
+      else showErr("Missing user_id / session_id in URL (open from in-game machine).");
+    })();
+  </script>
+</body>
+</html>

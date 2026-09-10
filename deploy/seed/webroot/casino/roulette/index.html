@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Golden Ark Roulette</title>
+  <style type="text/css">
+    html, body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+  </style>
+</head>
+<body>
+  <script type="text/javascript">
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    var targetIP = location.protocol + '//' + location.host;
+
+    var node = document.createElement('embed');
+    node.setAttribute('type', 'application/x-shockwave-flash');
+    node.setAttribute('src', 'Roulette.swf');
+    node.setAttribute('width', '512px');
+    node.setAttribute('height', '432px');
+    node.setAttribute('menu', 'false');
+    node.setAttribute('wmode', 'opaque');
+    node.setAttribute(
+      'flashvars',
+      'user_id=' + getUrlParameter('user_id') +
+        '&session_id=' + getUrlParameter('session_id') +
+        '&language=' + (getUrlParameter('language') || 'EN') +
+        '&target_ip=' + targetIP
+    );
+    document.body.appendChild(node);
+  </script>
+  <noscript>Flash casino requires JavaScript and Adobe Flash (CleanFlash).</noscript>
+</body>
+</html>

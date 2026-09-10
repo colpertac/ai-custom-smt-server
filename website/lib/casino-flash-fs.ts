@@ -140,8 +140,23 @@ export async function writeCasinoSwf(
   }
 
   const live = getCasinoSwfPath(game)
-  await fs.mkdir(path.dirname(live), { recursive: true })
-  await fs.writeFile(live, bytes)
+  try {
+    await fs.mkdir(path.dirname(live), { recursive: true })
+    await fs.writeFile(live, bytes)
+  } catch (e) {
+    const code =
+      e && typeof e === "object" && "code" in e
+        ? String((e as { code?: string }).code)
+        : ""
+    if (code === "EROFS" || code === "EACCES" || code === "ENOENT") {
+      throw new CasinoFlashError(
+        `Cannot write ${live} (${code || "error"}). ` +
+          "Website needs a writable mount on data/webroot (compose) and " +
+          "world-writable or uid-1001 ownership on that folder."
+      )
+    }
+    throw e
+  }
 
   const mirror = getCasinoSwfMirrorPath(game)
   if (path.resolve(mirror) !== path.resolve(live)) {
