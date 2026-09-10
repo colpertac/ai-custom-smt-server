@@ -20,6 +20,8 @@ SMT deploy bootstrap — requires Docker + Docker Compose.
 Usage:
   ./install.sh --ip <EXTERNAL_IP> [options]
 
+Flags are lowercase and case-sensitive (--domain, not --Domain). Order does not matter.
+
 Options:
   --ip IP            Public IP or hostname clients use (required)
   --domain HOST      Optional: enable Caddy HTTPS (COMPOSE_PROFILES=https + DOMAIN).
@@ -86,6 +88,9 @@ while [[ $# -gt 0 ]]; do
     -h|--help)
       usage
       exit 0
+      ;;
+    --Domain|--DOMAIN)
+      die "unknown argument: $1 (use lowercase --domain; flags are case-sensitive)"
       ;;
     *)
       die "unknown argument: $1 (try --help)"

@@ -2,25 +2,31 @@
 
 Hub images:
 
-| Image | Role |
-| --- | --- |
-| **colpertac/smt-comp** | lobby / world / channel |
-| **colpertac/smt-website** | Next.js account site |
-| `nginx:1.27-alpine` | updater static files |
-| **ops** (compose build) | admin control plane (Docker socket) |
+| Image                     | Role                                |
+| ------------------------- | ----------------------------------- |
+| **colpertac/smt-comp**    | lobby / world / channel             |
+| **colpertac/smt-website** | Next.js account site                |
+| `nginx:1.27-alpine`       | updater static files                |
+| **ops** (compose build)   | admin control plane (Docker socket) |
 
 **Quick start (Docker already installed):**
 
 ```bash
 # Linux / mac — prompts for install path (default /opt/smt), copies deploy+ops there
+# Flags are lowercase and case-sensitive (--domain, not --Domain). Order does not matter.
 ./install.sh --ip YOUR.PUBLIC.IP
-./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt   # non-interactive path
+./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt
 
 # Optional HTTPS (Caddy + Let's Encrypt). DNS A/AAAA must point at this host.
 # Without --domain the stack stays HTTP on :3000 (website) and :8765 (updater).
+# With --domain, open https://your.domain (not http://IP:3000) — login cookies are
+# Secure/HTTPS-only and CSRF expects that origin. EXTERNAL_IP is still used for
+# game TCP (lobby/channel). Needs ports 80+443 reachable for Let's Encrypt.
 ./install.sh --ip YOUR.PUBLIC.IP --domain play.example.com
+./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt --domain play.example.com
 
 # Windows PowerShell (Docker Desktop) — default C:\smt
+# PowerShell uses PascalCase params (-Ip, -Domain, -Prefix); order does not matter.
 .\install.ps1 -Ip YOUR.PUBLIC.IP
 .\install.ps1 -Ip YOUR.PUBLIC.IP -Prefix "$env:USERPROFILE\smt"   # no admin needed
 .\install.ps1 -Ip YOUR.PUBLIC.IP -Domain play.example.com         # optional HTTPS
