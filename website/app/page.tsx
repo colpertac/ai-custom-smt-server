@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { NewsMarkdown } from "@/components/news-markdown"
 import { buttonVariants } from "@/components/ui/button"
+import { PlayerPresenceStats } from "@/features/status/components/PlayerPresenceStats"
 import { listPublishedNews } from "@/lib/news-store"
 import { getAboutMarkdown } from "@/lib/site-settings-store"
 import { cn } from "@/lib/utils"
@@ -84,50 +85,54 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-5xl gap-px border-b border-chrome-border bg-panel-rule sm:grid-cols-3">
-        {(
-          [
-            {
-              t: "Account",
-              d: "Register, manage password, and keep your characters on this realm.",
-              href: session ? "/account" : "/register",
-              link: session ? "Open account →" : "Create account →",
-            },
-            {
-              t: "Updater",
-              d: "Download the client, then run the updater so patches stay current.",
-              href: "/download",
-              link: "Setup guide →",
-            },
-            {
-              t: "Status",
-              d: "See if login, the world, or your play session is down — or if it is just your connection.",
-              href: "/status",
-              link: "Live status →",
-            },
-          ] as const
-        ).map((f) => (
-          <div
-            key={f.t}
-            className="bg-panel px-(--density-panel-x) py-(--density-panel-y)"
+      <section className="grid w-full gap-px border-b border-chrome-border bg-panel-rule sm:grid-cols-3">
+        <div className="bg-panel px-(--density-panel-x) py-(--density-panel-y) sm:px-8">
+          <h2 className="font-heading text-sm tracking-[0.2em] text-gold uppercase">
+            Account
+          </h2>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            Register, manage password, and keep your characters on this realm.
+          </p>
+          <Link
+            href={session ? "/account" : "/register"}
+            className="mt-3 inline-block text-xs text-foreground hover:text-gold-dim"
           >
+            {session ? "Open account →" : "Create account →"}
+          </Link>
+        </div>
+
+        <div className="bg-panel px-(--density-panel-x) py-(--density-panel-y) sm:px-8">
+          <h2 className="font-heading text-sm tracking-[0.2em] text-gold uppercase">
+            Updater
+          </h2>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            Download the client, then run the updater so patches stay current.
+          </p>
+          <Link
+            href="/download"
+            className="mt-3 inline-block text-xs text-foreground hover:text-gold-dim"
+          >
+            Setup guide →
+          </Link>
+        </div>
+
+        <div className="flex flex-col bg-panel px-(--density-panel-x) py-(--density-panel-y) sm:px-8">
+          <div className="flex items-baseline justify-between gap-3">
             <h2 className="font-heading text-sm tracking-[0.2em] text-gold uppercase">
-              {f.t}
+              Players
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {f.d}
-            </p>
             <Link
-              href={f.href}
-              className="mt-3 inline-block text-xs text-foreground hover:text-gold-dim"
+              href="/status"
+              className="text-[0.65rem] tracking-wide text-muted-foreground uppercase hover:text-gold-dim"
             >
-              {f.link}
+              Status →
             </Link>
           </div>
-        ))}
+          <PlayerPresenceStats className="mt-3 flex-1" panel />
+        </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-(--density-section-y)">
+      <section className="mx-auto w-full max-w-5xl px-4 py-(--density-section-y)">
         <div className="flex items-end justify-between gap-4 border-b border-chrome-border pb-3">
           <h2 className="font-heading text-xl tracking-[0.15em] uppercase">
             Latest news
@@ -159,7 +164,7 @@ export default async function HomePage() {
 
       <section
         id="about"
-        className="mx-auto max-w-5xl border-t border-chrome-border px-4 py-(--density-section-y)"
+        className="mx-auto w-full max-w-5xl border-t border-chrome-border px-4 py-(--density-section-y)"
       >
         <div className="flex items-end justify-between gap-4 border-b border-chrome-border pb-3">
           <h2 className="font-heading text-xl tracking-[0.15em] uppercase">

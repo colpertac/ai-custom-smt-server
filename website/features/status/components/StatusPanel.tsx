@@ -1,5 +1,6 @@
 "use client"
 
+import { PlayerPresenceStats } from "@/features/status/components/PlayerPresenceStats"
 import { useServerStatus } from "@/features/status/hooks"
 import type { ProbeState, ServiceStatus } from "@/lib/status"
 import { cn } from "@/lib/utils"
@@ -213,6 +214,13 @@ export function StatusPanel() {
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {summary.body}
         </p>
+      </div>
+
+      <div className="border border-border bg-muted/40 px-4 py-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Players
+        </p>
+        <PlayerPresenceStats className="mt-3" />
       </div>
 
       <ul className="divide-y divide-border border border-border bg-muted/40">
