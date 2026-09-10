@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Golden Ark Kino</title>
+  <link rel="stylesheet" href="../common.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Golden Ark Kino</h1>
+    <p class="meta" id="who">Loading…</p>
+    <div id="err" class="error" style="display:none;"></div>
+    <div class="panel">
+      <div class="row coins">Coins: <span id="coins">—</span> · Pending: <span id="pending">0</span> · Wins: <span id="wins">0</span></div>
+      <div class="row">Jackpot: <span id="jackpot">—</span> · Turn: <span id="turn">0</span></div>
+      <div class="row cards" id="cards">
+        <span>—</span><span>—</span><span>—</span>
+      </div>
+      <div class="row">
+        <button id="btnStart" type="button">Start</button>
+        <button id="btnBet" type="button" disabled="disabled">Lock bets</button>
+        <button id="btnDraw" type="button" disabled="disabled">Draw</button>
+      </div>
+      <div class="row" id="result">Pick predictions, lock bets, then draw.</div>
+    </div>
+    <div class="panel">
+      <table class="grid" id="preds">
+        <thead>
+          <tr><th>#</th><th>Prediction</th><th>Cost</th><th>Win</th><th>Max</th><th>Qty</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="../common.js"></script>
+  <script type="text/javascript">
+    (function () {
+      var C = casinoCommon;
+      var q = C.getQuery();
+      var session = new C.Session(q);
+      var labels = [
+        "All 7s", "All 1s", "All 6s", "Sum 19", "Sum 4", "Sum 5", "Sum 16",
+        "Sum 7", "Sum 14", "Sum 12", "All same #", "All angel", "All human",
+        "Has non-fallen", "Has angel cap", "Order L-N-C", "Empty 10",
+        "Coin multiplier", "Coin per turn", "Loss guard", "Easy angel cap",
+        "Easy any cap", "Easy angel", "No fallen cap"
+      ];
+      var costs = [];
+      var winnings = [];
+      var limits = [];
+      var betLocked = false;
+
+      function showErr(msg) {
+        var el = document.getElementById("err");
+        if (!msg) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        el.style.display = "block";
+        el.innerHTML = String(msg);
+      }
+
+      function parseArr(raw) {
+        if (!raw) return [];
+        if (typeof raw !== "string") return raw;
+        try {
+          return C.parseJson(raw);
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function cardLabel(id) {
+        var n = parseInt(id, 10);
+        if (isNaN(n)) return "?";
+        var suit = Math.floor(n / 10);
+        var val = n % 10;
+        var name = suit === 0 ? "Angel" : suit === 1 ? "Human" : "Fallen";
+        if (val === 0) return name + " Cap";
+        return name + " " + val;
+      }
+
+      function renderTable() {
+        var tb = document.getElementById("preds").getElementsByTagName("tbody")[0];
+        tb.innerHTML = "";
+        var i;
+        for (i = 0; i < labels.length; i++) {
+          var tr = document.createElement("tr");
+          var qty = '<input id="q' + i + '" type="text" value="0" size="2" />';
+          tr.innerHTML =
+            "<td>" + i + "</td>" +
+            "<td>" + labels[i] + "</td>" +
+            "<td>" + (costs[i] != null ? costs[i] : "?") + "</td>" +
+            "<td>" + (winnings[i] != null ? winnings[i] : "?") + "</td>" +
+            "<td>" + (limits[i] != null ? limits[i] : "?") + "</td>" +
+            "<td>" + qty + "</td>";
+          tb.appendChild(tr);
+        }
+      }
+
+      function collectBets() {
+        var vals = [];
+        var i, el, n;
+        for (i = 0; i < labels.length; i++) {
+          el = document.getElementById("q" + i);
+          n = el ? parseInt(el.value, 10) : 0;
+          if (isNaN(n) || n < 0) n = 0;
+          vals.push(n);
+        }
+        return vals.join(",");
+      }
+
+      function setCards(arr) {
+        var html = "";
+        var i;
+        if (!arr || !arr.length) {
+          html = "<span>—</span><span>—</span><span>—</span>";
+        } else {
+          for (i = 0; i < arr.length; i++) {
+            html += "<span>" + cardLabel(arr[i]) + "</span>";
+          }
+        }
+        document.getElementById("cards").innerHTML = html;
+      }
+
+      function doStart() {
+        showErr("");
+        if (!session.valid()) {
+          showErr("Missing user_id / session_id in URL (open from in-game machine).");
+          return;
+        }
+        C.setBusy(true);
+        C.startGame(
+          session,
+          "kino",
+          function (res) {
+            C.setBusy(false);
+            C.setText("coins", res.coins);
+            C.setText("jackpot", res.jackpot || "—");
+            costs = parseArr(res.predictCosts);
+            winnings = parseArr(res.predictWinnings);
+            limits = parseArr(res.predictLimits);
+            renderTable();
+            document.getElementById("btnStart").disabled = true;
+            document.getElementById("btnBet").disabled = false;
+            document.getElementById("btnDraw").disabled = true;
+            betLocked = false;
+            C.setText("result", "Set prediction quantities, then Lock bets.");
+          },
+          function (err) {
+            C.setBusy(false);
+            showErr(err);
+          }
+        );
+      }
+
+      function doBet() {
+        showErr("");
+        document.getElementById("btnBet").disabled = true;
+        C.updateGame(
+          session,
+          "bet",
+          { bets: collectBets() },
+          function (res) {
+            if (res.coins != null) C.setText("coins", res.coins);
+            betLocked = true;
+            document.getElementById("btnDraw").disabled = false;
+            C.setText(
+              "result",
+              "Bets locked (spent " + (res.betTotal || "?") + "). Draw when ready."
+            );
+          },
+          function (err) {
+            document.getElementById("btnBet").disabled = false;
+            showErr(err);
+          }
+        );
+      }
+
+      function doDraw() {
+        if (!betLocked) return;
+        showErr("");
+        document.getElementById("btnDraw").disabled = true;
+        C.updateGame(
+          session,
+          "draw",
+          { cards: "0,0,0" },
+          function (res) {
+            if (res.coins != null) C.setText("coins", res.coins);
+            if (res.pendingCoins != null) C.setText("pending", res.pendingCoins);
+            if (res.wins != null) C.setText("wins", res.wins);
+            if (res.turn != null) C.setText("turn", res.turn);
+            setCards(parseArr(res.cards));
+            var tr = String(res.turnResult || "0");
+            var msg = "Turn result " + tr;
+            if (tr === "1") msg = '<span class="ok">Win — banked pending coins</span>';
+            if (tr === "2") msg = '<span class="ok">JACKPOT</span>';
+            if (tr === "-1") msg = "Bust / loss";
+            if (res.paid) msg += " · paid " + res.paid;
+            C.setText("result", msg);
+            if (tr === "0") {
+              /* continue same round */
+              document.getElementById("btnDraw").disabled = false;
+            } else {
+              betLocked = false;
+              document.getElementById("btnBet").disabled = false;
+              document.getElementById("btnDraw").disabled = true;
+            }
+          },
+          function (err) {
+            document.getElementById("btnDraw").disabled = false;
+            showErr(err);
+          }
+        );
+      }
+
+      C.setText("who", session.character || session.username || "?");
+      document.getElementById("btnStart").onclick = function () { doStart(); };
+      document.getElementById("btnBet").onclick = function () { doBet(); };
+      document.getElementById("btnDraw").onclick = function () { doDraw(); };
+      if (session.valid()) doStart();
+      else showErr("Missing user_id / session_id in URL (open from in-game machine).");
+    })();
+  </script>
+</body>
+</html>

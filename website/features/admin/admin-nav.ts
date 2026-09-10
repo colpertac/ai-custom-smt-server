@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react"
 import {
   BookOpenText,
   Database,
+  Dices,
   FileText,
   Coins,
   Download,
@@ -89,6 +90,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         icon: FileText,
         match: "prefix",
       },
+      { href: "/admin/casino", label: "Casino", icon: Dices, match: "prefix" },
       { href: "/admin/config", label: "Config", icon: Settings, match: "prefix" },
       {
         href: "/admin/game-files",
@@ -143,6 +145,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/payouts")) return "Payouts"
   if (pathname.startsWith("/admin/dungeon-loot")) return "Dungeon loot"
   if (pathname.startsWith("/admin/report-rewards")) return "Dungeon loot"
+  if (pathname.startsWith("/admin/casino")) return "Casino"
   if (pathname.startsWith("/admin/studio")) return "Studio"
   if (pathname.startsWith("/admin/sql")) return "SQL"
   return "Admin"

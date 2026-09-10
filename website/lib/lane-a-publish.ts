@@ -32,6 +32,7 @@ import { getEventScheduleStatus } from "./events/event-schedule-fs.ts"
 import { setsEqual } from "./events/event-schedule-math.ts"
 import { listConfigStatus } from "./server-config/fs.ts"
 import { isGoldenApplesRestartPending } from "./golden-apple-fs.ts"
+import { isCasinoRestartPending } from "./webgames-fs.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
 export const LANE_A_REPORT_REWARDS_ZIP = "zzz_ai_custom_report_rewards_admin.zip"
@@ -514,6 +515,8 @@ export type LaneAPendingStatus = {
   eventsSchedulePending: boolean
   /** Golden Light apple amounts (NPC3401.xml) edited — channel restart needed. */
   goldenApplesDirty: boolean
+  /** Casino webgame .nut odds edited — lobby restart needed. */
+  casinoDirty: boolean
 }
 
 /**
@@ -538,6 +541,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     configStatuses,
     scheduleStatus,
     goldenApplesDirty,
+    casinoDirty,
   ] = await Promise.all([
     shopsTreeDigest(shopsWorkingDir()),
     shopsTreeDigest(shopsLive),
@@ -548,6 +552,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     listConfigStatus(),
     getEventScheduleStatus().catch(() => null),
     isGoldenApplesRestartPending(),
+    isCasinoRestartPending(),
   ])
 
   const shopsDirty = shopsWorking !== shopsLiveDigest
@@ -582,13 +587,15 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
       reportRewardsDirty ||
       channelDirty ||
       eventsSchedulePending ||
-      goldenApplesDirty,
+      goldenApplesDirty ||
+      casinoDirty,
     shopsDirty,
     payoutsDirty,
     reportRewardsDirty,
     channelDirty,
     eventsSchedulePending,
     goldenApplesDirty,
+    casinoDirty,
   }
 }
 

@@ -432,6 +432,19 @@ export async function restartOpsChannel(
   return result
 }
 
+async function clearCasinoPendingIfLobby(
+  services: string[] | undefined,
+  ok: boolean
+): Promise<void> {
+  if (!ok || !services?.includes("lobby")) return
+  try {
+    const { clearCasinoRestartPending } = await import("@/lib/webgames-fs")
+    await clearCasinoRestartPending()
+  } catch {
+    /* non-fatal */
+  }
+}
+
 export type OpsLaneAConfigPublishResult = {
   ok: boolean
   lane?: string
@@ -548,11 +561,13 @@ export async function restartOpsServices(
     body: JSON.stringify({ services }),
   })
   const base = mapOpsActionResult(status, json)
+  const restarted = Array.isArray(json.services)
+    ? json.services.filter((v): v is string => typeof v === "string")
+    : services
+  await clearCasinoPendingIfLobby(restarted, base.ok)
   return {
     ...base,
-    services: Array.isArray(json.services)
-      ? json.services.filter((v): v is string => typeof v === "string")
-      : undefined,
+    services: restarted,
   }
 }
 

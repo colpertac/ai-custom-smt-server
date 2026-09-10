@@ -274,14 +274,83 @@ export function AdminOpsHealth() {
 
       if (restart) {
         setPublishPhase("restarting")
-        const restartRes = await api.post("admin/ops/restart/channel")
+        // Manual Events / Config drafts live in working channel.xml — shops
+        // publish does not copy them. Apply config before process restart so
+        // the Events/channel bullet clears with Publish & restart.
+        if (laneAPending.channelDirty) {
+          const cfgValidateRes = await api.post(
+            "admin/ops/publish/lane-a-config/validate",
+            { json: { only: ["channel"] }, timeout: 120_000 }
+          )
+          const cfgValidateJson =
+            (await cfgValidateRes.json()) as OpsActionResponse
+          if (
+            !cfgValidateRes.ok ||
+            !cfgValidateJson.success ||
+            !cfgValidateJson.data?.releaseId
+          ) {
+            setPublishPhase("failed")
+            setError(
+              cfgValidateJson.message ||
+                "Shops published but channel.xml failed validation — fix Events/Config, then Apply & Restart on Events"
+            )
+            return
+          }
+          const cfgApplyRes = await api.post(
+            "admin/ops/publish/lane-a-config/apply",
+            {
+              json: {
+                releaseId: cfgValidateJson.data.releaseId,
+                restart: false,
+              },
+              timeout: 120_000,
+            }
+          )
+          const cfgApplyJson = (await cfgApplyRes.json()) as OpsActionResponse
+          if (!cfgApplyRes.ok || !cfgApplyJson.success) {
+            setPublishPhase("failed")
+            setError(
+              cfgApplyJson.message ||
+                "Shops published but channel.xml did not copy live — use Events → Apply & Restart Channel"
+            )
+            return
+          }
+        }
+        // Casino odds live in lobby webgame scripts — restart lobby before
+        // channel when those edits are pending (lobby → world → channel order).
+        const needLobby = laneAPending.casinoDirty
+        if (needLobby) {
+          const lobbyRes = await api.post("admin/ops/restart/lobby", {
+            timeout: 180_000,
+          })
+          const lobbyJson = (await lobbyRes.json()) as OpsActionResponse
+          if (!lobbyRes.ok || !lobbyJson.success) {
+            setPublishPhase("failed")
+            setError(
+              lobbyJson.message ||
+                "Content published but login (lobby) did not restart — use Power → restart lobby, then channel"
+            )
+            return
+          }
+        }
+        const restartRes = await api.post("admin/ops/restart/channel", {
+          timeout: 180_000,
+        })
         const restartJson = (await restartRes.json()) as OpsActionResponse
         if (!restartRes.ok || !restartJson.success) {
           setPublishPhase("failed")
           setError(
             restartJson.message ||
-              "Shops were copied but the game channel did not restart — use Restart on the Channel row under Power"
+              (needLobby
+                ? "Content published and lobby restarted, but the game channel did not — use Power → Channel"
+                : "Content published but the game channel did not restart — use Restart on the Channel row under Power")
           )
+          return
+        }
+        if (needLobby) {
+          setPublishPhase("done")
+          notifyLaneAPendingChanged()
+          void signOutAfterLobbyRestart()
           return
         }
       }
@@ -316,7 +385,7 @@ export function AdminOpsHealth() {
         setPublishPhase((p) => (p === "done" || p === "failed" ? "idle" : p))
       }, 800)
     }
-  }, [refresh])
+  }, [refresh, laneAPending.casinoDirty, laneAPending.channelDirty])
 
   const openPublishDialog = useCallback((restart: boolean) => {
     setPublishWithRestart(restart)
@@ -693,8 +762,8 @@ export function AdminOpsHealth() {
                 <li>
                   <span className="font-medium text-cyan-50">Events / channel</span>{" "}
                   — draft <code className="text-cyan-50">channel.xml</code>{" "}
-                  differs from live; Apply &amp; Restart on Events (Manual) or
-                  wait for the schedule reconciler
+                  differs from live; Publish &amp; restart copies it, or use
+                  Events → Apply &amp; Restart Channel
                 </li>
               ) : null}
               {laneAPending.eventsSchedulePending ? (
@@ -709,9 +778,16 @@ export function AdminOpsHealth() {
                   <span className="font-medium text-cyan-50">
                     Magical Golden Apples
                   </span>{" "}
-                  — Golden Light amounts (
-                  <code className="text-cyan-50">NPC3401.xml</code>) changed;
-                  restart the game channel to reload (Power → Channel)
+                  — Golden Light amounts changed; restart the game channel to
+                  reload (Power → Channel, or Publish &amp; restart)
+                </li>
+              ) : null}
+              {laneAPending.casinoDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Casino</span> —
+                  slot / roulette / kino odds saved; restart login (lobby) so
+                  players get them (Publish &amp; restart does lobby then
+                  channel)
                 </li>
               ) : null}
             </ul>
@@ -923,8 +999,13 @@ export function AdminOpsHealth() {
             <DialogDescription>
               We validate your drafts first (nothing live changes if validation fails),
               then copy shops and dungeon payouts to the live server
+              {publishWithRestart && laneAPending.channelDirty
+                ? ", publish draft channel.xml (events)"
+                : ""}
               {publishWithRestart
-                ? " and restart the game channel so players pick them up right away."
+                ? laneAPending.casinoDirty
+                  ? ", and restart login (lobby) then the game channel so casino odds and other live content apply."
+                  : ", and restart the game channel so players pick them up right away."
                 : ". The running channel keeps the old data until you restart it (Power → Channel, or Publish & restart)."}{" "}
               Use Undo last publish if something looks wrong.
             </DialogDescription>
