@@ -179,6 +179,9 @@ services:
       CHANNEL_PROBE_HOST: ${CHANNEL_PROBE_HOST:-channel}
       OPS_URL: ${OPS_URL:-http://ops:14710}
       OPS_TOKEN: ${OPS_TOKEN:?set OPS_TOKEN in .env}
+      # Lane A publish/apply must use the ops sidecar (RW /comp). Native mode
+      # writes releases/lane-a from the website process and fails on :ro mounts.
+      OPS_BACKEND: ${OPS_BACKEND:-docker}
       # Standalone image has no repo tree — pin writable paths (nextjs uid 1001).
       WEBSITE_DATA_DIR: /website-data
       OPS_RUNTIME: /comp

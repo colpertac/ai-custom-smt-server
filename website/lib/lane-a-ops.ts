@@ -26,7 +26,12 @@ function opsBackend(): string {
 /** File publish can run in the website process when not Docker-separated. */
 export function useNativeLaneAPublish(): boolean {
   const b = opsBackend()
-  return b === "native" || b === "local" || b === ""
+  if (b === "docker" || b === "sidecar" || b === "remote") return false
+  if (b === "native" || b === "local") return true
+  // Unset: prefer ops when OPS_URL points at the compose sidecar.
+  const opsUrl = (process.env.OPS_URL || "").trim().toLowerCase()
+  if (opsUrl.includes("://ops:") || opsUrl.includes("://ops/")) return false
+  return true
 }
 
 function mapLocal(result: LaneAPublishResult): OpsLaneAPublishResult {
