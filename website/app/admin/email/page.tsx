@@ -13,9 +13,11 @@ export default async function AdminEmailPage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Configure Resend for welcome and forgot-password email. Settings are
-        stored in the website database — no SSH or editing{" "}
-        <code className="text-[0.65rem]">.env</code> required.
+        Configure Resend for welcome and forgot-password email. Settings live in
+        the website database — no SSH or editing{" "}
+        <code className="text-[0.65rem]">.env</code>. Mail delivery works after
+        save; restart the lobby only so forgot password can talk to the game
+        login service.
       </p>
       <AdminEmailPanel />
     </div>

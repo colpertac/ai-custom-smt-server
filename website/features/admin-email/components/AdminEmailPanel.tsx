@@ -24,6 +24,17 @@ type EmailSettings = {
   mailConfigured: boolean
 }
 
+function StepBadge({ n }: { n: number }) {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs font-medium tabular-nums text-foreground"
+    >
+      {n}
+    </span>
+  )
+}
+
 export function AdminEmailPanel() {
   const [settings, setSettings] = useState<EmailSettings>({
     publicSiteUrl: "",
@@ -41,8 +52,11 @@ export function AdminEmailPanel() {
   const [restartingLobby, setRestartingLobby] = useState(false)
   const [lobbyStatus, setLobbyStatus] = useState<string | null>(null)
   const [lobbyReady, setLobbyReady] = useState<boolean | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [ok, setOk] = useState<string | null>(null)
+  const [feedback, setFeedback] = useState<{
+    step: 1 | 2 | 3 | "load"
+    kind: "error" | "success"
+    message: string
+  } | null>(null)
 
   const loadLobbyStatus = useCallback(async () => {
     try {
@@ -63,7 +77,7 @@ export function AdminEmailPanel() {
 
   const loadSettings = useCallback(async () => {
     setLoading(true)
-    setError(null)
+    setFeedback(null)
     try {
       const response = await api("admin/email/settings")
       const json = (await response.json()) as {
@@ -72,13 +86,21 @@ export function AdminEmailPanel() {
         data?: { settings?: EmailSettings }
       }
       if (!response.ok || !json.success) {
-        setError(json.message || `HTTP ${response.status}`)
+        setFeedback({
+          step: "load",
+          kind: "error",
+          message: json.message || `HTTP ${response.status}`,
+        })
         return
       }
       if (json.data?.settings) setSettings(json.data.settings)
       void loadLobbyStatus()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load settings")
+      setFeedback({
+        step: "load",
+        kind: "error",
+        message: e instanceof Error ? e.message : "Failed to load settings",
+      })
     } finally {
       setLoading(false)
     }
@@ -90,8 +112,7 @@ export function AdminEmailPanel() {
 
   const save = async () => {
     setSaving(true)
-    setError(null)
-    setOk(null)
+    setFeedback(null)
     try {
       const payload: Record<string, string> = {
         publicSiteUrl: settings.publicSiteUrl,
@@ -107,16 +128,28 @@ export function AdminEmailPanel() {
         data?: { settings?: EmailSettings }
       }
       if (!response.ok || !json.success) {
-        setError(json.message || `HTTP ${response.status}`)
+        setFeedback({
+          step: 1,
+          kind: "error",
+          message: json.message || `HTTP ${response.status}`,
+        })
         return
       }
       if (json.data?.settings) setSettings(json.data.settings)
       setApiKey("")
-      setOk(
-        "Saved. Restart the lobby so it loads the password-reset secret file."
-      )
+      setFeedback({
+        step: 1,
+        kind: "success",
+        message:
+          "Saved. Test email and welcome mail work now — restart lobby only for forgot-password (step 3).",
+      })
+      void loadLobbyStatus()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Save failed")
+      setFeedback({
+        step: 1,
+        kind: "error",
+        message: e instanceof Error ? e.message : "Save failed",
+      })
     } finally {
       setSaving(false)
     }
@@ -124,8 +157,7 @@ export function AdminEmailPanel() {
 
   const sendTest = async () => {
     setTesting(true)
-    setError(null)
-    setOk(null)
+    setFeedback(null)
     try {
       const response = await api.post("admin/email/test", {
         json: { to: testTo.trim() },
@@ -135,12 +167,24 @@ export function AdminEmailPanel() {
         message?: string
       }
       if (!response.ok || !json.success) {
-        setError(json.message || `HTTP ${response.status}`)
+        setFeedback({
+          step: 2,
+          kind: "error",
+          message: json.message || `HTTP ${response.status}`,
+        })
         return
       }
-      setOk(json.message || "Test email sent")
+      setFeedback({
+        step: 2,
+        kind: "success",
+        message: json.message || "Test email sent",
+      })
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Test send failed")
+      setFeedback({
+        step: 2,
+        kind: "error",
+        message: e instanceof Error ? e.message : "Test send failed",
+      })
     } finally {
       setTesting(false)
     }
@@ -148,8 +192,7 @@ export function AdminEmailPanel() {
 
   const restartLobby = async () => {
     setRestartingLobby(true)
-    setError(null)
-    setOk(null)
+    setFeedback(null)
     try {
       const response = await api.post("admin/ops/restart/lobby", {
         timeout: 180_000,
@@ -159,13 +202,25 @@ export function AdminEmailPanel() {
         message?: string
       }
       if (!response.ok || !json.success) {
-        setError(json.message || `HTTP ${response.status}`)
+        setFeedback({
+          step: 3,
+          kind: "error",
+          message: json.message || `HTTP ${response.status}`,
+        })
         return
       }
-      setOk(json.message || "Lobby restarted")
+      setFeedback({
+        step: 3,
+        kind: "success",
+        message: json.message || "Lobby restarted",
+      })
       void loadLobbyStatus()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Lobby restart failed")
+      setFeedback({
+        step: 3,
+        kind: "error",
+        message: e instanceof Error ? e.message : "Lobby restart failed",
+      })
     } finally {
       setRestartingLobby(false)
     }
@@ -175,26 +230,39 @@ export function AdminEmailPanel() {
     return <p className="text-sm text-muted-foreground">Loading…</p>
   }
 
+  const stepAlert = (step: 1 | 2 | 3 | "load") =>
+    feedback?.step === step ? (
+      <FormAlert variant={feedback.kind === "success" ? "success" : "error"}>
+        {feedback.message}
+      </FormAlert>
+    ) : null
+
   return (
     <div className="space-y-6">
-      {error ? <FormAlert>{error}</FormAlert> : null}
-      {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
+      {stepAlert("load")}
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Resend (transactional email)</CardTitle>
-          <CardDescription>
-            Powers welcome mail and forgot-password links. Get an API key at{" "}
-            <a
-              href="https://resend.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline-offset-4 hover:underline"
-            >
-              resend.com
-            </a>{" "}
-            and verify your sender domain.
-          </CardDescription>
+          <div className="flex items-start gap-3">
+            <StepBadge n={1} />
+            <div className="min-w-0 space-y-1.5">
+              <CardTitle className="text-base">Configure Resend</CardTitle>
+              <CardDescription>
+                Powers welcome mail, test sends, and forgot-password emails.
+                Get an API key at{" "}
+                <a
+                  href="https://resend.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline-offset-4 hover:underline"
+                >
+                  resend.com
+                </a>{" "}
+                and verify your sender domain. Settings apply to the website
+                immediately on save — no lobby restart for mail delivery.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <FieldGroup>
@@ -209,8 +277,8 @@ export function AdminEmailPanel() {
                 }
               />
               <p className="mt-1 text-xs text-muted-foreground">
-                Public portal address — used in reset links, welcome mail, and the
-                email footer. Match what players type in the browser.
+                Public portal address — used in reset links, welcome mail, and
+                the email footer. Match what players type in the browser.
               </p>
             </Field>
             <Field>
@@ -260,36 +328,74 @@ export function AdminEmailPanel() {
           <Button type="button" disabled={saving} onClick={() => void save()}>
             {saving ? "Saving…" : "Save email settings"}
           </Button>
+          {stepAlert(1)}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Password reset</CardTitle>
-          <CardDescription>
-            The lobby needs the same secret as the website. It is stored here and
-            written to{" "}
-            <code className="text-xs">website-data/comp-reset-secret</code> for
-            the lobby container on startup.
-            {settings.resetSecretConfigured ? (
-              <> Secret is configured.</>
-            ) : (
-              <> Saving generates one automatically.</>
-            )}
-          </CardDescription>
+          <div className="flex items-start gap-3">
+            <StepBadge n={2} />
+            <div className="min-w-0 space-y-1.5">
+              <CardTitle className="text-base">Send a test email</CardTitle>
+              <CardDescription>
+                {settings.mailConfigured
+                  ? "Confirms Resend delivery. No lobby restart needed — same path as welcome mail."
+                  : "Save a Resend API key and from address in step 1 first."}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <Field className="min-w-[16rem] flex-1">
+              <FieldLabel htmlFor="email-test-to">Send to</FieldLabel>
+              <Input
+                id="email-test-to"
+                type="email"
+                placeholder="you@example.com"
+                value={testTo}
+                onChange={(e) => setTestTo(e.target.value)}
+              />
+            </Field>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={testing || !settings.mailConfigured || !testTo.trim()}
+              onClick={() => void sendTest()}
+            >
+              {testing ? "Sending…" : "Send test"}
+            </Button>
+          </div>
+          {stepAlert(2)}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-start gap-3">
+            <StepBadge n={3} />
+            <div className="min-w-0 space-y-1.5">
+              <CardTitle className="text-base">
+                Restart lobby for forgot password
+              </CardTitle>
+              <CardDescription>
+                Welcome mail and test sends do not need this. Forgot password
+                does: the lobby must load the shared reset secret written on
+                save (
+                <code className="text-[0.65rem]">
+                  website-data/comp-reset-secret
+                </code>
+                ). Restart once after first save, or whenever lobby status says
+                the secret is missing or mismatched.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {lobbyReady === false && lobbyStatus ? (
             <FormAlert>{lobbyStatus}</FormAlert>
           ) : null}
-          {lobbyReady === true && lobbyStatus ? (
-            <FormAlert variant="success">{lobbyStatus}</FormAlert>
-          ) : null}
-          <p className="text-xs text-muted-foreground">
-            Only accounts with a real email receive reset links. After saving,
-            restart the lobby once so it reads{" "}
-            <code className="text-[0.65rem]">comp-reset-secret</code>.
-          </p>
           <Button
             type="button"
             variant="outline"
@@ -298,42 +404,13 @@ export function AdminEmailPanel() {
           >
             {restartingLobby ? "Restarting lobby…" : "Restart lobby"}
           </Button>
+          {stepAlert(3)}
           {!settings.resetSecretConfigured ? (
             <p className="text-xs text-muted-foreground">
-              Save email settings first to generate the reset secret.
+              Save email settings in step 1 first — that generates the reset
+              secret.
             </p>
           ) : null}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Send test email</CardTitle>
-          <CardDescription>
-            {settings.mailConfigured
-              ? "Verify delivery before players use forgot password."
-              : "Save a Resend API key and from address first."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-wrap items-end gap-3">
-          <Field className="min-w-[16rem] flex-1">
-            <FieldLabel htmlFor="email-test-to">Send to</FieldLabel>
-            <Input
-              id="email-test-to"
-              type="email"
-              placeholder="you@example.com"
-              value={testTo}
-              onChange={(e) => setTestTo(e.target.value)}
-            />
-          </Field>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={testing || !settings.mailConfigured || !testTo.trim()}
-            onClick={() => void sendTest()}
-          >
-            {testing ? "Sending…" : "Send test"}
-          </Button>
         </CardContent>
       </Card>
     </div>
