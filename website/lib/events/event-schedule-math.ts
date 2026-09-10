@@ -298,19 +298,21 @@ export function nextScheduleChangeAt(
 export function defaultEventScheduleConfig(
   now: Date = new Date()
 ): EventScheduleConfig {
-  // Fresh installs / missing schedule file: Manual control (enabled:false),
-  // empty loop+calendar, Shinjuku Under Wonderground always-on preference.
-  // Live active set still comes from channel.xml DataStore partials.
-  const anchorDate = formatDateInTimeZone(now, DEFAULT_TIMEZONE)
+  // Fallback only when event-schedule.json is missing. The website image ships
+  // content/events/event-schedule.json with Dense archive loop days preloaded,
+  // Manual control (enabled:false), empty calendar, midnight NY, anchor
+  // 2026-01-01, alwaysOn Wonder + Daily Mission Chests. Live active partials
+  // still come from channel.xml DataStore.
+  void now
   return {
     version: 2,
     enabled: false,
     mode: "loop",
     timezone: DEFAULT_TIMEZONE,
-    flipTime: DEFAULT_FLIP_TIME,
-    alwaysOnIds: ["201506_wonder"],
+    flipTime: "00:00",
+    alwaysOnIds: ["201506_wonder", "201604_misc"],
     loop: {
-      anchorDate,
+      anchorDate: "2026-01-01",
       days: [],
     },
     calendar: { days: [] },

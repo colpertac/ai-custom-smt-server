@@ -16,9 +16,14 @@ Hub images:
 ./install.sh --ip YOUR.PUBLIC.IP
 ./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt   # non-interactive path
 
+# Optional HTTPS (Caddy + Let's Encrypt). DNS A/AAAA must point at this host.
+# Without --domain the stack stays HTTP on :3000 (website) and :8765 (updater).
+./install.sh --ip YOUR.PUBLIC.IP --domain play.example.com
+
 # Windows PowerShell (Docker Desktop) — default C:\smt
 .\install.ps1 -Ip YOUR.PUBLIC.IP
 .\install.ps1 -Ip YOUR.PUBLIC.IP -Prefix "$env:USERPROFILE\smt"   # no admin needed
+.\install.ps1 -Ip YOUR.PUBLIC.IP -Domain play.example.com         # optional HTTPS
 ```
 
 If the default path is not writable, the script stops with instructions (Linux:
@@ -27,7 +32,8 @@ If the default path is not writable, the script stops with instructions (Linux:
 See [youtube-1.0-setup.md](../docs/youtube-1.0-setup.md) for the recording checklist.
 
 Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxmox-smoke.md),
-[website-updater-docker.md](../docs/website-updater-docker.md), [oracle-vps.md](../docs/oracle-vps.md).
+[website-updater-docker.md](../docs/website-updater-docker.md), [oracle-vps.md](../docs/oracle-vps.md),
+[install-defaults.md](../docs/install-defaults.md) (what ships in seeds / images).
 
 ```bash
 # Publish (build PC — clone comp_hack as sibling ../comp_hack)

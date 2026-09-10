@@ -2,6 +2,9 @@
 
 Human-facing **ops** notes (deploy, IDs, lobby API, backups).
 
+**Fresh install / image defaults:** [`install-defaults.md`](install-defaults.md)
+(what ships vs what must stay empty).
+
 Localization community repo: [`translation-l10n.md`](translation-l10n.md)
 ([colpertac/smt-imagine-l10n](https://github.com/colpertac/smt-imagine-l10n)).
 

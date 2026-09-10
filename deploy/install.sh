@@ -150,9 +150,10 @@ copy_install_tree() {
   echo "Installing to $dest_prefix …"
   mkdir -p "$dest_prefix"
   if command -v rsync >/dev/null 2>&1; then
+    # Anchor excludes at transfer root so seed/updater is still copied.
     rsync -a \
-      --exclude data --exclude updater --exclude website-data \
-      --exclude .env \
+      --exclude /data/ --exclude /updater/ --exclude /website-data/ \
+      --exclude /.env \
       "$SCRIPT_DIR/" "$dest_deploy/"
     rsync -a --exclude audit.log "$SOURCE_OPS_DIR/" "$dest_ops/"
   else
