@@ -30,11 +30,17 @@ export async function withCompSession<T>(
   if (!peek) {
     throw new CompSessionMissingError()
   }
+  if (peek.offlineOps) {
+    throw new CompOfflineOpsError()
+  }
 
   return withUsernameLock(peek.username, async () => {
     const session = await readSession()
     if (!session) {
       throw new CompSessionMissingError()
+    }
+    if (session.offlineOps) {
+      throw new CompOfflineOpsError()
     }
     session.challenge = resolveChallenge(session.username, session.challenge)
     try {
@@ -55,5 +61,13 @@ export class CompSessionMissingError extends Error {
   constructor() {
     super("Not signed in")
     this.name = "CompSessionMissingError"
+  }
+}
+
+/** Cookie from SQLite offline login — COMP challenge state is not live. */
+export class CompOfflineOpsError extends Error {
+  constructor() {
+    super("Sign in again after lobby is up")
+    this.name = "CompOfflineOpsError"
   }
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import { ArrowLeft } from "lucide-react"
 
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/features/admin/admin-nav"
 import { useLaneAPending } from "@/features/admin/lane-a-pending"
 import { useOpenReportsPending } from "@/features/admin/open-reports-pending"
+import { api } from "@/lib/kyClient"
 import { cn } from "@/lib/utils"
 
 function navPendingDot(
@@ -29,15 +31,47 @@ function navPendingDot(
 
 export function AdminShell({
   username,
+  offlineOps = false,
   children,
 }: {
   username: string
+  offlineOps?: boolean
   children: React.ReactNode
 }) {
   const pathname = usePathname()
   const title = adminPageTitle(pathname)
   const laneA = useLaneAPending()
   const openReports = useOpenReportsPending()
+  const [lobbyDown, setLobbyDown] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function refreshLobby() {
+      try {
+        const res = await api.get("status")
+        const json = (await res.json()) as {
+          success?: boolean
+          data?: { services?: Array<{ id: string; state: string }> }
+        }
+        if (cancelled || !json.success) return
+        const lobby = json.data?.services?.find((s) => s.id === "lobby")
+        setLobbyDown(lobby?.state === "down")
+      } catch {
+        if (!cancelled) setLobbyDown(true)
+      }
+    }
+
+    void refreshLobby()
+    const id = window.setInterval(refreshLobby, 10_000)
+    return () => {
+      cancelled = true
+      window.clearInterval(id)
+    }
+  }, [])
+
+  // Offline cookie or live lobby down — Overview (Start) only.
+  const restrictNav = offlineOps || lobbyDown
 
   return (
     <div className="flex min-h-[calc(100svh-3.5rem)] w-full flex-col lg:flex-row">
@@ -68,34 +102,48 @@ export function AdminShell({
                   laneA.pending,
                   openReports.pending
                 )
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
-                      on
-                        ? "border-gold bg-[#161c28] text-foreground"
-                        : "border-transparent text-muted-foreground hover:bg-[#121824] hover:text-foreground"
-                    )}
-                  >
-                    <Icon
+                const navClass = cn(
+                  "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
+                  on
+                    ? "border-gold bg-[#161c28] text-foreground"
+                    : "border-transparent text-muted-foreground hover:bg-[#121824] hover:text-foreground"
+                )
+                const iconClass = cn(
+                  "size-3.5 shrink-0",
+                  on ? "text-gold-dim" : "text-muted-foreground"
+                )
+                const label = (
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                    <span className="truncate">{item.label}</span>
+                    {pendingDot ? (
+                      <span
+                        className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
+                        title={pendingDot.title}
+                        aria-label={pendingDot.title}
+                      />
+                    ) : null}
+                  </span>
+                )
+                if (restrictNav && item.href !== "/admin") {
+                  return (
+                    <span
+                      key={item.href}
+                      aria-disabled
+                      title="Unavailable while lobby is down — Start servers from Overview, then sign in again"
                       className={cn(
-                        "size-3.5 shrink-0",
-                        on ? "text-gold-dim" : "text-muted-foreground"
+                        navClass,
+                        "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground"
                       )}
-                      aria-hidden
-                    />
-                    <span className="flex min-w-0 flex-1 items-center gap-1.5">
-                      <span className="truncate">{item.label}</span>
-                      {pendingDot ? (
-                        <span
-                          className="size-1.5 shrink-0 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.85)]"
-                          title={pendingDot.title}
-                          aria-label={pendingDot.title}
-                        />
-                      ) : null}
+                    >
+                      <Icon className={iconClass} aria-hidden />
+                      {label}
                     </span>
+                  )
+                }
+                return (
+                  <Link key={item.href} href={item.href} className={navClass}>
+                    <Icon className={iconClass} aria-hidden />
+                    {label}
                   </Link>
                 )
               })}
@@ -125,6 +173,16 @@ export function AdminShell({
             Account
           </Link>
         </header>
+        {restrictNav ? (
+          <div
+            role="status"
+            className="border-b border-amber-500/40 bg-amber-950/40 px-4 py-2 text-xs text-amber-100"
+          >
+            Login service (lobby) is down. Use Overview to Start servers
+            {offlineOps ? ", then sign in again" : ""}. Other admin tools stay
+            disabled until lobby is up.
+          </div>
+        ) : null}
         <div
           className={cn(
             "mx-auto w-full flex-1 px-4 py-5",

@@ -8,6 +8,7 @@ import { displayEmail } from "@/lib/email"
 import { clearSession, readSession } from "@/lib/session"
 import {
   CompSessionMissingError,
+  CompOfflineOpsError,
   withCompSession,
 } from "@/lib/web-session"
 
@@ -20,6 +21,7 @@ function sessionFromCookie() {
       dispName: session.dispName ?? session.username,
       userLevel: session.userLevel ?? 0,
       mustChangePassword: Boolean(session.mustChangePassword),
+      offlineOps: Boolean(session.offlineOps),
     }
   })
 }
@@ -55,6 +57,11 @@ export async function GET(request: Request) {
   } catch (error) {
     if (error instanceof CompSessionMissingError) {
       return apiOk(null)
+    }
+    if (error instanceof CompOfflineOpsError) {
+      const cached = await sessionFromCookie()
+      if (cached) return apiOk(cached)
+      return apiFail(error.message, 503, "OFFLINE_OPS")
     }
     if (error instanceof CompApiError && error.status === 401) {
       await clearSession()

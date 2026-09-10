@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest"
 
 import { CompApiError } from "@/lib/comp-api"
-import { classifyLoginError } from "@/lib/login-errors"
+import {
+  classifyLoginError,
+  isCompUnreachable,
+  LOBBY_DOWN_LOGIN_MESSAGE,
+} from "@/lib/login-errors"
 
 describe("classifyLoginError", () => {
   it("maps lobby get_challenge 400 (unknown user) to 401", () => {
@@ -28,11 +32,23 @@ describe("classifyLoginError", () => {
     })
   })
 
-  it("maps unknown errors to 502", () => {
+  it("maps unreachable errors to a friendly lobby-down message", () => {
     expect(classifyLoginError(new Error("fetch failed"))).toEqual({
-      message: "fetch failed",
+      message: LOBBY_DOWN_LOGIN_MESSAGE,
       statusCode: 502,
       error: "COMP",
     })
+  })
+})
+
+describe("isCompUnreachable", () => {
+  it("is false when lobby returned an HTTP CompApiError", () => {
+    expect(isCompUnreachable(new CompApiError("bad", 401))).toBe(false)
+    expect(isCompUnreachable(new CompApiError("down", 503))).toBe(false)
+  })
+
+  it("is true for network / fetch failures", () => {
+    expect(isCompUnreachable(new Error("fetch failed"))).toBe(true)
+    expect(isCompUnreachable(new TypeError("fetch failed"))).toBe(true)
   })
 })

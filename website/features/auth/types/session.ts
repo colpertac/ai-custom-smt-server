@@ -12,4 +12,6 @@ export type SessionUser = {
   banInitiator?: string
   /** True when logged in with default admin/admin123 — must change before continuing. */
   mustChangePassword?: boolean
+  /** Admin signed in via Account SQLite while lobby COMP was unreachable. */
+  offlineOps?: boolean
 }

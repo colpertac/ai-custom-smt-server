@@ -8,5 +8,9 @@ export default async function AdminLayout({
 }) {
   const session = await requireAdmin()
 
-  return <AdminShell username={session.username}>{children}</AdminShell>
+  return (
+    <AdminShell username={session.username} offlineOps={session.offlineOps}>
+      {children}
+    </AdminShell>
+  )
 }

@@ -16,6 +16,11 @@ export type WebSession = CompAuthState & {
   userLevel?: number
   /** Logged in with default admin password — force change. */
   mustChangePassword?: boolean
+  /**
+   * Signed in via Account SQLite while COMP lobby HTTP was unreachable.
+   * Ops Start/Stop work; COMP-backed APIs must be rejected until re-login.
+   */
+  offlineOps?: boolean
 }
 
 /** A256GCM requires a 32-byte key; derive from the configured secret. */
@@ -68,6 +73,7 @@ export async function readSession(): Promise<WebSession | null> {
       userLevel:
         typeof payload.userLevel === "number" ? payload.userLevel : undefined,
       mustChangePassword: Boolean(payload.mustChangePassword),
+      offlineOps: Boolean(payload.offlineOps),
     }
   } catch {
     return null

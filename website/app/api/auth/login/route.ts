@@ -7,9 +7,17 @@ import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isDefaultAdminCredentials, SKIP_DEFAULT_ADMIN_PASSWORD_PROMPT_KEY } from "@/lib/default-admin"
 import { loginSchema } from "@/features/auth/schemas/login.schema"
-import { classifyLoginError } from "@/lib/login-errors"
+import {
+  classifyLoginError,
+  isCompUnreachable,
+  LOBBY_DOWN_LOGIN_MESSAGE,
+} from "@/lib/login-errors"
+import { verifyLobbyAdminPassword } from "@/lib/lobby-db"
 import { sealSession } from "@/lib/session"
 import { getSiteSetting } from "@/lib/site-settings-store"
+
+/** Placeholder challenge for offlineOps sessions (COMP unused until re-login). */
+const OFFLINE_OPS_CHALLENGE = "offline"
 
 export async function POST(request: Request) {
   const blocked = await guardApiMutation("login", 10, 60_000)
@@ -55,6 +63,40 @@ export async function POST(request: Request) {
       mustChangePassword,
     })
   } catch (error) {
+    if (isCompUnreachable(error)) {
+      const offline = verifyLobbyAdminPassword(
+        parsed.data.username,
+        parsed.data.password
+      )
+      if (offline.ok) {
+        const mustChangePassword =
+          isDefaultAdminCredentials(
+            parsed.data.username,
+            parsed.data.password
+          ) && getSiteSetting(SKIP_DEFAULT_ADMIN_PASSWORD_PROMPT_KEY) !== "1"
+
+        await sealSession({
+          username: offline.username,
+          passwordHash: offline.passwordHash,
+          challenge: OFFLINE_OPS_CHALLENGE,
+          dispName: offline.dispName,
+          userLevel: offline.userLevel,
+          mustChangePassword,
+          offlineOps: true,
+        })
+
+        return apiOk({
+          username: offline.username,
+          dispName: offline.dispName,
+          userLevel: offline.userLevel,
+          mustChangePassword,
+          offlineOps: true,
+        })
+      }
+
+      return apiFail(LOBBY_DOWN_LOGIN_MESSAGE, 502, "COMP")
+    }
+
     const fail = classifyLoginError(error)
     return apiFail(fail.message, fail.statusCode, fail.error)
   }

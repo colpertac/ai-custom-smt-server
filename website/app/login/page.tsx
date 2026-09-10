@@ -22,7 +22,7 @@ export default async function LoginPage({
 
   const params = await searchParams
   const notice = params.lobbyRestarted
-    ? "Game servers were restarted. Sign in again so admin tools can reach the lobby."
+    ? "Game servers were restarted. Sign in again so admin tools can reach the lobby. If login fails because lobby is still down, use your usual admin password — offline sign-in opens Admin so you can Start servers."
     : params.passwordChanged
       ? "Password updated. Sign in with your new password."
       : null

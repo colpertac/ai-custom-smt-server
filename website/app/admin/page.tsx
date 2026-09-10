@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { AdminAnnouncePanel } from "@/features/admin/components/AdminAnnouncePanel"
+import { AdminLobbyDownBanner } from "@/features/admin/components/AdminLobbyDownBanner"
 import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
 import { AdminOpsHealth } from "@/features/admin/components/AdminOpsHealth"
 import { requireAdmin } from "@/features/auth/server"
@@ -14,6 +15,8 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-6">
+      <AdminLobbyDownBanner />
+
       <p className="text-xs text-muted-foreground">
         Signed in as{" "}
         <span className="text-foreground">{session.username}</span>. Check

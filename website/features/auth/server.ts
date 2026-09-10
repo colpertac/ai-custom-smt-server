@@ -12,6 +12,7 @@ export async function getServerUser(): Promise<SessionUser | null> {
     dispName: session.dispName,
     userLevel: session.userLevel,
     mustChangePassword: Boolean(session.mustChangePassword),
+    offlineOps: Boolean(session.offlineOps),
   }
 }
 
@@ -28,6 +29,7 @@ export async function redirectIfLoggedIn(to = "/account"): Promise<void> {
 export async function requireAdmin(): Promise<SessionUser> {
   const user = await requireAuth()
   if (!isAdminLevel(user.userLevel)) redirect("/account")
-  if (user.mustChangePassword) redirect("/account")
+  // Offline recovery must reach Admin → Start even with default password.
+  if (user.mustChangePassword && !user.offlineOps) redirect("/account")
   return user
 }

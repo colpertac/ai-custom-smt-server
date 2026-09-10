@@ -6,6 +6,15 @@ export type ClassifiedApiFail = {
   error: string
 }
 
+/** Lobby answered over HTTP — do not fall back to Account SQLite. */
+export function isCompUnreachable(error: unknown): boolean {
+  return !(error instanceof CompApiError)
+}
+
+/** Shown when COMP is down and offline admin verify also fails. */
+export const LOBBY_DOWN_LOGIN_MESSAGE =
+  "Login service (lobby) is down. Admins can sign in with their usual password once the account database is available."
+
 /**
  * Map COMP / network failures from the login route to BFF responses.
  *
@@ -26,6 +35,14 @@ export function classifyLoginError(error: unknown): ClassifiedApiFail {
     return {
       message: error.message,
       statusCode: error.status >= 500 ? 502 : error.status,
+      error: "COMP",
+    }
+  }
+
+  if (isCompUnreachable(error)) {
+    return {
+      message: LOBBY_DOWN_LOGIN_MESSAGE,
+      statusCode: 502,
       error: "COMP",
     }
   }

@@ -27,11 +27,11 @@ export function LoginForm() {
   function onSubmit(data: LoginInput) {
     loginMutation.mutate(data, {
       onSuccess: (user) => {
-        if (user.mustChangePassword) {
+        if (user.mustChangePassword && !user.offlineOps) {
           router.refresh()
           return
         }
-        router.push("/account")
+        router.push(user.offlineOps ? "/admin" : "/account")
         router.refresh()
       },
       onError: (e) => {

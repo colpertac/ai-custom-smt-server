@@ -32,6 +32,25 @@ Not JWT. In-memory sessions keyed by username on the lobby process.
 
 Passwords in the DB are stored as `SHA-512(password + salt)`.
 
+## Offline admin login (lobby down)
+
+When lobby COMP HTTP is unreachable, the website login BFF can verify an
+**enabled** account with `user_level >= 1000` against the read-only lobby
+Account SQLite (`COMP_LOBBY_DB`, default
+`comp_hack/runtime/database/comp_hack.sqlite3`). That seals an `offlineOps`
+web session so Admin → Overview → Start can bring lobby back without SSH.
+Other admin nav (studio, shops, uploads, etc.) is disabled in the sidebar
+until a normal COMP login after lobby is up.
+
+Requirements:
+
+- Account DB file readable by the website process
+- An existing enabled admin account (empty first-boot DB still needs host /
+  `comp_hack/scripts/start.sh`)
+
+Non-admins cannot use this path. After Start/restart, sign out and sign in
+again via normal COMP challenge-response.
+
 ## Account endpoints (all POST, JSON)
 
 | Path | Auth | Notes |
