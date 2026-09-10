@@ -1,7 +1,7 @@
 /*** Server settings for the game ***/
 
 // Coin cost to play
-const COIN_COST = 10;
+const COIN_COST = 12;
 
 // Reel item types mapped to the payout indexes below (invertly visually)
 local REEL_ITEMS = [ [ 0, 0, 0 ],

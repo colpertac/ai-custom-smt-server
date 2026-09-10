@@ -143,12 +143,35 @@ export function resolveVersionDataEntries(
   return entries
 }
 
+/**
+ * Client embedded-IE URLs. Casino machines load Flash under lobby WebRoot
+ * (`webroot/casino/{slot,roulette,kino}/`) which talks to same-origin
+ * `/api/webgame/*`.
+ *
+ * Format placeholders: user_id, user_password, character_name, world_id,
+ * session_id, mid (machine id) — filled by ImagineClient.
+ */
 export function buildWebaccessPlaintext(
   baseHost: string,
   loginPort: number,
   scheme: "http" | "https"
 ): string {
-  return `<login = ${scheme}://${baseHost}:${loginPort}/>\n`
+  const origin = `${scheme}://${baseHost}:${loginPort}`
+  const auth =
+    "user_id=%s&user_password=%s&character_name=%s&world_id=%d&session_id=%s"
+  return (
+    `<dbnet = ${origin}/accountmanager/index.html?${auth}>\n` +
+    `<dcoshop = ${origin}/accountmanager/index.html?${auth}>\n` +
+    `<slot = ${origin}/casino/slot/index.html?${auth}&mid=%d>\n` +
+    `<roulette = ${origin}/casino/roulette/index.html?${auth}>\n` +
+    `<videogame = ${origin}/casino/unavailable/index.html?${auth}&mid=%d>\n` +
+    `<slotvip = ${origin}/casino/slot/index.html?${auth}&mid=%d>\n` +
+    `<roulettevip = ${origin}/casino/roulette/index.html?${auth}>\n` +
+    `<videogamevip = ${origin}/casino/unavailable/index.html?${auth}&mid=%d>\n` +
+    `<kino = ${origin}/casino/kino/index.html?${auth}>\n` +
+    `<login = ${origin}/>\n` +
+    `<birthday = ${origin}/accountmanager/index.html?user_id=%s&user_password=%s>\n`
+  )
 }
 
 async function encryptWebaccessLocal(plaintext: Buffer): Promise<Buffer> {

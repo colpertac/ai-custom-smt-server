@@ -2,9 +2,28 @@ import { describe, expect, it } from "vitest"
 
 import {
   buildVersionData,
+  buildWebaccessPlaintext,
   resolveVersionDataEntries,
   sanitizeVersionDataTag,
 } from "./client-config-pack"
+
+describe("buildWebaccessPlaintext", () => {
+  it("points casino machines at lobby webroot HTML UIs", () => {
+    const text = buildWebaccessPlaintext("127.0.0.1", 10999, "http")
+    expect(text).toContain(
+      "<slot = http://127.0.0.1:10999/casino/slot/index.html?"
+    )
+    expect(text).toContain(
+      "<roulette = http://127.0.0.1:10999/casino/roulette/index.html?"
+    )
+    expect(text).toContain(
+      "<kino = http://127.0.0.1:10999/casino/kino/index.html?"
+    )
+    expect(text).toContain("<login = http://127.0.0.1:10999/>")
+    expect(text).toContain("session_id=%s")
+    expect(text).toContain("mid=%d")
+  })
+})
 
 describe("buildVersionData", () => {
   it("builds a single-server file", () => {
