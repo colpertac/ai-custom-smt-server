@@ -88,9 +88,7 @@ export function CalendarModeBoard({
   }, [days, titleByEventId])
 
   useEffect(() => {
-    const el =
-      calendarRef.current?.getApi()?.el ??
-      rootRef.current?.querySelector<HTMLElement>(".fc")
+    const el = rootRef.current?.querySelector<HTMLElement>(".fc")
     // Defer one frame so FullCalendar finishes painting day cells.
     const id = window.requestAnimationFrame(() => {
       applySelectedDayClass(el, selectedDate)
@@ -151,7 +149,7 @@ export function CalendarModeBoard({
         dateClick={onDateClick}
         eventClick={onEventClick}
         datesSet={() => {
-          const el = calendarRef.current?.getApi()?.el
+          const el = rootRef.current?.querySelector<HTMLElement>(".fc")
           applySelectedDayClass(el, selectedDateRef.current)
         }}
         dayMaxEvents={3}
