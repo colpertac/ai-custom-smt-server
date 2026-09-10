@@ -1,13 +1,40 @@
+{
+	# Allow multi‑GB admin zip bodies (default is already unlimited, but be explicit).
+	servers {
+		timeouts {
+			read_body 2h
+			read_header 1m
+			write 2h
+			idle 2h
+		}
+		# HTTP/3 (QUIC) can stall long browser uploads; stick to H1/H2.
+		protocols h1 h2
+	}
+}
+
 {$DOMAIN} {
-    encode zstd gzip
+	# Large admin zip ingest: long upstream timeouts, unbuffered proxy.
+	handle /api/admin/ops/ingest/zip* {
+		reverse_proxy website:3000 {
+			transport http {
+				read_timeout 2h
+				write_timeout 2h
+				response_header_timeout 2h
+				dial_timeout 30s
+			}
+			flush_interval -1
+		}
+	}
 
-    # Client updater files (hashlist, packages, patches)
-    handle /files/* {
-        reverse_proxy updater:80
-    }
+	# Client updater files (hashlist, packages, patches)
+	handle /files/* {
+		encode zstd gzip
+		reverse_proxy updater:80
+	}
 
-    # Next.js website portal
-    handle {
-        reverse_proxy website:3000
-    }
+	# Next.js website portal
+	handle {
+		encode zstd gzip
+		reverse_proxy website:3000
+	}
 }

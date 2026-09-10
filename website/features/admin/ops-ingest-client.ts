@@ -37,16 +37,18 @@ export function uploadIngestZipXhr(opts: {
   onProgress: (pct: number) => void
 }): Promise<ApiEnvelope<{ jobId?: string; message?: string }>> {
   return new Promise((resolve, reject) => {
-    const body = new FormData()
-    body.set("kind", opts.kind)
-    body.set("mode", opts.mode)
-    body.set("file", opts.file)
-    body.set("wiki", opts.wiki ? "1" : "0")
+    // Raw zip body + query params — streams through Next → ops (no FormData buffer).
+    const qs = new URLSearchParams({
+      kind: opts.kind,
+      mode: opts.mode,
+      wiki: opts.wiki ? "1" : "0",
+    })
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", "/api/admin/ops/ingest/zip")
+    xhr.open("POST", `/api/admin/ops/ingest/zip?${qs.toString()}`)
     xhr.timeout = 0
     xhr.withCredentials = true
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+    xhr.setRequestHeader("Content-Type", "application/zip")
     xhr.upload.onprogress = (ev) => {
       if (!ev.lengthComputable || ev.total <= 0) return
       opts.onProgress(Math.min(100, Math.round((100 * ev.loaded) / ev.total)))
@@ -71,7 +73,7 @@ export function uploadIngestZipXhr(opts: {
     }
     xhr.onerror = () => reject(new Error("Upload failed"))
     xhr.ontimeout = () => reject(new Error("Upload timed out"))
-    xhr.send(body)
+    xhr.send(opts.file)
   })
 }
 

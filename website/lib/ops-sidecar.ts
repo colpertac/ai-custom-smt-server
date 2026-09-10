@@ -803,64 +803,25 @@ export type OpsIngestJob = {
   result?: OpsIngestResult | null
 }
 
-/** Forward a zip blob/buffer to the sidecar (not multipart). Returns 202+jobId. */
-export async function ingestOpsZip(
+function ingestZipUrl(
   kind: OpsIngestKind,
-  body: Blob | ArrayBuffer | Uint8Array,
-  actor?: string,
-  mode: OpsIngestMode = "merge",
+  mode: OpsIngestMode,
   options?: { rehash?: boolean; wiki?: boolean }
-): Promise<OpsIngestResult> {
-  const secret = opsToken()
-  if (!secret) {
-    throw new Error("OPS_TOKEN is not set on the website")
-  }
-  const size =
-    body instanceof Blob
-      ? body.size
-      : body instanceof ArrayBuffer
-        ? body.byteLength
-        : body.byteLength
-  const url =
+): string {
+  return (
     `${opsBaseUrl()}/ingest/zip?kind=${encodeURIComponent(kind)}` +
     `&mode=${encodeURIComponent(mode)}` +
     (options?.rehash === false ? "&rehash=0" : "&rehash=1") +
     (options?.wiki ? "&wiki=1" : "&wiki=0")
-  // Node/DOM typings disagree on Uint8Array vs BodyInit; Buffer is accepted at runtime.
-  const fetchBody = (
-    body instanceof Blob
-      ? body
-      : Buffer.from(
-          body instanceof Uint8Array ? body : new Uint8Array(body)
-        )
-  ) as BodyInit
-  let res: Response
-  try {
-    res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "X-Ops-Token": secret,
-        Accept: "application/json",
-        "Content-Type": "application/zip",
-        "Content-Length": String(size),
-        ...(actor ? { "X-Ops-Actor": actor } : {}),
-      },
-      body: fetchBody,
-      cache: "no-store",
-    })
-  } catch (e) {
-    throw new Error(
-      e instanceof Error
-        ? `Ops sidecar unreachable (${opsBaseUrl()}): ${e.message}`
-        : "Ops sidecar unreachable"
-    )
-  }
-  let json: Record<string, unknown> = {}
-  try {
-    json = (await res.json()) as Record<string, unknown>
-  } catch {
-    json = { ok: false, error: `HTTP ${res.status}` }
-  }
+  )
+}
+
+function parseIngestZipResponse(
+  res: Response,
+  json: Record<string, unknown>,
+  kind: OpsIngestKind,
+  mode: OpsIngestMode
+): OpsIngestResult {
   if (res.status === 401) {
     return { ok: false, error: "unauthorized" }
   }
@@ -893,6 +854,113 @@ export async function ingestOpsZip(
     channelStale: Boolean(json.channelStale),
     firstBoot: parseFirstBoot(json.firstBoot),
   }
+}
+
+/**
+ * Stream a raw zip body to the sidecar (no full buffering). Prefer this for
+ * multi‑GB admin uploads. Ops requires Content-Length.
+ */
+export async function ingestOpsZipStream(
+  kind: OpsIngestKind,
+  body: ReadableStream<Uint8Array>,
+  contentLength: number,
+  actor?: string,
+  mode: OpsIngestMode = "merge",
+  options?: { rehash?: boolean; wiki?: boolean }
+): Promise<OpsIngestResult> {
+  const secret = opsToken()
+  if (!secret) {
+    throw new Error("OPS_TOKEN is not set on the website")
+  }
+  if (!Number.isFinite(contentLength) || contentLength <= 0) {
+    throw new Error("Content-Length required for zip ingest")
+  }
+  let res: Response
+  try {
+    res = await fetch(ingestZipUrl(kind, mode, options), {
+      method: "POST",
+      headers: {
+        "X-Ops-Token": secret,
+        Accept: "application/json",
+        "Content-Type": "application/zip",
+        "Content-Length": String(contentLength),
+        ...(actor ? { "X-Ops-Actor": actor } : {}),
+      },
+      // Node streaming proxy — do not buffer the whole zip in the website.
+      body,
+      duplex: "half",
+      cache: "no-store",
+    } as RequestInit)
+  } catch (e) {
+    throw new Error(
+      e instanceof Error
+        ? `Ops sidecar unreachable (${opsBaseUrl()}): ${e.message}`
+        : "Ops sidecar unreachable"
+    )
+  }
+  let json: Record<string, unknown> = {}
+  try {
+    json = (await res.json()) as Record<string, unknown>
+  } catch {
+    json = { ok: false, error: `HTTP ${res.status}` }
+  }
+  return parseIngestZipResponse(res, json, kind, mode)
+}
+
+/** Forward a zip blob/buffer to the sidecar (not multipart). Returns 202+jobId. */
+export async function ingestOpsZip(
+  kind: OpsIngestKind,
+  body: Blob | ArrayBuffer | Uint8Array,
+  actor?: string,
+  mode: OpsIngestMode = "merge",
+  options?: { rehash?: boolean; wiki?: boolean }
+): Promise<OpsIngestResult> {
+  const secret = opsToken()
+  if (!secret) {
+    throw new Error("OPS_TOKEN is not set on the website")
+  }
+  const size =
+    body instanceof Blob
+      ? body.size
+      : body instanceof ArrayBuffer
+        ? body.byteLength
+        : body.byteLength
+  // Node/DOM typings disagree on Uint8Array vs BodyInit; Buffer is accepted at runtime.
+  const fetchBody = (
+    body instanceof Blob
+      ? body
+      : Buffer.from(
+          body instanceof Uint8Array ? body : new Uint8Array(body)
+        )
+  ) as BodyInit
+  let res: Response
+  try {
+    res = await fetch(ingestZipUrl(kind, mode, options), {
+      method: "POST",
+      headers: {
+        "X-Ops-Token": secret,
+        Accept: "application/json",
+        "Content-Type": "application/zip",
+        "Content-Length": String(size),
+        ...(actor ? { "X-Ops-Actor": actor } : {}),
+      },
+      body: fetchBody,
+      cache: "no-store",
+    })
+  } catch (e) {
+    throw new Error(
+      e instanceof Error
+        ? `Ops sidecar unreachable (${opsBaseUrl()}): ${e.message}`
+        : "Ops sidecar unreachable"
+    )
+  }
+  let json: Record<string, unknown> = {}
+  try {
+    json = (await res.json()) as Record<string, unknown>
+  } catch {
+    json = { ok: false, error: `HTTP ${res.status}` }
+  }
+  return parseIngestZipResponse(res, json, kind, mode)
 }
 
 export async function getOpsIngestJob(

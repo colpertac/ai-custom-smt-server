@@ -31,7 +31,8 @@ MODES = frozenset({"merge", "replace"})
 REPLACEABLE_BUCKETS = frozenset({"binarydata", "maps", "overlay"})
 
 MAX_UPLOAD = {
-    "binarydata": 600 * 1024 * 1024,
+    # Multi‑GB client dumps are common; stream via website → ops (not FormData).
+    "binarydata": 3 * 1024 * 1024 * 1024,
     "maps": 3 * 1024 * 1024 * 1024,
     "packages": 100 * 1024 * 1024,
     "overlay": 500 * 1024 * 1024,

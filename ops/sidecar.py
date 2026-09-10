@@ -2361,8 +2361,8 @@ def main() -> None:
         raise SystemExit(1)
     port = int(env("OPS_PORT", "14710") or "14710")
     httpd = ThreadingHTTPServer((bind, port), OpsHandler)
-    httpd.timeout = 600
-    OpsHandler.timeout = 600
+    httpd.timeout = 7200
+    OpsHandler.timeout = 7200
     print(
         f"ops sidecar {bind}:{port} backend={env('OPS_BACKEND', 'native') or 'native'} "
         f"audit={audit_path()}",

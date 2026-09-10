@@ -35,7 +35,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Runtime fs reads (catalog + schedule defaults); not always NFT-traced.
 COPY --from=builder --chown=nextjs:nodejs /app/content/events ./content/events
+COPY --chown=nextjs:nodejs server-entry.cjs ./server-entry.cjs
 
 USER nextjs
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "server-entry.cjs"]

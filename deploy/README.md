@@ -46,6 +46,10 @@ Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxm
 ./scripts/docker-push-hub.sh
 ./scripts/docker-push-website-hub.sh
 
+# GitHub release asset: deploy/ + ops/ only (Hub images pulled on install)
+./scripts/make-release-zip.sh
+# ./scripts/make-release-zip.sh --upload v1.0.0   # attach to an existing release tag
+
 # Manual run (without install script)
 cp .env.example .env   # EXTERNAL_IP, SESSION_SECRET, OPS_TOKEN, UPDATER_ROOT, …
 mkdir -p website-data/server-content/{config,shops,payouts,report-rewards}
