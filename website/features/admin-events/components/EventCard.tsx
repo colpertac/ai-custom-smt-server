@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
+import { EventZoneLabel } from "@/features/events/components/EventZoneLabel"
 import type { EventCategory, EventStatus } from "@/lib/events/types"
 
 interface EventCardProps {
@@ -160,7 +161,7 @@ export function EventCard({
                   key={zone}
                   className="rounded bg-background/60 px-1 py-0.5 text-[10px] text-muted-foreground border border-border/50 truncate max-w-[140px]"
                 >
-                  {zone}
+                  <EventZoneLabel label={zone} detail />
                 </span>
               ))}
               {event.affectedZones.length > 3 && (

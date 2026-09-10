@@ -12,6 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
+import {
+  EventSpawnZoneLabel,
+  EventZoneLabel,
+} from "@/features/events/components/EventZoneLabel"
 import type { EventNpcSpawn, EventStatus } from "@/lib/events/types"
 
 interface EventDetailDrawerProps {
@@ -81,6 +85,34 @@ export function EventDetailDrawer({
             <p className="text-foreground">{event.summary}</p>
           </div>
 
+          {event.notes ? (
+            <div
+              role="note"
+              className="rounded border border-primary/35 bg-primary/10 px-3 py-2.5"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                Player notes
+              </p>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-foreground whitespace-pre-wrap">
+                {event.notes}
+              </p>
+            </div>
+          ) : null}
+
+          {event.adminNotes ? (
+            <div
+              role="note"
+              className="rounded border border-border bg-muted/40 px-3 py-2.5"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Admin / GM notes
+              </p>
+              <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-foreground/90 whitespace-pre-wrap">
+                {event.adminNotes}
+              </p>
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-w-0">
             <div className="min-w-0 space-y-1.5 rounded border border-border/50 bg-muted/20 p-2.5">
               <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
@@ -121,7 +153,7 @@ export function EventDetailDrawer({
                     key={zone}
                     className="rounded bg-muted/80 px-2 py-1 text-[11px] text-foreground border border-border/60"
                   >
-                    {zone}
+                    <EventZoneLabel label={zone} detail />
                   </span>
                 ))}
               </div>
@@ -145,7 +177,13 @@ export function EventDetailDrawer({
                         {spawn.name}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
-                        {spawn.zoneName} ({spawn.zoneId}) · spot {spawn.spotId}
+                        <EventSpawnZoneLabel
+                          zoneName={spawn.zoneName}
+                          zoneId={spawn.zoneId}
+                          serverZoneId={spawn.serverZoneId}
+                          detail
+                        />
+                        {spawn.spotId > 0 ? ` · spot ${spawn.spotId}` : " · fixed coords"}
                       </div>
                     </div>
                     <code className="shrink-0 font-mono text-[10px] text-foreground/90">
@@ -172,7 +210,16 @@ export function EventDetailDrawer({
                 ))}
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="rounded border border-border/60 bg-muted/25 px-3 py-2.5 text-[11px] leading-relaxed text-muted-foreground">
+              <span className="font-medium text-foreground">
+                No dialogue NPCs in the catalog.{" "}
+              </span>
+              This partial may add enemies, weather, drops, or instance content
+              instead — see summary
+              {event.notes || event.adminNotes ? " / notes" : ""} above.
+            </div>
+          )}
         </div>
 
         <DialogFooter className="flex sm:justify-between items-center gap-3 pt-3 border-t border-border/60">

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-05T23:38:33.200Z",
+  "generatedAt": "2026-09-10T04:33:47.480Z",
   "events": [
     {
       "id": "200612_xmas",
@@ -27,6 +27,7 @@
           "nameJp": "ローブのおっちゃん",
           "zoneId": 20106,
           "zoneName": "杉並ＣＵＲＩＯＵＳ",
+          "serverZoneId": 20106,
           "spotId": 60000,
           "x": -7.03,
           "y": 432.88
@@ -36,6 +37,7 @@
           "nameJp": "ローブのおっちゃん",
           "zoneId": 50105,
           "zoneName": "新宿ＣＵＲＩＯＵＳ",
+          "serverZoneId": 50105,
           "spotId": 60000,
           "x": -7.03,
           "y": 432.88
@@ -45,6 +47,7 @@
           "nameJp": "ローブのおっちゃん",
           "zoneId": 130105,
           "zoneName": "上野ＣＵＲＩＯＵＳ",
+          "serverZoneId": 130105,
           "spotId": 60000,
           "x": -7.03,
           "y": 432.88
@@ -54,6 +57,7 @@
           "nameJp": "ローブのおっちゃん",
           "zoneId": 140105,
           "zoneName": "中立都市ＣＵＲＩＯＵＳ",
+          "serverZoneId": 140105,
           "spotId": 60000,
           "x": -7.03,
           "y": 432.88
@@ -63,6 +67,7 @@
           "nameJp": "ローブのおっちゃん",
           "zoneId": 100105,
           "zoneName": "品川ＣＵＲＩＯＵＳ",
+          "serverZoneId": 100105,
           "spotId": 60101,
           "x": -7.03,
           "y": 432.88
@@ -78,7 +83,9 @@
       "category": "special",
       "year": 2007,
       "month": 1,
-      "summary": "Oni invade Home III and Nakano — beat them back before they overrun Babel.",
+      "summary": "Field invasion: Oni enemies spawn in Home III and Shinjuku Babel. There are no dialogue NPCs to talk to.",
+      "notes": "No event clerks — hunt Oni in the field. They only appear during certain moon phases (including full moon). Check Home III and Shinjuku Babel; leave and re-enter the map if the moon just changed.",
+      "adminNotes": "Spawn groups use MoonRestriction 0x1111 (phases 0, 4, 8, 12 only). EnemyType 1585/1586. Home III boxes ~(-8019, 4), (-7625, ±600); Babel ~(149, -1814), (-680, -1938), (701, -1879). ImmediateSpawn — re-enter zone after moon change. Shift moon with @worldtime OFFSET (UserLevel 950+; 1440 ≈ one phase).",
       "affectedZones": [
         "Home III (20101)",
         "クリニック　アヤ (20105)",
@@ -98,7 +105,9 @@
       "category": "valentines",
       "year": 2007,
       "month": 2,
-      "summary": "Early Valentine's festival across Tokyo hubs with chocolate gifts and romance-themed NPCs.",
+      "summary": "Early Valentine's drop event: field mobs in major Tokyo hubs can drop Love-Filled Chocolate. No event clerks.",
+      "notes": "Not a festival with romance NPCs to talk to.\n\n• Kill normal field enemies in Suginami, Shibuya, Ichigaya, Shinagawa, Ueno (and the other hubs this event covers).\n• Those mobs can drop Love-Filled Chocolate while the event is on.\n\nThere are no new Valentine NPCs in town — QA by farming chocolate drops, not by hunting clerks.",
+      "adminNotes": "Partial 200702_valentines — drop overlay only (no ServerNPC).\n\n• DropSet 20070201: ItemType 5214 Love-Filled Chocolate, Rate 100, stack 1\n• Zone partials patch existing Spawn entries with GiftSetIDs → 20070201 on hubs including:\n  Suginami 30101, Shibuya 70101, Ichigaya 80101, Shinagawa 90101, Ueno 110101 (plus additional hub maps in the same XML)\n• Spawn keys are base-zone spawn IDs (e.g. 1, 11, 23… on Suginami) — merges gift drops onto stock mobs\n\nCatalog npcSpawns empty by design. QA: enable → restart → kill field mobs → confirm chocolate drops.",
       "affectedZones": [
         "Suginami (30101)",
         "Shibuya (70101)",
@@ -156,6 +165,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60020,
           "x": 113.65,
           "y": 1367.89
@@ -165,6 +175,7 @@
           "nameJp": "アヤ女医",
           "zoneId": 20105,
           "zoneName": "クリニック　アヤ",
+          "serverZoneId": 20105,
           "spotId": 60000,
           "x": -0.89,
           "y": 422.88
@@ -174,6 +185,7 @@
           "nameJp": "ロクちゃん",
           "zoneId": 50103,
           "zoneName": "Ｖｉｃｉｏｕｓ",
+          "serverZoneId": 50103,
           "spotId": 60000,
           "x": -304.15,
           "y": 428.44
@@ -183,6 +195,7 @@
           "nameJp": "アフロしんたろう",
           "zoneId": 50103,
           "zoneName": "Ｖｉｃｉｏｕｓ",
+          "serverZoneId": 50103,
           "spotId": 60001,
           "x": 288.34,
           "y": 426.99
@@ -198,7 +211,9 @@
       "category": "special",
       "year": 2007,
       "month": 9,
-      "summary": "Early clan competition partial adjusting dungeon end-chest drops for the first clan points race.",
+      "summary": "Drop-only clan contest: copper/silver end chests in four G1 dungeons always drop their matching contest shard. No hub NPCs.",
+      "notes": "No clerks or new maps — this only changes end-chest loot.\n\n• Clear copper or silver end chests in:\n  – Old Ichigaya Camp → Shard of the Old Ichigaya Camp\n  – Suginami Magou Mines → Shard of the Suginami Tunnels\n  – Cell Tower → Shard of Celu Tower\n  – Shibuya Quartz → Shard of Shibuya Quartz\n• Gold-tier chests are not part of this event’s append.\n• Tip: shards are guaranteed (100%) while the event is on.",
+      "adminNotes": "Partial 200709_clanpoints1 — only data/dropset/extra APPEND DropSets. No zone partial / events / ServerNPC.\n\nAPPEND @100% item 5272→dropsets 5100/5120 (Ichigaya Cu/Ag); 5271→5400/5420 (Suginami Cu/Ag); 5273→5500/5520 (Cell Tower Cu/Ag); 5274→5700/5710 (Shibuya Quartz Cu/Ag). Base placeholders live in treasure.xml; dungeon end-loot ActionCreateLoot already references these IDs.\n\nGold placeholders (5130+, etc.) untouched. Unlike 200711_clanpoints2, no ON_FLAG_SET / event counter scoring.\n\nQA'd: enable partial → Cu/Ag end chest on a listed family → matching shard every clear.",
       "affectedZones": [],
       "featuredNpcs": [],
       "npcSpawns": [],
@@ -229,6 +244,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60060,
           "x": 170.29,
           "y": 378.05
@@ -238,6 +254,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 60115,
           "x": -45.66,
           "y": -6854.38
@@ -247,15 +264,17 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
-          "spotId": 60115,
-          "x": -45.66,
-          "y": -6854.38
+          "serverZoneId": 100101,
+          "spotId": 0,
+          "x": -44.66,
+          "y": -9020.18
         },
         {
           "name": "Pyro Jack",
           "nameJp": "ジャックランタン",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 60101,
           "x": 9570.47,
           "y": 13568.8
@@ -271,7 +290,9 @@
       "category": "special",
       "year": 2007,
       "month": 11,
-      "summary": "Clan contest across secret-base instance maps with delivery-team story framing.",
+      "summary": "Clan contest: A-rank clears of listed G1 secret-base / dungeon instances score points for your clan. Info via Babel Elevator Girl.",
+      "notes": "No new hub clerks — scoring happens inside contest instances.\n\n• Info: talk to the Elevator Girl in Shinjuku Babel for event details (menu only while this event is on).\n• Play: clear listed G1 secret-base / dungeon instances.\n• Scoring: A-rank time-trial results add clan points. B/C/participation do not.\n• Tip: you need a clan for points to stick to the contest.",
+      "adminNotes": "Partial 200711_clanpoints2 — ServerZonePartial 20071101 AutoApply (default) on ~205 instance DynamicMapIDs (5101xxx / 512xxx / 513xxx / 54xxxx / 55xxxx / 57xxxx / 62xxxx / 921xxxx / 10902xxx). No ServerNPC in the partial.\n\nON_FLAG_SET Value 2000 → EX200711_G1. Conditions: not CLAN_HOME + bool_currentInstanceVariant in {1–10, 17–22} (G1 Cell Tower / Suginami / Ichigaya / Shibuya Quartz / etc. Cu–Au variants). branch_dungeonTrialResultExists → only A_RANK_FIRST / A_RANK branches → action_eventCounter 20071101 +1 with option flag 2 (RelatedTo = clan).\n\nInfo UI: Babel Elevator Girl NPC 210 / spot 60008 (Z50101_210 menu choice → EX200711_210_INFO, skipInvalid). Messages 150800–150811; DONE1/DONE2 (150820/150821) are unused by other datastore refs.\n\nQA'd: Elevator Girl event-info choice appears when partial is live. Full score path = A-rank clear on a listed G1 variant → counter 20071101.",
       "affectedZones": [],
       "featuredNpcs": [],
       "npcSpawns": [],
@@ -288,7 +309,7 @@
       "summary": "Holiday season with Demon Snack salesmen, countdown festivities, and New Year gifts.",
       "affectedZones": [
         "Home III (20101)",
-        "Zone 5121002"
+        "旧イチガヤ駐屯地 (zone 512104 · map 5121002)"
       ],
       "featuredNpcs": [
         "Demon Snack Salesman",
@@ -300,6 +321,7 @@
           "nameJp": "悪魔スナック営業マン",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60025,
           "x": -877.15,
           "y": -2237.19
@@ -308,7 +330,8 @@
           "name": "Demon Snack Sales Manager",
           "nameJp": "悪魔スナック営業部長",
           "zoneId": 5121002,
-          "zoneName": "Zone 5121002",
+          "zoneName": "旧イチガヤ駐屯地",
+          "serverZoneId": 512104,
           "spotId": 60401,
           "x": 9857.63,
           "y": 7519.61
@@ -337,6 +360,7 @@
           "nameJp": "新宿バベルからの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60028,
           "x": 8218.64,
           "y": -5.06
@@ -352,7 +376,9 @@
       "category": "valentines",
       "year": 2008,
       "month": 2,
-      "summary": "Tongue-in-cheek Valentine's festival (羅漢罵恋多蔭祭) across major Tokyo hubs.",
+      "summary": "Tongue-in-cheek Valentine's festival (羅漢罵恋多蔭祭): field enemies drop Block O' Chocolate, then turn them in for chocolate quests.",
+      "notes": "No new festival clerks in the event list — this is a Valentine's drop + quest event.\n\n• Fight regular enemies in Suginami, Shibuya, Ichigaya, Shinagawa, Ueno, and Ikebukuro: they can drop Block O' Chocolate.\n• Turn chocolates in through the event quest flow (Pixie summoned is required for some steps).\n\nLook for chocolate drops and quest progress, not a new NPC standing in Babel.",
+      "adminNotes": "Partial 200802_valentines (羅漢罵恋多蔭祭):\n\n1) Zone overlays — GiftSetIDs 20080201 on many existing Spawn IDs across 30101, 70101, 80101, 90101, 110101, 210101, 210201 (no ServerNPC in this partial).\n2) DropSet 20080201 — ItemType 5316 Block O' Chocolate (Rate 15; also Rate 5 with MinStack 1 MaxStack 2).\n3) Events — EX200802_27_CHOCO / quests 553–555; cooldown 20080201; SUMMONED demon 570 (Pixie); ITEM 5316 checks. Dialogue via EventNPCMessage; talk target is base-game NPC hook (…_27_…), not a catalogued spawn.\n\nQA: enable → restart → farm hubs for 5316 → run chocolate quests. Empty npcSpawns is expected.",
       "affectedZones": [
         "Suginami (30101)",
         "Shibuya (70101)",
@@ -385,9 +411,10 @@
           "nameJp": "集計係のイノセント",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 60039,
-          "x": null,
-          "y": null
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": 140,
+          "y": -1359.07
         }
       ],
       "xmlCount": 3
@@ -413,9 +440,10 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 60040,
-          "x": null,
-          "y": null
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": 0,
+          "y": -3900
         }
       ],
       "xmlCount": 3
@@ -441,6 +469,7 @@
           "nameJp": "三郎",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60027,
           "x": 1030.83,
           "y": 8.27
@@ -463,7 +492,18 @@
       "featuredNpcs": [
         "Gamers Hat"
       ],
-      "npcSpawns": [],
+      "npcSpawns": [
+        {
+          "name": "Gamers Hat",
+          "nameJp": "ゲーマーズ・ハット",
+          "zoneId": 50101,
+          "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": 0,
+          "y": -3900
+        }
+      ],
       "xmlCount": 2
     },
     {
@@ -474,7 +514,9 @@
       "category": "special",
       "year": 2008,
       "month": 6,
-      "summary": "Limited campaign to obtain the Sequencer through special event objectives.",
+      "summary": "Field farm for Material Sequencer I — Renegade Mothman in Nakano, Renegade Dwarf in Shibuya, and Renegade Momunofu in Ichigaya. No event clerks.",
+      "notes": "No clerks or hub NPCs — hunt Renegade demons on the field.\n\n• Where / what (Lv45):\n  – Nakano → Renegade Mothman\n  – Shibuya → Renegade Dwarf\n  – Ichigaya → Renegade Momunofu\n• Main drop (chance): Material Sequencer I; also Power Extractor / Cabinet Pro and zone mats.\n• Tip: each map has five spawn points far apart. A “Look for the Renegade Demon!!” notice means a pack spawned somewhere on that map — check all spots, not just one. Packs respawn about every 10 seconds.",
+      "adminNotes": "Partial 200806_renegade — AutoApply 20080601/02/03 on 40101 / 70101 / 80101. No ServerNPC.\n\nPer map: Spawn 20080601 Nakano Mothman 1892; 20080602 Shibuya Dwarf 1891; 20080603 Ichigaya Momunofu 1890. Level 45, TalkResist 100, XP 100000, count 2 per group.\n\n5 SLGs per map (…101–105 / …201–205 / …301–305), all SpotIDs 3001–3005 (SPAWN_LOCATION, centers far apart). RespawnTime 10s; no ImmediateSpawn; no SpotSelection (random single spot per SLG, not SPREAD). SpawnActions: StageEffect 350200 + DisplayMessage 350201 (zone-wide).\n\nDrops: race sets 189200/189100/189000 → Material Sequencer I 42018 (rates vary; Momunofu highest) + Power Extractor 42002 + Cabinet Pro 42006 + Scrap of Paper 5503; plus field 医学 sets 86/84/87; Nakano also 10000464 (Garnet/Jewel/Macca/Mag).\n\nQA: enable → leave/re-enter each hub → sweep @pos 3001–3005. Messages fire on spawn, not on warp. Confirm race per map.",
       "affectedZones": [
         "Nakano (40101)",
         "Shibuya (70101)",
@@ -505,6 +547,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60020,
           "x": 113.65,
           "y": 1367.89
@@ -533,6 +576,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60020,
           "x": 113.65,
           "y": 1367.89
@@ -561,6 +605,7 @@
           "nameJp": "三郎",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
+          "serverZoneId": 20102,
           "spotId": 60004,
           "x": -731.2,
           "y": -4469.88
@@ -589,6 +634,7 @@
           "nameJp": "選挙管理委員",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60028,
           "x": 8218.64,
           "y": -5.06
@@ -617,6 +663,7 @@
           "nameJp": "選挙管理委員",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60028,
           "x": 8218.64,
           "y": -5.06
@@ -653,6 +700,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60060,
           "x": 170.29,
           "y": 378.05
@@ -662,6 +710,7 @@
           "nameJp": "バネッサ",
           "zoneId": 20104,
           "zoneName": "ＳＵＲＶＩＶＡＬ",
+          "serverZoneId": 20104,
           "spotId": 60000,
           "x": -304.63,
           "y": 417.85
@@ -671,6 +720,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60046,
           "x": -69.49,
           "y": -4324.93
@@ -680,6 +730,7 @@
           "nameJp": "アリス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60048,
           "x": -14.06,
           "y": -6045.49
@@ -689,6 +740,7 @@
           "nameJp": "アリス",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60000,
           "x": -152.22,
           "y": 7015.13
@@ -698,6 +750,7 @@
           "nameJp": "アヤＪＯＹ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60001,
           "x": 148.96,
           "y": 7016.77
@@ -707,6 +760,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60002,
           "x": 150,
           "y": 7350
@@ -716,6 +770,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60003,
           "x": -150,
           "y": 7350
@@ -725,6 +780,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60004,
           "x": -350,
           "y": 7500
@@ -734,6 +790,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60005,
           "x": 350,
           "y": 7500
@@ -743,6 +800,7 @@
           "nameJp": "はっちゃん",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60007,
           "x": -1850,
           "y": 8200
@@ -752,6 +810,7 @@
           "nameJp": "ロクちゃん",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60008,
           "x": -1781.65,
           "y": 7603.05
@@ -761,6 +820,7 @@
           "nameJp": "未熟な司会者",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60006,
           "x": -800,
           "y": 9250
@@ -770,14 +830,26 @@
           "nameJp": "バイトくん",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60010,
           "x": -0.37,
           "y": 9497.83
         },
         {
+          "name": "Afro Shintaro",
+          "nameJp": "アフロしんたろう",
+          "zoneId": 50209,
+          "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
+          "spotId": 0,
+          "x": 1620,
+          "y": 7725
+        },
+        {
           "name": "ミスターＭじぃ",
           "zoneId": 50209,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 50209,
           "spotId": 60011,
           "x": 900,
           "y": 5500
@@ -793,7 +865,9 @@
       "category": "collab",
       "year": 2008,
       "month": 12,
-      "summary": "Za Television magazine tie-up — strike a star pose with lemon in hand.",
+      "summary": "Za Television magazine collab promo — pose for a commemorative photo with that lemon-in-hand star mood.",
+      "notes": "A small magazine promo, not a full quest festival.\n\n• Where: Home III only — look near about (173, 11).\n• What: one promo NPC. Talking to them shows a stage message about The Television magazine coming back to Tokyo and asking if you want a commemorative photo.\n• What not to expect: no multi-step quest, items, or other maps in this event alone.\n\nIf the website Details page lists no NPCs, that is a catalog gap (the NPC has no name comment in the data) — the NPC should still be in Home III when the event is on.",
+      "adminNotes": "Partial 200812_lemon — single zone partial ID 20081200 on Home III 20101.\n• ServerNPC ID 2016 @ SpotID 60031 ≈ (172.86, 10.67)\n• No <!-- name --> comment → extractRawNpcPlacements skips it (empty npcSpawns)\n• Only ActionStageEffect messageID 350550 (TV magazine / commemorative photo) — no Event dialogue tree, no drops in this XML\n• QA: enable → restart → Home III spot 60031 → confirm stage message. Optional fix: add a JP name comment above the NPC so the catalog lists them.",
       "affectedZones": [
         "Home III (20101)"
       ],
@@ -825,6 +899,7 @@
           "nameJp": "総司令　獅子舞フロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60049,
           "x": -0.55,
           "y": -4329.26
@@ -834,6 +909,7 @@
           "nameJp": "未熟な獅子舞フロスト",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 60102,
           "x": -2559.27,
           "y": 11631.2
@@ -843,6 +919,7 @@
           "nameJp": "獅子舞フロスト",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 60101,
           "x": 9570.47,
           "y": 13568.8
@@ -880,6 +957,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60020,
           "x": 113.65,
           "y": 1367.89
@@ -889,6 +967,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60049,
           "x": -0.55,
           "y": -4329.26
@@ -898,6 +977,7 @@
           "nameJp": "パーティー会場受付係",
           "zoneId": 70103,
           "zoneName": "魔階セルタワー",
+          "serverZoneId": 70103,
           "spotId": 60203,
           "x": -560.85,
           "y": 9023.25
@@ -907,6 +987,7 @@
           "nameJp": "バイトくん",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60010,
           "x": -0.37,
           "y": 9497.83
@@ -916,6 +997,7 @@
           "nameJp": "アヤＪＯＹ",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60013,
           "x": 0.67,
           "y": 7233.83
@@ -925,6 +1007,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60000,
           "x": -152.22,
           "y": 7015.13
@@ -934,6 +1017,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60001,
           "x": 148.96,
           "y": 7016.77
@@ -943,6 +1027,7 @@
           "nameJp": "アフロしんたろう",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60009,
           "x": 1102.74,
           "y": 7058.46
@@ -952,6 +1037,7 @@
           "nameJp": "ロクちゃん",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60008,
           "x": -1781.65,
           "y": 7603.05
@@ -961,6 +1047,7 @@
           "nameJp": "未熟な司会者",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60006,
           "x": -800,
           "y": 9250
@@ -970,6 +1057,7 @@
           "nameJp": "はっちゃん",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60007,
           "x": -1850,
           "y": 8200
@@ -979,6 +1067,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60004,
           "x": -350,
           "y": 7500
@@ -988,6 +1077,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60003,
           "x": -150,
           "y": 7350
@@ -997,6 +1087,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60002,
           "x": 150,
           "y": 7350
@@ -1006,6 +1097,7 @@
           "nameJp": "ＪＯＹダンサーズ",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60005,
           "x": 350,
           "y": 7500
@@ -1014,6 +1106,7 @@
           "name": "白神さん",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60011,
           "x": 900,
           "y": 5500
@@ -1023,6 +1116,7 @@
           "nameJp": "見習いデビルバスター",
           "zoneId": 70105,
           "zoneName": "ＤＥＡＴＨ　ＬＡＫＥ",
+          "serverZoneId": 70105,
           "spotId": 60014,
           "x": 840.73,
           "y": 9564.69
@@ -1051,6 +1145,7 @@
           "nameJp": "泣いたオニ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60028,
           "x": 8218.64,
           "y": -5.06
@@ -1066,7 +1161,9 @@
       "category": "valentines",
       "year": 2009,
       "month": 2,
-      "summary": "Valentine's Sweet☆Panic campaign to grab a demon's heart (and chocolate).",
+      "summary": "Valentine's Sweet☆Panic: collect Demon Chocolate Shards from demon quests and turn them in for chocolate and summon PGs.",
+      "notes": "No new event clerks appear on the map — talk to existing NPCs.\n\n• Shinjuku Babel — Elevator Girl\n• Holy City (Medical Center) — Alicia\n• Sōhonzan pharmacy (卍薬玉店)\n\nThey ask for Demon Chocolate Shards (hand in 2 at a time over several visits; there can be a short wait between turn-ins). Shards drop as a bonus from demon quests while this event is on.\n\nClearing a line rewards Store-Bought Chocolate, True Valentine's Chocolate, and a starter summon PG (Shiisa / Thoth / Okuninushi depending on which quest).",
+      "adminNotes": "Partial 200902_valentines — hooks existing NPCs via zone_events branches (no new ServerNPC in the zone partial; placeholders only on 50101 / 100104 / 130104).\n\n• Event IDs: EX20090201_210_VDAY (Babel Elevator Girl NPC 210), EX20090201_12_VDAY (Holy City Medical 100104 / Alicia), EX20090201_16_VDAY (Sōhonzan 130104).\n• Quests 582 / 583 / 584 (Babel / Holy City / Sōhonzan).\n• DropSet 20090201 → ItemType 5655 Demon Chocolate Shard @ 75%, wired as DemonQuestReward bonus.\n• Cooldown via bool_cooldown param 20090201; multi-phase turn-ins; gender-split finish messages on some lines.\n\nQA: enable partial + restart; talk Elevator Girl / Alicia / Sōhonzan shop; farm demon quests for shards; confirm turn-in + rewards. Empty catalog npcSpawns is expected.",
       "affectedZones": [
         "Shinjuku Babel (50101)",
         "メディカルセンター (100104)",
@@ -1097,6 +1194,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60049,
           "x": -0.55,
           "y": -4329.26
@@ -1125,6 +1223,7 @@
           "nameJp": "アークエンジェル",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60028,
           "x": 8218.64,
           "y": -5.06
@@ -1156,6 +1255,7 @@
           "nameJp": "タイゾー",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60053,
           "x": 334.33,
           "y": -2577.44
@@ -1165,6 +1265,7 @@
           "nameJp": "イワクロ店員",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60054,
           "x": 473.84,
           "y": -3232.03
@@ -1174,6 +1275,7 @@
           "nameJp": "仙石",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60055,
           "x": -479.22,
           "y": -3226.48
@@ -1183,6 +1285,7 @@
           "nameJp": "仙石の弟子",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60052,
           "x": -474.11,
           "y": -2739.24
@@ -1213,6 +1316,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60046,
           "x": -69.49,
           "y": -4324.93
@@ -1222,6 +1326,7 @@
           "nameJp": "アリス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60048,
           "x": -14.06,
           "y": -6045.49
@@ -1231,6 +1336,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 61200,
           "x": -7507.25,
           "y": -10088.3
@@ -1263,6 +1369,7 @@
           "nameJp": "黒い青年",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60043,
           "x": -8510.03,
           "y": 41.53
@@ -1272,6 +1379,7 @@
           "nameJp": "赤い青年",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 60028,
           "x": 6634.05,
           "y": 13963.1
@@ -1305,6 +1413,7 @@
           "nameJp": "御坂美琴",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60048,
           "x": -12.11,
           "y": 1356.98
@@ -1340,6 +1449,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60043,
           "x": -8510.03,
           "y": 41.53
@@ -1349,6 +1459,7 @@
           "nameJp": "ニコラス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60060,
           "x": -3790.27,
           "y": -772.34
@@ -1358,6 +1469,7 @@
           "nameJp": "テンプルナイト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60061,
           "x": -3646.39,
           "y": -359.27
@@ -1367,6 +1479,7 @@
           "nameJp": "ＤＢアサダ",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60004,
           "x": -354.51,
           "y": -509.04
@@ -1382,7 +1495,9 @@
       "category": "special",
       "year": 2010,
       "month": 2,
-      "summary": "Large-scale Shinjuku clash event centered on Babel and surrounding fields.",
+      "summary": "Post-rebalance Shinjuku field farm — turns on the large Shinjuku (150101) enemy table from low trash up through Ananta. No event clerks.",
+      "notes": "No clerks or hub NPCs — this only enables Shinjuku field packs.\n\n• Where: Shinjuku field (not Babel / Dock).\n• What: mixed open-world packs from low (Angel, Turdak, Bai Ze, Kushinada-Hime) through high (Macha, Camazotz, Odin, Four Kings, Thor, Qing Long, Nyarlathotep, etc.).\n• Ananta: rare high-end spawn; only on the full moon.\n• Drops (chance): Macca, Magnetite, bronze/rubber elements, plus rare boss bits.\n• Tip: if you just turned the event on, leave and re-enter Shinjuku so packs populate.",
+      "adminNotes": "Partial 201002_decisive — AutoApply ServerZonePartial 20100202 on DynamicMapID 150101 only. No ServerNPC / no spawn XML in the partial itself.\n\nON_SETUP → ActionStartEvent Z150101_DBATTLE_ON → action_enableSpawnGroup for groups 10–60, 70–79, 80–151, 200, 1000. Those groups live permanently in SpawnData_150101.xml with Restrictions.Disabled=true until enabled. Z150101_DBATTLE_OFF exists but no partial calls it. 201102_valentines also fires DBATTLE_ON.\n\nSmoke spots (QA'd): 5102 = group 10 (Angel/Turdak/Bai Ze/Kushinada-Hime); 5106 = group 80 (Macha/Shadowy Camazotz/Thunderstorm Furiae/Deformed Hanuman/Nightmare Tarrasque); 5108 = Black Frost (200); 5126 = Ananta Lv97 (1000, MoonRestriction 0x0100 = phase 8).\n\nDrops 9801000–9801009 (Macca 799 / Mag 800 / Element Bronze 42101 / Rubber 42711 / boss shards / Ananta's Crystal 7224).\n\nQA: enable partial → leave/re-enter 150101 (@zone) → @pos smoke spots. Ananta: @worldtime → phase 8 → leave/re-enter → @pos 5126. Confirm @zone is 150101 (not Babel 50101).",
       "affectedZones": [
         "Shinjuku (150101)"
       ],
@@ -1399,6 +1514,8 @@
       "year": 2010,
       "month": 2,
       "summary": "Valentine's gag starring Nora and chocolate antics.",
+      "notes": "No new event clerks — uses permanent Babel NPCs.\n\n• Start: talk to Nora in Shinjuku Babel and take the Valentine option (only while this event is on).\n• Fetch: she asks for a random chocolate-related item. Get it by talking to other Babel NPCs (they hand out the matching junk while the event is live).\n• Turn in: bring the item back to Nora for a reward roll.\n• Cooldown: about 1 hour between completed turn-ins.\n• Tip: empty NPC list on this page is expected — Nora was never in the event partial.",
+      "adminNotes": "Partial 201002_valentines — zone partial 20100201 AutoApply on Babel 50101 is a near-empty placeholder (“cooldown adjustments, no zone changes”). Real content is events/extra + dropset/extra.\n\nNora: permanent NPC 451 (spots 60068 ~(2334,1861), 60072 ~(1121,320)). Z50101_451 menu → EX201002_451_VDAY (message 650331, skipInvalid).\n\nFlow: accept → random fetch type (flags 1–6) → gather item from other Babel NPCs that branch into EX201002_*_VDAY when loaded → turn in → success/fail dropsets 20100201 / 20100202 + CHARACTER_COOLDOWN delay 20100201 duration 3600s.\n\nItem sources (NPC → item):\n• 250 → Ice of Reflection 5335\n• 248 → Scrap w/ picture of Yukichi Fukuza~ 5206\n• 423 → Beans of Demon Repelling 5207\n• 432 → Legendary Ice Dessert 5245\n• 328 → Dream Egg 5363\n• 278 → Hexagon 5703\n\nCatalog npcSpawns empty by design. QA: enable → restart → Babel → Nora Valentine choice → fetch → turn-in → confirm 1h CD.",
       "affectedZones": [
         "Shinjuku Babel (50101)"
       ],
@@ -1427,6 +1544,7 @@
           "nameJp": "コダマ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60050,
           "x": 1380.42,
           "y": -3393.25
@@ -1460,6 +1578,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 60115,
           "x": -45.66,
           "y": -6854.38
@@ -1469,15 +1588,17 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
-          "spotId": 60115,
-          "x": -45.66,
-          "y": -6854.38
+          "serverZoneId": 100101,
+          "spotId": 0,
+          "x": -44.66,
+          "y": -9020.18
         },
         {
           "name": "NPC Saien",
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 61052,
           "x": 3939.33,
           "y": 6459.79
@@ -1493,7 +1614,9 @@
       "category": "special",
       "year": 2010,
       "month": 4,
-      "summary": "Full Moon Wars limited event with lunar-themed battles and rewards.",
+      "summary": "Full-moon field farm: Lv61 Garm in Nakano, Knocker in Shibuya, and Poltergeist in Ichigaya. No town NPCs — hunt on the full moon for melons, Hourglass of Harihara, and macca paper.",
+      "notes": "No clerks or hub NPCs — this is a field farm only.\n\n• When: enemies only appear during the full moon.\n• Where / what:\n  – Nakano → Lv61 Garm\n  – Shibuya → Lv61 Knocker\n  – Ichigaya → Lv61 Poltergeist\n• Drops (chance): Gift Melons by race, Hourglass of Harihara, Paper Currency (50,000 Macca).\n• Tip: normal zone trash still spawns. If the moon just turned full, leave and re-enter the map.",
+      "adminNotes": "Partial 201004_fullmoonwars — AutoApply on 40101 / 70101 / 80101. No ServerNPC.\n\nMoonRestriction 256 (0x100) = phase 8 only. RespawnTime 600s; no ImmediateSpawn (after @worldtime, leave/re-enter the zone — do not wait in-place for first populate).\n\nPer map race (Spawn IDs 20100401–11): Nakano Garm 2444–2454; Shibuya Knocker 2433–2443; Ichigaya Poltergeist 2455–2465. TalkResist 100, Level 61, XP 100000.\n\nDrops: set 20100400 = item 699×20 @3.5% + Hourglass 12129 @10%; 20100401/02/03 = Gift Melon Wilders/Earth/Haunt (12114/12104/12127) @100% on matching race.\n\nSpotIDs filtered to SpotData that exists (Nakano ~99 of 200–299; Shibuya 201–207; Ichigaya 201–203). SpawnGroup keys must be Spawn IDs (201004xx), not EnemyType — mismatched keys strip the groups.\n\nQA: @worldtime → phase 8 → @zone out/in → @pos 201 on each hub. GM UserLevel ≥ 950 for @worldtime.",
       "affectedZones": [
         "Nakano (40101)",
         "Shibuya (70101)",
@@ -1524,6 +1647,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 60012,
           "x": 23691.5,
           "y": -5145.77
@@ -1539,7 +1663,9 @@
       "category": "summer",
       "year": 2010,
       "month": 6,
-      "summary": "Weather/atmosphere overlay companion for Kappa Arc Part 1.",
+      "summary": "Rain / atmosphere companion for Kappa Arc Part 1 — plays storm audio and sets a weather flag when you enter certain hubs.",
+      "notes": "Not a story event by itself — no new NPCs to talk to.\n\n• Companion for “Kappa's Sea Opening (Kappa Arc Part 1)”. Enable both for the full June 2010 vibe.\n• When you enter Nakano, Shibuya, or Ichigaya, you get rain/storm atmosphere (sound + weather flag).\n• For the Kappa quest / DB Katori, use the main Kappa Part 1 event — this overlay only handles the weather hook.",
+      "adminNotes": "Companion partial for 201006_kappa1 (カッパのお願い).\n\nZone partial 20100604 (AutoApply):\n• Maps: Nakano 40101, Shibuya 70101, Ichigaya 80101\n• ON_ZONE_IN → EX20100601_RAIN\n\nEX20100601_RAIN:\n• Sets ZONE_CHARACTER flag 201006 = 1 (once; condition LT_OR_NAN so it won’t re-fire)\n• Plays soundID 100858 (rain/storm SFX)\n• Rain visuals are driven by that flag / client weather — no ServerNPC, no spawns\n\nQA: enable with 201006_kappa1, restart channel, zone into Nakano/Shibuya/Ichigaya and confirm SFX/atmosphere. Story NPCs live in kappa1, not here.",
       "affectedZones": [
         "Nakano (40101)",
         "Shibuya (70101)",
@@ -1570,6 +1696,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 60012,
           "x": 23691.5,
           "y": -5145.77
@@ -1585,7 +1712,9 @@
       "category": "collab",
       "year": 2010,
       "month": 6,
-      "summary": "Idol group Momoiro Clover tie-up partial (pink-themed collab content).",
+      "summary": "Collab-era quest “Desperately Seeking Alice…” — find Alice and collect Mahjong tile cards from Suginami field mobs. Uses existing hub NPCs (no new clerks).",
+      "notes": "Despite the collab title, this is an Alice / Mahjong-card hunt — not idol NPCs.\n\n• Start: Home III Guard — “Ask about the latest news from Home III” (quest 716 “Desperately Seeking Alice…”).\n• Also talk to DB Yuki in Suginami (“Ask about the missing girl”) and the Card Maniacs in Home III / Shinjuku Babel.\n• Farm Jack Frost, Hua Po, Cait Sith, Gandharva, and Cu Sith in Suginami for Mahjong tile cards; turn them in to finish.\n• Tip: the website Details page may list no NPCs — empty catalog is expected; the event only adds dialogue (and card drops) onto permanent hubs.\n• Do not enable together with “Momoiro Clover Collaboration (Post)” — that is the leftover-card trade state.",
+      "adminNotes": "Partial 201006_momoiro — events/extra + dropset APPEND only (no zone ServerNPC).\n\nQuest 716 “Desperately Seeking Alice…” via zone_events skipInvalid branches:\n• NPC 220 守衛 Home III 20101 spot 60013 → EX20100603_220_QNEWS (start)\n• NPC 241 ＤＢユウキ Suginami 30101 spot 60007 → EX20100603_241_QGIRL / Q716\n• NPC 222 カードマニア Home III 20101 spot 60015 → EX20100603_222_Q716 (turn-in / finish)\n• NPC 227 カードマニア Babel 50101 spot 60020 → EX20100603_227_Q716 / QCARD\n\nItems: Old Card 12184; Mahjong cards 12185–12190. Finish rewards gender boots 5984/5985 (+ tarot paths e.g. 5034). Dropset APPEND rates onto existing drop IDs.\n\nMutually exclusive with 201006_momoiro_post (same NPC 227 menu lifecycle). Catalog npcSpawns empty by design.\n\nQA: enable main only → restart → Guard 220 news choice → farm Suginami → Card Maniac turn-in.",
       "affectedZones": [],
       "featuredNpcs": [],
       "npcSpawns": [],
@@ -1599,7 +1728,9 @@
       "category": "collab",
       "year": 2010,
       "month": 6,
-      "summary": "Post-state for the Momoiro Clover collaboration.",
+      "summary": "After the Alice quest: trade leftover Mahjong tile cards at the Babel Card Maniac for Alice’s Treasure Chest. Do not run with the main collab.",
+      "notes": "Post-event leftover trade — enable only after (or instead of) the main Momoiro / Alice quest event.\n\n• Where: Shinjuku Babel Card Maniac.\n• What: trade leftover Mahjong tile cards for Alice’s Treasure Chest.\n• Do not enable together with “Momoiro Clover Collaboration” — same NPC menu, different dialogue state.\n• Tip: no new field drops or clerks; empty Details NPC list is expected.",
+      "adminNotes": "Partial 201006_momoiro_post — events/extra only (no dropset / no zone ServerNPC).\n\nNPC 227 Babel 50101 → EX20100603_227_POST. Trades leftover cards 12185–12190 for Alice’s Treasure Chest 12205. Zone char flag 201006 + valuables gate first/repeat/failed paths.\n\nMutually exclusive with 201006_momoiro. Catalog npcSpawns empty by design.\n\nQA: enable post only (main off) → restart → Babel Card Maniac → Trade with leftover cards → confirm 12205.",
       "affectedZones": [],
       "featuredNpcs": [],
       "npcSpawns": [],
@@ -1615,9 +1746,9 @@
       "month": 7,
       "summary": "Search for the mythical Kappa underwater paradise.",
       "affectedZones": [
-        "Zone 7401001",
-        "ヴァーチャルビーチ・南国（昼） (220101)",
-        "ヴァーチャルビーチ・南国 (740101)"
+        "Virtual Tropical Beach (zone 740101 · map 7401001)",
+        "Virtual Tropical Beach (Day) (220101)",
+        "Virtual Tropical Beach (740101)"
       ],
       "featuredNpcs": [
         "DB Katori"
@@ -1627,7 +1758,8 @@
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 7401001,
-          "zoneName": "Zone 7401001",
+          "zoneName": "Virtual Tropical Beach",
+          "serverZoneId": 740101,
           "spotId": 30003,
           "x": -4160.86,
           "y": -4137.93
@@ -1636,7 +1768,8 @@
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 220101,
-          "zoneName": "ヴァーチャルビーチ・南国（昼）",
+          "zoneName": "Virtual Tropical Beach (Day)",
+          "serverZoneId": 220101,
           "spotId": 30003,
           "x": -4160.86,
           "y": -4137.93
@@ -1665,6 +1798,7 @@
           "nameJp": "三郎",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
+          "serverZoneId": 20102,
           "spotId": 60004,
           "x": -731.2,
           "y": -4469.88
@@ -1694,6 +1828,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 60012,
           "x": 23691.5,
           "y": -5145.77
@@ -1722,6 +1857,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1750,6 +1886,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1780,6 +1917,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1809,6 +1947,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1818,6 +1957,7 @@
           "nameJp": "ゴモリー",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60501,
           "x": 959.04,
           "y": -2832.92
@@ -1852,6 +1992,7 @@
           "nameJp": "ハイピクシー",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60052,
           "x": 2375.77,
           "y": -3990.22
@@ -1861,6 +2002,7 @@
           "nameJp": "影を追う者",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60010,
           "x": 2195,
           "y": -3006
@@ -1889,6 +2031,7 @@
           "nameJp": "アラハバキ",
           "zoneId": 200101,
           "zoneName": "新宿バベル居住区",
+          "serverZoneId": 200101,
           "spotId": 60050,
           "x": 0,
           "y": -4750
@@ -1904,13 +2047,38 @@
       "category": "collab",
       "year": 2011,
       "month": 5,
-      "summary": "Ikebukuro crossover with Celty, Shizuo looks, and Dollars-era fashion.",
+      "summary": "Ikebukuro crossover: boot an old PC to access Celty, Shizuo, Izaya, and DOLLARS Eye-Time stories.",
+      "notes": "Not a field-mob invasion — look for an old PC you can start up.\n\n• Home III and Ikebukuro East each have the PC.\n• Start it up to open Durarara-themed access menus: Headless Rider (Celty), Strongest Man in Ikebukuro (Shizuo), Scheming Informant (Izaya), and DOLLARS.\n• Those lead into Eye-Time (I-Time) story routes and related rewards once unlocked.\n\nTalk to the PC after enabling the event; don’t expect Oni-style street spawns.",
+      "adminNotes": "Partial 201105_durarara (合縁奇縁〈番外編〉):\n• Zone NPCs: ServerNPC ID 2049 on Home III spot 60053 (~3078, 4139) and Ikebukuro East 210201 spot 60202 (~-10390, 3147) → EX201105_2049.\n• Hub is an “old PC” (dialogue 750895+), not a named cast clerk.\n• Unlocks / routes gated by STATUS_ACTIVE 2106–2109 and iTime point scripts; huge trees in itime_04 (Shizuo), itime_05 (Celty), itime_06 (Izaya), itime_07.\n• Catalog previously missed NPCs because XML lacked <!-- name --> comments before ServerNPC — comments added for extractor.\n• Cooldown flag 20110501 via bool_cooldown.",
       "affectedZones": [
         "Home III (20101)",
         "イケブクロ東地区 (210201)"
       ],
-      "featuredNpcs": [],
-      "npcSpawns": [],
+      "featuredNpcs": [
+        "Old PC"
+      ],
+      "npcSpawns": [
+        {
+          "name": "Old PC",
+          "nameJp": "古いPC",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 60053,
+          "x": 3078.39,
+          "y": 4138.79
+        },
+        {
+          "name": "Old PC",
+          "nameJp": "古いPC",
+          "zoneId": 210201,
+          "zoneName": "イケブクロ東地区",
+          "serverZoneId": 210201,
+          "spotId": 60202,
+          "x": -10390,
+          "y": 3147.46
+        }
+      ],
       "xmlCount": 6
     },
     {
@@ -1934,6 +2102,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1962,6 +2131,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -1992,6 +2162,7 @@
           "nameJp": "ドジな運送屋　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60057,
           "x": -4024.98,
           "y": -316.97
@@ -2001,6 +2172,7 @@
           "nameJp": "ドジな運送屋　ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60058,
           "x": -4023.42,
           "y": 323.49
@@ -2010,8 +2182,9 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4930,
           "y": 6.16
         }
       ],
@@ -2040,6 +2213,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60031,
           "x": 172.86,
           "y": 10.67
@@ -2049,6 +2223,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 210101,
           "zoneName": "イケブクロ南地区",
+          "serverZoneId": 210101,
           "spotId": 60103,
           "x": -22677.6,
           "y": -74456.9
@@ -2058,6 +2233,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 61351,
           "x": -4699.21,
           "y": -7993.3
@@ -2089,6 +2265,7 @@
           "nameJp": "狂ったタケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60057,
           "x": -4024.98,
           "y": -316.97
@@ -2098,6 +2275,7 @@
           "nameJp": "ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60058,
           "x": -4023.42,
           "y": 323.49
@@ -2107,8 +2285,9 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4930,
           "y": 6.16
         }
       ],
@@ -2141,6 +2320,7 @@
           "nameJp": "会場案内人 タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61001,
           "x": 7197.38,
           "y": -3950.1
@@ -2150,6 +2330,7 @@
           "nameJp": "バイトくん",
           "zoneId": 20151,
           "zoneName": "パーティ会場",
+          "serverZoneId": 20151,
           "spotId": 61001,
           "x": -9.97,
           "y": 9487.17
@@ -2159,6 +2340,7 @@
           "nameJp": "アフロしんたろう",
           "zoneId": 20151,
           "zoneName": "パーティ会場",
+          "serverZoneId": 20151,
           "spotId": 61002,
           "x": 1446.09,
           "y": 6543.46
@@ -2168,6 +2350,7 @@
           "nameJp": "バーテンダー　ハヅキ",
           "zoneId": 20151,
           "zoneName": "パーティ会場",
+          "serverZoneId": 20151,
           "spotId": 60002,
           "x": -1796.4,
           "y": 7476.88
@@ -2177,6 +2360,7 @@
           "nameJp": "ミスターコンプ",
           "zoneId": 20151,
           "zoneName": "パーティ会場",
+          "serverZoneId": 20151,
           "spotId": 60001,
           "x": -39.09,
           "y": 7423.61
@@ -2211,6 +2395,7 @@
           "nameJp": "タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61003,
           "x": -4320.59,
           "y": -1764.35
@@ -2220,6 +2405,7 @@
           "nameJp": "ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61002,
           "x": -4636.73,
           "y": -1410.95
@@ -2229,6 +2415,7 @@
           "nameJp": "お針子リリィ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60059,
           "x": -4011.11,
           "y": 6.16
@@ -2238,6 +2425,7 @@
           "nameJp": "愚かな男",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61004,
           "x": -4697,
           "y": -804
@@ -2247,6 +2435,7 @@
           "nameJp": "バレンタインの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60058,
           "x": -4023.42,
           "y": 323.49
@@ -2256,8 +2445,9 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4930,
           "y": 6.16
         },
         {
@@ -2265,6 +2455,7 @@
           "nameJp": "イノセント",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
+          "serverZoneId": 20102,
           "spotId": 60007,
           "x": -2378.14,
           "y": -169.97
@@ -2302,6 +2493,7 @@
           "nameJp": "愚かな男",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60059,
           "x": -4011.11,
           "y": 6.16
@@ -2311,6 +2503,7 @@
           "nameJp": "ホワイトデーの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60058,
           "x": -4023.42,
           "y": 323.49
@@ -2320,8 +2513,9 @@
           "nameJp": "ヤギミヤ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4930,
           "y": 6.16
         },
         {
@@ -2329,6 +2523,7 @@
           "nameJp": "負の感情が憑依したＴＡＫＥＳＨＩ",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69001,
           "x": 26607.8,
           "y": 23639.7
@@ -2338,6 +2533,7 @@
           "nameJp": "ハヅキ",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69001,
           "x": -16665.6,
           "y": 24391.3
@@ -2368,6 +2564,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -2406,6 +2603,7 @@
           "nameJp": "ハイピクシー",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60052,
           "x": 2375.77,
           "y": -3990.22
@@ -2415,6 +2613,7 @@
           "nameJp": "ピクシー",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 62001,
           "x": -0.69,
           "y": 4456.03
@@ -2424,6 +2623,7 @@
           "nameJp": "ピクシー",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61003,
           "x": 475.76,
           "y": 8958.61
@@ -2433,6 +2633,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61002,
           "x": -475.76,
           "y": 8958.61
@@ -2442,6 +2643,7 @@
           "nameJp": "ドミニオン",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61011,
           "x": 1633.69,
           "y": 9132.79
@@ -2451,6 +2653,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61008,
           "x": -879.17,
           "y": 6401.13
@@ -2460,6 +2663,7 @@
           "nameJp": "ハイピクシー",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61007,
           "x": 1274.65,
           "y": 7392.52
@@ -2469,6 +2673,7 @@
           "nameJp": "ネコマタ",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61006,
           "x": -1274.65,
           "y": 7392.52
@@ -2478,6 +2683,7 @@
           "nameJp": "ドワーフ",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61010,
           "x": 1715.75,
           "y": 5690.58
@@ -2487,6 +2693,7 @@
           "nameJp": "ガルム",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61009,
           "x": 879.17,
           "y": 6401.13
@@ -2495,6 +2702,7 @@
           "name": "ポルターガイスト",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61001,
           "x": -1633.69,
           "y": 9132.79
@@ -2503,6 +2711,7 @@
           "name": "エンジェル",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61005,
           "x": 492.05,
           "y": 7991.47
@@ -2512,6 +2721,7 @@
           "nameJp": "リリム",
           "zoneId": 240101,
           "zoneName": "Ceremony Hall",
+          "serverZoneId": 240101,
           "spotId": 61004,
           "x": -492.05,
           "y": 7991.47
@@ -2540,6 +2750,7 @@
           "nameJp": "オニ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61005,
           "x": -8461.41,
           "y": -747.65
@@ -2568,6 +2779,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -2600,6 +2812,7 @@
           "nameJp": "獅子舞フロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61033,
           "x": -4025.6,
           "y": -4387.73
@@ -2609,6 +2822,7 @@
           "nameJp": "獅子舞フロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 61024,
           "x": -3699.75,
           "y": 1739.08
@@ -2618,6 +2832,7 @@
           "nameJp": "未熟な獅子舞フロスト",
           "zoneId": 240301,
           "zoneName": "ナカノの森",
+          "serverZoneId": 240301,
           "spotId": 60002,
           "x": 561.79,
           "y": 2206.6
@@ -2627,6 +2842,7 @@
           "nameJp": "獅子舞フロスト",
           "zoneId": 240301,
           "zoneName": "ナカノの森",
+          "serverZoneId": 240301,
           "spotId": 60001,
           "x": 1130.84,
           "y": 1549.34
@@ -2662,6 +2878,7 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61032,
           "x": -4024.86,
           "y": -4390.88
@@ -2671,6 +2888,7 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 61023,
           "x": -3700.04,
           "y": 1739.23
@@ -2680,6 +2898,7 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 61354,
           "x": -5791.59,
           "y": -7993.76
@@ -2689,6 +2908,7 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 61054,
           "x": 3403.34,
           "y": 10617.1
@@ -2698,6 +2918,7 @@
           "nameJp": "ＤＢサイオンジ",
           "zoneId": 240201,
           "zoneName": "キングフロストの森",
+          "serverZoneId": 240201,
           "spotId": 60001,
           "x": -404.74,
           "y": 1710.17
@@ -2707,6 +2928,7 @@
           "nameJp": "キングフロスト",
           "zoneId": 240201,
           "zoneName": "キングフロストの森",
+          "serverZoneId": 240201,
           "spotId": 60000,
           "x": 269.04,
           "y": 2277.4
@@ -2745,6 +2967,7 @@
           "nameJp": "バイト商人　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61035,
           "x": -3845.63,
           "y": -4399.25
@@ -2754,6 +2977,7 @@
           "nameJp": "バイト商人　ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61036,
           "x": -4218.93,
           "y": -4397.12
@@ -2763,6 +2987,7 @@
           "nameJp": "愛の使者　サキュバス",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61034,
           "x": -2990.3,
           "y": -4395.08
@@ -2772,6 +2997,7 @@
           "nameJp": "インキュバス",
           "zoneId": 30102,
           "zoneName": "スギナミ魔階坑道",
+          "serverZoneId": 30102,
           "spotId": 60401,
           "x": -1898,
           "y": -4903
@@ -2781,6 +3007,7 @@
           "nameJp": "リリム",
           "zoneId": 40110,
           "zoneName": "魔階ナカノ地下遺構",
+          "serverZoneId": 40110,
           "spotId": 60901,
           "x": 1406.47,
           "y": 537.01
@@ -2790,6 +3017,7 @@
           "nameJp": "ジャンヌ",
           "zoneId": 70103,
           "zoneName": "魔階セルタワー",
+          "serverZoneId": 70103,
           "spotId": 60901,
           "x": -2789.96,
           "y": 7024.01
@@ -2824,6 +3052,7 @@
           "nameJp": "悪魔研究士　シホ",
           "zoneId": 240401,
           "zoneName": "異界新宿バベル",
+          "serverZoneId": 240401,
           "spotId": 60001,
           "x": -6231.06,
           "y": -5.1
@@ -2833,6 +3062,7 @@
           "nameJp": "ジャアクフロスト",
           "zoneId": 240401,
           "zoneName": "異界新宿バベル",
+          "serverZoneId": 240401,
           "spotId": 60002,
           "x": -1.55,
           "y": -1620.35
@@ -2861,6 +3091,7 @@
           "nameJp": "悪魔研究士　シホ",
           "zoneId": 50106,
           "zoneName": "邪教の館",
+          "serverZoneId": 50106,
           "spotId": 62000,
           "x": 1067.13,
           "y": -931.41
@@ -2876,7 +3107,9 @@
       "category": "special",
       "year": 2013,
       "month": 5,
-      "summary": "Expertise unlock campaign centered on Ikebukuro.",
+      "summary": "Field farm: Lv60 Baphomet packs in Ikebukuro South and East. No town NPCs — hunt at fixed spawn spots for expertise-style drops.",
+      "notes": "No clerks or hub activity — this is a field farm only.\n\n• Where: Ikebukuro South and Ikebukuro East. Normal zone enemies still spawn; Baphomets are added at fixed spots, not a full map replace.\n• What: Lv60 Baphomet packs (fast respawn). Kill them for chance drops: Fighting Spirit, Box of Contracts, Evil Crystal.\n• Tip: If you only see normal trash, warp to a known spawn and look for Baphomet by name/level — they are easy to miss while wandering.",
+      "adminNotes": "Partial 201305_expertise — AutoApply ServerZonePartial on DynamicMapIDs 210101 (South) and 210201 (East). No ServerNPC / moon gate.\n\nSpawns: EnemyType 4060–4063, Level 60, XP 0, TalkResist 100, RespawnTime 10s. SpotIDs South 1001–1016 (4 SLGs), East 2001–2030 (6 SLGs); SpotSelection default ONE_RANDOM (one pack per SLG).\n\nDropSet 20130501: Fighting Spirit 12658 @5%, Box of Contracts 12833 @3%, Evil Crystal 12934 @1.5%.\n\nQA smoke: enable → publish/restart → warp South ~(-7617, -53594) or East ~(5054, 19825) / ~(18225, -13682). Expect Lv60 Baphomet; normals elsewhere are expected. Catalog npcSpawns empty by design.",
       "affectedZones": [
         "イケブクロ南地区 (210101)",
         "イケブクロ東地区 (210201)"
@@ -2909,6 +3142,7 @@
           "nameJp": "ヒロム",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60027,
           "x": 1030.83,
           "y": 8.27
@@ -2918,6 +3152,7 @@
           "nameJp": "ヒロム",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69950,
           "x": -104.68,
           "y": 1844.31
@@ -2927,8 +3162,9 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 68010,
-          "x": -3244,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": -3515,
           "y": -2084.4
         }
       ],
@@ -2960,6 +3196,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68055,
           "x": -3720.92,
           "y": 892.37
@@ -2969,6 +3206,7 @@
           "nameJp": "バイト商人　タケシ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60401,
           "x": -3708.39,
           "y": 1857.26
@@ -2978,6 +3216,7 @@
           "nameJp": "バイト商人　ハヅキ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 60402,
           "x": -3704.38,
           "y": 1620.86
@@ -2987,6 +3226,7 @@
           "nameJp": "混沌を司りしクラマテング",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69800,
           "x": 27754,
           "y": 14300.1
@@ -3016,6 +3256,7 @@
           "nameJp": "スライム",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
+          "serverZoneId": 20102,
           "spotId": 60017,
           "x": -2124.18,
           "y": -488.65
@@ -3025,6 +3266,7 @@
           "nameJp": "スライム",
           "zoneId": 210101,
           "zoneName": "イケブクロ南地区",
+          "serverZoneId": 210101,
           "spotId": 60102,
           "x": -18816.2,
           "y": -77041.6
@@ -3054,6 +3296,7 @@
           "nameJp": "ガルム",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
+          "serverZoneId": 20102,
           "spotId": 60017,
           "x": -2124.18,
           "y": -488.65
@@ -3063,6 +3306,7 @@
           "nameJp": "ガルム",
           "zoneId": 210101,
           "zoneName": "イケブクロ南地区",
+          "serverZoneId": 210101,
           "spotId": 60102,
           "x": -18816.2,
           "y": -77041.6
@@ -3094,6 +3338,7 @@
           "nameJp": "アリス",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69003,
           "x": -8661.49,
           "y": 38264.6
@@ -3103,6 +3348,7 @@
           "nameJp": "お菓子だいすきジャックランタン",
           "zoneId": 150101,
           "zoneName": "Shinjuku",
+          "serverZoneId": 150101,
           "spotId": 63000,
           "x": 2390,
           "y": 16647
@@ -3136,6 +3382,7 @@
           "nameJp": "アリス十番 立花あんな",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 62001,
           "x": -3925.36,
           "y": -1392.26
@@ -3145,6 +3392,7 @@
           "nameJp": "スチームガールズ 黒瀬サラ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 62002,
           "x": -4123.54,
           "y": -1391.11
@@ -3154,6 +3402,7 @@
           "nameJp": "焦っているスタッフ タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60027,
           "x": 1030.83,
           "y": 8.27
@@ -3163,8 +3412,9 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 62001,
-          "x": -3925.36,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -3650,
           "y": -1392.26
         },
         {
@@ -3172,6 +3422,7 @@
           "nameJp": "アリス十番 立花あんな",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 61024,
           "x": -3699.75,
           "y": 1739.08
@@ -3181,6 +3432,7 @@
           "nameJp": "スチームガールズ 黒瀬サラ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68056,
           "x": 5134.27,
           "y": 805.83
@@ -3190,6 +3442,7 @@
           "nameJp": "フリーのよろず屋 ハヅキ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69950,
           "x": -104.68,
           "y": 1844.31
@@ -3208,8 +3461,8 @@
       "summary": "New Year 2013–2014 festival wave.",
       "affectedZones": [
         "Nakano (40101)",
-        "Zone 240502",
-        "Zone 10511001",
+        "裏富士見ミッドガルド (zone 240501 · map 240502)",
+        "東シナガワ真氷穴 (zone 1051101 · map 10511001)",
         "裏富士見ミッドガルド (1050801)",
         "魔階ナカノ地下遺構（午） (1050901)",
         "ゾウシガヤ霊園（午） (1051001)"
@@ -3228,6 +3481,7 @@
           "nameJp": "ハヤグリーヴァ",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69105,
           "x": 36047,
           "y": 1410.05
@@ -3236,7 +3490,8 @@
           "name": "Kelpie",
           "nameJp": "ケルピー",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60013,
           "x": 4816.55,
           "y": 4014.43
@@ -3245,7 +3500,8 @@
           "name": "Cu Chulainn",
           "nameJp": "クヴァンダ",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60014,
           "x": -6045.01,
           "y": 4462.27
@@ -3254,7 +3510,8 @@
           "name": "Tomboy Kinari",
           "nameJp": "じゃじゃ馬娘　キンナリー",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60016,
           "x": -2868.2,
           "y": -304.3
@@ -3263,7 +3520,8 @@
           "name": "Hayagriva",
           "nameJp": "ハヤグリーヴァ",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60012,
           "x": -789.22,
           "y": -1470.29
@@ -3272,7 +3530,8 @@
           "name": "Valkyrie",
           "nameJp": "ヴァルキリー",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60015,
           "x": 1086.99,
           "y": 2179.84
@@ -3281,7 +3540,8 @@
           "name": "Young Unicorn",
           "nameJp": "若駒ユニコーン",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60017,
           "x": -564.68,
           "y": -3192.36
@@ -3290,7 +3550,8 @@
           "name": "Young Bicorn",
           "nameJp": "若駒バイコーン",
           "zoneId": 240502,
-          "zoneName": "Zone 240502",
+          "zoneName": "裏富士見ミッドガルド",
+          "serverZoneId": 240501,
           "spotId": 60018,
           "x": -1215.76,
           "y": -3356.44
@@ -3321,6 +3582,7 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69903,
           "x": 3500.35,
           "y": 5960.07
@@ -3330,6 +3592,7 @@
           "nameJp": "はぐれの悪魔研究士",
           "zoneId": 210101,
           "zoneName": "イケブクロ南地区",
+          "serverZoneId": 210101,
           "spotId": 60103,
           "x": -22677.6,
           "y": -74456.9
@@ -3361,6 +3624,7 @@
           "nameJp": "サエ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60043,
           "x": -8510.03,
           "y": 41.53
@@ -3370,6 +3634,7 @@
           "nameJp": "サエ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69951,
           "x": 2445.47,
           "y": -326.27
@@ -3408,6 +3673,7 @@
           "nameJp": "バイト商人　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60027,
           "x": 1030.83,
           "y": 8.27
@@ -3417,6 +3683,7 @@
           "nameJp": "バイト商人　ハヅキ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68055,
           "x": -3720.92,
           "y": 892.37
@@ -3426,6 +3693,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69004,
           "x": -10936.4,
           "y": 38505.1
@@ -3435,6 +3703,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60001,
           "x": 6882.78,
           "y": 7967.94
@@ -3444,6 +3713,7 @@
           "nameJp": "ティターニア",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60002,
           "x": 7235.77,
           "y": 8258.62
@@ -3453,6 +3723,7 @@
           "nameJp": "ジャンヌ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60003,
           "x": 7160.47,
           "y": 7629.13
@@ -3462,15 +3733,17 @@
           "nameJp": "ゲーデ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
-          "spotId": 60004,
-          "x": 6882.78,
-          "y": 7967.94
+          "serverZoneId": 240701,
+          "spotId": 0,
+          "x": 5729.11,
+          "y": 8905.32
         },
         {
           "name": "Gandharva",
           "nameJp": "ガンダルヴァ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60005,
           "x": 5826.77,
           "y": 7056.1
@@ -3480,6 +3753,7 @@
           "nameJp": "クー・フーリン",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60006,
           "x": 6588.69,
           "y": 8806.57
@@ -3489,6 +3763,7 @@
           "nameJp": "ヤタガラス",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60007,
           "x": 4540.41,
           "y": 7264.88
@@ -3497,6 +3772,7 @@
           "name": "ヨシツネ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60008,
           "x": 6408.63,
           "y": 6313.43
@@ -3505,6 +3781,7 @@
           "name": "カルティケーヤ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60009,
           "x": 4154.59,
           "y": 8225.87
@@ -3513,6 +3790,7 @@
           "name": "クルースニク",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60010,
           "x": 7202.43,
           "y": 6896.48
@@ -3521,6 +3799,7 @@
           "name": "フェニックス",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60011,
           "x": 6573.58,
           "y": 9509.49
@@ -3530,6 +3809,7 @@
           "nameJp": "タヂカラオ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60012,
           "x": 5373.17,
           "y": 6430.45
@@ -3538,6 +3818,7 @@
           "name": "オオクニヌシ",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60013,
           "x": 5002.2,
           "y": 9320.91
@@ -3547,6 +3828,7 @@
           "nameJp": "ドミニオン",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60014,
           "x": 5827.09,
           "y": 9707.29
@@ -3556,6 +3838,7 @@
           "nameJp": "インキュバス",
           "zoneId": 240701,
           "zoneName": "トリアナＴＯＫＹＯ",
+          "serverZoneId": 240701,
           "spotId": 60015,
           "x": 7897.58,
           "y": 9193.63
@@ -3591,6 +3874,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 30102,
           "zoneName": "スギナミ魔階坑道",
+          "serverZoneId": 30102,
           "spotId": 60402,
           "x": -2200,
           "y": -4900
@@ -3600,6 +3884,7 @@
           "nameJp": "オニ",
           "zoneId": 30102,
           "zoneName": "スギナミ魔階坑道",
+          "serverZoneId": 30102,
           "spotId": 60403,
           "x": -1600,
           "y": -4900
@@ -3609,6 +3894,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 30102,
           "zoneName": "スギナミ魔階坑道",
+          "serverZoneId": 30102,
           "spotId": 60404,
           "x": -2600,
           "y": -4400
@@ -3618,6 +3904,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 70103,
           "zoneName": "魔階セルタワー",
+          "serverZoneId": 70103,
           "spotId": 61001,
           "x": 1000,
           "y": 8100
@@ -3627,6 +3914,7 @@
           "nameJp": "オニ",
           "zoneId": 70103,
           "zoneName": "魔階セルタワー",
+          "serverZoneId": 70103,
           "spotId": 61002,
           "x": 1000,
           "y": 8600
@@ -3636,6 +3924,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 70103,
           "zoneName": "魔階セルタワー",
+          "serverZoneId": 70103,
           "spotId": 61003,
           "x": 1000,
           "y": 7600
@@ -3645,6 +3934,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 70104,
           "zoneName": "魔階シブヤクォーツ",
+          "serverZoneId": 70104,
           "spotId": 60006,
           "x": -1925.04,
           "y": 935.36
@@ -3654,6 +3944,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 80103,
           "zoneName": "旧イチガヤ駐屯地",
+          "serverZoneId": 80103,
           "spotId": 60006,
           "x": -5750,
           "y": 2600
@@ -3663,6 +3954,7 @@
           "nameJp": "オニ",
           "zoneId": 70104,
           "zoneName": "魔階シブヤクォーツ",
+          "serverZoneId": 70104,
           "spotId": 60007,
           "x": -2134.95,
           "y": 639.55
@@ -3672,6 +3964,7 @@
           "nameJp": "オニ",
           "zoneId": 80103,
           "zoneName": "旧イチガヤ駐屯地",
+          "serverZoneId": 80103,
           "spotId": 60007,
           "x": -5750,
           "y": 2200
@@ -3681,6 +3974,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 70104,
           "zoneName": "魔階シブヤクォーツ",
+          "serverZoneId": 70104,
           "spotId": 60008,
           "x": -1630.48,
           "y": 1404.52
@@ -3690,6 +3984,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 80103,
           "zoneName": "旧イチガヤ駐屯地",
+          "serverZoneId": 80103,
           "spotId": 60008,
           "x": -5100,
           "y": 2800
@@ -3724,6 +4019,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60006,
           "x": 319.7,
           "y": -1315.64
@@ -3733,6 +4029,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60007,
           "x": 324.08,
           "y": 1312.64
@@ -3762,8 +4059,9 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 68010,
-          "x": -3244,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": -3515,
           "y": -2084.4
         }
       ],
@@ -3798,6 +4096,7 @@
           "nameJp": "チャッピー",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69953,
           "x": -3662.77,
           "y": -1573.46
@@ -3807,6 +4106,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 150101,
           "zoneName": "Shinjuku",
+          "serverZoneId": 150101,
           "spotId": 63001,
           "x": -10088,
           "y": 1363.82
@@ -3816,6 +4116,7 @@
           "nameJp": "Hide アメノウズメ",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60007,
           "x": 0,
           "y": 0
@@ -3825,6 +4126,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60006,
           "x": 4029.22,
           "y": 16.82
@@ -3834,6 +4136,7 @@
           "nameJp": "ノッカー",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60005,
           "x": 3115.49,
           "y": 1901.83
@@ -3843,6 +4146,7 @@
           "nameJp": "ヤタガラス",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60003,
           "x": 3114.85,
           "y": -1937.62
@@ -3852,6 +4156,7 @@
           "nameJp": "カハク",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60004,
           "x": 3805.32,
           "y": -1307.88
@@ -3861,6 +4166,7 @@
           "nameJp": "マスドライバー　スダマ",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60002,
           "x": -32.88,
           "y": -1938.06
@@ -3870,6 +4176,7 @@
           "nameJp": "サルタヒコ",
           "zoneId": 240801,
           "zoneName": "ヨドバシアンダーグラウンド",
+          "serverZoneId": 240801,
           "spotId": 60001,
           "x": -4.2,
           "y": 1773.47
@@ -3888,9 +4195,9 @@
       "summary": "Finale of the Kappa saga — dungeon excursion into a demon palace.",
       "affectedZones": [
         "Shinjuku Dock (60101)",
-        "Zone 11307001",
-        "Zone 11404001",
-        "Zone 11504001",
+        "魔階セルタワー（！） (zone 1130701 · map 11307001)",
+        "魔階シブヤクォーツ（！） (zone 1140401 · map 11404001)",
+        "魔階ナカノ地下遺構（！） (zone 1150401 · map 11504001)",
         "魔階セルタワー（！） (1130701)",
         "魔階シブヤクォーツ（！） (1140401)"
       ],
@@ -3905,6 +4212,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60100,
           "x": 1197.11,
           "y": -2752.5
@@ -3913,7 +4221,8 @@
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 11307001,
-          "zoneName": "Zone 11307001",
+          "zoneName": "魔階セルタワー（！）",
+          "serverZoneId": 1130701,
           "spotId": 60001,
           "x": -400,
           "y": 360
@@ -3922,7 +4231,8 @@
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 11404001,
-          "zoneName": "Zone 11404001",
+          "zoneName": "魔階シブヤクォーツ（！）",
+          "serverZoneId": 1140401,
           "spotId": 60001,
           "x": -2300,
           "y": 5800
@@ -3931,7 +4241,8 @@
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 11504001,
-          "zoneName": "Zone 11504001",
+          "zoneName": "魔階ナカノ地下遺構（！）",
+          "serverZoneId": 1150401,
           "spotId": 60001,
           "x": -400,
           "y": 3400
@@ -3940,7 +4251,8 @@
           "name": "Kahaku",
           "nameJp": "カハク",
           "zoneId": 11307001,
-          "zoneName": "Zone 11307001",
+          "zoneName": "魔階セルタワー（！）",
+          "serverZoneId": 1130701,
           "spotId": 60001,
           "x": -400,
           "y": 360
@@ -3949,7 +4261,8 @@
           "name": "Kahaku",
           "nameJp": "カハク",
           "zoneId": 11404001,
-          "zoneName": "Zone 11404001",
+          "zoneName": "魔階シブヤクォーツ（！）",
+          "serverZoneId": 1140401,
           "spotId": 60001,
           "x": -2300,
           "y": 5800
@@ -3958,7 +4271,8 @@
           "name": "Kahaku",
           "nameJp": "カハク",
           "zoneId": 11504001,
-          "zoneName": "Zone 11504001",
+          "zoneName": "魔階ナカノ地下遺構（！）",
+          "serverZoneId": 1150401,
           "spotId": 60001,
           "x": -400,
           "y": 3400
@@ -3980,7 +4294,7 @@
         "Shibuya (70101)",
         "Shinagawa (90101)",
         "Shinjuku (150101)",
-        "Zone 11308001",
+        "Ｙキキビーチ (zone 1130801 · map 11308001)",
         "シブヤの一室 (1210101)"
       ],
       "featuredNpcs": [
@@ -3997,6 +4311,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68055,
           "x": -3720.92,
           "y": 892.37
@@ -4006,6 +4321,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69956,
           "x": 3659.29,
           "y": -147.29
@@ -4015,6 +4331,7 @@
           "nameJp": "ジャンヌ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69955,
           "x": 3781.8,
           "y": 131.01
@@ -4024,6 +4341,7 @@
           "nameJp": "ティターニア",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69005,
           "x": -18591.5,
           "y": 36197.5
@@ -4033,6 +4351,7 @@
           "nameJp": "ガブリエル",
           "zoneId": 90101,
           "zoneName": "Shinagawa",
+          "serverZoneId": 90101,
           "spotId": 63001,
           "x": 2039.07,
           "y": 6289.93
@@ -4042,6 +4361,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 150101,
           "zoneName": "Shinjuku",
+          "serverZoneId": 150101,
           "spotId": 63002,
           "x": 3376.07,
           "y": 16991
@@ -4050,7 +4370,8 @@
           "name": "Ishtar",
           "nameJp": "イシュタル",
           "zoneId": 11308001,
-          "zoneName": "Zone 11308001",
+          "zoneName": "Ｙキキビーチ",
+          "serverZoneId": 1130801,
           "spotId": 60001,
           "x": 3097.46,
           "y": -2785.32
@@ -4059,7 +4380,8 @@
           "name": "Tajikarao",
           "nameJp": "タヂカラオ",
           "zoneId": 11308001,
-          "zoneName": "Zone 11308001",
+          "zoneName": "Ｙキキビーチ",
+          "serverZoneId": 1130801,
           "spotId": 60002,
           "x": -350.32,
           "y": -2199.76
@@ -4092,6 +4414,7 @@
           "nameJp": "バイト商人　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60027,
           "x": 1030.83,
           "y": 8.27
@@ -4101,6 +4424,7 @@
           "nameJp": "バイト商人　ハヅキ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69959,
           "x": 380,
           "y": 3658
@@ -4110,8 +4434,9 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 68010,
-          "x": -3244,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": -3515,
           "y": -2084.4
         }
       ],
@@ -4147,6 +4472,7 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 30101,
           "zoneName": "Suginami",
+          "serverZoneId": 30101,
           "spotId": 60035,
           "x": -39874.3,
           "y": 11188.5
@@ -4156,6 +4482,7 @@
           "nameJp": "クラマテング",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69800,
           "x": 27754,
           "y": 14300.1
@@ -4165,6 +4492,7 @@
           "nameJp": "ネコマタ",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69007,
           "x": -8661.49,
           "y": 38264.6
@@ -4174,6 +4502,7 @@
           "nameJp": "だいそうじょう",
           "zoneId": 110101,
           "zoneName": "Ueno",
+          "serverZoneId": 110101,
           "spotId": 60103,
           "x": -9915.16,
           "y": 30597.5
@@ -4183,6 +4512,7 @@
           "nameJp": "トランペッター",
           "zoneId": 140101,
           "zoneName": "中立都市プロトピア",
+          "serverZoneId": 140101,
           "spotId": 60023,
           "x": -629.23,
           "y": 4369.47
@@ -4215,6 +4545,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60012,
           "x": -1000,
           "y": -2900
@@ -4224,6 +4555,7 @@
           "nameJp": "ヤタガラス",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60015,
           "x": -2379.24,
           "y": -1887.25
@@ -4233,6 +4565,7 @@
           "nameJp": "トウテツ",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60014,
           "x": -2000,
           "y": -2300
@@ -4242,6 +4575,7 @@
           "nameJp": "カイチ",
           "zoneId": 60101,
           "zoneName": "Shinjuku Dock",
+          "serverZoneId": 60101,
           "spotId": 60013,
           "x": -1538.54,
           "y": -2629.41
@@ -4276,6 +4610,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69108,
           "x": 38655.1,
           "y": 19023.6
@@ -4285,6 +4620,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60001,
           "x": -1500,
           "y": 4100
@@ -4294,6 +4630,7 @@
           "nameJp": "サンタフロスト",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60014,
           "x": 800,
           "y": -830.17
@@ -4303,6 +4640,7 @@
           "nameJp": "オニ",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60012,
           "x": 2100,
           "y": 1400
@@ -4312,6 +4650,7 @@
           "nameJp": "インキュバス",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60015,
           "x": 2063.78,
           "y": 672.23
@@ -4321,6 +4660,7 @@
           "nameJp": "フロストエース",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60002,
           "x": -2500,
           "y": 3200
@@ -4330,6 +4670,7 @@
           "nameJp": "ノッカー",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60006,
           "x": -527.5,
           "y": 1600
@@ -4339,6 +4680,7 @@
           "nameJp": "スライム",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60005,
           "x": -2200,
           "y": 1800
@@ -4348,6 +4690,7 @@
           "nameJp": "カハク",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60013,
           "x": 650,
           "y": 3300
@@ -4357,6 +4700,7 @@
           "nameJp": "クラマテング",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60018,
           "x": 1977.87,
           "y": -319.76
@@ -4366,6 +4710,7 @@
           "nameJp": "妖精王　オベロン",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60017,
           "x": -300,
           "y": -830.17
@@ -4374,6 +4719,7 @@
           "name": "ヤクシニー",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60004,
           "x": 75.32,
           "y": 4100
@@ -4383,6 +4729,7 @@
           "nameJp": "ティターニア",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60016,
           "x": -222.89,
           "y": -333.32
@@ -4392,6 +4739,7 @@
           "nameJp": "ＤＢノジーに使役されるカイチ",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60003,
           "x": -500,
           "y": 3900
@@ -4401,6 +4749,7 @@
           "nameJp": "ピクシー",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60029,
           "x": -2501.97,
           "y": 2673.25
@@ -4410,6 +4759,7 @@
           "nameJp": "ＮＰＣサイエン",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60008,
           "x": 1700,
           "y": 2300
@@ -4418,6 +4768,7 @@
           "name": "モリーアン",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60011,
           "x": 1600,
           "y": -800
@@ -4427,6 +4778,7 @@
           "nameJp": "ジャンヌ",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60027,
           "x": -600,
           "y": 2000
@@ -4436,6 +4788,7 @@
           "nameJp": "ＤＢカトリ",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60022,
           "x": -2000,
           "y": 4100
@@ -4445,6 +4798,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60021,
           "x": -2400,
           "y": 3700
@@ -4454,6 +4808,7 @@
           "nameJp": "ハヤグリーヴァ",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60020,
           "x": -1500,
           "y": 1600
@@ -4463,6 +4818,7 @@
           "nameJp": "ヴァルキリー",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60010,
           "x": -1100,
           "y": 1900
@@ -4472,6 +4828,7 @@
           "nameJp": "アリス",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60025,
           "x": 400,
           "y": 3800
@@ -4481,6 +4838,7 @@
           "nameJp": "イシュタル",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60028,
           "x": 300,
           "y": -1100
@@ -4490,6 +4848,7 @@
           "nameJp": "ヤタガラス",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60026,
           "x": -456.17,
           "y": 201.22
@@ -4499,6 +4858,7 @@
           "nameJp": "傲慢なニュクス",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60031,
           "x": 2050,
           "y": 1900.54
@@ -4507,6 +4867,7 @@
           "name": "ヴィヴィアン",
           "zoneId": 240901,
           "zoneName": "森のクリスマスパーティ会場",
+          "serverZoneId": 240901,
           "spotId": 60023,
           "x": 2100,
           "y": 1000
@@ -4535,6 +4896,7 @@
           "nameJp": "アレス",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 69070,
           "x": 8800,
           "y": 1150
@@ -4566,6 +4928,7 @@
           "nameJp": "魔神トート",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 69069,
           "x": -550,
           "y": -4350
@@ -4575,6 +4938,7 @@
           "nameJp": "魔神トート",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69960,
           "x": -2900,
           "y": -1000
@@ -4604,6 +4968,7 @@
           "nameJp": "魔神トート",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 69069,
           "x": -550,
           "y": -4350
@@ -4613,6 +4978,7 @@
           "nameJp": "魔神トート",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69960,
           "x": -2900,
           "y": -1000
@@ -4644,6 +5010,7 @@
           "nameJp": "ジャアクフロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69961,
           "x": -3711.26,
           "y": 131.07
@@ -4653,6 +5020,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60012,
           "x": -58.45,
           "y": 1334.92
@@ -4662,6 +5030,7 @@
           "nameJp": "ジャアクフロスト",
           "zoneId": 150102,
           "zoneName": "魔階トチョウ",
+          "serverZoneId": 150102,
           "spotId": 60011,
           "x": 301.94,
           "y": -1585.1
@@ -4693,6 +5062,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68055,
           "x": -3720.92,
           "y": 892.37
@@ -4702,6 +5072,7 @@
           "nameJp": "ヤクシャ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68074,
           "x": 5463.96,
           "y": -416.62
@@ -4738,6 +5109,7 @@
           "nameJp": "ネコマタ",
           "zoneId": 30101,
           "zoneName": "Suginami",
+          "serverZoneId": 30101,
           "spotId": 60036,
           "x": -41630.3,
           "y": 8926.74
@@ -4747,6 +5119,7 @@
           "nameJp": "ネコマタ",
           "zoneId": 70101,
           "zoneName": "Shibuya",
+          "serverZoneId": 70101,
           "spotId": 69007,
           "x": -8661.49,
           "y": 38264.6
@@ -4756,6 +5129,7 @@
           "nameJp": "山羊屋",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60101,
           "x": 1457.57,
           "y": 7143.2
@@ -4765,6 +5139,7 @@
           "nameJp": "アリス",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60020,
           "x": -1265.76,
           "y": 8351.72
@@ -4774,6 +5149,7 @@
           "nameJp": "邪神マダ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60201,
           "x": 852.94,
           "y": 8964.17
@@ -4783,6 +5159,7 @@
           "nameJp": "ガンダルヴァ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60203,
           "x": 718.33,
           "y": 6059.1
@@ -4792,6 +5169,7 @@
           "nameJp": "ノッカー",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60204,
           "x": -782.13,
           "y": 4176.72
@@ -4801,6 +5179,7 @@
           "nameJp": "モー・ショボー",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60015,
           "x": -1310.5,
           "y": 7032.76
@@ -4810,6 +5189,7 @@
           "nameJp": "ジャックランタン",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60001,
           "x": 1367.01,
           "y": 6073.53
@@ -4818,6 +5198,7 @@
           "name": "ポルターガイスト",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60018,
           "x": -1191.7,
           "y": 7706.24
@@ -4827,6 +5208,7 @@
           "nameJp": "ゲーデ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60014,
           "x": 1364.47,
           "y": 8713.76
@@ -4836,6 +5218,7 @@
           "nameJp": "カハク",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60205,
           "x": 342.13,
           "y": -1755.53
@@ -4845,6 +5228,7 @@
           "nameJp": "サラスヴァティ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60102,
           "x": 1402.81,
           "y": 7735.55
@@ -4854,6 +5238,7 @@
           "nameJp": "カイチ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60016,
           "x": 543.93,
           "y": 4096.69
@@ -4862,6 +5247,7 @@
           "name": "ウタイガイコツ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60012,
           "x": -314.51,
           "y": 7725.28
@@ -4870,6 +5256,7 @@
           "name": "ウタイガイコツ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60013,
           "x": 350.15,
           "y": 7786.01
@@ -4878,6 +5265,7 @@
           "name": "ゴグマゴグ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60011,
           "x": -1231.34,
           "y": 5983.94
@@ -4886,6 +5274,7 @@
           "name": "センリ",
           "zoneId": 241001,
           "zoneName": "Halloween Party",
+          "serverZoneId": 241001,
           "spotId": 60202,
           "x": -1004.22,
           "y": 9027.68
@@ -4923,6 +5312,7 @@
           "nameJp": "ケルベロス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69962,
           "x": -5129.85,
           "y": 1116.92
@@ -4932,6 +5322,7 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69963,
           "x": -3640.77,
           "y": -983.56
@@ -4941,6 +5332,7 @@
           "nameJp": "小悪魔リリム",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69964,
           "x": -3652.79,
           "y": 1147.8
@@ -4950,6 +5342,7 @@
           "nameJp": "タム・リン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69965,
           "x": -5134.9,
           "y": -957.96
@@ -4959,6 +5352,7 @@
           "nameJp": "ＤＢアン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69957,
           "x": -1131.05,
           "y": -4287.86
@@ -4988,6 +5382,7 @@
           "nameJp": "アヤ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69964,
           "x": -3652.79,
           "y": 1147.8
@@ -4997,6 +5392,7 @@
           "nameJp": "愛の使者　サキュバス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69963,
           "x": -3640.77,
           "y": -983.56
@@ -5016,7 +5412,7 @@
       "affectedZones": [
         "Home III (20101)",
         "Shinjuku Babel (50101)",
-        "ヴァーチャルビーチ・南国（昼） (220101)",
+        "Virtual Tropical Beach (Day) (220101)",
         "ヴァーチャルビーチ・南国（夕） (220102)",
         "ヴァーチャルビーチ・南国（夜） (220103)"
       ],
@@ -5030,6 +5426,7 @@
           "nameJp": "ＤＢアン",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 69963,
           "x": 168.36,
           "y": -607.93
@@ -5039,6 +5436,7 @@
           "nameJp": "スライム",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 69966,
           "x": 426.26,
           "y": -785.21
@@ -5048,6 +5446,7 @@
           "nameJp": "ＤＢアン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69957,
           "x": -1131.05,
           "y": -4287.86
@@ -5057,6 +5456,7 @@
           "nameJp": "スライム",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 69966,
           "x": -1359.44,
           "y": -4435.91
@@ -5065,7 +5465,8 @@
           "name": "DB Anne",
           "nameJp": "ＤＢアン",
           "zoneId": 220101,
-          "zoneName": "ヴァーチャルビーチ・南国（昼）",
+          "zoneName": "Virtual Tropical Beach (Day)",
+          "serverZoneId": 220101,
           "spotId": 60102,
           "x": -1742.8,
           "y": -1416.52
@@ -5075,6 +5476,7 @@
           "nameJp": "ＤＢアン",
           "zoneId": 220102,
           "zoneName": "ヴァーチャルビーチ・南国（夕）",
+          "serverZoneId": 220102,
           "spotId": 60102,
           "x": -1742.8,
           "y": -1416.52
@@ -5084,6 +5486,7 @@
           "nameJp": "ＤＢアン",
           "zoneId": 220103,
           "zoneName": "ヴァーチャルビーチ・南国（夜）",
+          "serverZoneId": 220103,
           "spotId": 60102,
           "x": -1742.8,
           "y": -1416.52
@@ -5092,7 +5495,8 @@
           "name": "Slime",
           "nameJp": "スライム",
           "zoneId": 220101,
-          "zoneName": "ヴァーチャルビーチ・南国（昼）",
+          "zoneName": "Virtual Tropical Beach (Day)",
+          "serverZoneId": 220101,
           "spotId": 60202,
           "x": -1657.59,
           "y": -1845.3
@@ -5102,6 +5506,7 @@
           "nameJp": "スライム",
           "zoneId": 220102,
           "zoneName": "ヴァーチャルビーチ・南国（夕）",
+          "serverZoneId": 220102,
           "spotId": 60202,
           "x": -1657.59,
           "y": -1845.3
@@ -5111,6 +5516,7 @@
           "nameJp": "スライム",
           "zoneId": 220103,
           "zoneName": "ヴァーチャルビーチ・南国（夜）",
+          "serverZoneId": 220103,
           "spotId": 60202,
           "x": -1657.59,
           "y": -1845.3
@@ -5140,6 +5546,7 @@
           "nameJp": "可動の山本長官",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 61026,
           "x": 529.05,
           "y": -1290.04
@@ -5149,6 +5556,7 @@
           "nameJp": "可動の山本長官",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 61027,
           "x": -18.76,
           "y": 4397.78
@@ -5158,6 +5566,7 @@
           "nameJp": "可動の山本長官",
           "zoneId": 270101,
           "zoneName": "コミュニティエリア（バザー）",
+          "serverZoneId": 270101,
           "spotId": 61001,
           "x": -582.56,
           "y": 14.54
@@ -5169,17 +5578,19 @@
       "id": "201604_misc",
       "folder": "datastore/partials/201604_misc",
       "titleJp": "201604_misc",
-      "titleEn": "Server Shutdown Misc. Changes",
+      "titleEn": "Daily Mission Chests & Hack Limits (2016)",
       "category": "special",
       "year": 2016,
       "month": 4,
-      "summary": "Miscellaneous shutdown-era tweaks including Daily Mission item additions.",
+      "summary": "Shutdown-era Daily Mission patch: extra treasure boxes inside Daily Mission maps, plus a higher Daily Mission hack limit.",
+      "notes": "Not a town festival — nothing new to talk to in Home III or Babel.\n\n• Daily Mission treasure boxes: when this event is on, Daily Mission instance maps get five extra chests you can open for DM-related rewards.\n• Daily Mission hack limits: the old low caps (1 / 2) are raised to 5 / 10 while this partial is active.\n\nUse Daily Mission terminals and enter a Daily Mission map to see the chests and the higher hack allowance. Re-enter Home III or Babel after enabling so the hack-limit flag applies.",
+      "adminNotes": "Partial 201604_misc — two AutoApply zone partials:\n\n1) Daily Mission treasure boxes (ID 20160498)\n   • Maps: 10201001–10201011 (Daily Mission instances)\n   • Objects: 宝箱１–５ (IDs 1200101–1200105) on SpotIDs 62101–62105\n   • Interact → event SD_D1020X_BOX (prompt / open flow)\n   • ON_FLAG_SET 1200100 → SD_D1020X_120010X_REWARD (action_flagRangeSet … 5)\n   • ON_FLAG_SET 1200999 → SD_D1020X_120010X_EXTRA (message 956096)\n\n2) Daily Mission hack limit bump (ID 20160499)\n   • Maps: Home III 20101 + Shinjuku Babel 50101\n   • ON_SETUP sets ZONE flag 20160401 = 1\n   • XML comment: hack limits changed from 1/2 to 5/10 (flag consumed by DM dialogue/logic elsewhere)\n\nNo ServerNPC. Treat as always-on DM infrastructure; QA via DM instances + hack UI, not slice spawn smoke.",
       "affectedZones": [
         "Home III (20101)",
         "Shinjuku Babel (50101)",
-        "Zone 10201001",
-        "Zone 10201002",
-        "Zone 10201003"
+        "デイリーエリア・遺 (zone 1020101 · map 10201001)",
+        "デイリーエリア・遺 (zone 1020102 · map 10201002)",
+        "デイリーエリア・塔 (zone 1020103 · map 10201003)"
       ],
       "featuredNpcs": [],
       "npcSpawns": [],
@@ -5200,7 +5611,7 @@
         "Holy City Arcadia (100101)",
         "総本山 (130101)",
         "中立都市プロトピア (140101)",
-        "Zone 11308001"
+        "Ｙキキビーチ (zone 1130801 · map 11308001)"
       ],
       "featuredNpcs": [
         "Y-Kiki Beach Manager Nagashima",
@@ -5213,6 +5624,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60073,
           "x": -1379.56,
           "y": -1628.98
@@ -5222,6 +5634,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
+          "serverZoneId": 50101,
           "spotId": 68055,
           "x": -3720.92,
           "y": 892.37
@@ -5231,6 +5644,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 100101,
           "zoneName": "Holy City Arcadia",
+          "serverZoneId": 100101,
           "spotId": 60116,
           "x": 1294.71,
           "y": -4718.11
@@ -5240,6 +5654,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 130101,
           "zoneName": "総本山",
+          "serverZoneId": 130101,
           "spotId": 60037,
           "x": 17.73,
           "y": 7399.1
@@ -5249,6 +5664,7 @@
           "nameJp": "Ｙキキビーチ管理人　ナガシマ",
           "zoneId": 140101,
           "zoneName": "中立都市プロトピア",
+          "serverZoneId": 140101,
           "spotId": 60025,
           "x": 952.62,
           "y": -1178.31
@@ -5257,7 +5673,8 @@
           "name": "Yatagarasu",
           "nameJp": "ヤタガラス",
           "zoneId": 11308001,
-          "zoneName": "Zone 11308001",
+          "zoneName": "Ｙキキビーチ",
+          "serverZoneId": 1130801,
           "spotId": 60002,
           "x": -350.32,
           "y": -2199.76
@@ -5266,7 +5683,8 @@
           "name": "Man with Dazzling Sweat",
           "nameJp": "ほとばしる汗がまぶしい男",
           "zoneId": 220101,
-          "zoneName": "ヴァーチャルビーチ・南国（昼）",
+          "zoneName": "Virtual Tropical Beach (Day)",
+          "serverZoneId": 220101,
           "spotId": 60006,
           "x": 1264.93,
           "y": -3946.79
@@ -5276,6 +5694,7 @@
           "nameJp": "ほとばしる汗がまぶしい男",
           "zoneId": 220102,
           "zoneName": "ヴァーチャルビーチ・南国（夕）",
+          "serverZoneId": 220102,
           "spotId": 60006,
           "x": 1264.93,
           "y": -3946.79
@@ -5285,6 +5704,7 @@
           "nameJp": "ほとばしる汗がまぶしい男",
           "zoneId": 220103,
           "zoneName": "ヴァーチャルビーチ・南国（夜）",
+          "serverZoneId": 220103,
           "spotId": 60006,
           "x": 1264.93,
           "y": -3946.79
@@ -5323,35 +5743,79 @@
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60020,
           "x": 113.65,
           "y": 1367.89
+        },
+        {
+          "name": "Jack Frost",
+          "nameJp": "ジャックフロスト",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -186.35,
+          "y": 1600
+        },
+        {
+          "name": "Jack Frost",
+          "nameJp": "ジャックフロスト",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 13.65,
+          "y": 1600
+        },
+        {
+          "name": "Jack Frost",
+          "nameJp": "ジャックフロスト",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 213.65,
+          "y": 1600
+        },
+        {
+          "name": "Jack Frost",
+          "nameJp": "ジャックフロスト",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 413.65,
+          "y": 1600
         },
         {
           "name": "Saburo",
           "nameJp": "三郎",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60027,
-          "x": 1030.83,
-          "y": 8.27
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 830.83,
+          "y": 408.27
         },
         {
           "name": "Hiromu",
           "nameJp": "ヒロム",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60027,
-          "x": 1030.83,
-          "y": 8.27
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 830.83,
+          "y": 208.27
         },
         {
           "name": "Flustered Staff Takeshi",
           "nameJp": "焦っているスタッフ タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60027,
-          "x": 1030.83,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 830.83,
           "y": 8.27
         },
         {
@@ -5359,25 +5823,48 @@
           "nameJp": "バイト商人　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60027,
-          "x": 1030.83,
-          "y": 8.27
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 830.83,
+          "y": -191.73
+        },
+        {
+          "name": "Part-Time Merchant Takeshi",
+          "nameJp": "バイト商人　タケシ",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 830.83,
+          "y": -391.73
         },
         {
           "name": "Envoy from Shinjuku Babel",
           "nameJp": "新宿バベルからの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60028,
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": 8218.64,
-          "y": -5.06
+          "y": 394.94
         },
         {
           "name": "Election Commissioner",
           "nameJp": "選挙管理委員",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60028,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 8218.64,
+          "y": 194.94
+        },
+        {
+          "name": "Election Commissioner",
+          "nameJp": "選挙管理委員",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": 8218.64,
           "y": -5.06
         },
@@ -5386,44 +5873,49 @@
           "nameJp": "泣いたオニ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60028,
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": 8218.64,
-          "y": -5.06
+          "y": -205.06
         },
         {
           "name": "Archangel",
           "nameJp": "アークエンジェル",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60028,
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": 8218.64,
-          "y": -5.06
+          "y": -405.06
         },
         {
           "name": "Black Youth",
           "nameJp": "黒い青年",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60043,
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": -8510.03,
-          "y": 41.53
+          "y": -358.47
         },
         {
           "name": "Jack Frost",
           "nameJp": "ジャックフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60043,
+          "serverZoneId": 20101,
+          "spotId": 0,
           "x": -8510.03,
-          "y": 41.53
+          "y": -158.47
         },
         {
           "name": "High Pixie",
           "nameJp": "ハイピクシー",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60052,
-          "x": 2375.77,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 2575.77,
           "y": -3990.22
         },
         {
@@ -5431,8 +5923,9 @@
           "nameJp": "ドジな運送屋　タケシ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60057,
-          "x": -4024.98,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4424.98,
           "y": -316.97
         },
         {
@@ -5440,8 +5933,9 @@
           "nameJp": "ドジな運送屋　ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60058,
-          "x": -4023.42,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4424.98,
           "y": 323.49
         },
         {
@@ -5449,6 +5943,7 @@
           "nameJp": "ハヅキ",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 60058,
           "x": -4023.42,
           "y": 323.49
@@ -5458,8 +5953,9 @@
           "nameJp": "バレンタインの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60058,
-          "x": -4023.42,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -3623.42,
           "y": 323.49
         },
         {
@@ -5467,8 +5963,9 @@
           "nameJp": "ホワイトデーの使者",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60058,
-          "x": -4023.42,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -3823.42,
           "y": 323.49
         },
         {
@@ -5476,17 +5973,19 @@
           "nameJp": "お針子リリィ",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
-          "y": 6.16
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -3611.11,
+          "y": -193.84
         },
         {
           "name": "Foolish Man",
           "nameJp": "愚かな男",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60059,
-          "x": -4011.11,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -3611.11,
           "y": 6.16
         },
         {
@@ -5494,8 +5993,19 @@
           "nameJp": "ジャックランタン",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 60060,
-          "x": 170.29,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -79.71,
+          "y": 378.05
+        },
+        {
+          "name": "Pyro Jack",
+          "nameJp": "ジャックランタン",
+          "zoneId": 20101,
+          "zoneName": "Home III",
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": 420.29,
           "y": 378.05
         },
         {
@@ -5503,6 +6013,7 @@
           "nameJp": "Moving 未熟なサンタフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
+          "serverZoneId": 20101,
           "spotId": 61032,
           "x": -4024.86,
           "y": -4390.88
@@ -5512,17 +6023,19 @@
           "nameJp": "未熟なサンタフロスト",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 61032,
-          "x": -4024.86,
-          "y": -4390.88
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -4440,
+          "y": -4350
         },
         {
           "name": "Demon God Thoth",
           "nameJp": "魔神トート",
           "zoneId": 20101,
           "zoneName": "Home III",
-          "spotId": 69069,
-          "x": -550,
+          "serverZoneId": 20101,
+          "spotId": 0,
+          "x": -350,
           "y": -4350
         },
         {
@@ -5530,8 +6043,9 @@
           "nameJp": "三郎",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
-          "spotId": 60004,
-          "x": -731.2,
+          "serverZoneId": 20102,
+          "spotId": 0,
+          "x": -350,
           "y": -4469.88
         },
         {
@@ -5539,44 +6053,69 @@
           "nameJp": "スライム",
           "zoneId": 20102,
           "zoneName": "第三ホーム搬入口",
-          "spotId": 60017,
-          "x": -2124.18,
-          "y": -488.65
+          "serverZoneId": 20102,
+          "spotId": 60016,
+          "x": -2258.23,
+          "y": -484.42
         },
         {
           "name": "DB Katori",
           "nameJp": "ＤＢカトリ",
           "zoneId": 40101,
           "zoneName": "Nakano",
-          "spotId": 60012,
-          "x": 23691.5,
-          "y": -5145.77
+          "serverZoneId": 40101,
+          "spotId": 0,
+          "x": 23550,
+          "y": -4945.77
+        },
+        {
+          "name": "DB Katori",
+          "nameJp": "ＤＢカトリ",
+          "zoneId": 40101,
+          "zoneName": "Nakano",
+          "serverZoneId": 40101,
+          "spotId": 0,
+          "x": 23550,
+          "y": -4745.77
         },
         {
           "name": "Kurama Tengu of Chaos",
           "nameJp": "混沌を司りしクラマテング",
           "zoneId": 40101,
           "zoneName": "Nakano",
+          "serverZoneId": 40101,
           "spotId": 69800,
           "x": 27754,
           "y": 14300.1
+        },
+        {
+          "name": "Kurama Tengu of Chaos",
+          "nameJp": "混沌を司りしクラマテング",
+          "zoneId": 40101,
+          "zoneName": "Nakano",
+          "serverZoneId": 40101,
+          "spotId": 0,
+          "x": 27600,
+          "y": 14200
         },
         {
           "name": "Kurama Tengu",
           "nameJp": "クラマテング",
           "zoneId": 40101,
           "zoneName": "Nakano",
-          "spotId": 69800,
-          "x": 27754,
-          "y": 14300.1
+          "serverZoneId": 40101,
+          "spotId": 0,
+          "x": 28000,
+          "y": 14200
         },
         {
           "name": "Pyro Jack",
           "nameJp": "ジャックランタン",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 60046,
-          "x": -69.49,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": 293.91,
           "y": -4324.93
         },
         {
@@ -5584,8 +6123,9 @@
           "nameJp": "アリス",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 60048,
-          "x": -14.06,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": -214.06,
           "y": -6045.49
         },
         {
@@ -5593,90 +6133,10 @@
           "nameJp": "総司令　獅子舞フロスト",
           "zoneId": 50101,
           "zoneName": "Shinjuku Babel",
-          "spotId": 60049,
-          "x": -0.55,
+          "serverZoneId": 50101,
+          "spotId": 0,
+          "x": -200.55,
           "y": -4329.26
-        },
-        {
-          "name": "Pyro Jack",
-          "nameJp": "ジャックランタン",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 60049,
-          "x": -0.55,
-          "y": -4329.26
-        },
-        {
-          "name": "DB Anne",
-          "nameJp": "ＤＢアン",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 60082,
-          "x": -3658.09,
-          "y": -4803.61
-        },
-        {
-          "name": "Moving Inexperienced Santa Frost",
-          "nameJp": "Moving 未熟なサンタフロスト",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 61023,
-          "x": -3700.04,
-          "y": 1739.23
-        },
-        {
-          "name": "Inexperienced Santa Frost",
-          "nameJp": "未熟なサンタフロスト",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 61023,
-          "x": -3700.04,
-          "y": 1739.23
-        },
-        {
-          "name": "Lion Dance Frost",
-          "nameJp": "獅子舞フロスト",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 61024,
-          "x": -3699.75,
-          "y": 1739.08
-        },
-        {
-          "name": "Part-Time Merchant Hazuki",
-          "nameJp": "バイト商人　ハヅキ",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 68055,
-          "x": -3720.92,
-          "y": 892.37
-        },
-        {
-          "name": "Y-Kiki Beach Manager Nagashima",
-          "nameJp": "Ｙキキビーチ管理人　ナガシマ",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 68055,
-          "x": -3720.92,
-          "y": 892.37
-        },
-        {
-          "name": "Hiromu",
-          "nameJp": "ヒロム",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 69950,
-          "x": -104.68,
-          "y": 1844.31
-        },
-        {
-          "name": "DB Anne",
-          "nameJp": "ＤＢアン",
-          "zoneId": 50101,
-          "zoneName": "Shinjuku Babel",
-          "spotId": 69957,
-          "x": -1131.05,
-          "y": -4287.86
         }
       ],
       "xmlCount": 1

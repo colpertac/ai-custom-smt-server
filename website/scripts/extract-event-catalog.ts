@@ -20,7 +20,17 @@ const I18N_PATH = path.join(WEBSITE_ROOT, "content/events/i18n.json")
 
 type I18nFile = {
   version: number
-  titles: Record<string, { titleEn: string; summary?: string }>
+  titles: Record<
+    string,
+    {
+      titleEn: string
+      summary?: string
+      /** Public /events detail — player-friendly. */
+      notes?: string
+      /** Admin /admin/events detail — GM / technical. */
+      adminNotes?: string
+    }
+  >
   npcs: Record<string, string | null>
 }
 
@@ -41,6 +51,8 @@ const ZONE_COMMENT_EN: Record<string, string> = {
   ハロウィンパーティ: "Halloween Party",
   パイ投げ合戦会場: "Pie-Throwing Arena",
   ヴァーチャルバトル: "Virtual Battle",
+  ヴァーチャルビーチ・南国: "Virtual Tropical Beach",
+  "ヴァーチャルビーチ・南国（昼）": "Virtual Tropical Beach (Day)",
   ネットワーク: "Network",
 }
 
@@ -290,33 +302,52 @@ async function findZonesDir(): Promise<string | null> {
   return null
 }
 
-async function loadZoneNameMap(): Promise<Map<number, string>> {
-  const map = new Map<number, string>(
+type ZoneIndex = {
+  byZoneId: Map<number, string>
+  /** DynamicMapID → owning ServerZone ID + display name */
+  byDynamicMapId: Map<number, { zoneId: number; name: string }>
+}
+
+async function loadZoneIndex(): Promise<ZoneIndex> {
+  const byZoneId = new Map<number, string>(
     Object.entries(KNOWN_MAP_NAMES).map(([k, v]) => [Number(k), v])
   )
+  const byDynamicMapId = new Map<number, { zoneId: number; name: string }>()
   const zonesDir = await findZonesDir()
-  if (!zonesDir) return map
+  if (!zonesDir) return { byZoneId, byDynamicMapId }
 
   const files = await fs.readdir(zonesDir)
   for (const file of files) {
     if (!file.endsWith(".xml")) continue
     const idMatch = file.match(/zone-(\d+)/)
     if (!idMatch) continue
-    const id = parseInt(idMatch[1], 10)
+    const zoneId = parseInt(idMatch[1], 10)
     try {
       const head = await fs.readFile(path.join(zonesDir, file), "utf8")
       const comment = head.match(/<!--\s*([^\n\-]+?)\s*(?:-->|--)/)
-      if (!comment) continue
-      const jp = comment[1].trim().replace(/\s*-->\s*$/, "").trim()
-      if (!jp || jp.startsWith("<")) continue
-      const en = ZONE_COMMENT_EN[jp] || (!hasCjk(jp) ? jp : null)
-      if (en) map.set(id, en)
-      else if (!map.has(id)) map.set(id, jp)
+      let name = byZoneId.get(zoneId) || KNOWN_MAP_NAMES[zoneId]
+      if (comment) {
+        const jp = comment[1].trim().replace(/\s*-->\s*$/, "").trim()
+        if (jp && !jp.startsWith("<")) {
+          const en = ZONE_COMMENT_EN[jp] || (!hasCjk(jp) ? jp : null)
+          if (en) name = en
+          else if (!name) name = jp
+        }
+      }
+      if (name) byZoneId.set(zoneId, name)
+
+      const dm = head.match(/<member name="DynamicMapID">(\d+)<\/member>/)
+      if (dm && name) {
+        const dynamicMapId = parseInt(dm[1], 10)
+        if (!byDynamicMapId.has(dynamicMapId)) {
+          byDynamicMapId.set(dynamicMapId, { zoneId, name })
+        }
+      }
     } catch {
       // skip unreadable
     }
   }
-  return map
+  return { byZoneId, byDynamicMapId }
 }
 
 /**
@@ -393,10 +424,27 @@ function collectFocusedMapIds(xmlContents: string[]): number[] {
     .map(([id]) => id)
 }
 
-function formatZoneLabel(id: number, zoneNames: Map<number, string>): string {
-  const name = zoneNames.get(id) || KNOWN_MAP_NAMES[id]
-  if (name) return `${name} (${id})`
+/**
+ * Label a catalog map id (often a DynamicMapID from partials).
+ * Resolved dynamic maps use: `Name (zone 740101 · map 7401001)` for UI tooltips.
+ */
+function formatZoneLabel(id: number, zones: ZoneIndex): string {
+  const asZone = zones.byZoneId.get(id) || KNOWN_MAP_NAMES[id]
+  if (asZone) return `${asZone} (${id})`
+  const asDm = zones.byDynamicMapId.get(id)
+  if (asDm) return `${asDm.name} (zone ${asDm.zoneId} · map ${id})`
   return `Zone ${id}`
+}
+
+function resolveMapDisplay(
+  mapId: number,
+  zones: ZoneIndex
+): { zoneName: string; serverZoneId: number | null } {
+  const asZone = zones.byZoneId.get(mapId) || KNOWN_MAP_NAMES[mapId]
+  if (asZone) return { zoneName: asZone, serverZoneId: mapId }
+  const asDm = zones.byDynamicMapId.get(mapId)
+  if (asDm) return { zoneName: asDm.name, serverZoneId: asDm.zoneId }
+  return { zoneName: `Zone ${mapId}`, serverZoneId: null }
 }
 
 async function findPartialsDir(): Promise<string> {
@@ -419,7 +467,7 @@ async function scanPartials(
   i18n: I18nFile,
   glossaryMap: Map<string, string>,
   devilMap: Map<string, string>,
-  zoneNames: Map<number, string>,
+  zones: ZoneIndex,
   spotResolver: SpotResolver
 ): Promise<{ events: CompEvent[]; unresolvedNpcs: string[]; missingTitles: string[] }> {
   const partialsDir = await findPartialsDir()
@@ -499,7 +547,7 @@ async function scanPartials(
     const focusedIds = collectFocusedMapIds(xmlContents)
     const zoneLabels: string[] = []
     for (const mid of focusedIds) {
-      const label = formatZoneLabel(mid, zoneNames)
+      const label = formatZoneLabel(mid, zones)
       if (!zoneLabels.includes(label)) zoneLabels.push(label)
       if (zoneLabels.length >= 6) break
     }
@@ -527,6 +575,8 @@ async function scanPartials(
       (titleJp
         ? `${category} event "${titleEn}" spanning ${zoneLabels.slice(0, 3).join(", ") || "Tokyo"}.`
         : `Server partial ${dirName} adding event NPCs and custom interactions.`)
+    const notes = override?.notes?.trim() || undefined
+    const adminNotes = override?.adminNotes?.trim() || undefined
 
     const featuredNpcs: string[] = []
     for (const raw of Array.from(npcRaw)) {
@@ -542,13 +592,19 @@ async function scanPartials(
     for (const p of placements) {
       const translated = translateNpcName(p.nameJp, i18n.npcs, glossaryMap, devilMap)
       if (translated === null) continue
-      const xy = await spotResolver.resolve(p.zoneId, p.spotId)
-      const zoneName = zoneNames.get(p.zoneId) || KNOWN_MAP_NAMES[p.zoneId] || `Zone ${p.zoneId}`
+      // Prefer SpotData when SpotID is live; fall back to inline X/Y (retired spots).
+      let xy =
+        p.spotId > 0 ? await spotResolver.resolve(p.zoneId, p.spotId) : null
+      if (!xy && p.x !== null && p.y !== null) {
+        xy = { x: p.x, y: p.y }
+      }
+      const { zoneName, serverZoneId } = resolveMapDisplay(p.zoneId, zones)
       npcSpawns.push({
         name: translated,
         nameJp: p.nameJp !== translated ? p.nameJp : undefined,
         zoneId: p.zoneId,
         zoneName,
+        serverZoneId,
         spotId: p.spotId,
         x: xy ? Math.round(xy.x * 100) / 100 : null,
         y: xy ? Math.round(xy.y * 100) / 100 : null,
@@ -561,7 +617,7 @@ async function scanPartials(
     if (npcSpawns.length > 0) {
       const fromSpawns: string[] = []
       for (const s of npcSpawns) {
-        const label = formatZoneLabel(s.zoneId, zoneNames)
+        const label = formatZoneLabel(s.zoneId, zones)
         if (!fromSpawns.includes(label)) fromSpawns.push(label)
       }
       // Keep instance arenas from focusedIds that aren't spawn hubs
@@ -580,6 +636,8 @@ async function scanPartials(
       year,
       month,
       summary,
+      ...(notes ? { notes } : {}),
+      ...(adminNotes ? { adminNotes } : {}),
       affectedZones: finalZones,
       featuredNpcs: featuredNpcs.slice(0, 6),
       npcSpawns,
@@ -599,11 +657,11 @@ async function main() {
   const i18n = await loadI18n()
   const glossaryMap = await loadGlossaryNpcMap()
   const devilMap = await loadDevilA1NpcMap()
-  const zoneNames = await loadZoneNameMap()
+  const zones = await loadZoneIndex()
   const spotResolver = new SpotResolver({ repoRoot: REPO_ROOT })
   await spotResolver.init()
   console.log(
-    `==> i18n titles: ${Object.keys(i18n.titles).length}, npc maps: ${Object.keys(i18n.npcs).length}, glossary: ${glossaryMap.size}, devil-a1: ${devilMap.size}, zones: ${zoneNames.size}`
+    `==> i18n titles: ${Object.keys(i18n.titles).length}, npc maps: ${Object.keys(i18n.npcs).length}, glossary: ${glossaryMap.size}, devil-a1: ${devilMap.size}, zones: ${zones.byZoneId.size}, dynamicMaps: ${zones.byDynamicMapId.size}`
   )
 
   console.log("==> Extracting events catalog...")
@@ -611,7 +669,7 @@ async function main() {
     i18n,
     glossaryMap,
     devilMap,
-    zoneNames,
+    zones,
     spotResolver
   )
   const withPos = events.reduce(

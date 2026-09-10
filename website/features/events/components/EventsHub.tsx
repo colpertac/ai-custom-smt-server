@@ -42,10 +42,7 @@ export function EventsHub({
 
   return (
     <section
-      className={cn(
-        "mx-auto max-w-5xl px-4 py-10",
-        tab === "payouts" && "site-atmosphere"
-      )}
+      className={cn("site-atmosphere mx-auto max-w-5xl px-4 py-10 sm:px-6")}
     >
       <div
         role="tablist"
@@ -90,12 +87,10 @@ export function EventsHub({
         id={`events-panel-${tab}`}
         aria-labelledby={`events-tab-${tab}`}
         key={tab}
-        className="mt-6 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
+        className="mt-8 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300"
       >
         {tab === "events" ? (
-          <div className="max-w-2xl">
-            <PublicEventsSchedule data={events} />
-          </div>
+          <PublicEventsSchedule data={events} />
         ) : (
           <>
             <p className="mb-4 max-w-2xl text-sm text-muted-foreground">

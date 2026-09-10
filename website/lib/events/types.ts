@@ -13,8 +13,14 @@ export type EventCategory =
 export interface EventNpcSpawn {
   name: string
   nameJp?: string
+  /**
+   * ID from the partial's DynamicMapIDs list (used for SpotData lookup).
+   * Often a DynamicMapID, not a ServerZone ID — see serverZoneId.
+   */
   zoneId: number
   zoneName: string
+  /** ServerZone.ID when zoneId was resolved as a DynamicMapID. */
+  serverZoneId?: number | null
   spotId: number
   x: number | null
   y: number | null
@@ -29,6 +35,10 @@ export interface CompEvent {
   year: number
   month: number
   summary: string
+  /** Player-facing how-to shown on the public events page. */
+  notes?: string
+  /** Technical / GM notes shown only in admin event details. */
+  adminNotes?: string
   affectedZones: string[]
   featuredNpcs: string[]
   /** Detailed NPC placements when SpotData resolves (may be empty). */

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto"
 
 import {
   conflictsInActiveSet,
+  DEFAULT_CONFLICT_GROUPS,
   validateSchedule,
 } from "./event-conflicts"
 import {
@@ -230,6 +231,17 @@ describe("event-schedule-math v2", () => {
 })
 
 describe("event-conflicts v2", () => {
+  it("keeps event-conflicts.json in sync with DEFAULT_CONFLICT_GROUPS", async () => {
+    const { readFile } = await import("node:fs/promises")
+    const path = await import("node:path")
+    const file = path.resolve(
+      process.cwd(),
+      "content/events/event-conflicts.json"
+    )
+    const parsed = JSON.parse(await readFile(file, "utf8")) as typeof DEFAULT_CONFLICT_GROUPS
+    expect(parsed).toEqual(DEFAULT_CONFLICT_GROUPS)
+  })
+
   it("rejects ordeal + sage on the same loop day", () => {
     const result = validateSchedule(
       baseConfig({

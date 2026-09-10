@@ -8,11 +8,15 @@
     },
     "200701_oni": {
       "titleEn": "Oni Attack Shinjuku Babel!!",
-      "summary": "Oni invade Home III and Nakano — beat them back before they overrun Babel."
+      "summary": "Field invasion: Oni enemies spawn in Home III and Shinjuku Babel. There are no dialogue NPCs to talk to.",
+      "notes": "No event clerks — hunt Oni in the field. They only appear during certain moon phases (including full moon). Check Home III and Shinjuku Babel; leave and re-enter the map if the moon just changed.",
+      "adminNotes": "Spawn groups use MoonRestriction 0x1111 (phases 0, 4, 8, 12 only). EnemyType 1585/1586. Home III boxes ~(-8019, 4), (-7625, ±600); Babel ~(149, -1814), (-680, -1938), (701, -1879). ImmediateSpawn — re-enter zone after moon change. Shift moon with @worldtime OFFSET (UserLevel 950+; 1440 ≈ one phase)."
     },
     "200702_valentines": {
       "titleEn": "Valentine's Event 2007",
-      "summary": "Early Valentine's festival across Tokyo hubs with chocolate gifts and romance-themed NPCs."
+      "summary": "Early Valentine's drop event: field mobs in major Tokyo hubs can drop Love-Filled Chocolate. No event clerks.",
+      "notes": "Not a festival with romance NPCs to talk to.\n\n• Kill normal field enemies in Suginami, Shibuya, Ichigaya, Shinagawa, Ueno (and the other hubs this event covers).\n• Those mobs can drop Love-Filled Chocolate while the event is on.\n\nThere are no new Valentine NPCs in town — QA by farming chocolate drops, not by hunting clerks.",
+      "adminNotes": "Partial 200702_valentines — drop overlay only (no ServerNPC).\n\n• DropSet 20070201: ItemType 5214 Love-Filled Chocolate, Rate 100, stack 1\n• Zone partials patch existing Spawn entries with GiftSetIDs → 20070201 on hubs including:\n  Suginami 30101, Shibuya 70101, Ichigaya 80101, Shinagawa 90101, Ueno 110101 (plus additional hub maps in the same XML)\n• Spawn keys are base-zone spawn IDs (e.g. 1, 11, 23… on Suginami) — merges gift drops onto stock mobs\n\nCatalog npcSpawns empty by design. QA: enable → restart → kill field mobs → confirm chocolate drops."
     },
     "200703_whiteday": {
       "titleEn": "White Day Event 2007",
@@ -24,7 +28,9 @@
     },
     "200709_clanpoints1": {
       "titleEn": "Clan Points Contest Round 1",
-      "summary": "Early clan competition partial adjusting dungeon end-chest drops for the first clan points race."
+      "summary": "Drop-only clan contest: copper/silver end chests in four G1 dungeons always drop their matching contest shard. No hub NPCs.",
+      "notes": "No clerks or new maps — this only changes end-chest loot.\n\n• Clear copper or silver end chests in:\n  – Old Ichigaya Camp → Shard of the Old Ichigaya Camp\n  – Suginami Magou Mines → Shard of the Suginami Tunnels\n  – Cell Tower → Shard of Celu Tower\n  – Shibuya Quartz → Shard of Shibuya Quartz\n• Gold-tier chests are not part of this event’s append.\n• Tip: shards are guaranteed (100%) while the event is on.",
+      "adminNotes": "Partial 200709_clanpoints1 — only data/dropset/extra APPEND DropSets. No zone partial / events / ServerNPC.\n\nAPPEND @100% item 5272→dropsets 5100/5120 (Ichigaya Cu/Ag); 5271→5400/5420 (Suginami Cu/Ag); 5273→5500/5520 (Cell Tower Cu/Ag); 5274→5700/5710 (Shibuya Quartz Cu/Ag). Base placeholders live in treasure.xml; dungeon end-loot ActionCreateLoot already references these IDs.\n\nGold placeholders (5130+, etc.) untouched. Unlike 200711_clanpoints2, no ON_FLAG_SET / event counter scoring.\n\nQA'd: enable partial → Cu/Ag end chest on a listed family → matching shard every clear."
     },
     "200710_halloween": {
       "titleEn": "Imagine Halloween 2007",
@@ -32,7 +38,9 @@
     },
     "200711_clanpoints2": {
       "titleEn": "Delivery Boyz G-Team — Secret Base Scramble",
-      "summary": "Clan contest across secret-base instance maps with delivery-team story framing."
+      "summary": "Clan contest: A-rank clears of listed G1 secret-base / dungeon instances score points for your clan. Info via Babel Elevator Girl.",
+      "notes": "No new hub clerks — scoring happens inside contest instances.\n\n• Info: talk to the Elevator Girl in Shinjuku Babel for event details (menu only while this event is on).\n• Play: clear listed G1 secret-base / dungeon instances.\n• Scoring: A-rank time-trial results add clan points. B/C/participation do not.\n• Tip: you need a clan for points to stick to the contest.",
+      "adminNotes": "Partial 200711_clanpoints2 — ServerZonePartial 20071101 AutoApply (default) on ~205 instance DynamicMapIDs (5101xxx / 512xxx / 513xxx / 54xxxx / 55xxxx / 57xxxx / 62xxxx / 921xxxx / 10902xxx). No ServerNPC in the partial.\n\nON_FLAG_SET Value 2000 → EX200711_G1. Conditions: not CLAN_HOME + bool_currentInstanceVariant in {1–10, 17–22} (G1 Cell Tower / Suginami / Ichigaya / Shibuya Quartz / etc. Cu–Au variants). branch_dungeonTrialResultExists → only A_RANK_FIRST / A_RANK branches → action_eventCounter 20071101 +1 with option flag 2 (RelatedTo = clan).\n\nInfo UI: Babel Elevator Girl NPC 210 / spot 60008 (Z50101_210 menu choice → EX200711_210_INFO, skipInvalid). Messages 150800–150811; DONE1/DONE2 (150820/150821) are unused by other datastore refs.\n\nQA'd: Elevator Girl event-info choice appears when partial is live. Full score path = A-rank clear on a listed G1 variant → counter 20071101."
     },
     "200712_xmasnewyears": {
       "titleEn": "Christmas & New Year 2007",
@@ -44,7 +52,9 @@
     },
     "200802_valentines": {
       "titleEn": "Rakanbaren Tain Festival",
-      "summary": "Tongue-in-cheek Valentine's festival (羅漢罵恋多蔭祭) across major Tokyo hubs."
+      "summary": "Tongue-in-cheek Valentine's festival (羅漢罵恋多蔭祭): field enemies drop Block O' Chocolate, then turn them in for chocolate quests.",
+      "notes": "No new festival clerks in the event list — this is a Valentine's drop + quest event.\n\n• Fight regular enemies in Suginami, Shibuya, Ichigaya, Shinagawa, Ueno, and Ikebukuro: they can drop Block O' Chocolate.\n• Turn chocolates in through the event quest flow (Pixie summoned is required for some steps).\n\nLook for chocolate drops and quest progress, not a new NPC standing in Babel.",
+      "adminNotes": "Partial 200802_valentines (羅漢罵恋多蔭祭):\n\n1) Zone overlays — GiftSetIDs 20080201 on many existing Spawn IDs across 30101, 70101, 80101, 90101, 110101, 210101, 210201 (no ServerNPC in this partial).\n2) DropSet 20080201 — ItemType 5316 Block O' Chocolate (Rate 15; also Rate 5 with MinStack 1 MaxStack 2).\n3) Events — EX200802_27_CHOCO / quests 553–555; cooldown 20080201; SUMMONED demon 570 (Pixie); ITEM 5316 checks. Dialogue via EventNPCMessage; talk target is base-game NPC hook (…_27_…), not a catalogued spawn.\n\nQA: enable → restart → farm hubs for 5316 → run chocolate quests. Empty npcSpawns is expected."
     },
     "200803_clanpoints4": {
       "titleEn": "4th Clan Contest",
@@ -64,7 +74,9 @@
     },
     "200806_renegade": {
       "titleEn": "Get the Sequencer! Grand Acquisition Op",
-      "summary": "Limited campaign to obtain the Sequencer through special event objectives."
+      "summary": "Field farm for Material Sequencer I — Renegade Mothman in Nakano, Renegade Dwarf in Shibuya, and Renegade Momunofu in Ichigaya. No event clerks.",
+      "notes": "No clerks or hub NPCs — hunt Renegade demons on the field.\n\n• Where / what (Lv45):\n  – Nakano → Renegade Mothman\n  – Shibuya → Renegade Dwarf\n  – Ichigaya → Renegade Momunofu\n• Main drop (chance): Material Sequencer I; also Power Extractor / Cabinet Pro and zone mats.\n• Tip: each map has five spawn points far apart. A “Look for the Renegade Demon!!” notice means a pack spawned somewhere on that map — check all spots, not just one. Packs respawn about every 10 seconds.",
+      "adminNotes": "Partial 200806_renegade — AutoApply 20080601/02/03 on 40101 / 70101 / 80101. No ServerNPC.\n\nPer map: Spawn 20080601 Nakano Mothman 1892; 20080602 Shibuya Dwarf 1891; 20080603 Ichigaya Momunofu 1890. Level 45, TalkResist 100, XP 100000, count 2 per group.\n\n5 SLGs per map (…101–105 / …201–205 / …301–305), all SpotIDs 3001–3005 (SPAWN_LOCATION, centers far apart). RespawnTime 10s; no ImmediateSpawn; no SpotSelection (random single spot per SLG, not SPREAD). SpawnActions: StageEffect 350200 + DisplayMessage 350201 (zone-wide).\n\nDrops: race sets 189200/189100/189000 → Material Sequencer I 42018 (rates vary; Momunofu highest) + Power Extractor 42002 + Cabinet Pro 42006 + Scrap of Paper 5503; plus field 医学 sets 86/84/87; Nakano also 10000464 (Garnet/Jewel/Macca/Mag).\n\nQA: enable → leave/re-enter each hub → sweep @pos 3001–3005. Messages fire on spawn, not on warp. Confirm race per map."
     },
     "200807_coop": {
       "titleEn": "Collect Ice & Rescue the Bazaar Demons!",
@@ -92,7 +104,9 @@
     },
     "200812_lemon": {
       "titleEn": "You're on The Television Cover! Lemon Star Mood",
-      "summary": "Za Television magazine tie-up — strike a star pose with lemon in hand."
+      "summary": "Za Television magazine collab promo — pose for a commemorative photo with that lemon-in-hand star mood.",
+      "notes": "A small magazine promo, not a full quest festival.\n\n• Where: Home III only — look near about (173, 11).\n• What: one promo NPC. Talking to them shows a stage message about The Television magazine coming back to Tokyo and asking if you want a commemorative photo.\n• What not to expect: no multi-step quest, items, or other maps in this event alone.\n\nIf the website Details page lists no NPCs, that is a catalog gap (the NPC has no name comment in the data) — the NPC should still be in Home III when the event is on.",
+      "adminNotes": "Partial 200812_lemon — single zone partial ID 20081200 on Home III 20101.\n• ServerNPC ID 2016 @ SpotID 60031 ≈ (172.86, 10.67)\n• No <!-- name --> comment → extractRawNpcPlacements skips it (empty npcSpawns)\n• Only ActionStageEffect messageID 350550 (TV magazine / commemorative photo) — no Event dialogue tree, no drops in this XML\n• QA: enable → restart → Home III spot 60031 → confirm stage message. Optional fix: add a JP name comment above the NPC so the catalog lists them."
     },
     "200812_newyears": {
       "titleEn": "Lion Dance Frost Runs Wild!?",
@@ -108,7 +122,9 @@
     },
     "200902_valentines": {
       "titleEn": "Sweet☆Panic — Seize That Demon's Heart",
-      "summary": "Valentine's Sweet☆Panic campaign to grab a demon's heart (and chocolate)."
+      "summary": "Valentine's Sweet☆Panic: collect Demon Chocolate Shards from demon quests and turn them in for chocolate and summon PGs.",
+      "notes": "No new event clerks appear on the map — talk to existing NPCs.\n\n• Shinjuku Babel — Elevator Girl\n• Holy City (Medical Center) — Alicia\n• Sōhonzan pharmacy (卍薬玉店)\n\nThey ask for Demon Chocolate Shards (hand in 2 at a time over several visits; there can be a short wait between turn-ins). Shards drop as a bonus from demon quests while this event is on.\n\nClearing a line rewards Store-Bought Chocolate, True Valentine's Chocolate, and a starter summon PG (Shiisa / Thoth / Okuninushi depending on which quest).",
+      "adminNotes": "Partial 200902_valentines — hooks existing NPCs via zone_events branches (no new ServerNPC in the zone partial; placeholders only on 50101 / 100104 / 130104).\n\n• Event IDs: EX20090201_210_VDAY (Babel Elevator Girl NPC 210), EX20090201_12_VDAY (Holy City Medical 100104 / Alicia), EX20090201_16_VDAY (Sōhonzan 130104).\n• Quests 582 / 583 / 584 (Babel / Holy City / Sōhonzan).\n• DropSet 20090201 → ItemType 5655 Demon Chocolate Shard @ 75%, wired as DemonQuestReward bonus.\n• Cooldown via bool_cooldown param 20090201; multi-phase turn-ins; gender-split finish messages on some lines.\n\nQA: enable partial + restart; talk Elevator Girl / Alicia / Sōhonzan shop; farm demon quests for shards; confirm turn-in + rewards. Empty catalog npcSpawns is expected."
     },
     "200904_ambition": {
       "titleEn": "Saien's Ambition / Birth of Devil Saien!?",
@@ -140,11 +156,15 @@
     },
     "201002_decisive": {
       "titleEn": "Shinjuku Decisive Battle",
-      "summary": "Large-scale Shinjuku clash event centered on Babel and surrounding fields."
+      "summary": "Post-rebalance Shinjuku field farm — turns on the large Shinjuku (150101) enemy table from low trash up through Ananta. No event clerks.",
+      "notes": "No clerks or hub NPCs — this only enables Shinjuku field packs.\n\n• Where: Shinjuku field (not Babel / Dock).\n• What: mixed open-world packs from low (Angel, Turdak, Bai Ze, Kushinada-Hime) through high (Macha, Camazotz, Odin, Four Kings, Thor, Qing Long, Nyarlathotep, etc.).\n• Ananta: rare high-end spawn; only on the full moon.\n• Drops (chance): Macca, Magnetite, bronze/rubber elements, plus rare boss bits.\n• Tip: if you just turned the event on, leave and re-enter Shinjuku so packs populate.",
+      "adminNotes": "Partial 201002_decisive — AutoApply ServerZonePartial 20100202 on DynamicMapID 150101 only. No ServerNPC / no spawn XML in the partial itself.\n\nON_SETUP → ActionStartEvent Z150101_DBATTLE_ON → action_enableSpawnGroup for groups 10–60, 70–79, 80–151, 200, 1000. Those groups live permanently in SpawnData_150101.xml with Restrictions.Disabled=true until enabled. Z150101_DBATTLE_OFF exists but no partial calls it. 201102_valentines also fires DBATTLE_ON.\n\nSmoke spots (QA'd): 5102 = group 10 (Angel/Turdak/Bai Ze/Kushinada-Hime); 5106 = group 80 (Macha/Shadowy Camazotz/Thunderstorm Furiae/Deformed Hanuman/Nightmare Tarrasque); 5108 = Black Frost (200); 5126 = Ananta Lv97 (1000, MoonRestriction 0x0100 = phase 8).\n\nDrops 9801000–9801009 (Macca 799 / Mag 800 / Element Bronze 42101 / Rubber 42711 / boss shards / Ananta's Crystal 7224).\n\nQA: enable partial → leave/re-enter 150101 (@zone) → @pos smoke spots. Ananta: @worldtime → phase 8 → leave/re-enter → @pos 5126. Confirm @zone is 150101 (not Babel 50101)."
     },
     "201002_valentines": {
       "titleEn": "Nora's Chocolate Cheek",
-      "summary": "Valentine's gag starring Nora and chocolate antics."
+      "summary": "Valentine's gag starring Nora and chocolate antics.",
+      "notes": "No new event clerks — uses permanent Babel NPCs.\n\n• Start: talk to Nora in Shinjuku Babel and take the Valentine option (only while this event is on).\n• Fetch: she asks for a random chocolate-related item. Get it by talking to other Babel NPCs (they hand out the matching junk while the event is live).\n• Turn in: bring the item back to Nora for a reward roll.\n• Cooldown: about 1 hour between completed turn-ins.\n• Tip: empty NPC list on this page is expected — Nora was never in the event partial.",
+      "adminNotes": "Partial 201002_valentines — zone partial 20100201 AutoApply on Babel 50101 is a near-empty placeholder (“cooldown adjustments, no zone changes”). Real content is events/extra + dropset/extra.\n\nNora: permanent NPC 451 (spots 60068 ~(2334,1861), 60072 ~(1121,320)). Z50101_451 menu → EX201002_451_VDAY (message 650331, skipInvalid).\n\nFlow: accept → random fetch type (flags 1–6) → gather item from other Babel NPCs that branch into EX201002_*_VDAY when loaded → turn in → success/fail dropsets 20100201 / 20100202 + CHARACTER_COOLDOWN delay 20100201 duration 3600s.\n\nItem sources (NPC → item):\n• 250 → Ice of Reflection 5335\n• 248 → Scrap w/ picture of Yukichi Fukuza~ 5206\n• 423 → Beans of Demon Repelling 5207\n• 432 → Legendary Ice Dessert 5245\n• 328 → Dream Egg 5363\n• 278 → Hexagon 5703\n\nCatalog npcSpawns empty by design. QA: enable → restart → Babel → Nora Valentine choice → fetch → turn-in → confirm 1h CD."
     },
     "201003_anniversaryeve": {
       "titleEn": "3rd Anniversary Eve",
@@ -156,7 +176,9 @@
     },
     "201004_fullmoonwars": {
       "titleEn": "Full Moon Wars",
-      "summary": "Full Moon Wars limited event with lunar-themed battles and rewards."
+      "summary": "Full-moon field farm: Lv61 Garm in Nakano, Knocker in Shibuya, and Poltergeist in Ichigaya. No town NPCs — hunt on the full moon for melons, Hourglass of Harihara, and macca paper.",
+      "notes": "No clerks or hub NPCs — this is a field farm only.\n\n• When: enemies only appear during the full moon.\n• Where / what:\n  – Nakano → Lv61 Garm\n  – Shibuya → Lv61 Knocker\n  – Ichigaya → Lv61 Poltergeist\n• Drops (chance): Gift Melons by race, Hourglass of Harihara, Paper Currency (50,000 Macca).\n• Tip: normal zone trash still spawns. If the moon just turned full, leave and re-enter the map.",
+      "adminNotes": "Partial 201004_fullmoonwars — AutoApply on 40101 / 70101 / 80101. No ServerNPC.\n\nMoonRestriction 256 (0x100) = phase 8 only. RespawnTime 600s; no ImmediateSpawn (after @worldtime, leave/re-enter the zone — do not wait in-place for first populate).\n\nPer map race (Spawn IDs 20100401–11): Nakano Garm 2444–2454; Shibuya Knocker 2433–2443; Ichigaya Poltergeist 2455–2465. TalkResist 100, Level 61, XP 100000.\n\nDrops: set 20100400 = item 699×20 @3.5% + Hourglass 12129 @10%; 20100401/02/03 = Gift Melon Wilders/Earth/Haunt (12114/12104/12127) @100% on matching race.\n\nSpotIDs filtered to SpotData that exists (Nakano ~99 of 200–299; Shibuya 201–207; Ichigaya 201–203). SpawnGroup keys must be Spawn IDs (201004xx), not EnemyType — mismatched keys strip the groups.\n\nQA: @worldtime → phase 8 → @zone out/in → @pos 201 on each hub. GM UserLevel ≥ 950 for @worldtime."
     },
     "201006_kappa1": {
       "titleEn": "Kappa's Sea Opening (Kappa Arc Part 1)",
@@ -164,7 +186,9 @@
     },
     "201006_kappa1_weather": {
       "titleEn": "Kappa's Sea Opening — Weather Overlay",
-      "summary": "Weather/atmosphere overlay companion for Kappa Arc Part 1."
+      "summary": "Rain / atmosphere companion for Kappa Arc Part 1 — plays storm audio and sets a weather flag when you enter certain hubs.",
+      "notes": "Not a story event by itself — no new NPCs to talk to.\n\n• Companion for “Kappa's Sea Opening (Kappa Arc Part 1)”. Enable both for the full June 2010 vibe.\n• When you enter Nakano, Shibuya, or Ichigaya, you get rain/storm atmosphere (sound + weather flag).\n• For the Kappa quest / DB Katori, use the main Kappa Part 1 event — this overlay only handles the weather hook.",
+      "adminNotes": "Companion partial for 201006_kappa1 (カッパのお願い).\n\nZone partial 20100604 (AutoApply):\n• Maps: Nakano 40101, Shibuya 70101, Ichigaya 80101\n• ON_ZONE_IN → EX20100601_RAIN\n\nEX20100601_RAIN:\n• Sets ZONE_CHARACTER flag 201006 = 1 (once; condition LT_OR_NAN so it won’t re-fire)\n• Plays soundID 100858 (rain/storm SFX)\n• Rain visuals are driven by that flag / client weather — no ServerNPC, no spawns\n\nQA: enable with 201006_kappa1, restart channel, zone into Nakano/Shibuya/Ichigaya and confirm SFX/atmosphere. Story NPCs live in kappa1, not here."
     },
     "201006_kappa2": {
       "titleEn": "Kappa's Tribulations (Kappa Arc Part 2)",
@@ -172,11 +196,15 @@
     },
     "201006_momoiro": {
       "titleEn": "Momoiro Clover Collaboration",
-      "summary": "Idol group Momoiro Clover tie-up partial (pink-themed collab content)."
+      "summary": "Collab-era quest “Desperately Seeking Alice…” — find Alice and collect Mahjong tile cards from Suginami field mobs. Uses existing hub NPCs (no new clerks).",
+      "notes": "Despite the collab title, this is an Alice / Mahjong-card hunt — not idol NPCs.\n\n• Start: Home III Guard — “Ask about the latest news from Home III” (quest 716 “Desperately Seeking Alice…”).\n• Also talk to DB Yuki in Suginami (“Ask about the missing girl”) and the Card Maniacs in Home III / Shinjuku Babel.\n• Farm Jack Frost, Hua Po, Cait Sith, Gandharva, and Cu Sith in Suginami for Mahjong tile cards; turn them in to finish.\n• Tip: the website Details page may list no NPCs — empty catalog is expected; the event only adds dialogue (and card drops) onto permanent hubs.\n• Do not enable together with “Momoiro Clover Collaboration (Post)” — that is the leftover-card trade state.",
+      "adminNotes": "Partial 201006_momoiro — events/extra + dropset APPEND only (no zone ServerNPC).\n\nQuest 716 “Desperately Seeking Alice…” via zone_events skipInvalid branches:\n• NPC 220 守衛 Home III 20101 spot 60013 → EX20100603_220_QNEWS (start)\n• NPC 241 ＤＢユウキ Suginami 30101 spot 60007 → EX20100603_241_QGIRL / Q716\n• NPC 222 カードマニア Home III 20101 spot 60015 → EX20100603_222_Q716 (turn-in / finish)\n• NPC 227 カードマニア Babel 50101 spot 60020 → EX20100603_227_Q716 / QCARD\n\nItems: Old Card 12184; Mahjong cards 12185–12190. Finish rewards gender boots 5984/5985 (+ tarot paths e.g. 5034). Dropset APPEND rates onto existing drop IDs.\n\nMutually exclusive with 201006_momoiro_post (same NPC 227 menu lifecycle). Catalog npcSpawns empty by design.\n\nQA: enable main only → restart → Guard 220 news choice → farm Suginami → Card Maniac turn-in."
     },
     "201006_momoiro_post": {
       "titleEn": "Momoiro Clover Collaboration (Post)",
-      "summary": "Post-state for the Momoiro Clover collaboration."
+      "summary": "After the Alice quest: trade leftover Mahjong tile cards at the Babel Card Maniac for Alice’s Treasure Chest. Do not run with the main collab.",
+      "notes": "Post-event leftover trade — enable only after (or instead of) the main Momoiro / Alice quest event.\n\n• Where: Shinjuku Babel Card Maniac.\n• What: trade leftover Mahjong tile cards for Alice’s Treasure Chest.\n• Do not enable together with “Momoiro Clover Collaboration” — same NPC menu, different dialogue state.\n• Tip: no new field drops or clerks; empty Details NPC list is expected.",
+      "adminNotes": "Partial 201006_momoiro_post — events/extra only (no dropset / no zone ServerNPC).\n\nNPC 227 Babel 50101 → EX20100603_227_POST. Trades leftover cards 12185–12190 for Alice’s Treasure Chest 12205. Zone char flag 201006 + valuables gate first/repeat/failed paths.\n\nMutually exclusive with 201006_momoiro. Catalog npcSpawns empty by design.\n\nQA: enable post only (main off) → restart → Babel Card Maniac → Trade with leftover cards → confirm 12205."
     },
     "201007_kappa3": {
       "titleEn": "Kappa and the Lost Utopia (Kappa Arc Part 3)",
@@ -216,7 +244,9 @@
     },
     "201105_durarara": {
       "titleEn": "Durarara!! Anime Collaboration",
-      "summary": "Ikebukuro crossover with Celty, Shizuo looks, and Dollars-era fashion."
+      "summary": "Ikebukuro crossover: boot an old PC to access Celty, Shizuo, Izaya, and DOLLARS Eye-Time stories.",
+      "notes": "Not a field-mob invasion — look for an old PC you can start up.\n\n• Home III and Ikebukuro East each have the PC.\n• Start it up to open Durarara-themed access menus: Headless Rider (Celty), Strongest Man in Ikebukuro (Shizuo), Scheming Informant (Izaya), and DOLLARS.\n• Those lead into Eye-Time (I-Time) story routes and related rewards once unlocked.\n\nTalk to the PC after enabling the event; don’t expect Oni-style street spawns.",
+      "adminNotes": "Partial 201105_durarara (合縁奇縁〈番外編〉):\n• Zone NPCs: ServerNPC ID 2049 on Home III spot 60053 (~3078, 4139) and Ikebukuro East 210201 spot 60202 (~-10390, 3147) → EX201105_2049.\n• Hub is an “old PC” (dialogue 750895+), not a named cast clerk.\n• Unlocks / routes gated by STATUS_ACTIVE 2106–2109 and iTime point scripts; huge trees in itime_04 (Shizuo), itime_05 (Celty), itime_06 (Izaya), itime_07.\n• Catalog previously missed NPCs because XML lacked <!-- name --> comments before ServerNPC — comments added for extractor.\n• Cooldown flag 20110501 via bool_cooldown."
     },
     "201107_summer": {
       "titleEn": "Summer Event 2011: Homura",
@@ -288,7 +318,9 @@
     },
     "201305_expertise": {
       "titleEn": "Expertise Liberation Front in Ikebukuro",
-      "summary": "Expertise unlock campaign centered on Ikebukuro."
+      "summary": "Field farm: Lv60 Baphomet packs in Ikebukuro South and East. No town NPCs — hunt at fixed spawn spots for expertise-style drops.",
+      "notes": "No clerks or hub activity — this is a field farm only.\n\n• Where: Ikebukuro South and Ikebukuro East. Normal zone enemies still spawn; Baphomets are added at fixed spots, not a full map replace.\n• What: Lv60 Baphomet packs (fast respawn). Kill them for chance drops: Fighting Spirit, Box of Contracts, Evil Crystal.\n• Tip: If you only see normal trash, warp to a known spawn and look for Baphomet by name/level — they are easy to miss while wandering.",
+      "adminNotes": "Partial 201305_expertise — AutoApply ServerZonePartial on DynamicMapIDs 210101 (South) and 210201 (East). No ServerNPC / moon gate.\n\nSpawns: EnemyType 4060–4063, Level 60, XP 0, TalkResist 100, RespawnTime 10s. SpotIDs South 1001–1016 (4 SLGs), East 2001–2030 (6 SLGs); SpotSelection default ONE_RANDOM (one pack per SLG).\n\nDropSet 20130501: Fighting Spirit 12658 @5%, Box of Contracts 12833 @3%, Evil Crystal 12934 @1.5%.\n\nQA smoke: enable → publish/restart → warp South ~(-7617, -53594) or East ~(5054, 19825) / ~(18225, -13682). Expect Lv60 Baphomet; normals elsewhere are expected. Catalog npcSpawns empty by design."
     },
     "201306_mensknuckle": {
       "titleEn": "MEN'S KNUCKLE Magazine Tie-Up",
@@ -411,8 +443,10 @@
       "summary": "Chief Yamamoto strolls town dispensing advice — and a Met Mobile trophy."
     },
     "201604_misc": {
-      "titleEn": "Server Shutdown Misc. Changes",
-      "summary": "Miscellaneous shutdown-era tweaks including Daily Mission item additions."
+      "titleEn": "Daily Mission Chests & Hack Limits (2016)",
+      "summary": "Shutdown-era Daily Mission patch: extra treasure boxes inside Daily Mission maps, plus a higher Daily Mission hack limit.",
+      "notes": "Not a town festival — nothing new to talk to in Home III or Babel.\n\n• Daily Mission treasure boxes: when this event is on, Daily Mission instance maps get five extra chests you can open for DM-related rewards.\n• Daily Mission hack limits: the old low caps (1 / 2) are raised to 5 / 10 while this partial is active.\n\nUse Daily Mission terminals and enter a Daily Mission map to see the chests and the higher hack allowance. Re-enter Home III or Babel after enabling so the hack-limit flag applies.",
+      "adminNotes": "Partial 201604_misc — two AutoApply zone partials:\n\n1) Daily Mission treasure boxes (ID 20160498)\n   • Maps: 10201001–10201011 (Daily Mission instances)\n   • Objects: 宝箱１–５ (IDs 1200101–1200105) on SpotIDs 62101–62105\n   • Interact → event SD_D1020X_BOX (prompt / open flow)\n   • ON_FLAG_SET 1200100 → SD_D1020X_120010X_REWARD (action_flagRangeSet … 5)\n   • ON_FLAG_SET 1200999 → SD_D1020X_120010X_EXTRA (message 956096)\n\n2) Daily Mission hack limit bump (ID 20160499)\n   • Maps: Home III 20101 + Shinjuku Babel 50101\n   • ON_SETUP sets ZONE flag 20160401 = 1\n   • XML comment: hack limits changed from 1/2 to 5/10 (flag consumed by DM dialogue/logic elsewhere)\n\nNo ServerNPC. Treat as always-on DM infrastructure; QA via DM instances + hack UI, not slice spawn smoke."
     },
     "201604_nagashima": {
       "titleEn": "Y-Kiki Beach Manager Nagashima",
@@ -565,6 +599,7 @@
     "ドワーフ": "Dwarf",
     "マスドライバー　スダマ": "Mass Driver Sudama",
     "未熟な司会者": "Inexperienced Emcee",
-    "若駒バイコーン": "Young Bicorn"
+    "若駒バイコーン": "Young Bicorn",
+    "古いPC": "Old PC"
   }
 }

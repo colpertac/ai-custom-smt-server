@@ -15,7 +15,11 @@ export type SpotXY = { x: number; y: number }
 export type RawNpcPlacement = {
   nameJp: string
   zoneId: number
+  /** 0 when the NPC is placed via explicit X/Y only (no active SpotID). */
   spotId: number
+  /** Inline world coords from ServerNPC when present. */
+  x: number | null
+  y: number | null
 }
 
 type SpotResolverOptions = {
@@ -25,6 +29,23 @@ type SpotResolverOptions = {
 
 function hasCjk(s: string): boolean {
   return /[\u3040-\u30ff\u3400-\u9fff]/.test(s)
+}
+
+/** Drop XML comments so commented-out SpotID / X / Y are not parsed as live. */
+function stripXmlComments(s: string): string {
+  return s.replace(/<!--[\s\S]*?-->/g, "")
+}
+
+function parseMemberNumber(
+  body: string,
+  member: string
+): number | null {
+  const m = body.match(
+    new RegExp(`<member name="${member}">\\s*([^<]+?)\\s*</member>`)
+  )
+  if (!m) return null
+  const n = Number(m[1].trim())
+  return Number.isFinite(n) ? n : null
 }
 
 async function pathExists(p: string): Promise<boolean> {
@@ -112,8 +133,11 @@ function parseSpotXml(xml: string): Map<number, SpotXY> {
 
 /**
  * Extract NPC placements from zone-partial XML.
- * Associates each commented ServerNPC + SpotID with the enclosing
- * ServerZonePartial's DynamicMapIDs (skipping blanket overlays).
+ * Associates each commented ServerNPC with the enclosing ServerZonePartial's
+ * DynamicMapIDs (skipping blanket overlays).
+ *
+ * Prefers an active (non-commented) SpotID; falls back to explicit X/Y when the
+ * SpotID was removed after the live event (common in older clan contests).
  */
 export function extractRawNpcPlacements(
   xmlContents: string[],
@@ -138,10 +162,13 @@ export function extractRawNpcPlacements(
         continue
       }
 
-      const body = match[2]
-      const spotMatch = body.match(/<member name="SpotID">(\d+)<\/member>/)
-      if (!spotMatch) continue
-      const spotId = parseInt(spotMatch[1], 10)
+      const body = stripXmlComments(match[2])
+      const spotId = parseMemberNumber(body, "SpotID")
+      const x = parseMemberNumber(body, "X")
+      const y = parseMemberNumber(body, "Y")
+      const hasSpot = spotId !== null && spotId > 0
+      const hasXY = x !== null && y !== null
+      if (!hasSpot && !hasXY) continue
 
       const before = content.slice(0, match.index)
       const partialStarts = [
@@ -162,7 +189,13 @@ export function extractRawNpcPlacements(
       const zones =
         mapIds.length > blanketThreshold ? mapIds.slice(0, 3) : mapIds
       for (const zoneId of zones) {
-        out.push({ nameJp, zoneId, spotId })
+        out.push({
+          nameJp,
+          zoneId,
+          spotId: hasSpot ? spotId : 0,
+          x: hasXY ? x : null,
+          y: hasXY ? y : null,
+        })
       }
     }
   }
@@ -170,7 +203,7 @@ export function extractRawNpcPlacements(
   // Deduplicate identical placements
   const seen = new Set<string>()
   return out.filter((p) => {
-    const key = `${p.nameJp}|${p.zoneId}|${p.spotId}`
+    const key = `${p.nameJp}|${p.zoneId}|${p.spotId}|${p.x}|${p.y}`
     if (seen.has(key)) return false
     seen.add(key)
     return true
