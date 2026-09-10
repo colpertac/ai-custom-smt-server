@@ -42,7 +42,9 @@ export function EventsHub({
 
   return (
     <section
-      className={cn("site-atmosphere mx-auto max-w-5xl px-4 py-10 sm:px-6")}
+      className={cn(
+        "site-atmosphere mx-auto w-full max-w-[90rem] px-4 py-8 sm:px-6 lg:px-8"
+      )}
     >
       <div
         role="tablist"

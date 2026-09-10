@@ -7,6 +7,8 @@ import { fetcher } from "@/lib/fetcher"
 import type {
   AdminEventsResponse,
   EventScheduleConfig,
+  EventScheduleLoopDay,
+  EventScheduleLoopProfile,
   EventScheduleStatus,
   UpdateEventsRequest,
   UpdateEventsResponse,
@@ -27,6 +29,36 @@ export async function updateAdminEventSchedule(
   })
   notifyLaneAPendingChanged()
   return result
+}
+
+export const fetchAdminLoopProfiles = () =>
+  fetcher<{ profiles: EventScheduleLoopProfile[] }>(
+    "admin/events/schedule/profiles"
+  )
+
+export async function saveAdminLoopProfile(payload: {
+  id?: string
+  name: string
+  description?: string
+  alwaysOnIds: string[]
+  days: EventScheduleLoopDay[]
+}): Promise<{
+  profile: EventScheduleLoopProfile
+  profiles: EventScheduleLoopProfile[]
+}> {
+  return fetcher("admin/events/schedule/profiles", {
+    method: "POST",
+    json: payload,
+  })
+}
+
+export async function deleteAdminLoopProfile(
+  id: string
+): Promise<{ profiles: EventScheduleLoopProfile[] }> {
+  return fetcher(
+    `admin/events/schedule/profiles?id=${encodeURIComponent(id)}`,
+    { method: "DELETE" }
+  )
 }
 
 export async function updateAdminEvents(

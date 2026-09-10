@@ -1,10 +1,14 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { MapPin, Sparkles, Users } from "lucide-react"
+import FullCalendar from "@fullcalendar/react"
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin from "@fullcalendar/interaction"
+import type { EventClickArg, EventInput } from "@fullcalendar/core"
+import type { DateClickArg } from "@fullcalendar/interaction"
+import { Sparkles, Users } from "lucide-react"
 
 import { PublicEventDetailDialog } from "@/features/events/components/PublicEventDetailDialog"
-import { EventZoneLabel } from "@/features/events/components/EventZoneLabel"
 import {
   categoryBadgeClass,
   categoryIcon,
@@ -12,11 +16,36 @@ import {
 import type { CompEvent, PublicEventsResponse } from "@/lib/events/types"
 import { cn } from "@/lib/utils"
 
+type DaySlot = {
+  dateKey: string
+  dayKey: string
+  title?: string
+  startsAt: string
+  endsAt: string
+  events: CompEvent[]
+}
+
+function dateKeyInZone(iso: string, timeZone: string): string {
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date(iso))
+  } catch {
+    return iso.slice(0, 10)
+  }
+}
+
 function formatWhen(iso: string, timeZone: string): string {
   try {
     return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
       timeZone,
     }).format(new Date(iso))
   } catch {
@@ -24,333 +53,440 @@ function formatWhen(iso: string, timeZone: string): string {
   }
 }
 
-function SectionHeading({
-  eyebrow,
-  title,
-  count,
-}: {
-  eyebrow?: string
-  title: string
-  count?: number
-}) {
-  return (
-    <div className="mb-4">
-      {eyebrow ? (
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
-          {eyebrow}
-        </p>
-      ) : null}
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="font-heading text-xl font-semibold tracking-[0.1em] uppercase text-foreground sm:text-2xl">
-          {title}
-        </h2>
-        {typeof count === "number" ? (
-          <span className="text-xs tabular-nums text-muted-foreground">
-            {count}
-          </span>
-        ) : null}
-      </div>
-      <div className="gold-rule mt-2 max-w-[12rem]" />
-    </div>
-  )
+function formatDayHeading(dateKey: string, timeZone: string): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone,
+    }).format(new Date(`${dateKey}T12:00:00`))
+  } catch {
+    return dateKey
+  }
 }
 
-function EventTile({
+function formatClock(iso: string, timeZone: string): string {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone,
+    }).format(new Date(iso))
+  } catch {
+    return iso
+  }
+}
+
+function upcomingLabel(slot: DaySlot, timeZone: string, nowMs: number): string {
+  const nowKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(nowMs))
+  if (slot.dateKey === nowKey) {
+    return `Later today · ${formatClock(slot.startsAt, timeZone)}`
+  }
+  const tomorrow = new Date(nowMs + 24 * 60 * 60_000)
+  const tomKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(tomorrow)
+  if (slot.dateKey === tomKey) {
+    return `Tomorrow · ${formatClock(slot.startsAt, timeZone)}`
+  }
+  return formatWhen(slot.startsAt, timeZone)
+}
+
+function EventRow({
   event,
-  featured = false,
   badge,
   onDetails,
 }: {
   event: CompEvent
-  featured?: boolean
   badge?: string
   onDetails: (event: CompEvent) => void
 }) {
-  const zones = (event.affectedZones ?? []).filter(Boolean)
-  const spawnCount = event.npcSpawns?.length ?? 0
-  const npcPreview = [
+  const npc = [
     ...new Set(
-      spawnCount > 0
-        ? (event.npcSpawns ?? []).map((s) => s.name)
-        : event.featuredNpcs
+      (event.npcSpawns?.length
+        ? event.npcSpawns.map((s) => s.name)
+        : event.featuredNpcs) ?? []
     ),
-  ].slice(0, 3)
+  ].slice(0, 2)
 
   return (
     <button
       type="button"
       onClick={() => onDetails(event)}
       className={cn(
-        "group site-panel relative w-full text-left transition duration-300 ease-out",
-        "hover:border-[color-mix(in_srgb,var(--gold)_40%,var(--border))] hover:shadow-lg",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--gold)_55%,transparent)]",
-        "motion-safe:hover:-translate-y-0.5",
-        featured ? "p-5 sm:p-6" : "p-4"
+        "group flex w-full items-start gap-3 border-b border-border/40 px-3 py-2.5 text-left last:border-b-0",
+        "transition-colors hover:bg-[color-mix(in_srgb,var(--gold)_8%,transparent)]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color-mix(in_srgb,var(--gold)_50%,transparent)]"
       )}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={cn(
-            "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-            categoryBadgeClass(event.category)
-          )}
-        >
-          {categoryIcon(event.category)}
-          {event.category}
-        </span>
-        {badge ? (
-          <span className="inline-flex items-center gap-1 rounded border border-[color-mix(in_srgb,var(--gold)_35%,transparent)] bg-[color-mix(in_srgb,var(--gold)_12%,transparent)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--gold-hot)]">
-            <span
-              aria-hidden
-              className="size-1.5 rounded-full bg-[var(--gold-hot)] motion-safe:animate-pulse"
-            />
-            {badge}
-          </span>
-        ) : null}
-      </div>
-
-      <h3
+      <span
         className={cn(
-          "font-heading mt-3 font-semibold tracking-[0.04em] text-foreground transition-colors group-hover:text-[var(--gold-hot)]",
-          featured ? "text-xl sm:text-2xl" : "text-lg"
+          "mt-0.5 inline-flex shrink-0 items-center gap-1 rounded border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider",
+          categoryBadgeClass(event.category)
         )}
       >
-        {event.titleEn}
-      </h3>
-
-      {event.summary ? (
-        <p
-          className={cn(
-            "mt-2 text-muted-foreground leading-relaxed",
-            featured ? "text-sm line-clamp-3" : "text-xs line-clamp-2"
-          )}
-        >
-          {event.summary}
-        </p>
-      ) : null}
-
-      {zones.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {zones.slice(0, featured ? 5 : 3).map((zone) => (
-            <span
-              key={zone}
-              className="inline-flex items-center gap-1 rounded border border-border/50 bg-background/40 px-2 py-0.5 text-[10px] text-foreground/85"
-            >
-              <MapPin className="size-2.5 text-muted-foreground" aria-hidden />
-              <EventZoneLabel label={zone} />
-            </span>
-          ))}
-          {zones.length > (featured ? 5 : 3) ? (
-            <span className="px-1 text-[10px] text-muted-foreground">
-              +{zones.length - (featured ? 5 : 3)}
+        {categoryIcon(event.category)}
+        {event.category}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="font-heading text-sm font-semibold tracking-wide text-foreground transition-colors group-hover:text-[var(--gold-hot)]">
+            {event.titleEn}
+          </span>
+          {badge ? (
+            <span className="inline-flex items-center gap-1 rounded border border-[color-mix(in_srgb,var(--gold)_35%,transparent)] bg-[color-mix(in_srgb,var(--gold)_12%,transparent)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-wider text-[var(--gold-hot)]">
+              <span
+                aria-hidden
+                className="size-1.5 rounded-full bg-[var(--gold-hot)] motion-safe:animate-pulse"
+              />
+              {badge}
             </span>
           ) : null}
-        </div>
-      ) : null}
-
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/50 pt-3">
-        <p className="inline-flex min-w-0 items-center gap-1.5 text-[11px] text-muted-foreground">
-          <Users className="size-3.5 shrink-0 text-[var(--gold-dim)]" aria-hidden />
-          <span className="truncate">
-            {npcPreview.length > 0
-              ? npcPreview.join(" · ")
-              : "Zones only — open for details"}
-            {(spawnCount > npcPreview.length ||
-              event.featuredNpcs.length > npcPreview.length) &&
-            npcPreview.length > 0
-              ? "…"
-              : ""}
-          </span>
-        </p>
-        <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--gold-dim)] transition-colors group-hover:text-[var(--gold-hot)]">
-          Details →
         </span>
-      </div>
+        {event.summary ? (
+          <span className="mt-0.5 line-clamp-1 block text-[11px] text-muted-foreground">
+            {event.summary}
+          </span>
+        ) : null}
+        {npc.length > 0 ? (
+          <span className="mt-1 inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+            <Users className="size-3 text-[var(--gold-dim)]" aria-hidden />
+            {npc.join(" · ")}
+          </span>
+        ) : null}
+      </span>
+      <span className="mt-1 shrink-0 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground group-hover:text-[var(--gold-hot)]">
+        →
+      </span>
     </button>
   )
 }
 
 export function PublicEventsSchedule({ data }: { data: PublicEventsResponse }) {
   const [selected, setSelected] = useState<CompEvent | null>(null)
+  const tz = data.timezone || "UTC"
 
   const alwaysIds = useMemo(
     () => new Set(data.alwaysOn.map((e) => e.id)),
     [data.alwaysOn]
   )
+
   const liveExclusive = useMemo(
     () => data.current.filter((e) => !alwaysIds.has(e.id)),
     [data.current, alwaysIds]
   )
 
+  const liveEvents =
+    liveExclusive.length > 0
+      ? liveExclusive
+      : data.current.filter((e) => !alwaysIds.has(e.id))
+
+  const slots: DaySlot[] = useMemo(() => {
+    return data.upcoming.map((s) => ({
+      dateKey: dateKeyInZone(s.startsAt, tz),
+      dayKey: s.dayKey,
+      title: s.title,
+      startsAt: s.startsAt,
+      endsAt: s.endsAt,
+      events: s.events.filter((e) => !alwaysIds.has(e.id)),
+    }))
+  }, [data.upcoming, tz, alwaysIds])
+
+  const nowKey = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date()),
+    [tz]
+  )
+
+  const nextTwo = useMemo(() => {
+    const now = Date.now()
+    return slots.filter((s) => Date.parse(s.startsAt) > now).slice(0, 2)
+  }, [slots])
+
+  const [browseDate, setBrowseDate] = useState<string | null>(nowKey)
+
+  const calendarEvents: EventInput[] = useMemo(() => {
+    return slots
+      .filter((s) => s.events.length > 0)
+      .map((s) => ({
+        id: s.dateKey,
+        title: `${s.events.length}`,
+        start: s.dateKey,
+        allDay: true,
+        backgroundColor: "color-mix(in srgb, var(--gold) 50%, #1a1408)",
+        borderColor: "color-mix(in srgb, var(--gold) 35%, transparent)",
+        textColor: "#f5edd4",
+      }))
+  }, [slots])
+
+  const browseSlot = browseDate
+    ? (slots.find((s) => s.dateKey === browseDate) ?? null)
+    : null
+
+  const browseIsToday = browseDate === nowKey
+  const browseEvents = browseIsToday
+    ? liveEvents
+    : (browseSlot?.events ?? [])
+
   return (
-    <div className="space-y-10">
-      <header className="site-panel overflow-hidden p-5 sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0 max-w-xl">
-            <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
-              <Sparkles className="size-3" aria-hidden />
-              Seasonal calendar
-            </p>
-            <p className="font-heading mt-2 text-2xl font-semibold tracking-[0.08em] uppercase sm:text-3xl">
-              What&apos;s running
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {data.scheduleEnabled
-                ? `Schedule is on (${data.mode} mode). Days flip at ${data.flipTime} ${data.timezone}.`
-                : "Live seasonal events on this realm right now. Open any card for zones, NPCs, and map positions."}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <div className="rounded border border-border/70 bg-background/35 px-3 py-2 text-center min-w-[4.5rem]">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Live
-              </p>
-              <p className="font-heading mt-0.5 text-xl tabular-nums text-[var(--gold-hot)]">
-                {data.current.length}
-              </p>
-            </div>
-            <div className="rounded border border-border/70 bg-background/35 px-3 py-2 text-center min-w-[4.5rem]">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Always
-              </p>
-              <p className="font-heading mt-0.5 text-xl tabular-nums">
-                {data.alwaysOn.length}
-              </p>
-            </div>
-            {data.scheduleEnabled ? (
-              <div className="rounded border border-border/70 bg-background/35 px-3 py-2 text-center min-w-[4.5rem]">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Upcoming
-                </p>
-                <p className="font-heading mt-0.5 text-xl tabular-nums">
-                  {data.upcoming.length}
-                </p>
-              </div>
-            ) : null}
-          </div>
+    <div className="space-y-5">
+      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-border/40 pb-3">
+        <div className="min-w-0 max-w-2xl">
+          <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
+            <Sparkles className="size-3" aria-hidden />
+            Seasonal schedule
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {data.scheduleEnabled
+              ? `Flips at ${data.flipTime} (${tz}). Live list on the left — pick any day on the calendar.`
+              : "Live seasonal events on this realm right now."}
+          </p>
         </div>
+        <p className="text-xs tabular-nums text-muted-foreground">
+          <span className="text-[var(--gold-hot)]">{liveEvents.length}</span> live
+          {data.alwaysOn.length > 0 ? (
+            <>
+              {" · "}
+              <span className="text-foreground">{data.alwaysOn.length}</span>{" "}
+              always on
+            </>
+          ) : null}
+        </p>
       </header>
 
-      {data.alwaysOn.length > 0 ? (
-        <section>
-          <SectionHeading
-            eyebrow="Standing"
-            title="Always available"
-            count={data.alwaysOn.length}
-          />
-          <div
-            className={cn(
-              "grid gap-3",
-              data.alwaysOn.length > 1
-                ? "sm:grid-cols-2"
-                : "max-w-2xl"
-            )}
-          >
-            {data.alwaysOn.map((e) => (
-              <EventTile
-                key={`always-${e.id}`}
-                event={e}
-                badge="Always on"
-                onDetails={setSelected}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section>
-        <SectionHeading
-          eyebrow="Right now"
-          title="Now live"
-          count={liveExclusive.length || data.current.length}
-        />
-        {(liveExclusive.length ? liveExclusive : data.current).length === 0 ? (
-          <div className="site-panel px-5 py-8 text-sm text-muted-foreground">
-            No seasonal events are live beyond the always-on set.
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {(liveExclusive.length ? liveExclusive : data.current).map(
-              (e, i) => (
-                <EventTile
-                  key={e.id}
-                  event={e}
-                  featured={i === 0}
-                  badge="Live"
-                  onDetails={setSelected}
-                />
-              )
-            )}
-          </div>
+      <div
+        className={cn(
+          "grid gap-5",
+          data.scheduleEnabled
+            ? "xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.92fr)] xl:items-start"
+            : null
         )}
-      </section>
-
-      {data.scheduleEnabled ? (
-        <section>
-          <SectionHeading
-            eyebrow="Coming up"
-            title="Upcoming"
-            count={data.upcoming.length}
-          />
-          {data.upcoming.length === 0 ? (
-            <div className="site-panel px-5 py-8 text-sm text-muted-foreground">
-              No upcoming windows in the next two weeks.
+      >
+        {/* Left column */}
+        <div className="min-w-0 space-y-5">
+          <section>
+            <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
+                  Right now
+                </p>
+                <h2 className="font-heading text-xl font-semibold tracking-[0.1em] uppercase sm:text-2xl">
+                  Today
+                </h2>
+              </div>
+              <span className="text-[11px] text-muted-foreground">
+                {liveEvents.length} rotating
+              </span>
             </div>
-          ) : (
-            <ul className="space-y-3">
-              {data.upcoming.map((slot) => (
-                <li key={`${slot.dayKey}-${slot.startsAt}`} className="site-panel p-4 sm:p-5">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="text-xs font-medium text-[var(--gold-dim)]">
-                      {formatWhen(slot.startsAt, data.timezone)}
-                      <span className="text-muted-foreground"> → </span>
-                      {formatWhen(slot.endsAt, data.timezone)}
-                    </p>
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {slot.events.length} event
-                      {slot.events.length === 1 ? "" : "s"}
+
+            <div className="site-panel overflow-hidden">
+              {liveEvents.length === 0 ? (
+                <p className="px-4 py-6 text-sm text-muted-foreground">
+                  No rotating events live right now
+                  {data.alwaysOn.length > 0
+                    ? " — always-on items still apply."
+                    : "."}
+                </p>
+              ) : (
+                <div className="max-h-[min(28rem,55vh)] overflow-y-auto">
+                  {liveEvents.map((e) => (
+                    <EventRow
+                      key={e.id}
+                      event={e}
+                      badge="Live"
+                      onDetails={setSelected}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {data.alwaysOn.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <span className="self-center text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Always
+                </span>
+                {data.alwaysOn.map((e) => (
+                  <button
+                    key={`always-${e.id}`}
+                    type="button"
+                    onClick={() => setSelected(e)}
+                    className="inline-flex max-w-full items-center gap-1.5 rounded border border-border/60 bg-background/40 px-2.5 py-1 text-left text-[11px] transition-colors hover:border-[color-mix(in_srgb,var(--gold)_40%,var(--border))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--gold)_50%,transparent)]"
+                  >
+                    <span
+                      className={cn(
+                        "inline-flex items-center rounded border px-1 py-px",
+                        categoryBadgeClass(e.category)
+                      )}
+                    >
+                      {categoryIcon(e.category)}
                     </span>
-                  </div>
-                  {slot.title ? (
-                    <p className="font-heading mt-1 text-lg font-semibold tracking-wide">
-                      {slot.title}
-                    </p>
-                  ) : null}
-                  <ul className="mt-3 divide-y divide-border/40 overflow-hidden rounded border border-border/55 bg-background/30">
-                    {slot.events.map((e) => (
-                      <li key={e.id}>
-                        <button
-                          type="button"
-                          onClick={() => setSelected(e)}
-                          className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--gold)_8%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color-mix(in_srgb,var(--gold)_50%,transparent)]"
-                        >
-                          <span className="min-w-0">
-                            <span className="block truncate text-sm text-foreground">
-                              {e.titleEn}
-                            </span>
-                            <span
-                              className={cn(
-                                "mt-0.5 inline-flex items-center gap-1 rounded border px-1 py-px text-[9px] font-semibold uppercase tracking-wider",
-                                categoryBadgeClass(e.category)
-                              )}
-                            >
-                              {categoryIcon(e.category)}
-                              {e.category}
-                            </span>
-                          </span>
-                          <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                            Details →
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      ) : null}
+                    <span className="truncate font-medium text-foreground">
+                      {e.titleEn}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </section>
+
+          {data.scheduleEnabled ? (
+            <section>
+              <div className="mb-2">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
+                  Coming up
+                </p>
+                <h2 className="font-heading text-lg font-semibold tracking-[0.1em] uppercase">
+                  Next flips
+                </h2>
+              </div>
+              {nextTwo.length === 0 ? (
+                <div className="site-panel px-4 py-5 text-sm text-muted-foreground">
+                  No upcoming windows yet.
+                </div>
+              ) : (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {nextTwo.map((slot) => (
+                    <button
+                      key={`${slot.dayKey}-${slot.startsAt}`}
+                      type="button"
+                      onClick={() => setBrowseDate(slot.dateKey)}
+                      className={cn(
+                        "site-panel p-3 text-left transition duration-300",
+                        "hover:border-[color-mix(in_srgb,var(--gold)_40%,var(--border))]",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--gold)_50%,transparent)]",
+                        browseDate === slot.dateKey &&
+                          "border-[color-mix(in_srgb,var(--gold)_45%,var(--border))] bg-[color-mix(in_srgb,var(--gold)_6%,transparent)]"
+                      )}
+                    >
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--gold-dim)]">
+                        {upcomingLabel(slot, tz, Date.now())}
+                      </p>
+                      <p className="font-heading mt-1 text-sm font-semibold tracking-wide">
+                        {formatDayHeading(slot.dateKey, tz)}
+                      </p>
+                      <p className="mt-2 line-clamp-2 text-[11px] text-muted-foreground">
+                        {slot.events.length === 0
+                          ? "No rotating events"
+                          : slot.events
+                              .slice(0, 3)
+                              .map((e) => e.titleEn)
+                              .join(" · ")}
+                        {slot.events.length > 3
+                          ? ` +${slot.events.length - 3}`
+                          : ""}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : null}
+        </div>
+
+        {/* Right column — calendar */}
+        {data.scheduleEnabled && slots.length > 0 ? (
+          <aside className="min-w-0 space-y-3 xl:sticky xl:top-20">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-dim)]">
+                Browse
+              </p>
+              <h2 className="font-heading text-lg font-semibold tracking-[0.1em] uppercase">
+                Calendar
+              </h2>
+            </div>
+
+            <div className="public-events-calendar event-schedule-calendar rounded border border-border/60 bg-background/40 p-2">
+              <FullCalendar
+                plugins={[dayGridPlugin, interactionPlugin]}
+                initialView="dayGridMonth"
+                timeZone={tz}
+                headerToolbar={{
+                  left: "prev,next today",
+                  center: "title",
+                  right: "",
+                }}
+                height="auto"
+                contentHeight={340}
+                events={calendarEvents}
+                dateClick={(arg: DateClickArg) => setBrowseDate(arg.dateStr)}
+                eventClick={(arg: EventClickArg) => {
+                  arg.jsEvent.preventDefault()
+                  setBrowseDate(arg.event.id)
+                }}
+                dayCellClassNames={(arg) =>
+                  arg.dateStr === browseDate ? ["is-browse-selected"] : []
+                }
+                dayMaxEvents={1}
+                fixedWeekCount={false}
+              />
+            </div>
+
+            <div
+              key={browseDate ?? "none"}
+              className="site-panel overflow-hidden motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300"
+            >
+              <div className="border-b border-border/40 px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--gold-dim)]">
+                  {browseIsToday
+                    ? "Selected · live now"
+                    : browseSlot?.dayKey?.replace(/^loop-/, "Loop day ") ||
+                      "Selected"}
+                </p>
+                <p className="font-heading mt-0.5 text-base font-semibold tracking-wide">
+                  {browseDate
+                    ? formatDayHeading(browseDate, tz)
+                    : "Pick a date"}
+                </p>
+                {!browseIsToday && browseSlot ? (
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">
+                    {formatWhen(browseSlot.startsAt, tz)}
+                    <span> → </span>
+                    {formatWhen(browseSlot.endsAt, tz)}
+                  </p>
+                ) : null}
+              </div>
+
+              {browseDate == null ? (
+                <p className="px-3 py-4 text-sm text-muted-foreground">
+                  Click a date to list events.
+                </p>
+              ) : browseEvents.length === 0 ? (
+                <p className="px-3 py-4 text-sm text-muted-foreground">
+                  {browseSlot
+                    ? "No rotating events that day. Always-on still applies."
+                    : "No scheduled window for this date in the preview range."}
+                </p>
+              ) : (
+                <div className="max-h-[min(22rem,40vh)] overflow-y-auto">
+                  {browseEvents.map((e) => (
+                    <EventRow
+                      key={e.id}
+                      event={e}
+                      badge={browseIsToday ? "Live" : undefined}
+                      onDetails={setSelected}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </aside>
+        ) : null}
+      </div>
 
       <PublicEventDetailDialog
         event={selected}

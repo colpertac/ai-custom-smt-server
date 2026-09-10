@@ -151,6 +151,24 @@ export interface EventScheduleValidationResult {
   conflicts: EventScheduleConflict[]
 }
 
+/** Saved or builtin loop-mode day plan (does not include calendar/timezone). */
+export interface EventScheduleLoopProfile {
+  id: string
+  name: string
+  description: string
+  /** Built-in presets cannot be overwritten or deleted. */
+  builtin: boolean
+  createdAt: string
+  updatedAt: string
+  alwaysOnIds: string[]
+  days: EventScheduleLoopDay[]
+}
+
+export interface EventScheduleProfilesFile {
+  version: 1
+  profiles: EventScheduleLoopProfile[]
+}
+
 export interface ExpandedScheduleSlot {
   dayKey: string
   title?: string

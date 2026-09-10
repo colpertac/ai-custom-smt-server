@@ -340,8 +340,9 @@ export async function getPublicEventsResponse(
 
   let upcomingSlots: ExpandedScheduleSlot[] = []
   if (config.enabled) {
-    const horizon = new Date(now.getTime() + 14 * 24 * 60 * 60_000)
-    upcomingSlots = expandUpcomingSlots(config, now, horizon, 40).filter(
+    // ~3 months so the public calendar can browse past the near-term strip.
+    const horizon = new Date(now.getTime() + 90 * 24 * 60 * 60_000)
+    upcomingSlots = expandUpcomingSlots(config, now, horizon, 120).filter(
       (s) => Date.parse(s.startsAt) > now.getTime() - 60_000
     )
   }

@@ -1,7 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { CalendarDays, Loader2, Repeat, Save } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { CalendarDays, Loader2, Repeat } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import {
 import { CalendarModeBoard } from "@/features/admin-events/components/CalendarModeBoard"
 import { EventIdChecklist } from "@/features/admin-events/components/EventIdChecklist"
 import { LoopDayBoard } from "@/features/admin-events/components/LoopDayBoard"
+import { LoopScheduleProfilesBar } from "@/features/admin-events/components/LoopScheduleProfilesBar"
 import { ScheduleDaySidebar } from "@/features/admin-events/components/ScheduleDaySidebar"
 import { ScheduleEventPicker } from "@/features/admin-events/components/ScheduleEventPicker"
 import { activeLoopDayIndex } from "@/lib/events/event-schedule-math"
@@ -22,10 +23,13 @@ import type {
   EventScheduleConfig,
   EventScheduleConflict,
   EventScheduleLoopDay,
+  EventScheduleLoopProfile,
   EventScheduleMode,
   EventScheduleStatus,
   EventStatus,
 } from "@/lib/events/types"
+
+const AUTOSAVE_MS = 500
 
 function formatIso(iso: string | null, timeZone: string): string {
   if (!iso) return "—"
@@ -38,6 +42,30 @@ function formatIso(iso: string | null, timeZone: string): string {
   } catch {
     return iso
   }
+}
+
+function scheduleConfigKey(config: EventScheduleConfig): string {
+  return JSON.stringify({
+    version: config.version,
+    enabled: config.enabled,
+    mode: config.mode,
+    timezone: config.timezone,
+    flipTime: config.flipTime,
+    alwaysOnIds: config.alwaysOnIds,
+    loop: {
+      anchorDate: config.loop.anchorDate,
+      days: config.loop.days.map((d) => ({
+        id: d.id,
+        eventIds: d.eventIds,
+      })),
+    },
+    calendar: {
+      days: config.calendar.days.map((d) => ({
+        date: d.date,
+        eventIds: d.eventIds,
+      })),
+    },
+  })
 }
 
 interface EventSchedulePanelProps {
@@ -56,6 +84,7 @@ export function EventSchedulePanel({
   const [success, setSuccess] = useState<string | null>(null)
   const [conflicts, setConflicts] = useState<EventScheduleConflict[]>([])
   const [status, setStatus] = useState<EventScheduleStatus | null>(null)
+  const [saveHint, setSaveHint] = useState<string>("Autosave on")
 
   // Panel is only shown in Schedule control mode — always persist enabled: true.
   const [mode, setMode] = useState<EventScheduleMode>("loop")
@@ -72,6 +101,10 @@ export function EventSchedulePanel({
   const [selectedCalDate, setSelectedCalDate] = useState<string | null>(null)
   /** Bumps so the “active now” arrow can move at flip without a full reload. */
   const [nowTick, setNowTick] = useState(() => Date.now())
+
+  const lastPersistedKey = useRef<string | null>(null)
+  const hydrateGeneration = useRef(0)
+  const saveSeq = useRef(0)
 
   useEffect(() => {
     const id = window.setInterval(() => setNowTick(Date.now()), 30_000)
@@ -98,7 +131,7 @@ export function EventSchedulePanel({
   }, [events])
 
   const applyStatus = useCallback(
-    (s: EventScheduleStatus) => {
+    (s: EventScheduleStatus, opts?: { markPersisted?: boolean }) => {
       setStatus(s)
       const c = s.config
       setMode(c.mode)
@@ -110,6 +143,12 @@ export function EventSchedulePanel({
       setCalendarDays(
         c.calendar.days.map((d) => ({ ...d, eventIds: [...d.eventIds] }))
       )
+      if (opts?.markPersisted !== false) {
+        lastPersistedKey.current = scheduleConfigKey({
+          ...c,
+          enabled: true,
+        })
+      }
       onStatusChange?.(s)
     },
     [onStatusChange]
@@ -118,9 +157,11 @@ export function EventSchedulePanel({
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
+    hydrateGeneration.current += 1
     try {
       const s = await fetchAdminEventSchedule()
       applyStatus(s)
+      setSaveHint("Autosave on")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load schedule")
     } finally {
@@ -132,47 +173,79 @@ export function EventSchedulePanel({
     void load()
   }, [load])
 
-  const buildConfig = (): EventScheduleConfig => ({
-    version: 2,
-    enabled: true,
+  const draftConfig = useMemo((): EventScheduleConfig => {
+    return {
+      version: 2,
+      enabled: true,
+      mode,
+      timezone,
+      flipTime,
+      alwaysOnIds,
+      loop: {
+        anchorDate: anchorDate || new Date().toISOString().slice(0, 10),
+        days: loopDays,
+      },
+      calendar: { days: calendarDays },
+    }
+  }, [
     mode,
     timezone,
     flipTime,
     alwaysOnIds,
-    loop: {
-      anchorDate: anchorDate || new Date().toISOString().slice(0, 10),
-      days: loopDays,
-    },
-    calendar: { days: calendarDays },
-  })
+    anchorDate,
+    loopDays,
+    calendarDays,
+  ])
 
-  const onSave = async () => {
-    setSaving(true)
-    setError(null)
-    setSuccess(null)
-    setConflicts([])
-    try {
-      const next = await updateAdminEventSchedule(buildConfig())
-      applyStatus(next)
-      setSuccess(
-        "Schedule saved. Live events are unchanged until you restart the channel on Overview (or the daily flip runs)."
-      )
-    } catch (err) {
-      const e = err as Error & {
-        data?: { errors?: string[]; conflicts?: EventScheduleConflict[] }
-      }
-      if (e.data?.conflicts?.length) {
-        setConflicts(e.data.conflicts)
-        setError("Schedule has conflicts — fix conflicting events on the day.")
-      } else {
-        const parts: string[] = [e.message || "Save failed"]
-        if (e.data?.errors?.length) parts.push(...e.data.errors)
-        setError(parts.join(" · "))
-      }
-    } finally {
-      setSaving(false)
-    }
-  }
+  const draftKey = useMemo(() => scheduleConfigKey(draftConfig), [draftConfig])
+
+  useEffect(() => {
+    if (loading) return
+    if (draftKey === lastPersistedKey.current) return
+
+    const hydrateAtStart = hydrateGeneration.current
+    const timer = window.setTimeout(() => {
+      if (hydrateAtStart !== hydrateGeneration.current) return
+      if (draftKey === lastPersistedKey.current) return
+
+      const seq = ++saveSeq.current
+      const payload = draftConfig
+      setSaving(true)
+      setSaveHint("Saving…")
+      setConflicts([])
+      void updateAdminEventSchedule(payload)
+        .then((next) => {
+          if (seq !== saveSeq.current) return
+          applyStatus(next)
+          setError(null)
+          setSaveHint(
+            "Saved · restart Overview (or wait for flip) to apply live"
+          )
+        })
+        .catch((err) => {
+          if (seq !== saveSeq.current) return
+          const e = err as Error & {
+            data?: { errors?: string[]; conflicts?: EventScheduleConflict[] }
+          }
+          if (e.data?.conflicts?.length) {
+            setConflicts(e.data.conflicts)
+            setError(
+              "Schedule has conflicts — fix conflicting events on the day."
+            )
+          } else {
+            const parts: string[] = [e.message || "Autosave failed"]
+            if (e.data?.errors?.length) parts.push(...e.data.errors)
+            setError(parts.join(" · "))
+          }
+          setSaveHint("Autosave failed")
+        })
+        .finally(() => {
+          if (seq === saveSeq.current) setSaving(false)
+        })
+    }, AUTOSAVE_MS)
+
+    return () => window.clearTimeout(timer)
+  }, [applyStatus, draftConfig, draftKey, loading])
 
   const selectedLoop = loopDays.find((d) => d.id === selectedLoopId) ?? null
   const selectedCal =
@@ -273,8 +346,8 @@ export function EventSchedulePanel({
           </h2>
           <p className="mt-1 max-w-xl text-xs text-muted-foreground">
             Schedule owns <code className="text-foreground">channel.xml</code>{" "}
-            event partials. Select a loop day or calendar date, then toggle
-            event cards below. Save the plan; restart on Overview to apply live.
+            event partials. Edits and profile loads autosave the plan; restart
+            the channel on Overview (or wait for the daily flip) to apply live.
           </p>
         </div>
       </div>
@@ -323,6 +396,35 @@ export function EventSchedulePanel({
       {error && <FormAlert variant="error">{error}</FormAlert>}
       {success && <FormAlert variant="success">{success}</FormAlert>}
 
+      {mode === "loop" ? (
+        <LoopScheduleProfilesBar
+          alwaysOnIds={alwaysOnIds}
+          loopDays={loopDays}
+          onApplyProfile={(profile: EventScheduleLoopProfile) => {
+            setConflicts([])
+            setAlwaysOnIds([...profile.alwaysOnIds])
+            setLoopDays(
+              profile.days.map((d) => ({
+                id: d.id,
+                eventIds: [...d.eventIds],
+              }))
+            )
+            setSelectedLoopId(profile.days[0]?.id ?? null)
+            setMode("loop")
+          }}
+          onMessage={(kind, text) => {
+            setConflicts([])
+            if (kind === "error") {
+              setError(text)
+              setSuccess(null)
+            } else {
+              setSuccess(text)
+              setError(null)
+            }
+          }}
+        />
+      ) : null}
+
       <div className="grid gap-3 text-xs sm:grid-cols-3">
         <label className="space-y-1">
           <span className="text-muted-foreground">Timezone</span>
@@ -360,8 +462,8 @@ export function EventSchedulePanel({
               className="h-8 text-xs"
             />
             <p className="text-[10px] leading-snug text-muted-foreground">
-              Date when Day 1 is active. The cycle wraps forever. Save updates
-              the plan only — restart the channel on Overview to apply today.
+              Date when Day 1 is active. The cycle wraps forever. Changes
+              autosave; restart the channel on Overview to apply today.
             </p>
           </label>
         ) : (
@@ -374,7 +476,8 @@ export function EventSchedulePanel({
       <div className="space-y-1.5 text-xs">
         <div className="font-medium text-foreground">Always on every day</div>
         <p className="text-muted-foreground">
-          Stay active across every loop/calendar day (e.g. Under Wonderground).
+          Stay active across every loop/calendar day (e.g. Daily Mission chests /
+          hack limits). Prefer QoL here — not festival clerks.
         </p>
         <EventIdChecklist
           label="Always-on events"
@@ -522,7 +625,27 @@ export function EventSchedulePanel({
         </div>
       )}
 
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p
+          className={cn(
+            "text-[11px]",
+            saving
+              ? "text-muted-foreground"
+              : error
+                ? "text-destructive"
+                : "text-muted-foreground"
+          )}
+          aria-live="polite"
+        >
+          {saving ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Loader2 className="size-3 animate-spin" />
+              Saving…
+            </span>
+          ) : (
+            saveHint
+          )}
+        </p>
         <Button
           type="button"
           variant="outline"
@@ -531,19 +654,6 @@ export function EventSchedulePanel({
           disabled={saving}
         >
           Reload
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          onClick={() => void onSave()}
-          disabled={saving}
-        >
-          {saving ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Save className="size-3.5" />
-          )}
-          Save schedule
         </Button>
       </div>
     </div>

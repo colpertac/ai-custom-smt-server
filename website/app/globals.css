@@ -955,4 +955,44 @@
   .event-schedule-calendar .fc .fc-highlight {
     background: color-mix(in oklab, var(--primary) 20%, transparent);
   }
+  /* Selected day — sky ring, distinct from muted “today” fill */
+  .event-schedule-calendar .fc .fc-daygrid-day.is-day-selected,
+  .event-schedule-calendar .fc .fc-daygrid-day.is-day-selected .fc-daygrid-day-frame {
+    background: color-mix(in oklab, #38bdf8 16%, transparent) !important;
+  }
+  .event-schedule-calendar .fc .fc-daygrid-day.is-day-selected {
+    box-shadow: inset 0 0 0 2px #38bdf8;
+    position: relative;
+    z-index: 1;
+  }
+  .event-schedule-calendar .fc .fc-daygrid-day.is-day-selected .fc-daygrid-day-number {
+    color: #7dd3fc !important;
+    font-weight: 700;
+  }
+
+  /* Public /events calendar — gold accents on the site skin */
+  .public-events-calendar .fc {
+    --fc-today-bg-color: color-mix(in srgb, var(--gold) 10%, transparent);
+    --fc-button-bg-color: color-mix(in srgb, var(--background) 70%, transparent);
+    --fc-button-text-color: var(--foreground);
+    --fc-button-hover-bg-color: color-mix(in srgb, var(--gold) 14%, transparent);
+    --fc-button-active-bg-color: color-mix(in srgb, var(--gold) 22%, transparent);
+  }
+  .public-events-calendar .fc .fc-toolbar-title {
+    font-family: var(--font-heading);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .public-events-calendar .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    color: var(--gold-hot);
+    font-weight: 700;
+  }
+  .public-events-calendar .fc .fc-event {
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+  .public-events-calendar .fc .fc-daygrid-day.is-browse-selected {
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent);
+  }
 }
