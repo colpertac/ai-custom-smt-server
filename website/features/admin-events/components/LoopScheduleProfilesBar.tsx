@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { BookmarkPlus, Loader2, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -45,6 +45,9 @@ export function LoopScheduleProfilesBar({
   const [saveName, setSaveName] = useState("")
   const [saveDescription, setSaveDescription] = useState("")
 
+  const onMessageRef = useRef(onMessage)
+  onMessageRef.current = onMessage
+
   const load = useCallback(async () => {
     setLoading(true)
     try {
@@ -56,14 +59,14 @@ export function LoopScheduleProfilesBar({
           : (data.profiles[0]?.id ?? DENSE_ARCHIVE_PROFILE_ID)
       )
     } catch (err) {
-      onMessage(
+      onMessageRef.current(
         "error",
         err instanceof Error ? err.message : "Failed to load loop profiles"
       )
     } finally {
       setLoading(false)
     }
-  }, [onMessage])
+  }, [])
 
   useEffect(() => {
     void load()
@@ -224,8 +227,8 @@ export function LoopScheduleProfilesBar({
               Built-in preset: rotate through as much of the catalog as possible
               in a short loop. Not seasonal — Christmas can appear any day; miss
               today and it returns next cycle (~2 weeks). Separates main/post,
-              shared NPC spots (Saien, etc.), and hard conflicts. Always-on QoL
-              like Daily Mission chests stays on.
+              shared NPC spots (Saien, etc.), and hard conflicts. Always-on:
+              Under Wonderground + Daily Mission chests / hack limits.
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { api } from "@/lib/kyClient"
 
@@ -21,8 +21,11 @@ export function useOpenReportsPending(
   const [status, setStatus] = useState<OpenReportsPendingStatus>({
     pending: false,
   })
+  const failStreak = useRef(0)
+  const nextAllowedAt = useRef(0)
 
   const refresh = useCallback(async () => {
+    if (Date.now() < nextAllowedAt.current) return
     try {
       const response = await api.post("admin/reports", {
         json: { resolved: false, limit: 1 },
@@ -31,12 +34,21 @@ export function useOpenReportsPending(
         success?: boolean
         data?: { reports?: unknown[] }
       }
-      if (!response.ok || !json.success) return
+      if (!response.ok || !json.success) {
+        failStreak.current = Math.min(failStreak.current + 1, 5)
+        nextAllowedAt.current =
+          Date.now() + Math.min(60_000, pollMs * 2 ** failStreak.current)
+        return
+      }
+      failStreak.current = 0
+      nextAllowedAt.current = 0
       setStatus({ pending: (json.data?.reports?.length ?? 0) > 0 })
     } catch {
-      /* ignore transient errors */
+      failStreak.current = Math.min(failStreak.current + 1, 5)
+      nextAllowedAt.current =
+        Date.now() + Math.min(60_000, pollMs * 2 ** failStreak.current)
     }
-  }, [])
+  }, [pollMs])
 
   useEffect(() => {
     void refresh()

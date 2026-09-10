@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AlertTriangle, Filter, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -50,9 +50,13 @@ export function ScheduleEventPicker({
     reason: string
     eventIds: string[]
   } | null>(null)
-  const [flashKey, setFlashKey] = useState(0)
 
   const selected = useMemo(() => new Set(selectedIds), [selectedIds])
+
+  // Day switches replace selectedIds wholesale — clear stale conflict UI.
+  useEffect(() => {
+    setConflictNotice(null)
+  }, [title])
 
   const filtered = useMemo(() => {
     let list = events
@@ -75,12 +79,11 @@ export function ScheduleEventPicker({
       )
     }
     return [...list].sort((a, b) => {
-      const aOn = selected.has(a.id) ? 0 : 1
-      const bOn = selected.has(b.id) ? 0 : 1
-      if (aOn !== bOn) return aOn - bOn
+      if (a.year !== b.year) return b.year - a.year
+      if (a.month !== b.month) return b.month - a.month
       return a.titleEn.localeCompare(b.titleEn)
     })
-  }, [events, category, onlyAssigned, search, selected])
+  }, [events, category, onlyAssigned, search])
 
   const conflictIds = useMemo(() => {
     const ids = new Set<string>()
@@ -110,7 +113,6 @@ export function ScheduleEventPicker({
     const hit = findConflictInSet(probe, DEFAULT_CONFLICT_GROUPS)
     if (hit) {
       setConflictNotice({ reason: hit.reason, eventIds: hit.eventIds })
-      setFlashKey((k) => k + 1)
       return
     }
     setConflictNotice(null)
@@ -217,7 +219,7 @@ export function ScheduleEventPicker({
             const conflicted = conflictIds.has(evt.id)
             return (
               <EventCard
-                key={`${evt.id}-${conflicted ? `c${flashKey}` : "ok"}`}
+                key={evt.id}
                 event={{ ...evt, active }}
                 onToggle={onToggle}
                 onInspect={(e) => setDetailId(e.id)}

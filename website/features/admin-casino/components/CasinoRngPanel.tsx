@@ -26,7 +26,7 @@ import {
 } from "@/lib/webgames-types"
 import { cn } from "@/lib/utils"
 
-const AUTOSAVE_MS = 500
+const AUTOSAVE_MS = 900
 
 const SLOT_PAYOUT_LABELS = [
   "Symbol 0",
@@ -399,7 +399,6 @@ function CasinoFlashPanel({
 }
 
 export function CasinoRngPanel() {
-  const queryClient = useQueryClient()
   const [game, setGame] = useState<WebGameId>("slot")
   const [drafts, setDrafts] = useState<Partial<WebGameSettingsMap>>({})
   const [baselines, setBaselines] = useState<Partial<Record<WebGameId, string>>>(
@@ -500,7 +499,7 @@ export function CasinoRngPanel() {
           setSaveHint("Saved draft · apply on Overview")
           setMessage(null)
           notifyLaneAPendingChanged()
-          await queryClient.invalidateQueries({ queryKey: ["admin-casino"] })
+          // Avoid refetching settings mid-edit — baselines already match disk.
         } catch (err) {
           if (seq !== saveSeq.current) return
           setError(err instanceof Error ? err.message : "Autosave failed")
@@ -512,7 +511,7 @@ export function CasinoRngPanel() {
       })()
     }, AUTOSAVE_MS)
     return () => window.clearTimeout(timer)
-  }, [dirtyGamesKey, queryClient])
+  }, [dirtyGamesKey])
 
   if (listQuery.isLoading) {
     return <p className="text-sm text-muted-foreground">Loading…</p>

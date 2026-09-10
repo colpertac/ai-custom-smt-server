@@ -101,7 +101,7 @@ function shopFingerprint(shop: ShopDetail): string {
   return JSON.stringify(toSaveBody(shop))
 }
 
-const AUTOSAVE_MS = 500
+const AUTOSAVE_MS = 900
 
 export function CompShopsPanel() {
   const confirm = useConfirm()
@@ -230,11 +230,37 @@ export function CompShopsPanel() {
     try {
       await saveAdminShop(current.shopId, body)
       if (seq !== saveSeq.current) return true
-      void queryClient.invalidateQueries({ queryKey: ["admin", "shops"] })
-      void queryClient.invalidateQueries({
-        queryKey: ["admin", "shops", current.shopId],
-      })
-      // Only clear dirty if the user hasn't edited further.
+      // Keep typing smooth: update caches in place — do not refetch the open
+      // shop (that re-renders the whole editor and feels like input lag).
+      queryClient.setQueryData<ShopDetail>(
+        ["admin", "shops", current.shopId],
+        (prev) =>
+          prev && prev.shopId === current.shopId
+            ? {
+                ...prev,
+                name: current.name,
+                type: current.type,
+                tabs: current.tabs,
+                passthrough: current.passthrough,
+              }
+            : prev
+      )
+      queryClient.setQueryData<ShopListItem[]>(["admin", "shops"], (prev) =>
+        prev?.map((row) =>
+          row.shopId === current.shopId
+            ? {
+                ...row,
+                name: current.name,
+                type: current.type,
+                tabCount: current.tabs.length,
+                productCount: current.tabs.reduce(
+                  (n, t) => n + t.products.length,
+                  0
+                ),
+              }
+            : row
+        )
+      )
       if (
         draftRef.current &&
         shopFingerprint(draftRef.current) === fp

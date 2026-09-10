@@ -17,9 +17,16 @@ export type LaneAPendingClientStatus = {
   casinoDirty: boolean
 }
 
+let notifyTimer: ReturnType<typeof setTimeout> | null = null
+
+/** Coalesce rapid autosave notifications so Overview status isn't spammed. */
 export function notifyLaneAPendingChanged(): void {
   if (typeof window === "undefined") return
-  window.dispatchEvent(new Event(LANE_A_PENDING_EVENT))
+  if (notifyTimer) window.clearTimeout(notifyTimer)
+  notifyTimer = window.setTimeout(() => {
+    notifyTimer = null
+    window.dispatchEvent(new Event(LANE_A_PENDING_EVENT))
+  }, 750)
 }
 
 export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {

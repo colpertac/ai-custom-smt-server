@@ -29,7 +29,7 @@ import type {
   EventStatus,
 } from "@/lib/events/types"
 
-const AUTOSAVE_MS = 500
+const AUTOSAVE_MS = 900
 
 function formatIso(iso: string | null, timeZone: string): string {
   if (!iso) return "—"
@@ -204,23 +204,38 @@ export function EventSchedulePanel({
     if (draftKey === lastPersistedKey.current) return
 
     const hydrateAtStart = hydrateGeneration.current
+    const keyAtSchedule = draftKey
+    const payload = draftConfig
     const timer = window.setTimeout(() => {
       if (hydrateAtStart !== hydrateGeneration.current) return
-      if (draftKey === lastPersistedKey.current) return
+      if (keyAtSchedule !== scheduleConfigKey(payload)) return
+      if (keyAtSchedule === lastPersistedKey.current) return
 
       const seq = ++saveSeq.current
-      const payload = draftConfig
       setSaving(true)
       setSaveHint("Saving…")
       setConflicts([])
       void updateAdminEventSchedule(payload)
         .then((next) => {
           if (seq !== saveSeq.current) return
-          applyStatus(next)
-          setError(null)
-          setSaveHint(
-            "Saved · apply on Overview (or wait for flip)"
+          // Mark the payload we sent as persisted — do NOT rehydrate form
+          // state from the response (that remounts day boards / sidebars).
+          lastPersistedKey.current = keyAtSchedule
+          setStatus((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  reconciler: next.reconciler,
+                  liveActiveIds: next.liveActiveIds,
+                  desiredActiveIds: next.desiredActiveIds,
+                  nextChangeAt: next.nextChangeAt,
+                  activeLoopDayIndex: next.activeLoopDayIndex,
+                  activeCalendarDate: next.activeCalendarDate,
+                }
+              : next
           )
+          setError(null)
+          setSaveHint("Saved · apply on Overview (or wait for flip)")
         })
         .catch((err) => {
           if (seq !== saveSeq.current) return
@@ -245,7 +260,7 @@ export function EventSchedulePanel({
     }, AUTOSAVE_MS)
 
     return () => window.clearTimeout(timer)
-  }, [applyStatus, draftConfig, draftKey, loading])
+  }, [draftConfig, draftKey, loading])
 
   const selectedLoop = loopDays.find((d) => d.id === selectedLoopId) ?? null
   const selectedCal =
@@ -328,6 +343,36 @@ export function EventSchedulePanel({
     })
   }
 
+  const handleProfileMessage = useCallback(
+    (kind: "success" | "error", text: string) => {
+      setConflicts([])
+      if (kind === "error") {
+        setError(text)
+        setSuccess(null)
+      } else {
+        setSuccess(text)
+        setError(null)
+      }
+    },
+    []
+  )
+
+  const handleApplyProfile = useCallback(
+    (profile: EventScheduleLoopProfile) => {
+      setConflicts([])
+      setAlwaysOnIds([...profile.alwaysOnIds])
+      setLoopDays(
+        profile.days.map((d) => ({
+          id: d.id,
+          eventIds: [...d.eventIds],
+        }))
+      )
+      setSelectedLoopId(profile.days[0]?.id ?? null)
+      setMode("loop")
+    },
+    []
+  )
+
   if (loading) {
     return (
       <div className="flex items-center gap-2 py-6 text-xs text-muted-foreground">
@@ -400,28 +445,8 @@ export function EventSchedulePanel({
         <LoopScheduleProfilesBar
           alwaysOnIds={alwaysOnIds}
           loopDays={loopDays}
-          onApplyProfile={(profile: EventScheduleLoopProfile) => {
-            setConflicts([])
-            setAlwaysOnIds([...profile.alwaysOnIds])
-            setLoopDays(
-              profile.days.map((d) => ({
-                id: d.id,
-                eventIds: [...d.eventIds],
-              }))
-            )
-            setSelectedLoopId(profile.days[0]?.id ?? null)
-            setMode("loop")
-          }}
-          onMessage={(kind, text) => {
-            setConflicts([])
-            if (kind === "error") {
-              setError(text)
-              setSuccess(null)
-            } else {
-              setSuccess(text)
-              setError(null)
-            }
-          }}
+          onApplyProfile={handleApplyProfile}
+          onMessage={handleProfileMessage}
         />
       ) : null}
 
