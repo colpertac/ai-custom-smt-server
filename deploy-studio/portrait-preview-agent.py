@@ -6,6 +6,7 @@ Started by ``./studio up`` (with the worker). Website Admin talks here for:
   - full-window login debug snaps
   - orch start/kill/status (async job)
   - drone queued click/type/key missions
+  - worker init-camera (in-world framing)
 
   ./studio up
   # or: uv run python portrait-preview-agent.py
@@ -837,6 +838,68 @@ def run_drone(body: dict) -> dict:
         _drone_lock.release()
 
 
+def run_init_camera(role: str) -> dict:
+    """Run worker ``init-camera`` (in-world pose + Home/PageUp/S). One at a time."""
+    role_n = normalize_role(role)
+    if not role_n:
+        raise RuntimeError("role must be vam1 or vaf1")
+    orch = orch_job_status()
+    if orch.get("state") == "running":
+        raise RuntimeError("orch job already running — wait or Kill clients")
+    login_cur = login_job_status()
+    if login_cur.get("state") == "running":
+        raise RuntimeError("login step already running — wait")
+    if not _drone_lock.acquire(blocking=False):
+        raise RuntimeError("drone already running")
+    try:
+        if drone_is_busy():
+            raise RuntimeError("drone already running")
+        if not WORKER.is_file():
+            raise RuntimeError(f"missing {WORKER}")
+        ensure_display()
+        lock = acquire_drone_lock(role_n)
+        try:
+            started = time.time()
+            proc = subprocess.run(
+                [sys.executable, str(WORKER), "init-camera", role_n],
+                cwd=str(HERE),
+                capture_output=True,
+                text=True,
+                timeout=90,
+            )
+            elapsed = round(time.time() - started, 2)
+            log = ((proc.stdout or "") + (proc.stderr or "")).strip()[-500:]
+            if proc.returncode != 0:
+                raise RuntimeError(log or f"init-camera {role_n} failed")
+            ended = {
+                **lock,
+                "state": "ok",
+                "endedAt": time.time(),
+                "elapsedSec": elapsed,
+                "message": f"init-camera {role_n} ok",
+            }
+            release_drone_lock(ended)
+            return {
+                "ok": True,
+                "role": role_n,
+                "elapsedSec": elapsed,
+                "log": log,
+                "job": ended,
+            }
+        except Exception as e:
+            release_drone_lock(
+                {
+                    **lock,
+                    "state": "failed",
+                    "endedAt": time.time(),
+                    "message": str(e)[:300],
+                }
+            )
+            raise
+    finally:
+        _drone_lock.release()
+
+
 def run_debug_snap(mannequin: str, step: str = "admin") -> tuple[bytes, dict]:
     """Full-window snap (no studio crop) for login debug from Admin UI."""
     ensure_display()
@@ -938,6 +1001,7 @@ class Handler(BaseHTTPRequestHandler):
             "/login",
             "/client",
             "/drone",
+            "/camera",
         }:
             self.send_error(404)
             return
@@ -1034,6 +1098,24 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_err(code, msg)
             return
 
+        if path == "/camera":
+            body = self._read_json()
+            if body is None:
+                return
+            role = str(body.get("role") or body.get("mannequin") or "")
+            try:
+                result = run_init_camera(role)
+                self._send_json(200, result)
+            except Exception as e:
+                msg = str(e)[:500]
+                low = msg.lower()
+                if "already running" in low or "must be" in low:
+                    code = 409 if "already" in low else 400
+                else:
+                    code = 502
+                self._send_err(code, msg)
+            return
+
         body = self._read_json()
         if body is None:
             return
@@ -1071,7 +1153,7 @@ def main() -> None:
     print(
         f"portrait agent on http://{host}:{port} "
         f"(GET /status /orch/job /drone /health; "
-        f"POST /preview /debug-snap /orch/up /orch/down /login /client /drone; token required)",
+        f"POST /preview /debug-snap /orch/up /orch/down /login /client /drone /camera; token required)",
         flush=True,
     )
     try:

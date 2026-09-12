@@ -197,13 +197,39 @@ export function StudioDronePanel({ className }: { className?: string }) {
     setQueue((prev) => [...prev, { id: newId(), op: "wait", sec }])
   }
 
-  function addCameraSetup() {
-    setQueue((prev) => [
-      ...prev,
-      { id: newId(), op: "key", name: "Home" },
-      { id: newId(), op: "wait", sec: 0.2 },
-      { id: newId(), op: "key", name: "Prior" },
-    ])
+  async function runInitCamera() {
+    setRunning(true)
+    setError(null)
+    setOk(null)
+    try {
+      const response = await api.post("admin/studio/camera", {
+        json: { role, snapAfter: true },
+        timeout: 90_000,
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: { screenshot?: ShotMeta; result?: { elapsedSec?: number } }
+      }
+      if (!response.ok || !json.success) {
+        setError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      if (json.data?.screenshot) {
+        applyShot(json.data.screenshot)
+      } else {
+        await refreshLatestShot()
+      }
+      const sec = json.data?.result?.elapsedSec
+      setOk(
+        json.message ||
+          (sec != null ? `Init camera ${role} (${sec}s)` : `Init camera ${role}`)
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Init camera failed")
+    } finally {
+      setRunning(false)
+    }
   }
 
   function moveItem(id: string, dir: -1 | 1) {
@@ -385,10 +411,10 @@ export function StudioDronePanel({ className }: { className?: string }) {
               variant="outline"
               className="h-7 px-2 text-[11px]"
               disabled={busy}
-              title="Hold Home, then PageUp (in-world camera framing)"
-              onClick={addCameraSetup}
+              title="Worker init-camera: studio pose, hold Home, PageUp, S. Client must already be in-world (same as orch after login)."
+              onClick={() => void runInitCamera()}
             >
-              Cam Home+PgUp
+              Init camera
             </Button>
             <Button
               type="button"

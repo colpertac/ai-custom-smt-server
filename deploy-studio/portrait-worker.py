@@ -380,7 +380,7 @@ def hold_key(key: str, seconds: float, wid: str | None = None) -> None:
 
     from portrait_common import wine_hold_key
 
-    if wine_hold_key(key, seconds):
+    if wine_hold_key(key, seconds, x11_wid=wid):
         return
 
     # Fallback: XTEST (often ignored by DirectInput).
@@ -491,25 +491,47 @@ def init_camera(
         time.sleep(0.5)
 
     if wid is None:
-        wid = resolve_window(mannequin)
-    focus_window(wid)
-    if CAM_FOCUS_SEC > 0:
-        print(f"camera init {mannequin}: settle {CAM_FOCUS_SEC}s after focus…")
-        time.sleep(CAM_FOCUS_SEC)
-    print(
-        f"camera init {mannequin}: Home {CAM_HOME_SEC}s, "
-        f"PageUp {CAM_PGUP_SEC}s, S {HOLD_S_SEC}s"
+        from portrait_common import resolve_role_target
+
+        try:
+            wid = str(resolve_role_target(mannequin)["wid"])
+        except RuntimeError:
+            wid = resolve_window(mannequin)
+
+    from portrait_common import (
+        _norm_wid,
+        find_imagine_windows,
+        hide_imagine_windows,
+        show_imagine_windows,
     )
-    hold_key("Home", CAM_HOME_SEC, wid)
-    time.sleep(0.15)
-    hold_key("Prior", CAM_PGUP_SEC, wid)
-    time.sleep(0.3)
-    hold_s(HOLD_S_SEC, wid)
-    time.sleep(AFTER_S_SEC)
-    # Deselect if a prior center-click left the self HP bar up.
-    click_void(wid)
-    mark_camera_ready(mannequin)
-    print(f"camera init {mannequin}: marked ready in {CAMERA_STATE_PATH}")
+
+    hidden: list[str] = []
+    try:
+        others = [
+            w for w in find_imagine_windows() if _norm_wid(w) != _norm_wid(wid)
+        ]
+        hidden = hide_imagine_windows(others)
+        focus_window(wid)
+        if CAM_FOCUS_SEC > 0:
+            print(f"camera init {mannequin}: settle {CAM_FOCUS_SEC}s after focus…")
+            time.sleep(CAM_FOCUS_SEC)
+        print(
+            f"camera init {mannequin}: Home {CAM_HOME_SEC}s, "
+            f"PageUp {CAM_PGUP_SEC}s, S {HOLD_S_SEC}s"
+        )
+        hold_key("Home", CAM_HOME_SEC, wid)
+        time.sleep(0.15)
+        hold_key("Prior", CAM_PGUP_SEC, wid)
+        time.sleep(0.3)
+        hold_s(HOLD_S_SEC, wid)
+        time.sleep(AFTER_S_SEC)
+        # Deselect if a prior center-click left the self HP bar up.
+        click_void(wid)
+        mark_camera_ready(mannequin)
+        print(f"camera init {mannequin}: marked ready in {CAMERA_STATE_PATH}")
+    finally:
+        if hidden:
+            show_imagine_windows(hidden)
 
 
 def cmd_init_camera(args: argparse.Namespace) -> None:
@@ -517,7 +539,12 @@ def cmd_init_camera(args: argparse.Namespace) -> None:
     if getattr(args, "skip_pose", False):
         SKIP_INIT_POSE = True
     mannequin = args.mannequin
-    wid = resolve_window(mannequin)
+    from portrait_common import resolve_role_target
+
+    try:
+        wid = str(resolve_role_target(mannequin)["wid"])
+    except RuntimeError:
+        wid = resolve_window(mannequin)
     init_camera(mannequin, wid, force=True)
     print(f"framing ready for {mannequin} (wid={wid})")
 

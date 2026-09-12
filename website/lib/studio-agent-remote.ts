@@ -16,6 +16,9 @@ const ORCH_DOWN_TIMEOUT_MS = Number(
 const DRONE_TIMEOUT_MS = Number(
   process.env.PORTRAIT_DRONE_TIMEOUT_MS || 100000
 )
+const CAMERA_TIMEOUT_MS = Number(
+  process.env.PORTRAIT_CAMERA_TIMEOUT_MS || 90000
+)
 
 export class StudioAgentError extends Error {
   status: number
@@ -92,7 +95,7 @@ async function readAgentJson(res: Response): Promise<Record<string, unknown>> {
       typeof data.error === "string"
         ? data.error
         : res.status === 404
-          ? "Wine agent has no /drone — copy updated deploy-studio and ./studio up"
+          ? "Wine agent missing that route — copy updated deploy-studio and ./studio up"
           : `HTTP ${res.status}`
     throw new StudioAgentError(err, res.status === 409 ? 409 : 502)
   }
@@ -223,6 +226,34 @@ export async function runDroneMission(input: {
       data.snap && typeof data.snap === "object"
         ? (data.snap as DroneMissionResult["snap"])
         : undefined,
+    job:
+      data.job && typeof data.job === "object"
+        ? (data.job as Record<string, unknown>)
+        : undefined,
+  }
+}
+
+export async function runInitCamera(input: {
+  role: "vam1" | "vaf1"
+}): Promise<{
+  ok: boolean
+  role: string
+  elapsedSec?: number
+  log?: string
+  job?: Record<string, unknown>
+}> {
+  const res = await agentFetch("/camera", {
+    method: "POST",
+    body: JSON.stringify({ role: input.role }),
+    timeoutMs: CAMERA_TIMEOUT_MS,
+  })
+  const data = await readAgentJson(res)
+  return {
+    ok: Boolean(data.ok ?? true),
+    role: typeof data.role === "string" ? data.role : input.role,
+    elapsedSec:
+      typeof data.elapsedSec === "number" ? data.elapsedSec : undefined,
+    log: typeof data.log === "string" ? data.log : undefined,
     job:
       data.job && typeof data.job === "object"
         ? (data.job as Record<string, unknown>)
