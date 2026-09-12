@@ -20,6 +20,7 @@ import {
   wikiSetBonus,
 } from "@/content/wiki/format"
 import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
+import { Redo2, Undo2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { EquipSlotKey } from "@/lib/armory-equipment"
@@ -357,6 +358,52 @@ export type SidebarFlashTarget = {
   key: number
 } | null
 
+function SidebarHistoryButtons({
+  canUndo,
+  canRedo,
+  undoCount,
+  onUndo,
+  onRedo,
+}: {
+  canUndo: boolean
+  canRedo: boolean
+  undoCount: number
+  onUndo: () => void
+  onRedo: () => void
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Button
+        type="button"
+        size="xs"
+        variant="outline"
+        disabled={!canUndo}
+        onClick={onUndo}
+        title="Undo last gear change (Ctrl+Z)"
+      >
+        <Undo2 className="size-3.5" aria-hidden />
+        Undo
+        {undoCount > 0 ? (
+          <span className="font-mono text-[10px] text-muted-foreground">
+            {undoCount}
+          </span>
+        ) : null}
+      </Button>
+      <Button
+        type="button"
+        size="xs"
+        variant="outline"
+        disabled={!canRedo}
+        onClick={onRedo}
+        title="Redo gear change (Ctrl+Y)"
+      >
+        <Redo2 className="size-3.5" aria-hidden />
+        Redo
+      </Button>
+    </div>
+  )
+}
+
 export function GearSlotSidebar({
   slotKey,
   equipped,
@@ -368,6 +415,11 @@ export function GearSlotSidebar({
   onSelectWhole,
   onDropLayer,
   onDropEnchant,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
+  undoCount,
 }: {
   slotKey: EquipSlotKey
   equipped: PlannerSlot
@@ -379,6 +431,11 @@ export function GearSlotSidebar({
   onSelectWhole: (item: WikiItem) => void
   onDropLayer: (item: WikiItem, layer: GearLayer) => void
   onDropEnchant: (enchantId: number, side: EnchantSide) => void
+  onUndo: () => void
+  onRedo: () => void
+  canUndo: boolean
+  canRedo: boolean
+  undoCount: number
 }) {
   const [q, setQ] = useState("")
   const [items, setItems] = useState<WikiItem[]>([])
@@ -486,10 +543,19 @@ export function GearSlotSidebar({
       <div className="min-h-0 flex-1 overflow-y-auto">
         <section className="space-y-1.5 border-b border-border p-2.5">
           {equipped.s1ItemId == null ? (
-            <p className="text-[11px] text-muted-foreground">
-              Empty — equip a base piece below, then drag or double-click S2/S3
-              from recommendations.
-            </p>
+            <div className="flex items-start justify-between gap-2">
+              <p className="min-w-0 text-[11px] text-muted-foreground">
+                Empty — equip a base piece below, then drag or double-click
+                S2/S3 from recommendations.
+              </p>
+              <SidebarHistoryButtons
+                canUndo={canUndo}
+                canRedo={canRedo}
+                undoCount={undoCount}
+                onUndo={onUndo}
+                onRedo={onRedo}
+              />
+            </div>
           ) : (
             <div className="flex items-center gap-2">
               {display.iconSrc ? (
@@ -530,6 +596,13 @@ export function GearSlotSidebar({
                   </Link>
                 </p>
               </div>
+              <SidebarHistoryButtons
+                canUndo={canUndo}
+                canRedo={canRedo}
+                undoCount={undoCount}
+                onUndo={onUndo}
+                onRedo={onRedo}
+              />
             </div>
           )}
 

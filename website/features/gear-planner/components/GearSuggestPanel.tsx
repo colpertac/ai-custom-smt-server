@@ -202,6 +202,22 @@ function PriorityListEditor({
   )
 }
 
+function sameLoadout(a: PlannerSlot[], b: PlannerSlot[]): boolean {
+  if (a.length !== b.length) return false
+  return a.every((slot, i) => {
+    const other = b[i]
+    return (
+      other != null &&
+      slot.s1ItemId === other.s1ItemId &&
+      slot.sitemItemId === other.sitemItemId &&
+      slot.s2ItemId === other.s2ItemId &&
+      slot.s3ItemId === other.s3ItemId &&
+      slot.tarotEnchantId === other.tarotEnchantId &&
+      slot.soulEnchantId === other.soulEnchantId
+    )
+  })
+}
+
 export function GearSuggestPanel({
   loadout,
   attrs,
@@ -209,6 +225,7 @@ export function GearSuggestPanel({
   gender,
   focus = "player",
   onApply,
+  onUndo,
 }: {
   loadout: PlannerSlot[]
   attrs: PlannerAttrs
@@ -216,6 +233,7 @@ export function GearSuggestPanel({
   gender: 0 | 1
   focus?: CombatFocus
   onApply: (next: PlannerSlot[]) => void
+  onUndo?: () => void
 }) {
   const [open, setOpen] = useState(false)
   const [priorityOpen, setPriorityOpen] = useState(false)
@@ -285,10 +303,15 @@ export function GearSuggestPanel({
 
   const undo = useCallback(() => {
     if (!undoSnapshot) return
-    onApply(undoSnapshot)
+    onUndo?.()
     setUndoSnapshot(null)
     setLastResult(null)
-  }, [undoSnapshot, onApply])
+  }, [undoSnapshot, onUndo])
+
+  const suggestStillApplied =
+    Boolean(undoSnapshot) &&
+    lastResult != null &&
+    sameLoadout(loadout, lastResult.loadout)
 
   return (
     <div className="space-y-2">
@@ -354,7 +377,7 @@ export function GearSuggestPanel({
           <WandSparkles className="size-3.5" aria-hidden />
           Suggest
         </Button>
-        {undoSnapshot ? (
+        {suggestStillApplied ? (
           <Button type="button" size="xs" variant="ghost" onClick={undo}>
             <Undo2 className="size-3.5" aria-hidden />
             Undo suggest

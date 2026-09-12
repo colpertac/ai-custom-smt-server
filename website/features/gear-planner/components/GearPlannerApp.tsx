@@ -24,7 +24,7 @@ import {
   GearSlotSidebar,
   type SidebarFlashTarget,
 } from "@/features/gear-planner/components/GearSlotSidebar"
-import { CircleHelp, WandSparkles } from "lucide-react"
+import { CircleHelp, Redo2, Undo2, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -71,6 +71,34 @@ import { cn } from "@/lib/utils"
 
 const STORAGE_KEY = "imagine-gear-planner-v3"
 const LEGACY_STORAGE_KEY = "imagine-gear-planner-v2"
+const LOADOUT_HISTORY_LIMIT = 50
+
+type LoadoutHistory = {
+  past: PlannerSlot[][]
+  present: PlannerSlot[]
+  future: PlannerSlot[][]
+}
+
+function clonePlannerLoadout(loadout: PlannerSlot[]): PlannerSlot[] {
+  return loadout.map((slot) => ({ ...slot }))
+}
+
+function plannerLoadoutsEqual(a: PlannerSlot[], b: PlannerSlot[]): boolean {
+  if (a.length !== b.length) return false
+  return a.every((slot, i) => {
+    const other = b[i]
+    return (
+      other != null &&
+      slot.slot === other.slot &&
+      slot.s1ItemId === other.s1ItemId &&
+      slot.sitemItemId === other.sitemItemId &&
+      slot.s2ItemId === other.s2ItemId &&
+      slot.s3ItemId === other.s3ItemId &&
+      slot.tarotEnchantId === other.tarotEnchantId &&
+      slot.soulEnchantId === other.soulEnchantId
+    )
+  })
+}
 
 export type PlannerGender = 0 | 1
 
@@ -171,7 +199,12 @@ function GearPlannerAppClient({
     return loadStored()
   }, [initialSharePayload])
 
-  const [loadout, setLoadout] = useState<PlannerSlot[]>(stored.loadout)
+  const [history, setHistory] = useState<LoadoutHistory>(() => ({
+    past: [],
+    present: stored.loadout,
+    future: [],
+  }))
+  const loadout = history.present
   const [attrs, setAttrs] = useState<PlannerAttrs>(stored.attrs)
   const [gender, setGender] = useState<PlannerGender>(stored.gender)
   const [lnc, setLnc] = useState<PlannerLnc>(stored.lnc)
@@ -232,17 +265,66 @@ function GearPlannerAppClient({
     return itemSubcategory(selectedEquip.s1ItemId)
   }, [selectedEquip])
 
+  const commitLoadout = useCallback(
+    (next: PlannerSlot[] | ((prev: PlannerSlot[]) => PlannerSlot[])) => {
+      setHistory((h) => {
+        const resolved = typeof next === "function" ? next(h.present) : next
+        if (plannerLoadoutsEqual(h.present, resolved)) return h
+        return {
+          past: [...h.past, clonePlannerLoadout(h.present)].slice(
+            -LOADOUT_HISTORY_LIMIT
+          ),
+          present: resolved,
+          future: [],
+        }
+      })
+    },
+    []
+  )
+
+  const replaceLoadout = useCallback((next: PlannerSlot[]) => {
+    setHistory({ past: [], present: next, future: [] })
+  }, [])
+
+  const undoLoadout = useCallback(() => {
+    setHistory((h) => {
+      if (h.past.length === 0) return h
+      const prev = h.past[h.past.length - 1]!
+      return {
+        past: h.past.slice(0, -1),
+        present: clonePlannerLoadout(prev),
+        future: [...h.future, clonePlannerLoadout(h.present)].slice(
+          -LOADOUT_HISTORY_LIMIT
+        ),
+      }
+    })
+  }, [])
+
+  const redoLoadout = useCallback(() => {
+    setHistory((h) => {
+      if (h.future.length === 0) return h
+      const next = h.future[h.future.length - 1]!
+      return {
+        past: [...h.past, clonePlannerLoadout(h.present)].slice(
+          -LOADOUT_HISTORY_LIMIT
+        ),
+        present: clonePlannerLoadout(next),
+        future: h.future.slice(0, -1),
+      }
+    })
+  }, [])
+
   const applyStored = useCallback(
     (payload: unknown) => {
       const next = parsePlannerState(payload)
-      setLoadout(next.loadout)
+      replaceLoadout(next.loadout)
       setAttrs(next.attrs)
       setGender(next.gender)
       setLnc(next.lnc)
       setNotes(next.notes)
       setDropError(null)
     },
-    []
+    [replaceLoadout]
   )
 
   useEffect(() => {
@@ -271,14 +353,44 @@ function GearPlannerAppClient({
     }
   }, [accountBuildId, initialSharePayload, applyStored])
 
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName
+        if (
+          tag === "INPUT" ||
+          tag === "TEXTAREA" ||
+          tag === "SELECT" ||
+          target.isContentEditable
+        ) {
+          return
+        }
+      }
+      const modifier = event.ctrlKey || event.metaKey
+      if (!modifier) return
+      if (event.key === "z" && !event.shiftKey) {
+        event.preventDefault()
+        undoLoadout()
+        return
+      }
+      if (event.key === "y" || (event.key === "z" && event.shiftKey)) {
+        event.preventDefault()
+        redoLoadout()
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [undoLoadout, redoLoadout])
+
   const clearAll = useCallback(() => {
-    setLoadout(emptyPlannerLoadout())
+    commitLoadout(emptyPlannerLoadout())
     setAttrs({ ...DEFAULT_PLANNER_ATTRS })
     setLnc(1)
     setNotes("")
     setSelectedSlot(null)
     setDropError(null)
-  }, [])
+  }, [commitLoadout])
 
   const importFromArmory = useCallback(async () => {
     const name = importName.trim()
@@ -321,7 +433,7 @@ function GearPlannerAppClient({
         setImportError("Import failed")
         return
       }
-      setLoadout(
+      commitLoadout(
         emptyPlannerLoadout().map((slot) => {
           const src = profile.equipment.find((e) => e.slot === slot.slot)
           if (!src) return slot
@@ -346,7 +458,7 @@ function GearPlannerAppClient({
     } finally {
       setImportBusy(false)
     }
-  }, [importName])
+  }, [importName, commitLoadout])
 
   const handleDropLayer = useCallback(
     (donor: WikiItem, layer: GearLayer) => {
@@ -363,9 +475,9 @@ function GearPlannerAppClient({
       }
       setDropError(null)
       setFlashTarget({ layer, key: Date.now() })
-      setLoadout((prev) => applyLayerToSlot(prev, selectedSlot, layer, donor))
+      commitLoadout((prev) => applyLayerToSlot(prev, selectedSlot, layer, donor))
     },
-    [selectedSlot, selectedEquip, gender]
+    [selectedSlot, selectedEquip, gender, commitLoadout]
   )
 
   const handleDropEnchant = useCallback(
@@ -382,11 +494,11 @@ function GearPlannerAppClient({
       }
       setDropError(null)
       setFlashTarget({ layer: side, key: Date.now() })
-      setLoadout((prev) =>
+      commitLoadout((prev) =>
         applyEnchantToSlot(prev, selectedSlot, side, enchantId)
       )
     },
-    [selectedSlot, selectedEquip]
+    [selectedSlot, selectedEquip, commitLoadout]
   )
 
   const currentPayload = useMemo(
@@ -575,9 +687,11 @@ function GearPlannerAppClient({
                             <strong>Suggest</strong> searches layer swaps within
                             a time budget. It fills hard caps first (LBC / TAC /
                             PC / PP / CD / Incant), then soft stats in your
-                            priority order. You can lock S1 appearance, undo,
-                            and it respects the current Player / Partner / Both
-                            focus for soft scoring and candidates.
+                            priority order. You can lock S1 appearance, and
+                            Undo / Redo (or Ctrl+Z / Ctrl+Y) walks back gear
+                            changes — including a Suggest run. It respects the
+                            current Player / Partner / Both focus for soft
+                            scoring and candidates.
                           </p>
                         </div>
                       </div>
@@ -765,19 +879,55 @@ function GearPlannerAppClient({
             />
           </Field>
 
-          <GearLoadoutStrip
-            loadout={loadout}
-            selectedSlot={selectedSlot}
-            setColorBySlot={combat.setColorIndexBySlot}
-            onPick={(key) => {
-              setSelectedSlot(key)
-              setRecommendSlot(key)
-              setDropError(null)
-            }}
-            onClear={(key) => {
-              setLoadout((prev) => equipWikiItemOntoSlot(prev, key, null))
-            }}
-          />
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="font-heading text-xs tracking-[0.14em] text-gold-dim uppercase">
+                Loadout
+              </h3>
+              <div className="flex flex-wrap items-center gap-1">
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="outline"
+                  disabled={history.past.length === 0}
+                  onClick={undoLoadout}
+                  title="Undo last gear change (Ctrl+Z)"
+                >
+                  <Undo2 className="size-3.5" aria-hidden />
+                  Undo
+                  {history.past.length > 0 ? (
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      {history.past.length}
+                    </span>
+                  ) : null}
+                </Button>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="outline"
+                  disabled={history.future.length === 0}
+                  onClick={redoLoadout}
+                  title="Redo gear change (Ctrl+Y)"
+                >
+                  <Redo2 className="size-3.5" aria-hidden />
+                  Redo
+                </Button>
+              </div>
+            </div>
+            <GearLoadoutStrip
+              loadout={loadout}
+              selectedSlot={selectedSlot}
+              setColorBySlot={combat.setColorIndexBySlot}
+              onPick={(key) => {
+                setSelectedSlot(key)
+                setRecommendSlot(key)
+                setDropError(null)
+              }}
+              onClear={(key) => {
+                commitLoadout((prev) => equipWikiItemOntoSlot(prev, key, null))
+              }}
+            />
+          </div>
 
           <GearSetLegend
             activeSets={combat.activeSets}
@@ -835,10 +985,11 @@ function GearPlannerAppClient({
             gender={gender}
             focus={combatFocus}
             onApply={(next) => {
-              setLoadout(next)
+              commitLoadout(next)
               setFlashTarget({ layer: "all", key: Date.now() })
               setDropError(null)
             }}
+            onUndo={undoLoadout}
           />
 
           <GearCombatMatrix
@@ -874,7 +1025,7 @@ function GearPlannerAppClient({
               }
               onEquipWhole={(hit: RecommendHit) => {
                 const item = recommendHitToWikiItem(hit)
-                setLoadout((prev) =>
+                commitLoadout((prev) =>
                   equipWikiItemOntoSlot(prev, hit.slotKey, item)
                 )
                 setSelectedSlot(hit.slotKey)
@@ -912,14 +1063,14 @@ function GearPlannerAppClient({
               setFlashTarget(null)
             }}
             onClear={() => {
-              setLoadout((prev) =>
+              commitLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, null)
               )
               setFlashTarget(null)
               setDropError(null)
             }}
             onSelectWhole={(item) => {
-              setLoadout((prev) =>
+              commitLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, item)
               )
               setFlashTarget({ layer: "all", key: Date.now() })
@@ -927,6 +1078,11 @@ function GearPlannerAppClient({
             }}
             onDropLayer={handleDropLayer}
             onDropEnchant={handleDropEnchant}
+            onUndo={undoLoadout}
+            onRedo={redoLoadout}
+            canUndo={history.past.length > 0}
+            canRedo={history.future.length > 0}
+            undoCount={history.past.length}
           />
         </div>
       ) : null}
@@ -945,14 +1101,14 @@ function GearPlannerAppClient({
               setFlashTarget(null)
             }}
             onClear={() => {
-              setLoadout((prev) =>
+              commitLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, null)
               )
               setFlashTarget(null)
               setDropError(null)
             }}
             onSelectWhole={(item) => {
-              setLoadout((prev) =>
+              commitLoadout((prev) =>
                 equipWikiItemOntoSlot(prev, selectedSlot, item)
               )
               setFlashTarget({ layer: "all", key: Date.now() })
@@ -960,6 +1116,11 @@ function GearPlannerAppClient({
             }}
             onDropLayer={handleDropLayer}
             onDropEnchant={handleDropEnchant}
+            onUndo={undoLoadout}
+            onRedo={redoLoadout}
+            canUndo={history.past.length > 0}
+            canRedo={history.future.length > 0}
+            undoCount={history.past.length}
           />
         </div>
       ) : null}
