@@ -12,8 +12,8 @@ import {
   type GearEnchantDragPayload,
   type PlannerAttrs,
   type PlannerLnc,
-  type PlannerStatKey,
   type RankedEnchantHit,
+  type RecommendStatFilter,
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
@@ -78,7 +78,7 @@ export function GearEnchantPicker({
   enabled,
   onApply,
 }: {
-  stat: PlannerStatKey
+  stat: RecommendStatFilter
   attrs: PlannerAttrs
   lnc: PlannerLnc
   enabled: boolean
@@ -96,7 +96,7 @@ export function GearEnchantPicker({
     const handle = window.setTimeout(() => {
       setHits(
         rankEnchantsForStat({
-          stat,
+          stat: stat || null,
           side,
           attrs,
           lnc,
@@ -108,7 +108,7 @@ export function GearEnchantPicker({
     return () => window.clearTimeout(handle)
   }, [stat, side, attrs, lnc, q, enabled])
 
-  const def = PLANNER_STATS.find((s) => s.key === stat)!
+  const def = PLANNER_STATS.find((s) => s.key === stat)
 
   return (
     <div className="space-y-2 border border-border bg-card/40 p-3">
@@ -150,8 +150,8 @@ export function GearEnchantPicker({
       ) : (
         <>
           <p className="text-[11px] text-muted-foreground">
-            Ranked for {def.label} under current attrs / LNC. Drag onto the
-            matching sidebar card or double-click.
+            Ranked for {def?.label ?? "any combat stat"} under current attrs /
+            LNC. Drag onto the matching sidebar card or double-click.
           </p>
           <Field>
             <FieldLabel htmlFor="gp-enchant-q">Search</FieldLabel>

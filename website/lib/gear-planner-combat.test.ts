@@ -303,6 +303,31 @@ describe("rankItemsForStat", () => {
     expect(hit).toBeTruthy()
     expect(hit!.pieceContribution).toBe(-20)
   })
+
+  it("omitting stat ranks items that help any combat bucket", () => {
+    const hits = rankItemsForStat({
+      slot: "bottom",
+      limit: 10,
+    })
+    expect(hits.length).toBeGreaterThan(0)
+    expect(
+      hits.every((h) => h.score > 0 || h.completesSetIds.length > 0)
+    ).toBe(true)
+
+    const cdHits = rankItemsForStat({
+      stat: "cooldown",
+      slot: "bottom",
+      limit: 5,
+    })
+    const known = cdHits[0]
+    expect(known).toBeTruthy()
+    const anyForKnown = rankItemsForStat({
+      slot: "bottom",
+      query: String(known!.item.id),
+      limit: 5,
+    })
+    expect(anyForKnown.some((h) => h.item.id === known!.item.id)).toBe(true)
+  })
 })
 
 describe("partner combat split", () => {

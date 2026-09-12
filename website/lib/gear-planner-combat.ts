@@ -200,6 +200,22 @@ export function isCombatPlannerStatKey(key: string): key is PlannerStatKey {
   return PLANNER_STATS.some((s) => s.key === key)
 }
 
+/** Empty string = any combat stat (recommend / enchant pickers). */
+export type RecommendStatFilter = PlannerStatKey | ""
+
+function signedRankScore(
+  contribution: number,
+  def: PlannerStatDef
+): number {
+  return def.kind === "reduction" ? -contribution : contribution
+}
+
+/** Cross-stat compare: LB cap is thousands while percents are ~5–30. */
+function combinedAnyScore(contribution: number, def: PlannerStatDef): number {
+  const signed = signedRankScore(contribution, def)
+  return def.kind === "lbCap" ? signed / 1000 : signed
+}
+
 export type EquipmentSetInfo = {
   id: number
   equipment: number[]
@@ -1679,7 +1695,8 @@ function setTokuseiForFocus(
 }
 
 export function rankItemsForStat(options: {
-  stat: PlannerStatKey
+  /** When omitted / null, rank by strongest contribution across all combat stats. */
+  stat?: PlannerStatKey | null
   slot?: EquipSlotKey | null
   /** When set, only items whose S1/S2/S3 layer contributes to the target stat. */
   layer?: GearLayer | null
@@ -1695,8 +1712,11 @@ export function rankItemsForStat(options: {
   /** Optional candidate pool (API may pass runtime wiki catalog). */
   items?: readonly WikiItem[]
 }): RankedGearHit[] {
-  const def = PLANNER_STATS.find((s) => s.key === options.stat)
-  if (!def) return []
+  const stats = options.stat
+    ? PLANNER_STATS.filter((s) => s.key === options.stat)
+    : PLANNER_STATS
+  if (stats.length === 0) return []
+  const anyStat = !options.stat
 
   const focus = options.focus ?? "player"
   const limit = options.limit ?? 40
@@ -1734,45 +1754,60 @@ export function rankItemsForStat(options: {
   for (const item of pool) {
     const slotKey = equipSlotKeyFromWikiSlot(item.equipSlot)!
 
-    let pieceContribution: number
-    let setCompletionBonus = 0
-    const completesSetIds: number[] = []
-
-    if (layer) {
-      pieceContribution = itemLayerContribution(
-        item,
-        layer,
-        options.stat,
-        focus
-      )
-      if (pieceContribution === 0) continue
-    } else {
-      pieceContribution = itemPieceContribution(item, options.stat, focus)
-
+    let newlyComplete: ReturnType<typeof activeAndPartialSets>["activeSets"] = []
+    if (!layer) {
       const trial = equipWikiItemOntoSlot(loadout, slotKey, item)
       const before = activeAndPartialSets(loadout).activeSets.map((s) => s.id)
-      const after = activeAndPartialSets(trial).activeSets
-      const newlyComplete = after.filter((s) => !before.includes(s.id))
+      newlyComplete = activeAndPartialSets(trial).activeSets.filter(
+        (s) => !before.includes(s.id)
+      )
+    }
 
-      for (const set of newlyComplete) {
-        const rows = setTokuseiForFocus(set.tokuseiIds, focus)
-        const v = contribFromAdjustments(rows, def)
-        if (v !== 0) {
-          setCompletionBonus += v
-          completesSetIds.push(set.id)
-        } else if (set.tokuseiIds.length > 0) {
-          completesSetIds.push(set.id)
+    let pieceContribution = 0
+    let setCompletionBonus = 0
+    let score = Number.NEGATIVE_INFINITY
+    const completesSetIds: number[] = []
+    let anyHit = false
+
+    for (const def of stats) {
+      const statKey = def.key as PlannerStatKey
+      const piece = layer
+        ? itemLayerContribution(item, layer, statKey, focus)
+        : itemPieceContribution(item, statKey, focus)
+
+      let setBonus = 0
+      if (!layer) {
+        for (const set of newlyComplete) {
+          const rows = setTokuseiForFocus(set.tokuseiIds, focus)
+          const v = contribFromAdjustments(rows, def)
+          if (v !== 0) setBonus += v
+          if (!completesSetIds.includes(set.id)) {
+            if (v !== 0 || set.tokuseiIds.length > 0) {
+              completesSetIds.push(set.id)
+            }
+          }
         }
       }
 
-      const combined = pieceContribution + setCompletionBonus
-      if (combined === 0 && completesSetIds.length === 0) continue
+      const rankedValue = layer ? piece : piece + setBonus
+      if (layer) {
+        if (piece === 0) continue
+      } else if (rankedValue === 0 && completesSetIds.length === 0) {
+        continue
+      }
+
+      anyHit = true
+      const nextScore = anyStat
+        ? combinedAnyScore(rankedValue, def)
+        : signedRankScore(rankedValue, def)
+      if (nextScore > score) {
+        score = nextScore
+        pieceContribution = piece
+        setCompletionBonus = setBonus
+      }
     }
 
-    const rankedValue = layer
-      ? pieceContribution
-      : pieceContribution + setCompletionBonus
-    const score = def.kind === "reduction" ? -rankedValue : rankedValue
+    if (!anyHit) continue
 
     hits.push({
       item,
@@ -1813,15 +1848,19 @@ export type RankedEnchantHit = {
 }
 
 export function rankEnchantsForStat(options: {
-  stat: PlannerStatKey
+  /** When omitted / null, rank by strongest contribution across all combat stats. */
+  stat?: PlannerStatKey | null
   side: EnchantSide
   attrs: PlannerAttrs
   lnc: PlannerLnc
   limit?: number
   query?: string
 }): RankedEnchantHit[] {
-  const def = PLANNER_STATS.find((s) => s.key === options.stat)
-  if (!def) return []
+  const stats = options.stat
+    ? PLANNER_STATS.filter((s) => s.key === options.stat)
+    : PLANNER_STATS
+  if (stats.length === 0) return []
+  const anyStat = !options.stat
   const limit = options.limit ?? 40
   const q = options.query?.trim().toLowerCase() ?? ""
 
@@ -1844,12 +1883,27 @@ export function rankEnchantsForStat(options: {
     ) {
       continue
     }
-    const contribution = contribFromAdjustments(
-      enchantSideAdjustments(sideData, options.attrs, options.lnc),
-      def
+    const adjustments = enchantSideAdjustments(
+      sideData,
+      options.attrs,
+      options.lnc
     )
-    if (contribution === 0 && sideData.lines.length === 0) continue
-    const score = def.kind === "reduction" ? -contribution : contribution
+    let contribution = 0
+    let score = Number.NEGATIVE_INFINITY
+    let anyHit = false
+    for (const def of stats) {
+      const next = contribFromAdjustments(adjustments, def)
+      if (next === 0 && sideData.lines.length === 0) continue
+      anyHit = true
+      const nextScore = anyStat
+        ? combinedAnyScore(next, def)
+        : signedRankScore(next, def)
+      if (nextScore > score) {
+        score = nextScore
+        contribution = next
+      }
+    }
+    if (!anyHit) continue
     hits.push({
       enchant,
       side: options.side,

@@ -23,10 +23,13 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const stat = req.nextUrl.searchParams.get("stat") as PlannerStatKey | null
-  if (!stat || !STAT_KEYS.has(stat)) {
+  const statRaw = req.nextUrl.searchParams.get("stat")
+  const anyStat =
+    !statRaw || statRaw === "any" || statRaw === "all" || statRaw === ""
+  const stat = anyStat ? null : (statRaw as PlannerStatKey)
+  if (!anyStat && !STAT_KEYS.has(statRaw)) {
     return NextResponse.json(
-      { error: `stat must be one of: ${[...STAT_KEYS].join(", ")}` },
+      { error: `stat must be one of: any, ${[...STAT_KEYS].join(", ")}` },
       { status: 400 }
     )
   }

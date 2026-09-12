@@ -27,7 +27,7 @@ import {
   type CombatFocus,
   type GearLayer,
   type GearLayerDragPayload,
-  type PlannerStatKey,
+  type RecommendStatFilter,
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
 
@@ -339,8 +339,8 @@ export function GearRecommendTable({
   onEquipWhole,
   onApplyLayer,
 }: {
-  stat: PlannerStatKey
-  onStatChange: (s: PlannerStatKey) => void
+  stat: RecommendStatFilter
+  onStatChange: (s: RecommendStatFilter) => void
   slot: EquipSlotKey | ""
   onSlotChange: (s: EquipSlotKey | "") => void
   gender: 0 | 1
@@ -360,7 +360,7 @@ export function GearRecommendTable({
     let cancelled = false
     setLoading(true)
     const params = new URLSearchParams({
-      stat,
+      stat: stat || "any",
       limit: "30",
       equipped: equippedParam,
       gender: String(gender),
@@ -391,7 +391,8 @@ export function GearRecommendTable({
     }
   }, [stat, slot, layer, q, equippedParam, gender, subcategory, rankFocus])
 
-  const def = PLANNER_STATS.find((s) => s.key === stat)!
+  const def = PLANNER_STATS.find((s) => s.key === stat)
+  const statLabel = def?.label ?? "any combat stat"
   const layerLabel =
     layer === "s1" ? "S1" : layer === "s2" ? "S2" : layer === "s3" ? "S3" : null
   const rankFocusLabel =
@@ -421,8 +422,11 @@ export function GearRecommendTable({
             id="gp-rec-stat"
             className="flex h-9 w-full border border-border bg-background px-2 text-sm"
             value={stat}
-            onChange={(e) => onStatChange(e.target.value as PlannerStatKey)}
+            onChange={(e) =>
+              onStatChange(e.target.value as RecommendStatFilter)
+            }
           >
+            <option value="">Any stat</option>
             {PLANNER_STATS.map((s) => (
               <option key={s.key} value={s.key}>
                 {s.abbr} — {s.label}
@@ -505,7 +509,7 @@ export function GearRecommendTable({
           </span>
         </div>
         <span className="text-[11px] text-muted-foreground">
-          Ranked for {def.label} · {rankFocusLabel}
+          Ranked for {statLabel} · {rankFocusLabel}
           {layerLabel ? ` on ${layerLabel}` : ""}.
           {subcategory != null ? " Filtered to slot subcategory." : ""}
         </span>
@@ -529,7 +533,9 @@ export function GearRecommendTable({
           ) : (
             <p className="text-sm text-muted-foreground">
               No items fit filters
-              {layerLabel ? ` (no ${def.abbr} on ${layerLabel})` : ""}.
+              {layerLabel
+                ? ` (no ${def?.abbr ?? "combat stats"} on ${layerLabel})`
+                : ""}.
             </p>
           )
         ) : (

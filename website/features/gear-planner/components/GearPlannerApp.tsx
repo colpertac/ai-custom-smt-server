@@ -64,6 +64,7 @@ import {
   type PlannerLnc,
   type PlannerSlot,
   type PlannerStatKey,
+  type RecommendStatFilter,
   type SetStatus,
 } from "@/lib/gear-planner-combat"
 import { cn } from "@/lib/utils"
@@ -176,7 +177,8 @@ function GearPlannerAppClient({
   const [lnc, setLnc] = useState<PlannerLnc>(stored.lnc)
   const [notes, setNotes] = useState(stored.notes)
   const [selectedSlot, setSelectedSlot] = useState<EquipSlotKey | null>(null)
-  const [recommendStat, setRecommendStat] = useState<PlannerStatKey>("cooldown")
+  const [recommendStat, setRecommendStat] =
+    useState<RecommendStatFilter>("cooldown")
   const [recommendSlot, setRecommendSlot] = useState<EquipSlotKey | "">("")
   const [dropError, setDropError] = useState<string | null>(null)
   const [importName, setImportName] = useState("")
