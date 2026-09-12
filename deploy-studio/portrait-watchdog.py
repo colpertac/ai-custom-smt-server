@@ -52,6 +52,7 @@ from portrait_common import (  # noqa: E402
     resolve_mannequin_window,
     worker_token,
 )
+from portrait_drone import drone_busy_role, drone_is_busy  # noqa: E402
 from portrait_screen_detect import classify_image  # noqa: E402
 
 STUDIO_URL = os.environ.get("PORTRAIT_STUDIO_URL", "http://127.0.0.1:14700")
@@ -354,8 +355,10 @@ def tick(st: WatchState, *, now: float | None = None) -> None:
     except Exception:
         pass
     # Keep Wine GL from idling out while mannequins are online.
+    # Skip while a drone mission is driving a window (focus fight).
     try:
-        nudge_mannequin_windows()
+        if not drone_is_busy():
+            nudge_mannequin_windows()
     except Exception as e:
         print(f"idle nudge: {e}", file=sys.stderr)
 
@@ -403,6 +406,14 @@ def tick(st: WatchState, *, now: float | None = None) -> None:
         elapsed = now - slot.offline_since
         print(f"{name}: offline ({elapsed:.0f}s)")
         if elapsed < OFFLINE_SEC:
+            continue
+
+        try:
+            busy = drone_busy_role()
+        except Exception:
+            busy = None
+        if busy:
+            print(f"{name}: skip recover — drone mission on {busy}")
             continue
 
         # Recover path

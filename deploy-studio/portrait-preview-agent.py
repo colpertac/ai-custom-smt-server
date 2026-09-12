@@ -5,6 +5,7 @@ Started by ``./studio up`` (with the worker). Website Admin talks here for:
   - studio-crop preview snaps
   - full-window login debug snaps
   - orch start/kill/status (async job)
+  - drone queued click/type/key missions
 
   ./studio up
   # or: uv run python portrait-preview-agent.py
@@ -47,6 +48,13 @@ from portrait_common import (  # noqa: E402
     normalize_mannequin_roles,
     resolve_mannequin_window,
 )
+from portrait_drone import (  # noqa: E402
+    acquire_drone_lock,
+    drone_is_busy,
+    read_drone_lock,
+    release_drone_lock,
+    run_drone_mission,
+)
 
 WORKER = HERE / "portrait-worker.py"
 ORCH = HERE / "portrait-orch.py"
@@ -68,6 +76,7 @@ LOGIN_JOB_EXIT = WORK_DIR / "login-job.exit"
 _login_job_lock = threading.Lock()
 
 _job_lock = threading.Lock()
+_drone_lock = threading.Lock()
 
 
 def worker_token() -> str:
@@ -290,6 +299,8 @@ def start_orch_up(*, male_only: bool = False, roles: list[str] | None = None) ->
         login_cur = login_job_status()
         if login_cur.get("state") == "running":
             raise RuntimeError("login step already running — wait")
+        if drone_is_busy():
+            raise RuntimeError("drone mission running — wait")
         WORK_DIR.mkdir(parents=True, exist_ok=True)
         try:
             ORCH_JOB_EXIT.unlink(missing_ok=True)
@@ -482,6 +493,8 @@ def start_login_step(*, role: str, step: str) -> dict:
     orch = orch_job_status()
     if orch.get("state") == "running":
         raise RuntimeError("orch job already running — wait or Kill clients")
+    if drone_is_busy():
+        raise RuntimeError("drone mission running — wait")
     with _login_job_lock:
         cur = login_job_status()
         if cur.get("state") == "running":
@@ -666,6 +679,10 @@ def collect_status() -> dict:
         info["screenConfidence"] = None
         if not info["live"] or not can_snap:
             continue
+        if drone_is_busy():
+            # Status snaps call focus_x_window and steal keys from the drone.
+            info["screen"] = "drone"
+            continue
         # Always classify from a local snap — channel "online" can lag behind
         # disconnect dialogs / black frames after channel restart.
         try:
@@ -723,6 +740,7 @@ def collect_status() -> dict:
         "watchdogAlive": _read_pidfile(WATCHDOG_PID) is not None,
         "job": orch_job_status(),
         "loginJob": login_job_status(),
+        "droneJob": read_drone_lock(),
     }
     if display_err:
         out["ok"] = False
@@ -766,6 +784,57 @@ def run_preview(mannequin: str) -> tuple[bytes, dict]:
         return png_path.read_bytes(), meta
     finally:
         shutil.rmtree(out_dir, ignore_errors=True)
+
+
+def run_drone(body: dict) -> dict:
+    """Play a queued click/type/key mission. One at a time; blocks orch/login."""
+    role = str(body.get("role") or body.get("mannequin") or "")
+    actions = body.get("actions")
+    snap_after = body.get("snapAfter")
+    if snap_after is None:
+        snap_after = True
+    orch = orch_job_status()
+    if orch.get("state") == "running":
+        raise RuntimeError("orch job already running — wait or Kill clients")
+    login_cur = login_job_status()
+    if login_cur.get("state") == "running":
+        raise RuntimeError("login step already running — wait")
+    if not _drone_lock.acquire(blocking=False):
+        raise RuntimeError("drone already running")
+    try:
+        if drone_is_busy():
+            raise RuntimeError("drone already running")
+        ensure_display()
+        role_n = normalize_role(role)
+        if not role_n:
+            raise RuntimeError("role must be vam1 or vaf1")
+        lock = acquire_drone_lock(role_n)
+        try:
+            result = run_drone_mission(
+                role_n, actions, snap_after=bool(snap_after)
+            )
+            ended = {
+                **lock,
+                "state": "ok",
+                "endedAt": time.time(),
+                "elapsedSec": result.get("elapsedSec"),
+                "message": f"drone {role_n} ok",
+                "steps": len(result.get("steps") or []),
+            }
+            release_drone_lock(ended)
+            return {**result, "job": ended}
+        except Exception as e:
+            release_drone_lock(
+                {
+                    **lock,
+                    "state": "failed",
+                    "endedAt": time.time(),
+                    "message": str(e)[:300],
+                }
+            )
+            raise
+    finally:
+        _drone_lock.release()
 
 
 def run_debug_snap(mannequin: str, step: str = "admin") -> tuple[bytes, dict]:
@@ -848,8 +917,14 @@ class Handler(BaseHTTPRequestHandler):
                     "ok": True,
                     "job": orch_job_status(),
                     "loginJob": login_job_status(),
+                    "droneJob": read_drone_lock(),
                 },
             )
+            return
+        if path == "/drone":
+            if not check_auth(self):
+                return
+            self._send_json(200, {"ok": True, "job": read_drone_lock()})
             return
         self.send_error(404)
 
@@ -862,6 +937,7 @@ class Handler(BaseHTTPRequestHandler):
             "/orch/down",
             "/login",
             "/client",
+            "/drone",
         }:
             self.send_error(404)
             return
@@ -941,6 +1017,23 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_err(code, msg)
             return
 
+        if path == "/drone":
+            body = self._read_json()
+            if body is None:
+                return
+            try:
+                result = run_drone(body)
+                self._send_json(200, {"ok": True, **result})
+            except Exception as e:
+                msg = str(e)[:500]
+                low = msg.lower()
+                if "already running" in low or "empty" in low or "must be" in low:
+                    code = 409 if "already" in low else 400
+                else:
+                    code = 502
+                self._send_err(code, msg)
+            return
+
         body = self._read_json()
         if body is None:
             return
@@ -977,8 +1070,8 @@ def main() -> None:
     httpd = ThreadingHTTPServer((host, port), Handler)
     print(
         f"portrait agent on http://{host}:{port} "
-        f"(GET /status /orch/job /health; "
-        f"POST /preview /debug-snap /orch/up /orch/down /login /client; token required)",
+        f"(GET /status /orch/job /drone /health; "
+        f"POST /preview /debug-snap /orch/up /orch/down /login /client /drone; token required)",
         flush=True,
     )
     try:

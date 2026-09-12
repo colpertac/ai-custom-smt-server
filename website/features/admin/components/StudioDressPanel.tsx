@@ -8,6 +8,11 @@ import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { StudioLoginDebugPanel } from "@/features/admin/components/StudioLoginDebugPanel"
 import { StudioClientsPanel } from "@/features/admin/components/StudioClientsPanel"
+import {
+  StudioConnectionFieldHelp,
+  StudioConnectionOverviewHelp,
+} from "@/features/admin/components/StudioConnectionFieldHelp"
+import { StudioDronePanel } from "@/features/admin/components/StudioDronePanel"
 import { StudioPortraitClearCard } from "@/features/admin/components/StudioPortraitClearCard"
 import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { api } from "@/lib/kyClient"
@@ -542,7 +547,10 @@ export function StudioDressPanel() {
           <div className="border border-border bg-card/60 p-3 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-sm font-medium">Connection</p>
+                <p className="flex items-center gap-1 text-sm font-medium">
+                  Connection
+                  <StudioConnectionOverviewHelp />
+                </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Channel studio + Wine preview agent. Saving studio token also
                   updates channel draft StudioToken.
@@ -574,9 +582,12 @@ export function StudioDressPanel() {
 
             <div className="grid gap-2 sm:grid-cols-2">
               <Field className="gap-1">
-                <FieldLabel htmlFor="studio-url" className="text-[11px]">
-                  Studio URL
-                </FieldLabel>
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="studio-url" className="text-[11px]">
+                    Studio URL
+                  </FieldLabel>
+                  <StudioConnectionFieldHelp field="studioUrl" label="Studio URL" />
+                </div>
                 <Input
                   id="studio-url"
                   placeholder="http://127.0.0.1:14700"
@@ -587,9 +598,15 @@ export function StudioDressPanel() {
                 />
               </Field>
               <Field className="gap-1">
-                <FieldLabel htmlFor="studio-preview-url" className="text-[11px]">
-                  Preview agent URL
-                </FieldLabel>
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="studio-preview-url" className="text-[11px]">
+                    Preview agent URL
+                  </FieldLabel>
+                  <StudioConnectionFieldHelp
+                    field="previewUrl"
+                    label="Preview agent URL"
+                  />
+                </div>
                 <Input
                   id="studio-preview-url"
                   placeholder="http://192.168.0.230:14701"
@@ -600,9 +617,15 @@ export function StudioDressPanel() {
                 />
               </Field>
               <Field className="gap-1">
-                <FieldLabel htmlFor="studio-token" className="text-[11px]">
-                  Studio token
-                </FieldLabel>
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="studio-token" className="text-[11px]">
+                    Studio token
+                  </FieldLabel>
+                  <StudioConnectionFieldHelp
+                    field="studioToken"
+                    label="Studio token"
+                  />
+                </div>
                 <Input
                   id="studio-token"
                   type="password"
@@ -621,9 +644,18 @@ export function StudioDressPanel() {
                 />
               </Field>
               <Field className="gap-1">
-                <FieldLabel htmlFor="studio-worker-token" className="text-[11px]">
-                  Worker token
-                </FieldLabel>
+                <div className="flex items-center gap-1">
+                  <FieldLabel
+                    htmlFor="studio-worker-token"
+                    className="text-[11px]"
+                  >
+                    Worker token
+                  </FieldLabel>
+                  <StudioConnectionFieldHelp
+                    field="workerToken"
+                    label="Worker token"
+                  />
+                </div>
                 <Input
                   id="studio-worker-token"
                   type="password"
@@ -858,6 +890,7 @@ export function StudioDressPanel() {
 
         {/* Right: visuals + tunables */}
         <div className="space-y-3 xl:col-span-7 min-w-0">
+          <StudioDronePanel />
           <div className="border border-border bg-card/60 p-3 space-y-3">
             <div className="flex flex-wrap items-end justify-between gap-2">
               <div>

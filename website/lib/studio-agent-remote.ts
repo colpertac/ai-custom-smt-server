@@ -13,6 +13,9 @@ const DEFAULT_TIMEOUT_MS = Number(
 const ORCH_DOWN_TIMEOUT_MS = Number(
   process.env.PORTRAIT_ORCH_DOWN_TIMEOUT_MS || 120000
 )
+const DRONE_TIMEOUT_MS = Number(
+  process.env.PORTRAIT_DRONE_TIMEOUT_MS || 100000
+)
 
 export class StudioAgentError extends Error {
   status: number
@@ -88,7 +91,9 @@ async function readAgentJson(res: Response): Promise<Record<string, unknown>> {
     const err =
       typeof data.error === "string"
         ? data.error
-        : `HTTP ${res.status}`
+        : res.status === 404
+          ? "Wine agent has no /drone — copy updated deploy-studio and ./studio up"
+          : `HTTP ${res.status}`
     throw new StudioAgentError(err, res.status === 409 ? 409 : 502)
   }
   return data
@@ -161,6 +166,69 @@ export async function startLoginStep(input: {
 }
 
 export type ClientAction = "start" | "stop" | "restart"
+
+export type DroneAction =
+  | { op: "click"; xFrac: number; yFrac: number; button?: number }
+  | { op: "type"; text: string }
+  | { op: "key"; name: string }
+  | { op: "wait"; sec: number }
+
+export type DroneMissionResult = {
+  ok: boolean
+  role?: string
+  wid?: string
+  pid?: number
+  windowW?: number
+  windowH?: number
+  steps?: Array<Record<string, unknown>>
+  elapsedSec?: number
+  snap?: {
+    path?: string
+    bytes?: number
+    step?: string
+    pngBase64?: string
+  }
+  job?: Record<string, unknown>
+  error?: string
+}
+
+export async function runDroneMission(input: {
+  role: "vam1" | "vaf1"
+  actions: DroneAction[]
+  snapAfter?: boolean
+}): Promise<DroneMissionResult> {
+  const res = await agentFetch("/drone", {
+    method: "POST",
+    body: JSON.stringify({
+      role: input.role,
+      actions: input.actions,
+      snapAfter: input.snapAfter !== false,
+    }),
+    timeoutMs: DRONE_TIMEOUT_MS,
+  })
+  const data = await readAgentJson(res)
+  return {
+    ok: Boolean(data.ok ?? true),
+    role: typeof data.role === "string" ? data.role : input.role,
+    wid: typeof data.wid === "string" ? data.wid : undefined,
+    pid: typeof data.pid === "number" ? data.pid : undefined,
+    windowW: typeof data.windowW === "number" ? data.windowW : undefined,
+    windowH: typeof data.windowH === "number" ? data.windowH : undefined,
+    steps: Array.isArray(data.steps)
+      ? (data.steps as Array<Record<string, unknown>>)
+      : [],
+    elapsedSec:
+      typeof data.elapsedSec === "number" ? data.elapsedSec : undefined,
+    snap:
+      data.snap && typeof data.snap === "object"
+        ? (data.snap as DroneMissionResult["snap"])
+        : undefined,
+    job:
+      data.job && typeof data.job === "object"
+        ? (data.job as Record<string, unknown>)
+        : undefined,
+  }
+}
 
 export async function clientAction(input: {
   role: "vam1" | "vaf1"

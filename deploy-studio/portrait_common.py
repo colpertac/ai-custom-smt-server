@@ -495,13 +495,18 @@ def _find_windows_xwininfo(needle: str) -> list[str]:
     return hits
 
 
-def load_window_map() -> dict[str, str]:
+def _windows_state_raw() -> dict[str, Any]:
     if not WINDOWS_PATH.is_file():
         return {}
     try:
         raw = json.loads(WINDOWS_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+    return raw if isinstance(raw, dict) else {}
+
+
+def load_window_map() -> dict[str, str]:
+    raw = _windows_state_raw()
     out: dict[str, str] = {}
     for k, v in (raw.get("windows") or raw or {}).items():
         if isinstance(k, str) and isinstance(v, str) and v.strip():
@@ -509,26 +514,170 @@ def load_window_map() -> dict[str, str]:
     return out
 
 
-def save_window_map(windows: dict[str, str]) -> None:
+def load_window_pids() -> dict[str, int]:
+    raw = _windows_state_raw()
+    out: dict[str, int] = {}
+    for k, v in (raw.get("pids") or {}).items():
+        if not isinstance(k, str):
+            continue
+        try:
+            pid = int(v)
+        except (TypeError, ValueError):
+            continue
+        if pid > 1:
+            out[k.strip().lower()] = pid
+    return out
+
+
+def save_window_map(
+    windows: dict[str, str],
+    pids: dict[str, int] | None = None,
+) -> None:
     WINDOWS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "windows": {k.lower(): v for k, v in windows.items()},
-    }
+    roles = {k.lower(): v for k, v in windows.items() if v}
+    merged = load_window_pids()
+    if pids:
+        for k, v in pids.items():
+            try:
+                pid = int(v)
+            except (TypeError, ValueError):
+                continue
+            if pid > 1:
+                merged[k.lower()] = pid
+    for role, wid in roles.items():
+        live = _x_window_pid(wid)
+        if live:
+            merged[role] = live
+    merged = {k: v for k, v in merged.items() if k in roles}
+    payload = {"windows": roles, "pids": merged}
     WINDOWS_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
+def sibling_mannequin_role(role: str) -> str:
+    r = role.strip().lower()
+    if r in {"vam", "vam1"}:
+        return "vaf1"
+    if r in {"vaf", "vaf1"}:
+        return "vam1"
+    raise RuntimeError("role must be vam1 or vaf1")
+
+
+def window_is_live_imagine(wid: str) -> bool:
+    if not wid:
+        return False
+    target = _norm_wid(wid)
+    return any(_norm_wid(w) == target for w in find_imagine_windows())
+
+
 def resolve_mannequin_window(mannequin: str, *, explicit: str | None = None) -> str | None:
-    """Env override → windows.json → None (caller may fall back)."""
+    """Env override → windows.json → None (caller may fall back).
+
+    Ignores shared ``PORTRAIT_WINDOW_ID`` when both clients are up so vam1
+    cannot steal vaf1 (same window title).
+    """
     if explicit and explicit.strip():
         return explicit.strip()
     env_key = f"PORTRAIT_WINDOW_{mannequin.upper()}"
     override = os.environ.get(env_key, "").strip()
     if override:
         return override
+    mapped = load_window_map()
+    pinned = mapped.get(mannequin.lower())
+    if pinned:
+        return pinned
     generic = os.environ.get("PORTRAIT_WINDOW_ID", "").strip()
     if generic:
-        return generic
-    return load_window_map().get(mannequin.lower())
+        live = find_imagine_windows()
+        if len(live) <= 1 and len(mapped) <= 1:
+            return generic
+    return None
+
+
+def resolve_role_target(role: str) -> dict[str, Any]:
+    """X window + Unix PID for one mannequin. Never the sibling client."""
+    role_n = role.strip().lower()
+    if role_n == "vam":
+        role_n = "vam1"
+    elif role_n == "vaf":
+        role_n = "vaf1"
+    if role_n not in ALLOWED_MANNEQUIN_ROLES:
+        raise RuntimeError("role must be vam1 or vaf1")
+    sibling = sibling_mannequin_role(role_n)
+    mapped = load_window_map()
+    pids = load_window_pids()
+    env_wid = os.environ.get(f"PORTRAIT_WINDOW_{role_n.upper()}", "").strip()
+    pinned = env_wid or mapped.get(role_n)
+    sibling_wid = (
+        os.environ.get(f"PORTRAIT_WINDOW_{sibling.upper()}", "").strip()
+        or mapped.get(sibling)
+    )
+    sibling_pid = pids.get(sibling) or (
+        _x_window_pid(sibling_wid) if sibling_wid else None
+    )
+
+    def accept(wid: str) -> dict[str, Any] | None:
+        if not window_is_live_imagine(wid):
+            return None
+        pid = _x_window_pid(wid)
+        if sibling_wid and _norm_wid(wid) == _norm_wid(sibling_wid):
+            raise RuntimeError(
+                f"{role_n} pin {wid} is the {sibling} window — "
+                "Start this role from Clients"
+            )
+        if pid and sibling_pid and int(pid) == int(sibling_pid):
+            raise RuntimeError(
+                f"{role_n} window {wid} is {sibling} process {pid}"
+            )
+        return {
+            "role": role_n,
+            "wid": _norm_wid(wid),
+            "pid": pid,
+            "siblingWid": _norm_wid(sibling_wid) if sibling_wid else None,
+            "siblingPid": sibling_pid,
+        }
+
+    if pinned:
+        hit = accept(pinned)
+        if hit:
+            if hit.get("pid") and pids.get(role_n) != hit["pid"]:
+                mapped[role_n] = hit["wid"]
+                save_window_map(mapped, {role_n: int(hit["pid"])})
+            return hit
+        want_pid = pids.get(role_n)
+        if want_pid:
+            for w in find_imagine_windows():
+                if sibling_wid and _norm_wid(w) == _norm_wid(sibling_wid):
+                    continue
+                if _x_window_pid(w) == want_pid:
+                    hit = accept(w)
+                    if hit:
+                        mapped[role_n] = hit["wid"]
+                        save_window_map(mapped, {role_n: want_pid})
+                        return hit
+        raise RuntimeError(
+            f"{role_n} pin {pinned} is gone "
+            f"(pid was {pids.get(role_n) or '?'}) — Start that role from Clients"
+        )
+
+    others = {
+        _norm_wid(w)
+        for w in ([sibling_wid] if sibling_wid else [])
+        if w
+    }
+    hits = [w for w in find_imagine_windows() if _norm_wid(w) not in others]
+    if not hits:
+        raise RuntimeError(
+            f"no Imagine window for {role_n} — Start the client first"
+        )
+    if len(hits) > 1:
+        raise RuntimeError(
+            f"multiple Imagine windows and {role_n} is not pinned — "
+            "Start that role from Clients first"
+        )
+    hit = accept(hits[0])
+    if not hit:
+        raise RuntimeError(f"no Imagine window for {role_n}")
+    return hit
 
 
 def focus_x_window(wid: str) -> None:
@@ -548,6 +697,12 @@ def focus_x_window(wid: str) -> None:
         )
     if not shutil.which("xdotool"):
         return
+    subprocess.run(
+        ["xdotool", "windowmap", wid],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     # Prefer activate when a WM is present; always fall back to focus.
     act = subprocess.run(
         ["xdotool", "windowactivate", "--sync", wid],
@@ -571,32 +726,52 @@ def focus_x_window(wid: str) -> None:
     time.sleep(0.25)
 
 
-def focus_only_window(active_wid: str, other_wids: list[str] | None = None) -> None:
-    """Minimize sibling Imagine windows, then focus ``active_wid``.
+def hide_imagine_windows(wids: list[str]) -> list[str]:
+    """Unmap X windows. vam1 ignores minimize but stays gone after unmap."""
+    hidden: list[str] = []
+    if not shutil.which("xdotool"):
+        return hidden
+    for wid in wids:
+        if not wid:
+            continue
+        subprocess.run(
+            ["xdotool", "windowunmap", wid],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        hidden.append(wid)
+    return hidden
 
-    Two Wine clients on bare Xvfb steal focus from each other; keys go to the
-    wrong one unless the inactive client is minimized first (same idea as orch).
+
+def show_imagine_windows(wids: list[str]) -> None:
+    if not shutil.which("xdotool"):
+        return
+    for wid in wids:
+        if not wid:
+            continue
+        subprocess.run(
+            ["xdotool", "windowmap", wid],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+
+def focus_only_window(active_wid: str, other_wids: list[str] | None = None) -> None:
+    """Unmap sibling Imagine windows, then focus ``active_wid``.
+
+    Both clients share a title; minimize does not stick on the first Wine
+    process. Unmap does. Callers that hide for a whole job should remap after.
     """
     if not active_wid:
         return
     if other_wids is None:
         other_wids = [w for w in find_imagine_windows() if _norm_wid(w) != _norm_wid(active_wid)]
+    hide_imagine_windows(
+        [w for w in other_wids if _norm_wid(w) != _norm_wid(active_wid)]
+    )
     if shutil.which("xdotool"):
-        for wid in other_wids:
-            if _norm_wid(wid) == _norm_wid(active_wid):
-                continue
-            subprocess.run(
-                ["xdotool", "windowminimize", wid],
-                check=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        subprocess.run(
-            ["xdotool", "windowmap", active_wid],
-            check=False,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
         subprocess.run(
             ["xdotool", "windowraise", active_wid],
             check=False,
@@ -929,13 +1104,8 @@ def sendinput_exe_path() -> Path:
     return HERE / "portrait-sendinput.exe"
 
 
-def wine_hold_key(
-    key: str,
-    seconds: float,
-    *,
-    title: str | None = None,
-) -> bool:
-    """Hold a key via Wine SendInput helper. Returns False if unavailable."""
+def _wine_sendinput_cmd(*args: str, timeout: float = 20.0) -> bool:
+    """Run portrait-sendinput.exe under Wine. Returns False if unavailable."""
     exe = sendinput_exe_path()
     if not exe.is_file():
         return False
@@ -945,20 +1115,7 @@ def wine_hold_key(
         or shutil.which("wine32")
         or "wine"
     )
-    ms = max(1, int(round(seconds * 1000)))
-    # Map xdotool-ish names to sendinput names.
-    key_l = key.strip().lower()
-    if key_l in ("prior", "page_up", "pageup"):
-        key_l = "prior"
-    elif key_l in ("next", "page_down", "pagedown"):
-        key_l = "next"
-    cmd = [wine, str(exe)]
-    win_title = title if title is not None else os.environ.get(
-        "PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666"
-    ).strip()
-    if win_title:
-        cmd += ["--title", win_title]
-    cmd += ["hold", key_l, str(ms)]
+    cmd = [wine, str(exe), *args]
     env = wine_runtime_env()
     try:
         r = subprocess.run(
@@ -969,7 +1126,7 @@ def wine_hold_key(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
             text=True,
-            timeout=max(10.0, seconds + 8.0),
+            timeout=timeout,
         )
     except (OSError, subprocess.TimeoutExpired) as e:
         print(f"warning: wine sendinput failed: {e}", file=sys.stderr)
@@ -982,6 +1139,121 @@ def wine_hold_key(
             file=sys.stderr,
         )
         return False
+    return True
+
+
+def _wine_title(title: str | None) -> str:
+    if title is not None:
+        return title.strip()
+    return os.environ.get(
+        "PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666"
+    ).strip()
+
+
+def _wine_title_args(title: str | None) -> list[str]:
+    win_title = _wine_title(title)
+    return ["--title", win_title] if win_title else []
+
+
+def _wine_x11_wid_args(x11_wid: str | int | None) -> list[str]:
+    """Pass the X window so SendInput hits vaf1, not the first 'IMAGINE' title."""
+    if x11_wid is None or x11_wid == "":
+        return []
+    raw = str(x11_wid).strip()
+    try:
+        n = int(raw, 16) if raw.lower().startswith("0x") else int(raw)
+    except ValueError:
+        return []
+    if n <= 0:
+        return []
+    return ["--x11-wid", hex(n)]
+
+
+def wine_hold_key(
+    key: str,
+    seconds: float,
+    *,
+    title: str | None = None,
+    x11_wid: str | int | None = None,
+) -> bool:
+    """Hold a key via Wine SendInput helper. Returns False if unavailable."""
+    ms = max(1, int(round(seconds * 1000)))
+    key_l = key.strip().lower()
+    if key_l in ("prior", "page_up", "pageup"):
+        key_l = "prior"
+    elif key_l in ("next", "page_down", "pagedown"):
+        key_l = "next"
+    return _wine_sendinput_cmd(
+        *_wine_x11_wid_args(x11_wid),
+        *_wine_title_args(title),
+        "hold",
+        key_l,
+        str(ms),
+        timeout=max(10.0, seconds + 8.0),
+    )
+
+
+def wine_tap_key(
+    key: str,
+    *,
+    title: str | None = None,
+    x11_wid: str | int | None = None,
+) -> bool:
+    """Tap a key via Wine SendInput (login Tab/Shift+Tab/Enter/Esc)."""
+    key_l = key.strip().lower().replace(" ", "")
+    if key_l in ("return", "enter"):
+        key_l = "return"
+    elif key_l in ("escape", "esc"):
+        key_l = "escape"
+    elif key_l in ("backspace", "back"):
+        key_l = "backspace"
+    elif key_l in (
+        "shift+tab",
+        "shift-tab",
+        "shift_tab",
+        "iso_left_tab",
+        "backtab",
+    ):
+        key_l = "shift+tab"
+    return _wine_sendinput_cmd(
+        *_wine_x11_wid_args(x11_wid),
+        *_wine_title_args(title),
+        "tap",
+        key_l,
+    )
+
+
+def wine_type_text(
+    text: str,
+    *,
+    title: str | None = None,
+    x11_wid: str | int | None = None,
+) -> bool:
+    """Type ASCII into the foreground Wine client. Never log ``text``."""
+    delay = int(os.environ.get("PORTRAIT_LOGIN_TYPE_DELAY_MS", "35"))
+    timeout = max(20.0, 0.08 * max(1, len(text)) + 8.0)
+    if _wine_sendinput_cmd(
+        *_wine_x11_wid_args(x11_wid),
+        *_wine_title_args(title),
+        "type",
+        text,
+        str(max(10, delay)),
+        timeout=timeout,
+    ):
+        return True
+    # Older sendinput.exe has tap only.
+    for ch in text:
+        if ch == " ":
+            key = "space"
+        elif ch in "\n\r":
+            key = "return"
+        elif ch == "\t":
+            key = "tab"
+        else:
+            key = ch
+        if not wine_tap_key(key, title=title, x11_wid=x11_wid):
+            return False
+        time.sleep(max(0.01, delay / 1000.0))
     return True
 
 
@@ -1124,6 +1396,7 @@ def debug_snap(
         "admin",
         "watchdog",
         "status",
+        "drone",
     ):
         return None
     try:

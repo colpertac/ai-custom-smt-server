@@ -7,6 +7,7 @@ if ! command -v "$CC" >/dev/null 2>&1; then
   echo "error: need $CC (sudo apt install g++-mingw-w64-i686)" >&2
   exit 1
 fi
-"$CC" -O2 -o "$HERE/portrait-sendinput.exe" "$HERE/portrait-sendinput.c" -luser32
+# -mwindows: no console window (a console steals Win32 focus from login).
+"$CC" -O2 -mwindows -o "$HERE/portrait-sendinput.exe" "$HERE/portrait-sendinput.c" -luser32
 echo "built $HERE/portrait-sendinput.exe"
 file "$HERE/portrait-sendinput.exe"

@@ -849,6 +849,15 @@ def cmd_loop(args: argparse.Namespace) -> None:
         f"job=dress+{'S' if hold else 'no-S'} (no re-pose)"
     )
     while True:
+        try:
+            from portrait_drone import drone_is_busy
+
+            if drone_is_busy():
+                print("drone busy — skip claim (do not steal focus)")
+                time.sleep(args.interval)
+                continue
+        except Exception:
+            pass
         job = claim_job()
         if job:
             try:

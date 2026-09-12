@@ -288,20 +288,43 @@ def launch_client() -> None:
 
 def skip_splash(wid: str, role: str | None = None) -> None:
     """Press Esc to skip cave/ATLUS (and similar) splash screens."""
-    focus(wid)
-    if SPLASH_SETTLE_SEC > 0:
-        print(f"settle {SPLASH_SETTLE_SEC:.1f}s for splash…")
-        time.sleep(SPLASH_SETTLE_SEC)
-    n = max(1, SPLASH_ESC_COUNT)
-    print(f"skip splash: Esc ×{n}")
-    for i in range(n):
+    hidden: list[str] = []
+    try:
+        from portrait_common import (
+            _norm_wid,
+            find_imagine_windows,
+            hide_imagine_windows,
+            show_imagine_windows,
+        )
+
+        hidden = hide_imagine_windows(
+            [w for w in find_imagine_windows() if _norm_wid(w) != _norm_wid(wid)]
+        )
+    except Exception:
+        hidden = []
+    try:
         focus(wid)
-        key_focus("Escape")
-        time.sleep(SPLASH_ESC_GAP_SEC)
-    focus(wid)
-    time.sleep(0.4)
-    if role:
-        snap(role, "after-splash", wid)
+        if SPLASH_SETTLE_SEC > 0:
+            print(f"settle {SPLASH_SETTLE_SEC:.1f}s for splash…")
+            time.sleep(SPLASH_SETTLE_SEC)
+        n = max(1, SPLASH_ESC_COUNT)
+        print(f"skip splash: Esc ×{n}")
+        for i in range(n):
+            focus(wid)
+            key_focus("Escape")
+            time.sleep(SPLASH_ESC_GAP_SEC)
+        focus(wid)
+        time.sleep(0.4)
+        if role:
+            snap(role, "after-splash", wid)
+    finally:
+        if hidden:
+            try:
+                from portrait_common import show_imagine_windows
+
+                show_imagine_windows(hidden)
+            except Exception:
+                pass
 
 
 def login(
@@ -405,6 +428,11 @@ def main() -> None:
         help="Already on login screen — skip Esc splash sequence",
     )
     ap.add_argument(
+        "--splash-only",
+        action="store_true",
+        help="Esc through splash/intro, then stop on the login form (no creds)",
+    )
+    ap.add_argument(
         "--measure-mask",
         metavar="PNG",
         help="Find black rect center in a white-canvas mask PNG; print fracs and exit",
@@ -416,6 +444,18 @@ def main() -> None:
     role = args.role.strip().lower()
     if args.start_only and args.credentials_only:
         die("use only one of --start-only / --credentials-only")
+    if args.splash_only and (
+        args.start_only or args.credentials_only or args.no_splash
+    ):
+        die("--splash-only cannot be combined with other login step flags")
+    if args.splash_only:
+        need_xdotool()
+        if bool(args.launch) and not args.no_launch:
+            launch_client()
+        wid = find_window(explicit=args.window, role=role)
+        skip_splash(wid, role)
+        print(f"stopped on login ({role} {wid}; no credentials)")
+        return
     if args.start_only:
         need_xdotool()
         wid = find_window(explicit=args.window, role=role)
