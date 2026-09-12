@@ -277,6 +277,8 @@ mkdir -p \
   "$WEBSITE_DATA/server-content/payouts" \
   "$WEBSITE_DATA/server-content/report-rewards" \
   "$WEBSITE_DATA/server-content/report-rewards/dungeons" \
+  "$WEBSITE_DATA/armory/portraits" \
+  "$WEBSITE_DATA/portrait-captures" \
   "$DATA_DIR/webroot"
 # Website image runs as uid 1001 (nextjs); open perms so bind-mount writes work.
 chmod -R a+rwX "$WEBSITE_DATA" || true
@@ -315,17 +317,33 @@ seed_server_content_subdir shops
 seed_server_content_subdir payouts
 seed_server_content_subdir report-rewards
 
+# cp -a preserves seed 664/775; nextjs (uid 1001) needs write on shops/payouts/….
+chmod -R a+rwX "$WEBSITE_DATA" || true
+
 # Seed minimal config XMLs if data/ is empty (lobby needs constants.xml etc.).
-if [[ ! -f "$DATA_DIR/config/lobby.xml" ]]; then
-  mkdir -p "$DATA_DIR/config"
-  if [[ -d "$DEPLOY_DIR/seed/config" ]]; then
-    cp -a "$DEPLOY_DIR/seed/config/." "$DATA_DIR/config/"
-    echo "Seeded data/config from deploy/seed/config"
-  elif [[ -d "$DEPLOY_DIR/config/sqlite" ]]; then
-    cp -a "$DEPLOY_DIR/config/sqlite/." "$DATA_DIR/config/"
-    echo "Seeded data/config from deploy/config/sqlite (may still need constants.xml from a full data pack)"
+# Also fill any *missing* required files (e.g. channel.xml deleted while lobby.xml remains).
+mkdir -p "$DATA_DIR/config"
+CONFIG_SEED=""
+if [[ -d "$DEPLOY_DIR/seed/config" ]]; then
+  CONFIG_SEED="$DEPLOY_DIR/seed/config"
+elif [[ -d "$DEPLOY_DIR/config/sqlite" ]]; then
+  CONFIG_SEED="$DEPLOY_DIR/config/sqlite"
+fi
+if [[ -n "$CONFIG_SEED" ]]; then
+  if [[ ! -f "$DATA_DIR/config/lobby.xml" ]]; then
+    cp -a "$CONFIG_SEED/." "$DATA_DIR/config/"
+    echo "Seeded data/config from $CONFIG_SEED"
+  else
+    for f in channel.xml lobby.xml world.xml constants.xml setup.xml newcharacter.xml; do
+      if [[ -f "$CONFIG_SEED/$f" && ! -f "$DATA_DIR/config/$f" ]]; then
+        cp -a "$CONFIG_SEED/$f" "$DATA_DIR/config/$f"
+        echo "Restored missing data/config/$f"
+      fi
+    done
   fi
 fi
+# Website (uid 1001) publishes live config into data/config.
+chmod -R a+rwX "$DATA_DIR/config" || true
 
 if [[ -n "$DOMAIN" ]]; then
   SITE_URL="https://${DOMAIN}"
@@ -418,6 +436,9 @@ fi
   echo "COMP_IMAGE=colpertac/smt-comp:latest"
   echo "WEBSITE_IMAGE=colpertac/smt-website:latest"
   echo "OPS_IMAGE=$OPS_IMAGE"
+  # Store grants / in-game announce (override if admin password changed)
+  echo "COMP_ANNOUNCE_USER=${COMP_ANNOUNCE_USER:-admin}"
+  echo "COMP_ANNOUNCE_PASSWORD=${COMP_ANNOUNCE_PASSWORD:-admin123}"
   if [[ -n "${RESEND_API_KEY:-}" ]]; then
     echo "RESEND_API_KEY=$RESEND_API_KEY"
   fi

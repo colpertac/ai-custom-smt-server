@@ -202,6 +202,8 @@ New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-conten
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\payouts") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards\dungeons") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "armory\portraits") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "portrait-captures") | Out-Null
 
 function Seed-ServerContentSubdir([string] $Subdir) {
   $dest = Join-Path $WebsiteData "server-content\$Subdir"
@@ -286,6 +288,8 @@ OPS_URL=http://ops:14710
 COMP_IMAGE=colpertac/smt-comp:latest
 WEBSITE_IMAGE=colpertac/smt-website:latest
 OPS_IMAGE=colpertac/smt-ops:latest
+COMP_ANNOUNCE_USER=admin
+COMP_ANNOUNCE_PASSWORD=admin123
 "@
 if ($ResendApiKey) { $envBody += "`nRESEND_API_KEY=$ResendApiKey" }
 if ($ResendFromEmail) { $envBody += "`nRESEND_FROM_EMAIL=$ResendFromEmail" }

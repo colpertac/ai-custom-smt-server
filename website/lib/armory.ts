@@ -24,6 +24,7 @@ import {
   type ArmoryComputedStats,
 } from "@/lib/armory-stats"
 import { enqueuePortraitJob } from "@/lib/portrait-queue"
+import { isPortraitCaptureAvailable } from "@/lib/studio-api"
 import { getWorldDb, WorldDbMissingError } from "@/lib/world-db"
 
 export { WorldDbMissingError }
@@ -513,11 +514,12 @@ function statsFromRow(row: CharacterRow): ArmoryStats | null {
 /**
  * Exact-name public profile from world DB.
  * Returns null when the character does not exist.
+ * Portrait enqueue only runs when studio capture is available.
  */
-export function loadArmoryProfile(
+export async function loadArmoryProfile(
   rawName: string,
   opts?: { enqueuePortrait?: boolean }
-): ArmoryProfile | null {
+): Promise<ArmoryProfile | null> {
   const name = rawName.trim()
   if (!isValidCharacterName(name)) return null
   if (isArmoryHiddenCharacter(name)) return null
@@ -731,15 +733,18 @@ export function loadArmoryProfile(
   const portrait = resolveArmoryPortrait(portraitInput, row.Name)
   let portraitStatus: ArmoryProfile["portraitStatus"] = portrait.status
   if (portraitStatus === "missing" && opts?.enqueuePortrait !== false) {
-    try {
-      enqueuePortraitJob(row.Name, portraitInput)
-      portraitStatus = "queued"
-    } catch (err) {
-      console.error(
-        `[armory] enqueue portrait failed for ${row.Name}:`,
-        err instanceof Error ? err.message : err
-      )
-      portraitStatus = "missing"
+    const canCapture = await isPortraitCaptureAvailable()
+    if (canCapture) {
+      try {
+        enqueuePortraitJob(row.Name, portraitInput)
+        portraitStatus = "queued"
+      } catch (err) {
+        console.error(
+          `[armory] enqueue portrait failed for ${row.Name}:`,
+          err instanceof Error ? err.message : err
+        )
+        portraitStatus = "missing"
+      }
     }
   }
 

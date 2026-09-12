@@ -112,6 +112,8 @@ services:
     command: ["comp_channel", "/comp/config/channel.xml"]
     ports:
       - "${CHANNEL_PORT:-14666}:14666"
+      # Portrait studio HTTP (Admin → Studio / deploy-studio). Same token as StudioToken.
+      - "${STUDIO_HTTP_PORT:-14700}:14700"
     healthcheck: *hc-channel
     depends_on:
       world:
@@ -185,6 +187,7 @@ services:
       OPS_BACKEND: ${OPS_BACKEND:-native}
       # Standalone image has no repo tree — pin writable paths (nextjs uid 1001).
       WEBSITE_DATA_DIR: /website-data
+      PORTRAIT_PREVIEW_DIR: /website-data/portrait-captures
       OPS_RUNTIME: /comp
       COMP_CONFIG_LIVE_DIR: /comp/config
       COMP_CONFIG_DIR: /website-data/server-content/config
@@ -200,10 +203,18 @@ services:
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
       RESEND_FROM_NAME: ${RESEND_FROM_NAME:-SMT}
       RESEND_SUPPORT_EMAIL: ${RESEND_SUPPORT_EMAIL:-}
+      # Lobby admin used for store checkout grants + in-game announces (level ≥1000).
+      COMP_ANNOUNCE_USER: ${COMP_ANNOUNCE_USER:-admin}
+      COMP_ANNOUNCE_PASSWORD: ${COMP_ANNOUNCE_PASSWORD:-admin123}
+      # Read updater overlay for optional CEventMessage zip download (Publish uses ops).
+      OPS_UPDATER_ROOT: /updater
     volumes:
       # Website publishes Lane A releases/shops/packages/config + casino SWFs.
       - ${COMP_RUNTIME:-./data}:/comp
       - ${WEBSITE_DATA:-./website-data}:/website-data
+      # Armory portrait cache. Website entrypoint chmod's this for uid 1001.
+      - ${WEBSITE_DATA:-./website-data}/armory/portraits:/app/public/armory/portraits
+      - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater:ro
     ports:
       - "${WEBSITE_PORT:-3000}:3000"
     depends_on:

@@ -9,6 +9,12 @@ import { useConfirm } from "@/components/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { DungeonLootDrawer } from "@/features/admin-dungeon-loot/components/DungeonLootDrawer"
 import { RotationFacingPicker } from "@/features/admin-dungeon-loot/components/RotationFacingPicker"
 import {
@@ -24,9 +30,7 @@ import {
   useSaveReportRewardGlobal,
   useSetAllReportRewardsEnabled,
 } from "@/features/admin-report-rewards/hooks"
-import { CEVENT_OVERLAY_REL } from "@/lib/report-reward-client-overlay-paths"
 import {
-  STOCK_REPORT_COST_MESSAGE_IDS,
   linearTradeTiers,
   stockChoiceMessageIdForCost,
   tradeTiersMissingStockLabels,
@@ -385,41 +389,47 @@ export function DungeonLootPanel() {
               })}
             </ul>
             {customNpcPackages.length > 0 ? (
-              <div className="mt-2 space-y-2 rounded-md border border-cyan-900/40 bg-cyan-950/20 p-2.5">
-                <p className="text-[0.65rem] text-muted-foreground">
-                  Non-stock item costs (
-                  {Object.keys(STOCK_REPORT_COST_MESSAGE_IDS).join("/")} are
-                  stock) need custom client dialog strings (
-                  <span className="font-mono">CEventMessage</span>). Publish
-                  from Overview patches the server overlay, or download a zip
-                  for manual install.
+              <div className="mt-2 flex items-start gap-2 rounded-md border border-cyan-900/40 bg-cyan-950/20 p-2.5">
+                <p className="min-w-0 flex-1 text-[0.65rem] text-muted-foreground">
+                  Custom package costs need dialog strings —{" "}
+                  <span className="text-foreground">Publish</span> updates the
+                  server overlay; players run ImagineUpdate (normal path).
                 </p>
-                <p className="text-[0.65rem] text-muted-foreground">
-                  Drop{" "}
-                  <span className="font-mono text-foreground">
-                    {CEVENT_OVERLAY_REL}
-                  </span>{" "}
-                  into your game folder (same directory as{" "}
-                  <span className="font-mono">ImagineClient.exe</span>).
-                </p>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={clientPatchDownloading}
-                  onClick={() => void handleDownloadClientPatch()}
-                >
-                  <Download className="size-3.5" />
-                  {clientPatchDownloading
-                    ? "Building patch…"
-                    : "Download client dialog patch"}
-                </Button>
-                {clientPatchError ? (
-                  <p className="text-[0.65rem] text-[#ff9b9b]">
-                    {clientPatchError}
-                  </p>
-                ) : null}
+                <TooltipProvider delay={200}>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          type="button"
+                          size="icon-sm"
+                          variant="ghost"
+                          className="size-7 shrink-0 text-muted-foreground hover:text-foreground"
+                          disabled={clientPatchDownloading}
+                          aria-label="Download client dialog patch zip"
+                          onClick={() => void handleDownloadClientPatch()}
+                        />
+                      }
+                    >
+                      <Download
+                        className={
+                          clientPatchDownloading
+                            ? "size-3.5 animate-pulse"
+                            : "size-3.5"
+                        }
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={6}>
+                      Troubleshooting: download CEventMessage zip for manual
+                      client install
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
+            ) : null}
+            {clientPatchError ? (
+              <p className="mt-1 text-[0.65rem] text-[#ff9b9b]">
+                {clientPatchError}
+              </p>
             ) : null}
           </div>
         </div>

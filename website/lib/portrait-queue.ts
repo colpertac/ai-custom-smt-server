@@ -11,6 +11,8 @@ import {
 } from "./armory-portrait.ts"
 
 export const PORTRAIT_CLAIM_TIMEOUT_MS = 15 * 60 * 1000
+/** After a failed capture, ignore armory re-enqueue until this elapses. */
+export const PORTRAIT_FAIL_RETRY_MS = 60 * 1000
 
 export type PortraitJobStatus = "pending" | "claimed" | "ready" | "failed"
 
@@ -156,9 +158,17 @@ export function enqueuePortraitJob(
          ON CONFLICT(fingerprint) DO UPDATE SET
            character_name = excluded.character_name,
            payload_json = excluded.payload_json,
-           updated_at = excluded.updated_at,
+           updated_at = CASE
+             WHEN portrait_jobs.status = 'failed'
+               AND portrait_jobs.updated_at > (excluded.updated_at - ${PORTRAIT_FAIL_RETRY_MS})
+               THEN portrait_jobs.updated_at
+             ELSE excluded.updated_at
+           END,
            status = CASE
              WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.status
+             WHEN portrait_jobs.status = 'failed'
+               AND portrait_jobs.updated_at > (excluded.updated_at - ${PORTRAIT_FAIL_RETRY_MS})
+               THEN 'failed'
              ELSE 'pending'
            END,
            claimed_at = CASE
@@ -167,6 +177,9 @@ export function enqueuePortraitJob(
            END,
            error = CASE
              WHEN portrait_jobs.status IN ('pending', 'claimed') THEN portrait_jobs.error
+             WHEN portrait_jobs.status = 'failed'
+               AND portrait_jobs.updated_at > (excluded.updated_at - ${PORTRAIT_FAIL_RETRY_MS})
+               THEN portrait_jobs.error
              ELSE NULL
            END`
       )

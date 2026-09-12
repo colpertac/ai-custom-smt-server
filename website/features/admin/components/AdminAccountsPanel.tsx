@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { Mars, Venus, VenusAndMars } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 
 import type { AdminAccount } from "@/features/admin/api"
 import {
@@ -12,11 +12,13 @@ import {
   useDeleteAdminAccount,
   useUpdateAdminAccount,
 } from "@/features/admin/hooks"
+import { useSessionUser } from "@/features/auth/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 import {
   Card,
   CardContent,
@@ -24,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
 type EditForm = {
   email: string
@@ -104,7 +107,7 @@ export function AdminAccountsPanel() {
                   <th className="px-2 py-2 font-medium">Admin</th>
                   <th className="px-2 py-2 font-medium">CP</th>
                   <th className="px-2 py-2 font-medium">Chars</th>
-                  <th className="px-2 py-2 font-medium">On</th>
+                  <th className="px-2 py-2 font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,8 +123,15 @@ export function AdminAccountsPanel() {
                     <td className="px-2 py-2">{a.userLevel ?? 0}</td>
                     <td className="px-2 py-2">{a.cp ?? 0}</td>
                     <td className="px-2 py-2">{a.characterCount ?? 0}</td>
-                    <td className="px-2 py-2">
-                      {a.enabled === false ? "no" : "yes"}
+                    <td
+                      className={cn(
+                        "px-2 py-2 font-medium",
+                        a.enabled === false
+                          ? "text-[#ff9b9b]"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {a.enabled === false ? "Banned" : "Active"}
                     </td>
                   </tr>
                 ))}
@@ -137,8 +147,8 @@ export function AdminAccountsPanel() {
             {current ? `Edit ${current.username}` : "Select an account"}
           </CardTitle>
           <CardDescription>
-            Sets admin level, CP, tickets, email, password, bans, and enabled.
-            Editing yourself forces re-login.
+            Toggle Banned, optionally note who/why, then Save. Editing yourself
+            forces re-login.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -194,9 +204,13 @@ function AccountEditForm({
   onSave: (payload: Record<string, unknown>) => void
   onDelete: () => void
 }) {
+  const { data: session } = useSessionUser()
+  const isSelf =
+    (session?.username || "").toLowerCase() === account.username.toLowerCase()
   const form = useForm<EditForm>({
     defaultValues: toForm(account),
   })
+  const banned = !form.watch("enabled")
 
   function submit(data: EditForm) {
     onSave({
@@ -244,26 +258,102 @@ function AccountEditForm({
             />
           </Field>
         </div>
-        <Field>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" {...form.register("enabled")} />
-            Enabled
-          </label>
-        </Field>
-        <Field>
-          <FieldLabel>Ban reason</FieldLabel>
-          <Input {...form.register("banReason")} />
-        </Field>
-        <Field>
-          <FieldLabel>Ban initiator</FieldLabel>
-          <Input {...form.register("banInitiator")} />
-        </Field>
+
+        <div
+          className={cn(
+            "space-y-3 border p-3",
+            banned
+              ? "border-[#ff9b9b]/55 bg-[#ff9b9b]/8"
+              : "border-border bg-muted/30"
+          )}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p
+                className={cn(
+                  "text-sm font-medium",
+                  banned ? "text-[#ff9b9b]" : "text-foreground"
+                )}
+              >
+                {banned ? "Account banned" : "Account active"}
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {isSelf
+                  ? "You can’t ban the account you’re using — switch to another admin first."
+                  : banned
+                    ? "Login is blocked. Turn this off and Save to unban."
+                    : "Turn on and Save to ban — they cannot log in."}
+              </p>
+            </div>
+            <Controller
+              name="enabled"
+              control={form.control}
+              render={({ field }) => (
+                <div className="flex shrink-0 items-center gap-2">
+                  <span
+                    className={cn(
+                      "text-xs font-medium uppercase tracking-wide",
+                      !field.value
+                        ? "text-[#ff9b9b]"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    Banned
+                  </span>
+                  <Switch
+                    checked={!field.value}
+                    disabled={busy || isSelf}
+                    onCheckedChange={(on) => {
+                      field.onChange(!on)
+                      if (on) {
+                        const who = (session?.username || "").trim()
+                        if (who && !form.getValues("banInitiator").trim()) {
+                          form.setValue("banInitiator", who)
+                        }
+                      }
+                    }}
+                    aria-label="Ban this account"
+                    className={cn(
+                      !field.value &&
+                        "data-checked:bg-[#c44] data-checked:border-[#c44] data-[checked]:bg-[#c44] data-[checked]:border-[#c44] data-checked:shadow-[#c44]/35"
+                    )}
+                  />
+                </div>
+              )}
+            />
+          </div>
+          <Field>
+            <FieldLabel>Ban reason</FieldLabel>
+            <Input
+              {...form.register("banReason")}
+              placeholder="Why they’re banned (optional)"
+              disabled={busy}
+            />
+          </Field>
+          <Field>
+            <FieldLabel>Banned by</FieldLabel>
+            <Input
+              {...form.register("banInitiator")}
+              placeholder="GM / admin name (audit log)"
+              disabled={busy}
+            />
+            <p className="mt-1 text-[0.7rem] text-muted-foreground">
+              Who applied the ban — for your records only. Use a name, not only
+              digits.
+            </p>
+          </Field>
+        </div>
       </FieldGroup>
       <div className="flex flex-wrap gap-2">
         <Button type="submit" disabled={busy}>
           {busy ? "Saving…" : "Save changes"}
         </Button>
-        <Button type="button" variant="destructive" disabled={busy} onClick={onDelete}>
+        <Button
+          type="button"
+          variant="destructive"
+          disabled={busy || isSelf}
+          onClick={onDelete}
+        >
           Delete account
         </Button>
       </div>

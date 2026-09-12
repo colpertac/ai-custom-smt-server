@@ -37,6 +37,10 @@ export type ArmoryPortrait = {
 }
 
 export function portraitsDir(): string {
+  const custom = process.env.WEBSITE_DATA_DIR?.trim()
+  if (custom) {
+    return path.join(path.resolve(custom), "armory", "portraits")
+  }
   return path.join(process.cwd(), "public", "armory", "portraits")
 }
 

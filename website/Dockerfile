@@ -30,13 +30,21 @@ ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Runtime fs reads (catalog + schedule defaults); not always NFT-traced.
 COPY --from=builder --chown=nextjs:nodejs /app/content/events ./content/events
 COPY --chown=nextjs:nodejs server-entry.cjs ./server-entry.cjs
+COPY --chmod=0755 docker-entrypoint.sh ./docker-entrypoint.sh
 
-USER nextjs
+# Studio ingest writes PNGs here. Image copy is root-owned without --chown;
+# bind mounts hide this dir, so the entrypoint also chmod's the mount.
+RUN mkdir -p /app/public/armory/portraits \
+  && chown -R nextjs:nodejs /app/public/armory \
+  && chmod 0777 /app/public/armory/portraits
+
+# Stay root for the entrypoint (chmod bind mounts), then drop to uid 1001.
 EXPOSE 3000
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "server-entry.cjs"]

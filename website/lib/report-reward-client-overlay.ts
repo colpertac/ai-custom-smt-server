@@ -158,7 +158,10 @@ export async function buildClientOverlayZip(input: {
   const sbin = await readIfExists(overlayShieldPath(CEVENT_OVERLAY_REL))
   if (!sbin?.length) {
     throw new Error(
-      `${CEVENT_OVERLAY_REL} not found in updater overlay. Run Publish from Admin → Power (or fix ops-tools) so CEventMessage can be patched.`
+      `${CEVENT_OVERLAY_REL} not found under ${updaterRoot()}/overlay. ` +
+        `Publish from Admin → Power first (ImagineUpdate is the normal path). ` +
+        `For this zip download, the website needs the updater overlay mounted ` +
+        `(OPS_UPDATER_ROOT).`
     )
   }
 

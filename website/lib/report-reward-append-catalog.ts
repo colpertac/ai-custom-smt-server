@@ -75,14 +75,9 @@ export function defaultAppendDropSetId(payoutId: string): number | undefined {
   return DEFAULT_APPEND_DROPSET[payoutId]
 }
 
-/** Enabled by default for main tier families (bronze/silver/gold). */
-export function defaultReportEnabled(payoutId: string): boolean {
-  return (
-    payoutId === "mirage-bronze" ||
-    /^suginami-(bronze|silver|gold)$/.test(payoutId) ||
-    /^celu-(bronze|silver|gold)$/.test(payoutId) ||
-    /^quartz-(bronze|silver|gold)$/.test(payoutId)
-  )
+/** All catalog dungeons are enabled by default (admin can turn any off). */
+export function defaultReportEnabled(_payoutId: string): boolean {
+  return true
 }
 
 /**

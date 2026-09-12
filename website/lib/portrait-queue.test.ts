@@ -88,11 +88,24 @@ describe("portrait-queue", () => {
 
   it("retries a failed job on the next enqueue", async () => {
     const q = await load()
-    const { fingerprint } = q.enqueuePortraitJob("cat2", sample())
-    q.claimPortraitJob()
-    q.failPortraitJob(fingerprint, "client crashed")
+    const { fingerprint } = q.enqueuePortraitJob("cat2", sample(), 1000)
+    q.claimPortraitJob(2000)
+    q.failPortraitJob(fingerprint, "client crashed", 3000)
     expect(q.getPortraitJob(fingerprint)?.status).toBe("failed")
-    expect(q.enqueuePortraitJob("cat2", sample()).status).toBe("pending")
+    expect(
+      q.enqueuePortraitJob("cat2", sample(), 3000 + q.PORTRAIT_FAIL_RETRY_MS + 1)
+        .status
+    ).toBe("pending")
+  })
+
+  it("does not immediately re-enqueue a recently failed job", async () => {
+    const q = await load()
+    const { fingerprint } = q.enqueuePortraitJob("cat2", sample(), 1000)
+    q.claimPortraitJob(2000)
+    q.failPortraitJob(fingerprint, "EACCES", 3000)
+    expect(q.enqueuePortraitJob("cat2", sample(), 4000).status).toBe("failed")
+    expect(q.getPortraitJob(fingerprint)?.error).toBe("EACCES")
+    expect(q.getPortraitJob(fingerprint)?.updatedAt).toBe(3000)
   })
 
   it("refuses complete until the hash-named PNG exists", async () => {

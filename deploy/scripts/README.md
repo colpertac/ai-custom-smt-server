@@ -10,6 +10,7 @@ Run from the **repository root** (or `cd deploy` and use `./scripts/…`).
 | `docker-push-hub.sh` | Pack + push `colpertac/smt-comp` |
 | `docker-push-website-hub.sh` | Build + push `colpertac/smt-website` |
 | `make-release-zip.sh` | Zip `deploy/` + `ops/` for a GitHub release asset |
+| `make-studio-release-zip.sh` | Zip `deploy-studio/` for a GitHub release asset |
 | `make-deploy-bundle.sh` | Zip compose + local `data/` + `updater/` for scp |
 | `stage-proxmox-bundle.sh` | Copy bundle to SMB share (homelab) |
 

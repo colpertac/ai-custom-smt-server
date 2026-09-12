@@ -70,7 +70,20 @@ async function rmrf(p: string): Promise<void> {
 
 async function copyFileSafe(src: string, dest: string): Promise<void> {
   await ensureDir(path.dirname(dest))
-  await fs.copyFile(src, dest)
+  const tmp = `${dest}.${process.pid}.${Date.now()}.tmp`
+  try {
+    await fs.copyFile(src, tmp)
+    await fs.rename(tmp, dest)
+  } catch (first) {
+    // Docker bind mounts sometimes reject copyFile/rename with EPERM; fall back.
+    try {
+      await fs.unlink(tmp).catch(() => undefined)
+      const data = await fs.readFile(src)
+      await fs.writeFile(dest, data)
+    } catch {
+      throw first
+    }
+  }
 }
 
 async function writeManifest(

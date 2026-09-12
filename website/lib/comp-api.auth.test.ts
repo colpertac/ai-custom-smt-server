@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { authenticate, CompApiError } from "@/lib/comp-api"
+import {
+  authenticate,
+  authenticatedRequest,
+  CompApiError,
+} from "@/lib/comp-api"
 import { challengeReply, passwordHash } from "@/lib/sha512"
 
 describe("authenticate (login challenge flow)", () => {
@@ -53,5 +57,47 @@ describe("authenticate (login challenge flow)", () => {
     await expect(authenticate("webtest", "hunter2")).rejects.toBeInstanceOf(
       CompApiError
     )
+  })
+})
+
+describe("authenticatedRequest", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it("re-mints challenge once after lobby 401", async () => {
+    const passwordHashValue = passwordHash("hunter2", "salt")
+    const auth = {
+      username: "webtest",
+      passwordHash: passwordHashValue,
+      challenge: "stale-reply",
+    }
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        text: async () => "",
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: async () =>
+          JSON.stringify({ salt: "salt", challenge: "fresh-raw" }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: async () =>
+          JSON.stringify({ error: "Success", challenge: "next-raw" }),
+      })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const data = await authenticatedRequest(auth, "/admin/get_accounts")
+
+    expect(data.error).toBe("Success")
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(String(fetchMock.mock.calls[1]![0])).toContain("/auth/get_challenge")
+    expect(auth.challenge).toBe(challengeReply(passwordHashValue, "next-raw"))
   })
 })

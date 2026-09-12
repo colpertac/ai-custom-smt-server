@@ -14,7 +14,7 @@ import {
 
 type Params = { params: Promise<{ name: string }> }
 
-/** Portrait miss must enqueue on every request (no stale “ready”). */
+/** Portrait miss enqueues only when studio capture is available. */
 export const dynamic = "force-dynamic"
 
 export async function GET(_request: Request, { params }: Params) {
@@ -38,7 +38,7 @@ export async function GET(_request: Request, { params }: Params) {
   }
 
   try {
-    const profile = loadArmoryProfile(raw)
+    const profile = await loadArmoryProfile(raw)
     if (!profile) {
       return apiFail("Character not found", 404, "NOT_FOUND")
     }

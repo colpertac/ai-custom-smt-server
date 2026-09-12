@@ -13,7 +13,7 @@ const bodySchema = z.object({
 
 /**
  * Delete a character's cached portrait (+ queue row) so the next armory visit
- * shows the placeholder and re-enqueues capture.
+ * shows the placeholder (and re-enqueues only if studio capture is available).
  */
 export async function POST(request: Request) {
   const blocked = await guardApiMutation(
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   }
 
   const name = parsed.data.name
-  const profile = loadArmoryProfile(name, { enqueuePortrait: false })
+  const profile = await loadArmoryProfile(name, { enqueuePortrait: false })
   const extra = profile?.portraitFingerprint
     ? [profile.portraitFingerprint]
     : []

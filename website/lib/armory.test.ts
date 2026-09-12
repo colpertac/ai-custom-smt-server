@@ -165,9 +165,9 @@ describe("loadArmoryProfile", () => {
     delete process.env.WEBSITE_DATA_DIR
   })
 
-  it("loads admin from local world DB when present", () => {
+  it("loads admin from local world DB when present", async () => {
     if (!fs.existsSync(getWorldDbPath())) return
-    const profile = loadArmoryProfile("admin")
+    const profile = await loadArmoryProfile("admin")
     expect(profile).not.toBeNull()
     expect(profile!.name).toBe("admin")
     expect(profile!.stats?.level).toBeGreaterThan(0)

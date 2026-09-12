@@ -1,5 +1,3 @@
-import { after } from "next/server"
-
 import {
   authenticate,
   authenticatedRequest,
@@ -55,14 +53,14 @@ export async function POST(request: Request) {
 
     const realEmail = parsed.data.email.trim()
     if (realEmail && !isPlaceholderEmail(realEmail, details.username)) {
-      after(() => {
-        void sendWelcomeEmail({
+      try {
+        await sendWelcomeEmail({
           to: realEmail,
           userName: details.dispName || details.username,
-        }).catch((err) => {
-          console.error("[email] welcome send failed:", err)
         })
-      })
+      } catch (err) {
+        console.error("[email] welcome send failed:", err)
+      }
     }
 
     return apiOk(

@@ -63,6 +63,17 @@ export async function POST(request: Request, { params }: Params) {
   }
 
   const d = parsed.data
+  if (d.enabled === false && gate.username.toLowerCase() === username) {
+    return apiFail(
+      "You can't ban the account you're logged in as",
+      400,
+      "VALIDATION"
+    )
+  }
+  // Lobby SQLite declares string cols with NUMERIC affinity; digit-only values
+  // are stored as INTEGER and older lobby builds fail to load the account.
+  // Keep a non-digit so BanInitiator/BanReason stay TEXT until lobby is patched.
+  const asSqliteText = (s: string) => (/^\d+(\.\d+)?$/.test(s.trim()) ? `${s}\u200b` : s)
   const payload: Parameters<typeof adminUpdateAccount>[1] = { username }
   if (d.dispName !== undefined) payload.disp_name = d.dispName
   if (d.email !== undefined) payload.email = d.email
@@ -71,8 +82,9 @@ export async function POST(request: Request, { params }: Params) {
   if (d.ticketCount !== undefined) payload.ticket_count = d.ticketCount
   if (d.userLevel !== undefined) payload.user_level = d.userLevel
   if (d.enabled !== undefined) payload.enabled = d.enabled
-  if (d.banReason !== undefined) payload.ban_reason = d.banReason
-  if (d.banInitiator !== undefined) payload.ban_initiator = d.banInitiator
+  if (d.banReason !== undefined) payload.ban_reason = asSqliteText(d.banReason)
+  if (d.banInitiator !== undefined)
+    payload.ban_initiator = asSqliteText(d.banInitiator)
 
   try {
     return await withCompSession(async (session) => {

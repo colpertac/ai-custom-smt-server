@@ -34,6 +34,8 @@ cd deploy
 ```
 
 Open `http://YOUR.IP:3000` — default admin `admin` / `admin123` (change on first login).
+If host `:3000` is already in use, pass `--website-port 3666` (or set `WEBSITE_PORT` /
+`SITE_URL` in `deploy/.env`) — see [deploy/README.md](deploy/README.md).
 
 Full walkthrough: [docs/youtube-1.0-setup.md](docs/youtube-1.0-setup.md).
 

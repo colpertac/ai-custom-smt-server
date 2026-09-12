@@ -898,6 +898,10 @@ def cmd_loop(args: argparse.Namespace) -> None:
                     f"job error (continuing loop): exit {code}",
                     file=sys.stderr,
                 )
+                # Failed ingest/dress used to immediately re-claim (armory poll
+                # flips failed→pending). Sleep so the mannequin is not stuck
+                # in dress + hold-S forever.
+                time.sleep(max(args.interval, 10.0))
             except Exception as e:
                 fp = job.get("fingerprint")
                 if fp:
@@ -906,6 +910,7 @@ def cmd_loop(args: argparse.Namespace) -> None:
                     except Exception:
                         pass
                 print(f"error: {e}", file=sys.stderr)
+                time.sleep(max(args.interval, 10.0))
         else:
             time.sleep(args.interval)
 

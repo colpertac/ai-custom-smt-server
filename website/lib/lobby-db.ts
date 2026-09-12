@@ -87,6 +87,18 @@ export function countEnabledPlayerAccounts(): number {
   return Number(row?.c ?? 0)
 }
 
+/** Resolve login username from recovery email (exact lowercase match). */
+export function lookupUsernameByEmail(email: string): string | null {
+  const addr = email.trim().toLowerCase()
+  if (!addr) return null
+  const row = getLobbyDb()
+    .prepare(
+      `SELECT Username FROM Account WHERE lower(Email) = ? AND Enabled != 0`
+    )
+    .get(addr) as { Username: string } | undefined
+  return row?.Username ? String(row.Username).toLowerCase() : null
+}
+
 /** Resolve Account.UID for a login username (exact match, lobby stores lowercase). */
 export function lookupAccountUid(username: string): string | null {
   const name = username.trim().toLowerCase()

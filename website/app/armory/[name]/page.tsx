@@ -15,7 +15,7 @@ import {
   WorldDbMissingError,
 } from "@/lib/armory"
 
-/** Always re-run profile load so portrait miss → enqueue (no stale RSC ready). */
+/** Always re-run profile load so portrait miss can enqueue when studio is up. */
 export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ name: string }> }
@@ -32,7 +32,7 @@ export default async function ArmoryCharacterPage({ params }: Props) {
   let profile
   let dbError: string | null = null
   try {
-    profile = loadArmoryProfile(name)
+    profile = await loadArmoryProfile(name)
   } catch (error) {
     if (error instanceof WorldDbMissingError) {
       dbError = error.message

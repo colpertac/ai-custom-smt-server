@@ -60,6 +60,9 @@ See `.env.example` for the full list.
 
 ## Website side
 
+Same GitHub release can ship `smt-deploy-studio.zip` beside `smt-deploy-ops.zip`.
+Unpack on the Wine host (game client is separate).
+
 Admin Studio (`/admin/studio`) stays the dashboard. Point the website at this
 host for Snap:
 

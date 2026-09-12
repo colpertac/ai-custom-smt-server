@@ -1,5 +1,3 @@
-import { after } from "next/server"
-
 import { fetchRecoveryEmail } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
@@ -47,15 +45,19 @@ export async function POST(request: Request) {
       !isPlaceholderEmail(recovery.email, recovery.username)
     ) {
       const { token } = createPasswordResetToken(recovery.username)
-      after(() => {
-        void sendResetPasswordEmail({
+      try {
+        await sendResetPasswordEmail({
           to: recovery.email,
           userName: recovery.username,
           token,
-        }).catch((err) => {
-          console.error("[email] reset send failed:", err)
         })
-      })
+      } catch (err) {
+        console.error("[email] reset send failed:", err)
+      }
+    } else if (recovery && !recovery.email) {
+      console.info(
+        `[forgot-password] account ${recovery.username} has no recovery email`
+      )
     }
   } catch (err) {
     console.error("[forgot-password]", err)

@@ -31,6 +31,12 @@ function websiteRoot(): string {
 export function previewCapturesDir(): string {
   const custom = process.env.PORTRAIT_PREVIEW_DIR?.trim()
   if (custom) return path.resolve(custom)
+  // Docker / Hub: website-data is the writable volume (uid 1001).
+  const dataDir = process.env.WEBSITE_DATA_DIR?.trim()
+  if (dataDir) {
+    return path.join(path.resolve(dataDir), "portrait-captures")
+  }
+  // Local monorepo: ai_custom_smt_server/work/portrait-captures
   return path.resolve(websiteRoot(), "../work/portrait-captures")
 }
 

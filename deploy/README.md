@@ -25,11 +25,17 @@ Hub images:
 ./install.sh --ip YOUR.PUBLIC.IP --domain play.example.com
 ./install.sh --ip YOUR.PUBLIC.IP --prefix /opt/smt --domain play.example.com
 
+# Host website port already taken (e.g. Next.js dev on :3000)? Map a free port:
+./install.sh --ip YOUR.PUBLIC.IP --website-port 3666
+# Or after install: set WEBSITE_PORT=3666 and SITE_URL=http://YOUR.IP:3666 in .env,
+# then docker compose up -d website. Container still listens on 3000 internally.
+
 # Windows PowerShell (Docker Desktop) — default C:\smt
-# PowerShell uses PascalCase params (-Ip, -Domain, -Prefix); order does not matter.
+# PowerShell uses PascalCase params (-Ip, -Domain, -Prefix, -WebsitePort); order does not matter.
 .\install.ps1 -Ip YOUR.PUBLIC.IP
 .\install.ps1 -Ip YOUR.PUBLIC.IP -Prefix "$env:USERPROFILE\smt"   # no admin needed
 .\install.ps1 -Ip YOUR.PUBLIC.IP -Domain play.example.com         # optional HTTPS
+.\install.ps1 -Ip YOUR.PUBLIC.IP -WebsitePort 3666                # if host :3000 is busy
 ```
 
 If the default path is not writable, the script stops with instructions (Linux:
@@ -49,6 +55,10 @@ Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxm
 # GitHub release asset: deploy/ + ops/ only (Hub images pulled on install)
 ./scripts/make-release-zip.sh
 # ./scripts/make-release-zip.sh --upload v1.0.0   # attach to an existing release tag
+
+# Optional second asset: Wine / portrait studio host (no game client in the zip)
+./scripts/make-studio-release-zip.sh
+# ./scripts/make-studio-release-zip.sh --upload v1.0.0
 
 # Manual run (without install script)
 cp .env.example .env   # EXTERNAL_IP, SESSION_SECRET, OPS_TOKEN, UPDATER_ROOT, …

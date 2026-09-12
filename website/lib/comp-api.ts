@@ -1,5 +1,6 @@
 import { placeholderEmail, isPlaceholderEmail } from "@/lib/email/placeholders"
 import { getCompApiUrl, getCompResetSecret } from "@/lib/env"
+import { lookupUsernameByEmail } from "@/lib/lobby-db"
 import { challengeReply, passwordHash } from "@/lib/sha512"
 
 export class CompApiError extends Error {
@@ -93,11 +94,29 @@ export async function authenticate(
 
 /**
  * Authenticated COMP call. Rotates `auth.challenge` from the response.
+ * On 401, re-mints a challenge once (lobby restart / HMR / stale cookie).
  */
 export async function authenticatedRequest(
   auth: CompAuthState,
   path: string,
   body: JsonObject = {}
+): Promise<JsonObject> {
+  try {
+    return await authenticatedRequestOnce(auth, path, body)
+  } catch (error) {
+    if (!(error instanceof CompApiError) || error.status !== 401) {
+      throw error
+    }
+    const { challenge } = await getChallenge(auth.username)
+    auth.challenge = challengeReply(auth.passwordHash, challenge)
+    return authenticatedRequestOnce(auth, path, body)
+  }
+}
+
+async function authenticatedRequestOnce(
+  auth: CompAuthState,
+  path: string,
+  body: JsonObject
 ): Promise<JsonObject> {
   const data = await postJson(path, {
     ...body,
@@ -142,8 +161,8 @@ export function parseAccountDetails(data: JsonObject): AccountDetails {
     enabled: Boolean(data.enabled),
     lastLogin: Number(data.last_login ?? 0),
     characterCount: Number(data.character_count ?? 0),
-    banReason: String(data.ban_reason ?? ""),
-    banInitiator: String(data.ban_initiator ?? ""),
+    banReason: String(data.ban_reason ?? "").replace(/\u200b/g, ""),
+    banInitiator: String(data.ban_initiator ?? "").replace(/\u200b/g, ""),
   }
 }
 
@@ -601,9 +620,20 @@ export async function fetchRecoveryEmail(input: {
     throw new CompApiError("COMP_RESET_SECRET not configured", 500)
   }
 
-  const username = input.username?.trim().toLowerCase() || ""
+  const usernameIn = input.username?.trim().toLowerCase() || ""
   const email = input.email?.trim().toLowerCase() || ""
-  if (!username && !email) return null
+  if (!usernameIn && !email) return null
+
+  // Lobby HTTP auth for recovery_email requires a username field. When the
+  // user enters only an email, resolve username from lobby SQLite first.
+  let username = usernameIn
+  if (!username && email) {
+    try {
+      username = lookupUsernameByEmail(email) || ""
+    } catch (err) {
+      console.error("[forgot-password] lobby DB email lookup failed:", err)
+    }
+  }
 
   try {
     const data = await postJson("/account/recovery_email", {
