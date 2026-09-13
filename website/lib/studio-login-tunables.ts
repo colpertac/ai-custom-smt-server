@@ -45,8 +45,8 @@ export const DEFAULT_STUDIO_LOGIN_TUNABLES: StudioLoginTunables = {
   startClickGapSec: 0.25,
   startClickJitterPx: 12,
   afterLaunchSec: 8.0,
-  onlineTimeoutSec: 60,
-  loginRetries: 3,
+  onlineTimeoutSec: 20,
+  loginRetries: 1,
   charSelectSec: 3,
   debugScreenshots: true,
 }

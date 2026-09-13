@@ -15,8 +15,8 @@ Env (deploy-studio/.env via dotenv):
   PORTRAIT_CLIENT_DIR   game client tree (ImagineClient.exe)
   DISPLAY / PORTRAIT_XVFB_DISPLAY   headless X (default :99)
   PORTRAIT_ORCH_ROLES   default vam1,vaf1
-  PORTRAIT_ORCH_LOGIN_RETRIES     default 3
-  PORTRAIT_ORCH_ONLINE_TIMEOUT    per-role wait after Start Game (default 60)
+  PORTRAIT_ORCH_LOGIN_RETRIES     default 1
+  PORTRAIT_ORCH_ONLINE_TIMEOUT    per-role wait after Start Game (default 20)
 
 Examples:
   ./studio orch-up-male
@@ -85,8 +85,8 @@ def reload_orch_config() -> None:
     BETWEEN_CLIENTS_SEC = float(os.environ.get("PORTRAIT_ORCH_BETWEEN_SEC", "3"))
     BETWEEN_CAM_SEC = float(os.environ.get("PORTRAIT_ORCH_BETWEEN_CAM_SEC", "2.5"))
     CAM_FOCUS_SEC = float(os.environ.get("PORTRAIT_ORCH_CAM_FOCUS_SEC", "1.2"))
-    LOGIN_RETRIES = int(os.environ.get("PORTRAIT_ORCH_LOGIN_RETRIES", "3"))
-    ONLINE_TIMEOUT = float(os.environ.get("PORTRAIT_ORCH_ONLINE_TIMEOUT", "60"))
+    LOGIN_RETRIES = int(os.environ.get("PORTRAIT_ORCH_LOGIN_RETRIES", "1"))
+    ONLINE_TIMEOUT = float(os.environ.get("PORTRAIT_ORCH_ONLINE_TIMEOUT", "20"))
     CHAR_SELECT_SEC = float(os.environ.get("PORTRAIT_ORCH_CHAR_SELECT_SEC", "3"))
 
 

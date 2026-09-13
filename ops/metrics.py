@@ -6,9 +6,11 @@ Docker: same host /proc (sidecar on host) + docker stats for game containers.
 
 from __future__ import annotations
 
+import copy
 import os
 import re
 import subprocess
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -29,6 +31,11 @@ _DOCKER_CONTAINERS = (
     ("world", "smt-world"),
     ("channel", "smt-channel"),
 )
+
+# Concurrent /metrics pollers must not stampede `docker stats` (1s sample).
+_DOCKER_STATS_TTL_SEC = 2.0
+_docker_stats_lock = threading.Lock()
+_docker_stats_cache: tuple[float, list[dict[str, Any]]] | None = None
 
 
 def _read_proc_stat() -> tuple[int, int] | None:
@@ -342,6 +349,18 @@ def _process_error_from_inspect(info: dict[str, Any] | None) -> str | None:
 
 
 def _docker_processes() -> list[dict[str, Any]]:
+    global _docker_stats_cache
+    with _docker_stats_lock:
+        now = time.monotonic()
+        cached = _docker_stats_cache
+        if cached and now - cached[0] < _DOCKER_STATS_TTL_SEC:
+            return copy.deepcopy(cached[1])
+        rows = _docker_processes_uncached()
+        _docker_stats_cache = (now, rows)
+        return copy.deepcopy(rows)
+
+
+def _docker_processes_uncached() -> list[dict[str, Any]]:
     names = [c for _, c in _DOCKER_CONTAINERS]
     inspect = _docker_inspect_states(names)
     try:
@@ -356,20 +375,20 @@ def _docker_processes() -> list[dict[str, Any]]:
             ],
             capture_output=True,
             text=True,
-            timeout=8,
+            timeout=4,
             check=False,
         )
     except (OSError, subprocess.TimeoutExpired):
+        # Busy hosts often time out `docker stats`; inspect is enough for up/down.
         return [
             {
                 "name": label,
-                "running": False,
+                "running": (inspect.get(cname) or {}).get("status") == "running",
                 "pid": None,
                 "rssBytes": None,
                 "cpuPercent": None,
                 "container": cname,
                 "status": (inspect.get(cname) or {}).get("status"),
-                "error": "docker_stats_failed",
             }
             for label, cname in _DOCKER_CONTAINERS
         ]

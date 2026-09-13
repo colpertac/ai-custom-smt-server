@@ -23,7 +23,7 @@ export function AdminLobbyDownBanner() {
         const lobby = json.data?.services?.find((s) => s.id === "lobby")
         setLobbyDown(lobby?.state === "down")
       } catch {
-        if (!cancelled) setLobbyDown(true)
+        // Probe flake / brief 502 — do not flash "lobby down"
       }
     }
 

@@ -63,11 +63,13 @@ async function collectGameServicesFromOps(): Promise<ServiceStatus[] | null> {
         }
       }
 
-      const up = proc.running && !proc.error
+      // error is advisory (healthcheck starting, stats flake). Down only if not running.
+      const up = proc.running
       return {
         id,
         label: capitalizeService(id),
         state: up ? ("up" as const) : ("down" as const),
+        detail: proc.error || undefined,
       }
     })
   } catch {

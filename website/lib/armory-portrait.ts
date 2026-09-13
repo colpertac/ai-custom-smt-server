@@ -106,6 +106,23 @@ function publicPortraitUrl(basename: string, ext: ".webp" | ".png"): string {
   return `/armory/portraits/${encodeURIComponent(basename)}${ext}`
 }
 
+/** Safe on-disk path for a requested `/armory/portraits/:filename`. */
+export function portraitFilePath(filename: string): string | null {
+  const base = path.basename(filename)
+  if (!base || base !== filename) return null
+  if (!/^[0-9A-Za-z._-]{1,64}\.(png|webp)$/i.test(base)) return null
+  const dir = path.resolve(portraitsDir())
+  const full = path.resolve(dir, base)
+  if (full !== dir && !full.startsWith(dir + path.sep)) return null
+  return fs.existsSync(full) ? full : null
+}
+
+export function portraitContentType(
+  filename: string
+): "image/png" | "image/webp" {
+  return filename.toLowerCase().endsWith(".webp") ? "image/webp" : "image/png"
+}
+
 function findPortraitFile(basename: string): string | null {
   const dir = portraitsDir()
   for (const ext of [".webp", ".png"] as const) {

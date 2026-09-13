@@ -77,7 +77,7 @@ export async function getStudioHealth(init?: {
   signal?: AbortSignal
 }): Promise<StudioHealth> {
   const { json } = await studioFetch("/studio/health", {
-    signal: init?.signal,
+    signal: init?.signal ?? AbortSignal.timeout(1_500),
   })
   return {
     ok: Boolean(json.ok),

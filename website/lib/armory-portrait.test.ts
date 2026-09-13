@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest"
 import {
   appearanceFingerprint,
   decodeEquippedVA,
+  portraitFilePath,
   portraitFingerprintCanonical,
   resolveArmoryPortrait,
   type PortraitFingerprintInput,
@@ -108,5 +109,12 @@ describe("resolveArmoryPortrait", () => {
     const r = resolveArmoryPortrait(sample(), "no-such-portrait-zzzz")
     expect(r.status).toBe("missing")
     expect(r.url).toBeNull()
+  })
+})
+
+describe("portraitFilePath", () => {
+  it("rejects traversal and missing files", () => {
+    expect(portraitFilePath("../secret.png")).toBeNull()
+    expect(portraitFilePath("no-such-portrait-zzzz.png")).toBeNull()
   })
 })

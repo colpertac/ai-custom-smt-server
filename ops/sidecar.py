@@ -38,6 +38,7 @@ import hmac
 import subprocess
 import sys
 import threading
+import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -155,7 +156,19 @@ def handle_health(_handler: OpsHandler) -> tuple[int, bytes, str]:
     return json_bytes(payload, 200)
 
 
+_METRICS_CACHE_TTL_SEC = 2.0
+_metrics_cache_lock = threading.Lock()
+_metrics_cache: tuple[float, dict] | None = None
+
+
 def handle_metrics(_handler: OpsHandler) -> tuple[int, bytes, str]:
+    global _metrics_cache
+    now = time.monotonic()
+    with _metrics_cache_lock:
+        cached = _metrics_cache
+        if cached and now - cached[0] < _METRICS_CACHE_TTL_SEC:
+            return json_bytes(cached[1], 200)
+
     backend = env("OPS_BACKEND", "native") or "native"
     payload = collect_metrics(
         backend=backend,
@@ -168,7 +181,9 @@ def handle_metrics(_handler: OpsHandler) -> tuple[int, bytes, str]:
         name = str(proc.get("name") or "").lower()
         if name not in {"lobby", "world", "channel"}:
             continue
-        if proc.get("running") and not proc.get("error"):
+        # Logs are for offline/crash diagnosis. Do not tail docker logs on the
+        # hot poll path for running containers (advisory health/stats flakes).
+        if proc.get("running"):
             continue
         snap = collect_service_logs(
             service=name,
@@ -179,6 +194,8 @@ def handle_metrics(_handler: OpsHandler) -> tuple[int, bytes, str]:
         )
         if snap.get("ok") and snap.get("summary"):
             proc["logSummary"] = snap["summary"]
+    with _metrics_cache_lock:
+        _metrics_cache = (time.monotonic(), payload)
     return json_bytes(payload, 200)
 
 

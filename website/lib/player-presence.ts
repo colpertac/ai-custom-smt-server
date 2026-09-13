@@ -50,7 +50,9 @@ export function offlineFromAccounts(
 
 async function countMannequinsOnline(): Promise<number> {
   try {
-    const health = await getStudioHealth()
+    const health = await getStudioHealth({
+      signal: AbortSignal.timeout(1_500),
+    })
     if (!(health.ok || health.vam1 || health.vaf1 || health.vam || health.vaf)) {
       return 0
     }
@@ -74,7 +76,9 @@ async function fetchOnlineRaw(): Promise<
     }
   }
   try {
-    const auth = await authenticate(creds.user, creds.password)
+    const auth = await authenticate(creds.user, creds.password, {
+      timeoutMs: 4_000,
+    })
     const online = await adminGetOnline(auth)
     return { total: online.total }
   } catch (error) {

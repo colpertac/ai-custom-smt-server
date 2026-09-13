@@ -349,7 +349,10 @@ function parseProcessMetrics(raw: unknown): OpsProcessMetric[] {
 }
 
 export async function getOpsMetrics(actor?: string): Promise<OpsMetrics> {
-  const { status, json } = await opsFetch("/metrics", { actor })
+  const { status, json } = await opsFetch("/metrics", {
+    actor,
+    timeoutMs: 4_000,
+  })
   if (status === 401) {
     return { ok: false, error: "unauthorized" }
   }

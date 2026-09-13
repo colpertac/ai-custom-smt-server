@@ -16,13 +16,20 @@ export class CompApiError extends Error {
 
 type JsonObject = Record<string, unknown>
 
-async function postJson(path: string, body: JsonObject): Promise<JsonObject> {
+async function postJson(
+  path: string,
+  body: JsonObject,
+  options?: { timeoutMs?: number }
+): Promise<JsonObject> {
   const url = `${getCompApiUrl()}/api${path}`
+  const timeoutMs = options?.timeoutMs
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
     cache: "no-store",
+    signal:
+      timeoutMs && timeoutMs > 0 ? AbortSignal.timeout(timeoutMs) : undefined,
   })
 
   const text = await response.text()
@@ -55,10 +62,17 @@ export type CompChallenge = {
   challenge: string
 }
 
-export async function getChallenge(username: string): Promise<CompChallenge> {
-  const data = await postJson("/auth/get_challenge", {
-    username: username.toLowerCase(),
-  })
+export async function getChallenge(
+  username: string,
+  options?: { timeoutMs?: number }
+): Promise<CompChallenge> {
+  const data = await postJson(
+    "/auth/get_challenge",
+    {
+      username: username.toLowerCase(),
+    },
+    options
+  )
 
   const salt = typeof data.salt === "string" ? data.salt : ""
   const challenge = typeof data.challenge === "string" ? data.challenge : ""
@@ -78,10 +92,11 @@ export type CompAuthState = {
 
 export async function authenticate(
   username: string,
-  password: string
+  password: string,
+  options?: { timeoutMs?: number }
 ): Promise<CompAuthState> {
   const normalized = username.toLowerCase()
-  const { salt, challenge } = await getChallenge(normalized)
+  const { salt, challenge } = await getChallenge(normalized, options)
   const hash = passwordHash(password, salt)
   const reply = challengeReply(hash, challenge)
 
@@ -99,30 +114,36 @@ export async function authenticate(
 export async function authenticatedRequest(
   auth: CompAuthState,
   path: string,
-  body: JsonObject = {}
+  body: JsonObject = {},
+  options?: { timeoutMs?: number }
 ): Promise<JsonObject> {
   try {
-    return await authenticatedRequestOnce(auth, path, body)
+    return await authenticatedRequestOnce(auth, path, body, options)
   } catch (error) {
     if (!(error instanceof CompApiError) || error.status !== 401) {
       throw error
     }
-    const { challenge } = await getChallenge(auth.username)
+    const { challenge } = await getChallenge(auth.username, options)
     auth.challenge = challengeReply(auth.passwordHash, challenge)
-    return authenticatedRequestOnce(auth, path, body)
+    return authenticatedRequestOnce(auth, path, body, options)
   }
 }
 
 async function authenticatedRequestOnce(
   auth: CompAuthState,
   path: string,
-  body: JsonObject
+  body: JsonObject,
+  options?: { timeoutMs?: number }
 ): Promise<JsonObject> {
-  const data = await postJson(path, {
-    ...body,
-    session_username: auth.username,
-    challenge: auth.challenge,
-  })
+  const data = await postJson(
+    path,
+    {
+      ...body,
+      session_username: auth.username,
+      challenge: auth.challenge,
+    },
+    options
+  )
 
   const nextChallenge =
     typeof data.challenge === "string" ? data.challenge : ""
@@ -242,7 +263,9 @@ export type AdminOnlineCounts = {
 export async function adminGetOnline(
   auth: CompAuthState
 ): Promise<AdminOnlineCounts> {
-  const data = await authenticatedRequest(auth, "/admin/online")
+  const data = await authenticatedRequest(auth, "/admin/online", {}, {
+    timeoutMs: 4_000,
+  })
   if (data.error && data.error !== "Success") {
     throw new CompApiError(String(data.error), 502, data)
   }
