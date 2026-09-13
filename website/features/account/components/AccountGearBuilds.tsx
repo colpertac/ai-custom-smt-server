@@ -91,23 +91,11 @@ export function AccountGearBuilds() {
   }
 
   return (
-    <section className="mt-3 border border-border bg-card/60 px-5 py-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
-            Gear builds
-          </h2>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Saved loadouts from the{" "}
-            <Link
-              href="/builder"
-              className="text-gold-dim hover:text-gold-hot"
-            >
-              gear builder
-            </Link>
-            . Open one to continue editing, or copy a share link.
-          </p>
-        </div>
+    <section className="flex h-full flex-col border border-border bg-card/60 px-4 py-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
+          Gear builds
+        </h2>
         <Link
           href="/builder"
           className={cn(
@@ -118,6 +106,13 @@ export function AccountGearBuilds() {
           Open builder
         </Link>
       </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+        Saved loadouts from the{" "}
+        <Link href="/builder" className="text-gold-dim hover:text-gold-hot">
+          gear builder
+        </Link>
+        .
+      </p>
 
       {loading ? (
         <p className="mt-4 text-sm text-muted-foreground">Loading builds…</p>
@@ -128,7 +123,7 @@ export function AccountGearBuilds() {
           No saved builds yet. Create one in the builder while signed in.
         </p>
       ) : (
-        <ul className="mt-4 divide-y divide-border border border-border">
+        <ul className="mt-3 min-h-0 divide-y divide-border overflow-y-auto border border-border">
           {builds.map((b) => (
             <li
               key={b.id}

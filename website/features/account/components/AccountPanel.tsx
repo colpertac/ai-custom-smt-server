@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 import { AccountGearBuilds } from "@/features/account/components/AccountGearBuilds"
+import { AccountGmCommands } from "@/features/account/components/AccountGmCommands"
 import { ChangeEmailForm } from "@/features/auth/components/ChangeEmailForm"
 import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm"
 import { useLogout, useSessionDetails } from "@/features/auth/hooks"
@@ -29,7 +30,7 @@ export function AccountPanel() {
 
   if (isLoading || !details) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10 text-sm text-muted-foreground">
+      <div className="mx-auto w-full max-w-7xl px-4 py-10 text-sm text-muted-foreground sm:px-5">
         Loading account…
       </div>
     )
@@ -44,9 +45,9 @@ export function AccountPanel() {
   ]
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-      <header className="flex flex-wrap items-end justify-between gap-4 border border-border bg-card/80 px-5 py-5">
-        <div>
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-5">
+      <header className="flex shrink-0 flex-wrap items-end justify-between gap-4 border border-border bg-card/80 px-5 py-4">
+        <div className="min-w-0">
           <p className="text-[0.7rem] tracking-[0.25em] text-gold-dim uppercase">
             Signed in
           </p>
@@ -68,98 +69,100 @@ export function AccountPanel() {
             ) : null}
           </p>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="uppercase tracking-wider"
-          disabled={logoutMutation.isPending}
-          onClick={() => {
-            logoutMutation.mutate(undefined, {
-              onSuccess: () => {
-                router.push("/")
-                router.refresh()
-              },
-            })
-          }}
-        >
-          Log out
-        </Button>
-      </header>
-
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        {(
-          [
-            ["CP", (details.cp ?? 0).toLocaleString()],
-            ["Characters", String(details.characterCount ?? 0)],
-            ["Level", String(details.userLevel ?? 0)],
-          ] as const
-        ).map(([label, value]) => (
-          <div
-            key={label}
-            className="border border-border bg-muted px-3 py-3 text-center"
-          >
-            <p className="text-[0.65rem] tracking-wider text-muted-foreground uppercase">
-              {label}
-            </p>
-            <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-gold">
-              {value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <section className="mt-3 border border-border bg-card/60 px-5 py-5">
-        <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
-          Account info
-        </h2>
-        <dl className="mt-4 space-y-3 text-sm">
-          {infoRows.map((row) => (
+        <div className="flex flex-wrap items-end gap-2">
+          {(
+            [
+              ["CP", (details.cp ?? 0).toLocaleString()],
+              ["Characters", String(details.characterCount ?? 0)],
+              ["GM level", String(details.userLevel ?? 0)],
+            ] as const
+          ).map(([label, value]) => (
             <div
-              key={row.label}
-              className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border/80 pb-3 last:border-0 last:pb-0"
+              key={label}
+              className="min-w-24 border border-border bg-muted px-3 py-2 text-center"
             >
-              <dt className="text-muted-foreground">{row.label}</dt>
-              <dd className="text-right font-medium break-all text-foreground">
-                {row.value}
-              </dd>
+              <p className="text-[0.65rem] tracking-wider text-muted-foreground uppercase">
+                {label}
+              </p>
+              <p className="mt-0.5 font-mono text-base font-semibold tabular-nums text-gold">
+                {value}
+              </p>
             </div>
           ))}
-        </dl>
-        {details.banReason ? (
-          <p className="mt-4 text-sm font-medium text-[#ff9b9b]">
-            Ban: {details.banReason}
-            {details.banInitiator ? ` (${details.banInitiator})` : ""}
-          </p>
-        ) : null}
-      </section>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="uppercase tracking-wider"
+            disabled={logoutMutation.isPending}
+            onClick={() => {
+              logoutMutation.mutate(undefined, {
+                onSuccess: () => {
+                  router.push("/")
+                  router.refresh()
+                },
+              })
+            }}
+          >
+            Log out
+          </Button>
+        </div>
+      </header>
 
-      <AccountGearBuilds />
+      <div className="mt-3 grid items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="border border-border bg-card/60 px-4 py-4">
+          <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
+            Account info
+          </h2>
+          <dl className="mt-3 space-y-2.5 text-sm">
+            {infoRows.map((row) => (
+              <div key={row.label} className="min-w-0">
+                <dt className="text-[11px] tracking-wider text-muted-foreground uppercase">
+                  {row.label}
+                </dt>
+                <dd className="mt-0.5 font-medium break-all text-foreground">
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          {details.banReason ? (
+            <p className="mt-3 text-sm font-medium text-[#ff9b9b]">
+              Ban: {details.banReason}
+              {details.banInitiator ? ` (${details.banInitiator})` : ""}
+            </p>
+          ) : null}
+        </section>
 
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <section className="border border-border bg-card/60 px-5 py-5">
+        <AccountGearBuilds />
+
+        <section className="border border-border bg-card/60 px-4 py-4">
           <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
             Email
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Optional. Used for password reset email if you forget your password.
+            Optional. Used for password reset if you forget your password.
           </p>
-          <div className="mt-4">
+          <div className="mt-3">
             <ChangeEmailForm defaultValue={details.email || ""} />
           </div>
         </section>
 
-        <section className="border border-border bg-card/60 px-5 py-5">
+        <section className="border border-border bg-card/60 px-4 py-4">
           <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
             Change password
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             You&apos;ll need to sign in again after changing it.
           </p>
-          <div className="mt-4">
+          <div className="mt-3">
             <ChangePasswordForm />
           </div>
         </section>
+      </div>
+
+      <div className="mt-3">
+        <AccountGmCommands userLevel={details.userLevel ?? 0} />
       </div>
     </div>
   )

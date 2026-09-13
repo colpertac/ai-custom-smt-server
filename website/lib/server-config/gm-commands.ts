@@ -542,6 +542,12 @@ export type GmCommandTier = {
   commands: string[]
 }
 
+/** In-game @ commands this UserLevel can type in channel chat. */
+export function getAccessibleGmCommands(userLevel: number): GmCommand[] {
+  const level = Number.isFinite(userLevel) ? userLevel : 0
+  return GM_COMMANDS.filter((cmd) => cmd.level <= level)
+}
+
 /** Grouped thresholds for compact UI (e.g. RegistrationUserLevel help). */
 export function getGmCommandTiers(): GmCommandTier[] {
   const byLevel = new Map<number, GmCommandTier>()
@@ -555,6 +561,25 @@ export function getGmCommandTiers(): GmCommandTier[] {
     tier.commands.push(label)
   }
   return [...byLevel.values()].sort((a, b) => a.level - b.level)
+}
+
+/** Highest unlocked ladder name, or "Any account" when nothing special is unlocked. */
+export function getUnlockedGmTierLabel(userLevel: number): string {
+  const level = Number.isFinite(userLevel) ? userLevel : 0
+  let label = "Any account"
+  for (const tier of getGmCommandTiers()) {
+    if (tier.level <= level) label = tier.label
+    else break
+  }
+  return label
+}
+
+/** Next ladder step the player has not reached yet, if any. */
+export function getNextLockedGmTier(
+  userLevel: number
+): GmCommandTier | undefined {
+  const level = Number.isFinite(userLevel) ? userLevel : 0
+  return getGmCommandTiers().find((tier) => tier.level > level)
 }
 
 /** @deprecated Prefer getGmCommandTiers() — kept for existing imports. */
