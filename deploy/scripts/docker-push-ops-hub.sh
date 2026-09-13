@@ -38,6 +38,10 @@ DEPLOY_DIR="${DEPLOY_DIR}" "${SCRIPT_DIR}/stage-server-datastore.sh" || {
   echo "zones missing in ${OPS_DIR}/server-datastore after staging" >&2
   exit 1
 }
+[[ -f "${OPS_DIR}/server-datastore/scripts/branch_randomsplit.nut" ]] || {
+  echo "event scripts missing in ${OPS_DIR}/server-datastore after staging" >&2
+  exit 1
+}
 
 echo "==> docker build ${LOCAL_TAG}"
 docker build -t "${LOCAL_TAG}" "${OPS_DIR}"

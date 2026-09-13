@@ -35,6 +35,7 @@ SERVERDATA_DIRS = (
     "partials",
     "shops",
     "skills",
+    "scripts",
     "webapps",
     "webgames",
     "migrations",

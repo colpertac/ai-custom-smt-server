@@ -17,11 +17,13 @@ DATASTORE="${COMP_RUNTIME:-${DEPLOY_DIR}/data}"/datastore
 OPS_SEED="$(cd "${DEPLOY_DIR}/../ops" && pwd)/server-datastore"
 
 # Folders channel/world load via ServerDataManager (not client BinaryData/Map).
-SERVER_DIRS=(data zones events partials shops skills webapps webgames migrations packages)
+# scripts/ is required — NPC talk/shop branches (branch_randomSplit, bool_cooldown, …).
+SERVER_DIRS=(data zones events partials shops skills scripts webapps webgames migrations packages)
 
 REQUIRED_SENTINELS=(
   "zones/zone-90105.xml"
   "data/zoneinstance/00_stock.xml"
+  "scripts/branch_randomsplit.nut"
 )
 
 find_comp_hack() {
