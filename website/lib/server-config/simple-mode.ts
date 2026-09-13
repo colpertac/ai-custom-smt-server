@@ -7,6 +7,7 @@ export const SIMPLE_FIELDS: Partial<Record<ConfigFileId, readonly string[]>> = {
     "CharacterDeletionDelay",
     "CharacterTicketCost",
     "StartupCharacterDelete",
+    "RegistrationCP",
     "RegistrationTicketCount",
     "RegistrationUserLevel",
     "RegistrationAccountEnabled",

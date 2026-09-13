@@ -23,6 +23,7 @@ content (`content/events/`, compiled news seed) applies on new containers.
 | **Promos** | None | Lobby DB starts empty |
 | **Payouts** | Current seed weights/CP (wired subset enabled) | `deploy/seed/server-content/payouts/` |
 | **Dungeon loot** | Item **38172** “Dungeon Report”, 1 item / 1 CP; **all** dungeons `enabled: true` | `deploy/seed/server-content/report-rewards/` |
+| **World loot eggs** | `LootEggDuration` **300**; `LootEggRestrictedDuration` **0** (immediately free-for-all) | `deploy/seed/config/world.xml` (`WorldSharedConfig`) |
 | **Casino / config / email / SQL / …** | Current code + empty runtime DBs | Website / ops images as published |
 
 Refresh shops / payouts / loot from a working tree:
