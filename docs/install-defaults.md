@@ -25,6 +25,7 @@ content (`content/events/`, compiled news seed) applies on new containers.
 | **Dungeon loot** | Item **38172** “Dungeon Report”, 1 item / 1 CP; **all** dungeons `enabled: true` | `deploy/seed/server-content/report-rewards/` |
 | **World loot eggs** | `LootEggDuration` **300**; `LootEggRestrictedDuration` **0** (immediately free-for-all) | `deploy/seed/config/world.xml` (`WorldSharedConfig`) |
 | **Casino / config / email / SQL / …** | Current code + empty runtime DBs | Website / ops images as published |
+| **Website feedback** | Empty `feedback` / `feedback_images` in new `web.sqlite` | Public `/feedback` form; Admin → Feedback |
 
 Refresh shops / payouts / loot from a working tree:
 

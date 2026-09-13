@@ -30,6 +30,10 @@ export function SiteFooter() {
         <Link href="/download" className="text-muted-foreground hover:text-gold-dim">
           Client setup
         </Link>
+        <span className="mx-2 text-faint">·</span>
+        <Link href="/feedback" className="text-muted-foreground hover:text-gold-dim">
+          Feedback
+        </Link>
       </p>
     </footer>
   )

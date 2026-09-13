@@ -9,6 +9,7 @@ import {
   Flag,
   FolderArchive,
   Globe,
+  Inbox,
   LayoutDashboard,
   Mail,
   MessageSquareText,
@@ -48,6 +49,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
       { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
       { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
       { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
+      { href: "/admin/feedback", label: "Feedback", icon: Inbox, match: "prefix" },
       {
         href: "/admin/chat-logs",
         label: "Chat logs",
@@ -127,6 +129,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/website")) return "Website"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
   if (pathname.startsWith("/admin/reports")) return "Reports"
+  if (pathname.startsWith("/admin/feedback")) return "Feedback"
   if (pathname.startsWith("/admin/chat-logs")) return "Chat logs"
   if (pathname.startsWith("/admin/news")) return "News"
   if (pathname.startsWith("/admin/download")) return "Download"
