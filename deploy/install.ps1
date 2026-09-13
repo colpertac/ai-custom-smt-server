@@ -43,9 +43,9 @@ function Die-Writable([string] $Prefix) {
   Write-Host "error: cannot write to $Prefix" -ForegroundColor Red
   Write-Host ""
   Write-Host "On Windows, either:"
-  Write-Host "  • Run PowerShell as Administrator, then re-run this script"
-  Write-Host "  • Or install under your profile (no admin):"
-  Write-Host "      .\install.ps1 -Ip … -Prefix `"$env:USERPROFILE\smt`""
+  Write-Host "  * Run PowerShell as Administrator, then re-run this script"
+  Write-Host "  * Or install under your profile (no admin):"
+  Write-Host "      .\install.ps1 -Ip ... -Prefix `"$env:USERPROFILE\smt`""
   exit 1
 }
 
@@ -71,12 +71,17 @@ function Test-WritablePrefix([string] $Prefix) {
 function Copy-InstallTree([string] $DestPrefix) {
   $destDeploy = Join-Path $DestPrefix "deploy"
   $destOps = Join-Path $DestPrefix "ops"
-  Write-Host "Installing to $DestPrefix …"
+  Write-Host "Installing to $DestPrefix ..."
   New-Item -ItemType Directory -Force -Path $DestPrefix | Out-Null
 
-  $excludeDeploy = @("data", "updater", "website-data", ".env", "ops-tools")
+  $excludeDeploy = @(
+    (Join-Path $ScriptRoot "data"),
+    (Join-Path $ScriptRoot "updater"),
+    (Join-Path $ScriptRoot "website-data"),
+    (Join-Path $ScriptRoot "ops-tools")
+  )
   robocopy $ScriptRoot $destDeploy /E /NFL /NDL /NJH /NJS /nc /ns /np `
-    /XD $excludeDeploy 2>$null | Out-Null
+    /XD $excludeDeploy /XF .env 2>$null | Out-Null
   if ($LASTEXITCODE -ge 8) {
     Die "Failed to copy deploy/ to $destDeploy (robocopy exit $LASTEXITCODE)"
   }
@@ -86,7 +91,26 @@ function Copy-InstallTree([string] $DestPrefix) {
   if ($LASTEXITCODE -ge 8) {
     Die "Failed to copy ops/ to $destOps (robocopy exit $LASTEXITCODE)"
   }
-  Write-Host "Copied deploy/ and ops/ → $DestPrefix"
+  Write-Host "Copied deploy/ and ops/ -> $DestPrefix"
+}
+
+# Docker bind-mounts these into Linux. Git for Windows (core.autocrlf) often
+# checks out *.sh as CRLF, which breaks shebangs (env: 'bash\r').
+function Convert-UnixShellScripts([string] $Root) {
+  if (-not (Test-Path $Root)) { return }
+  $utf8 = New-Object System.Text.UTF8Encoding $false
+  $converted = 0
+  Get-ChildItem -Path $Root -Filter *.sh -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+    $raw = [System.IO.File]::ReadAllText($_.FullName)
+    $unix = $raw -replace "`r`n", "`n" -replace "`r", "`n"
+    if ($unix -ne $raw) {
+      [System.IO.File]::WriteAllText($_.FullName, $unix, $utf8)
+      $converted++
+    }
+  }
+  if ($converted -gt 0) {
+    Write-Host "Normalized Unix line endings on $converted .sh file(s) under $Root"
+  }
 }
 
 function Resolve-InstallPaths {
@@ -94,7 +118,7 @@ function Resolve-InstallPaths {
     Die "docker-compose.yml not found in $ScriptRoot"
   }
   if (-not (Test-Path $SourceOpsDir)) {
-    Die "ops/ not found at $SourceOpsDir — copy deploy/ and ops/ together"
+    Die "ops/ not found at $SourceOpsDir - copy deploy/ and ops/ together"
   }
 
   if ($Dir) {
@@ -135,6 +159,7 @@ if (-not $Ip) {
 }
 
 $DeployDir = Resolve-InstallPaths
+Convert-UnixShellScripts $DeployDir
 
 function Test-Docker {
   if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -190,13 +215,52 @@ function Seed-UpdaterIfNeeded {
   if (-not (Test-Path $seed)) { return }
   if (-not (Test-Path $ver)) {
     Copy-Item -Path (Join-Path $seed "*") -Destination $UpdaterRoot -Recurse -Force
-    Write-Host "Seeded updater from deploy/seed/updater (empty overlay — hashlist.ver ready)"
+    Write-Host "Seeded updater from deploy/seed/updater (empty overlay - hashlist.ver ready)"
   }
 }
 
 Seed-UpdaterIfNeeded
 New-Item -ItemType Directory -Force -Path $DataDir | Out-Null
 New-Item -ItemType Directory -Force -Path $OpsTools | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $DataDir "config") | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $DataDir "webroot") | Out-Null
+
+function Seed-RuntimeConfigIfNeeded {
+  $dest = Join-Path $DataDir "config"
+  $seed = Join-Path $DeployDir "seed\config"
+  if (-not (Test-Path $seed)) {
+    $seed = Join-Path $DeployDir "config\sqlite"
+  }
+  if (-not (Test-Path $seed)) { return }
+  $lobby = Join-Path $dest "lobby.xml"
+  if (-not (Test-Path $lobby)) {
+    Copy-Item -Path (Join-Path $seed "*") -Destination $dest -Recurse -Force
+    Write-Host "Seeded data/config from $seed"
+  } else {
+    foreach ($f in @("channel.xml", "lobby.xml", "world.xml", "constants.xml", "setup.xml", "newcharacter.xml")) {
+      $src = Join-Path $seed $f
+      $dst = Join-Path $dest $f
+      if ((Test-Path $src) -and -not (Test-Path $dst)) {
+        Copy-Item -Path $src -Destination $dst -Force
+        Write-Host "Restored missing data/config/$f"
+      }
+    }
+  }
+}
+
+function Seed-WebrootIfNeeded {
+  $seed = Join-Path $DeployDir "seed\webroot"
+  $dest = Join-Path $DataDir "webroot"
+  if (-not (Test-Path $seed)) { return }
+  $marker = Join-Path $dest "casino\slot\index.html"
+  if (-not (Test-Path $marker)) {
+    Copy-Item -Path (Join-Path $seed "*") -Destination $dest -Recurse -Force
+    Write-Host "Seeded data/webroot from deploy/seed/webroot (casino HTML wrappers)"
+  }
+}
+
+Seed-RuntimeConfigIfNeeded
+Seed-WebrootIfNeeded
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\config") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\shops") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\payouts") | Out-Null
@@ -237,7 +301,7 @@ $ResendFromEmail = ""
 $ResendFromName = ""
 $ResendSupportEmail = ""
 if (Test-Path $EnvFile) {
-  Write-Host "Existing .env found — regenerating with new EXTERNAL_IP/URLs; rotating secrets only if placeholders."
+  Write-Host "Existing .env found - regenerating with new EXTERNAL_IP/URLs; rotating secrets only if placeholders."
   $existing = Get-Content $EnvFile -Raw
   if ($existing -match '(?m)^SESSION_SECRET=(.+)$') {
     $prev = $Matches[1].Trim()
@@ -270,7 +334,7 @@ if (Test-Path $EnvFile) {
 }
 
 $envBody = @"
-# Generated by install.ps1 — $([DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mmZ"))
+# Generated by install.ps1 - $([DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mmZ"))
 EXTERNAL_IP=$Ip
 SESSION_SECRET=$SessionSecret
 OPS_TOKEN=$OpsToken
@@ -301,7 +365,7 @@ Write-Host "Wrote $EnvFile"
 Write-Host "  EXTERNAL_IP=$Ip"
 Write-Host "  SITE_URL=$SiteUrl"
 Write-Host "  PUBLIC_UPDATER_URL=$PublicUpdaterUrl"
-Write-Host "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env — keep private)"
+Write-Host "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env - keep private)"
 
 Push-Location $DeployDir
 try {
@@ -309,27 +373,34 @@ try {
   $opsDir = Join-Path (Split-Path $DeployDir -Parent) "ops"
   $opsBuildLocal = $false
   if ((Test-Path $stageScript) -and (Test-Path (Join-Path $opsDir "Dockerfile"))) {
-    $bash = Get-Command bash -ErrorAction SilentlyContinue
+    # Prefer Git Bash; skip the Windows WSL stub (system32\bash.exe) which
+    # fails when no real Linux distro is installed.
+    $bash = Get-Command bash -All -ErrorAction SilentlyContinue |
+      Where-Object {
+        $_.Source -and
+        $_.Source -notmatch '\\(System32|Sysnative|SysWOW64|WindowsApps)\\bash\.exe$'
+      } |
+      Select-Object -First 1
     if ($bash) {
-      & bash $stageScript
+      & $bash.Source $stageScript
       if ($LASTEXITCODE -eq 0) {
         $opsBuildLocal = $true
-        Write-Host "Ops tools staged — will build smt-ops:local from ../ops."
+        Write-Host "Ops tools staged - will build smt-ops:local from ../ops."
         (Get-Content $EnvFile) -replace '^OPS_IMAGE=.*', 'OPS_IMAGE=colpertac/smt-ops:local' | Set-Content $EnvFile
       } else {
-        Write-Host "No local comp_hack build — pulling colpertac/smt-ops:latest (tools baked in)."
+        Write-Host "No local comp_hack build - pulling colpertac/smt-ops:latest (tools baked in)."
       }
     }
   } else {
     Write-Host "Will pull colpertac/smt-ops:latest (tools baked in)."
   }
-  Write-Host "Pulling Hub images and starting stack…"
+  Write-Host "Pulling Hub images and starting stack..."
   if ($opsBuildLocal) {
-    docker compose pull lobby world channel website updater 2>$null
+    docker compose --progress=plain pull lobby world channel website updater
     docker compose build ops
     docker compose up -d
   } else {
-    docker compose pull lobby world channel website updater ops 2>$null
+    docker compose --progress=plain pull lobby world channel website updater ops
     docker compose up -d
   }
   if ($LASTEXITCODE -ne 0) { Die "docker compose up failed (exit $LASTEXITCODE)" }
@@ -345,12 +416,12 @@ Write-Host "Lobby:    ${Ip}:10666"
 Write-Host "Channel:  ${Ip}:14666"
 Write-Host ""
 Write-Host "Next:"
-Write-Host "  1. Open $SiteUrl — register / sign in (admin needs userLevel >= 1000)."
-Write-Host "  2. Admin → Overview — confirm ops is healthy."
-Write-Host "  3. If first boot: Admin → Game files — upload content zips, then Start."
-Write-Host "  4. Admin → Download — Client prep zip, ship client, paste MediaFire/Drive URL."
+Write-Host "  1. Open $SiteUrl - register / sign in (admin needs userLevel >= 1000)."
+Write-Host "  2. Admin -> Overview - confirm ops is healthy."
+Write-Host "  3. If first boot: Admin -> Game files - upload content zips, then Start."
+Write-Host "  4. Admin -> Download - Client prep zip, ship client, paste MediaFire/Drive URL."
 Write-Host "  5. Allow ports 10666, 14666, 8765, $WebsitePort in Windows Firewall / router if public."
-Write-Host "  6. Optional: Admin → Email — paste Resend API key + from address for forgot-password mail."
-Write-Host "     Restart lobby once after saving (Overview → restart services if needed)."
+Write-Host "  6. Optional: Admin -> Email - paste Resend API key + from address for forgot-password mail."
+Write-Host "     Restart lobby once after saving (Overview -> restart services if needed)."
 Write-Host ""
 Write-Host "Docs: docs/youtube-1.0-setup.md"
