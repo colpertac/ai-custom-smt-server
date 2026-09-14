@@ -36,6 +36,8 @@ type LiveMetrics = {
     pid?: number | null
     rssBytes?: number | null
     cpuPercent?: number | null
+    status?: string
+    error?: string
   }[]
 }
 
@@ -212,13 +214,24 @@ export function AdminOpsMetrics() {
           hint="machine"
         />
         <MetricCell label="RAM" value={memPct} hint={memHint} />
-        {(live?.processes ?? []).map((proc) => (
+        {(live?.processes ?? []).map((proc) => {
+          const status = (proc.status || "").toLowerCase()
+          const err = (proc.error || "").toLowerCase()
+          const starting =
+            status === "restarting" ||
+            status === "created" ||
+            err.includes("healthcheck starting")
+          return (
           <MetricCell
             key={proc.name}
             label={proc.name}
-            value={proc.running ? "up" : "down"}
+            value={starting ? "starting" : proc.running ? "up" : "down"}
             hint={
-              proc.running
+              starting
+                ? proc.name.toLowerCase() === "channel"
+                  ? "loading game data"
+                  : "coming up"
+                : proc.running
                 ? [
                     proc.cpuPercent != null
                       ? `cpu ${formatPct(proc.cpuPercent)}`
@@ -232,7 +245,8 @@ export function AdminOpsMetrics() {
                 : undefined
             }
           />
-        ))}
+          )
+        })}
       </div>
     </div>
   )

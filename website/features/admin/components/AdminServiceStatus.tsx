@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Play, RotateCcw, ScrollText, Square } from "lucide-react"
+import { Loader2, Play, RotateCcw, ScrollText, Square } from "lucide-react"
 
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
@@ -30,10 +30,20 @@ type ProcessRow = {
   logSummary?: string
 }
 
-type Tone = "online" | "offline" | "error" | "unknown"
+type Tone = "online" | "offline" | "error" | "starting" | "unknown"
+
+function isStarting(proc: ProcessRow | undefined): boolean {
+  if (!proc) return false
+  const status = (proc.status || "").toLowerCase()
+  const err = (proc.error || "").toLowerCase()
+  if (status === "restarting" || status === "created") return true
+  if (err.includes("healthcheck starting")) return true
+  return false
+}
 
 function toneFor(proc: ProcessRow | undefined): Tone {
   if (!proc) return "unknown"
+  if (isStarting(proc)) return "starting"
   if (proc.error) return "error"
   if (proc.running) return "online"
   return "offline"
@@ -47,15 +57,33 @@ function labelFor(tone: Tone): string {
       return "offline"
     case "error":
       return "error"
+    case "starting":
+      return "starting"
     default:
       return "…"
   }
+}
+
+function startingHint(name: string, proc: ProcessRow): string {
+  const err = (proc.error || "").toLowerCase()
+  if (err.includes("healthcheck starting")) {
+    return name === "channel"
+      ? "Loading maps and game data. First start can take several minutes."
+      : "Still starting…"
+  }
+  if ((proc.status || "").toLowerCase() === "restarting") {
+    return proc.logSummary
+      ? `Restarting… ${proc.logSummary}`
+      : "Restarting…"
+  }
+  return "Still starting…"
 }
 
 const DOT: Record<Tone, string> = {
   online: "bg-emerald-500",
   offline: "bg-red-500",
   error: "bg-amber-500",
+  starting: "bg-amber-500",
   unknown: "bg-muted-foreground/40",
 }
 
@@ -217,11 +245,13 @@ export function AdminServiceStatus({
           const online = tone === "online"
           const offline = tone === "offline" || tone === "error"
           const err = tone === "error" && proc?.error ? proc.error : null
-          const hint =
-            !online && proc?.logSummary
+          const rowBusy = busy?.service === name || workingAll
+          const showWorking = rowBusy || tone === "starting"
+          const hint = tone === "starting" && proc
+            ? startingHint(name, proc)
+            : !online && proc?.logSummary
               ? proc.logSummary
               : err
-          const rowBusy = busy?.service === name || workingAll
           return (
             <li
               key={name}
@@ -236,7 +266,7 @@ export function AdminServiceStatus({
               <span
                 className={cn(
                   "inline-block size-2 shrink-0 rounded-full",
-                  rowBusy ? "bg-amber-500 animate-pulse" : DOT[tone]
+                  showWorking ? "bg-amber-500 animate-pulse" : DOT[tone]
                 )}
                 aria-hidden
               />
@@ -245,20 +275,23 @@ export function AdminServiceStatus({
               </span>
               <span
                 className={cn(
-                  "min-w-[3.5rem] text-xs",
-                  rowBusy && "text-amber-600 dark:text-amber-400",
-                  !rowBusy &&
+                  "inline-flex min-w-[4.75rem] items-center gap-1 text-xs",
+                  showWorking && "text-amber-600 dark:text-amber-400",
+                  !showWorking &&
                     tone === "online" &&
                     "text-emerald-600 dark:text-emerald-400",
-                  !rowBusy &&
+                  !showWorking &&
                     tone === "offline" &&
                     "text-red-600 dark:text-red-400",
-                  !rowBusy &&
+                  !showWorking &&
                     tone === "error" &&
                     "text-amber-700 dark:text-amber-400",
-                  !rowBusy && tone === "unknown" && "text-muted-foreground"
+                  !showWorking && tone === "unknown" && "text-muted-foreground"
                 )}
               >
+                {showWorking ? (
+                  <Loader2 className="size-3 shrink-0 animate-spin" aria-hidden />
+                ) : null}
                 {rowBusy ? "working" : labelFor(tone)}
               </span>
               <span className="flex items-center gap-0.5">
@@ -268,7 +301,7 @@ export function AdminServiceStatus({
                   size="icon-xs"
                   title={`Start ${name}`}
                   aria-label={`Start ${name}`}
-                  disabled={anyBusy || online || tone === "unknown"}
+                  disabled={anyBusy || online || showWorking || tone === "unknown"}
                   onClick={() => void runAction(name, "start")}
                 >
                   <Play
