@@ -53,8 +53,9 @@ Guides: [docker-hub.md](../docs/docker-hub.md), [proxmox-smoke.md](../docs/proxm
 ./scripts/docker-push-website-hub.sh
 
 # GitHub release asset: deploy/ + ops/ only (Hub images pulled on install)
-./scripts/make-release-zip.sh
-# ./scripts/make-release-zip.sh --upload v1.0.0   # attach to an existing release tag
+# If you changed deploy/ or ops/, rebuild and replace the zip on the release:
+./scripts/make-release-zip.sh -o /tmp/smt-deploy-ops.zip --upload v1.0.0
+# ./scripts/make-release-zip.sh --upload v1.0.0   # timestamped filename (new asset)
 
 # Optional second asset: Wine / portrait studio host (no game client in the zip)
 ./scripts/make-studio-release-zip.sh

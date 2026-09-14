@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Pack deploy/ + ops/ for a GitHub release asset (Hub images pulled on install).
 #
+# Re-run this whenever deploy/ or ops/ changes, and upload over the existing
+# release asset (same filename so --clobber replaces smt-deploy-ops.zip):
+#   ./deploy/scripts/make-release-zip.sh -o /tmp/smt-deploy-ops.zip --upload v1.0.0
+#
 #   ./deploy/scripts/make-release-zip.sh
 #   ./deploy/scripts/make-release-zip.sh -o /tmp/smt-deploy-ops.zip
 #   ./deploy/scripts/make-release-zip.sh --upload v1.0.0   # needs gh + existing release tag

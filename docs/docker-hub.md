@@ -6,6 +6,7 @@ Published images:
 | --- | --- |
 | Game | [colpertac/smt-comp](https://hub.docker.com/r/colpertac/smt-comp) |
 | Website | [colpertac/smt-website](https://hub.docker.com/r/colpertac/smt-website) |
+| Ops sidecar | [colpertac/smt-ops](https://hub.docker.com/r/colpertac/smt-ops) |
 
 Tags: `latest` and dated `YYYYMMDD`.
 
@@ -30,6 +31,9 @@ JOBS=16 /home/cat/repos/smt/comp_hack/scripts/build.sh
 
 # Build + push website image
 ./deploy/scripts/docker-push-website-hub.sh
+
+# Build + push ops sidecar (ops/*.py is baked into this image)
+./deploy/scripts/docker-push-ops-hub.sh
 ```
 
 Manual equivalent:
@@ -167,6 +171,38 @@ docker compose down
 
 ---
 
+## What to republish after a change
+
+Hub images do **not** include `deploy/` or the host copy of `ops/`. Those ship in
+the GitHub release zip (`smt-deploy-ops.zip` on tag `v1.0.0`). Fresh
+`install.sh` copies that zip; running hosts `docker compose pull` images.
+
+| You changed | Also do |
+| --- | --- |
+| `website/` | `./deploy/scripts/docker-push-website-hub.sh` |
+| Game binaries (`comp_hack` build) | `./deploy/scripts/docker-push-hub.sh` |
+| `ops/*.py` (sidecar) | `./deploy/scripts/docker-push-ops-hub.sh` **and** rezip the release (below) |
+| `deploy/` (compose, `install.sh`, seed, …) | Rezip the release (below) |
+
+If **`deploy/` or `ops/`** changed, rebuild the install zip and replace the
+asset on the existing release (`--clobber` overwrites `smt-deploy-ops.zip`):
+
+```bash
+./deploy/scripts/make-release-zip.sh -o /tmp/smt-deploy-ops.zip --upload v1.0.0
+```
+
+Studio zip is separate (`make-studio-release-zip.sh`) — only if `deploy-studio/`
+changed.
+
+On the server after image and/or zip updates:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+---
+
 ## Notes
 
 - Do not run bare-metal `scripts/start.sh` and Docker at the same time (same ports).
@@ -175,5 +211,6 @@ docker compose down
 - Change default DB passwords before public deploy; keep XML `Password` and
   `mariadb/init` in sync (init runs only on first empty `data/mariadb/`).
 - Updating binaries: rebuild + `docker-push-hub.sh`, then
-  `docker compose pull && docker compose up -d`.
+  `docker compose pull && docker compose up -d`. Changes under `deploy/` or
+  `ops/` also need a new GitHub release zip (see **What to republish**).
 - Backup / restore / upgrade / rollback: [backup-restore.md](backup-restore.md).
