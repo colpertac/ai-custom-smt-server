@@ -10,7 +10,10 @@ import {
   adminPageTitle,
   navItemActive,
 } from "@/features/admin/admin-nav"
-import { useLaneAPending } from "@/features/admin/lane-a-pending"
+import {
+  useLaneAPending,
+  type LaneAPendingClientStatus,
+} from "@/features/admin/lane-a-pending"
 import { useOpenFeedbackPending } from "@/features/admin/open-feedback-pending"
 import { useOpenReportsPending } from "@/features/admin/open-reports-pending"
 import { api } from "@/lib/kyClient"
@@ -18,11 +21,37 @@ import { cn } from "@/lib/utils"
 
 function navPendingDot(
   itemHref: string,
-  laneAPending: boolean,
+  laneA: LaneAPendingClientStatus,
   openReportsPending: boolean,
   openFeedbackPending: boolean
 ): { title: string } | null {
-  if (itemHref === "/admin" && laneAPending) {
+  if (itemHref === "/admin" && laneA.pending) {
+    const onlyGameFiles =
+      laneA.gameFilesDirty &&
+      !laneA.shopsDirty &&
+      !laneA.payoutsDirty &&
+      !laneA.reportRewardsDirty &&
+      !laneA.channelDirty &&
+      !laneA.eventsSchedulePending &&
+      !laneA.goldenApplesDirty &&
+      !laneA.casinoDirty &&
+      !laneA.configDirty
+    if (onlyGameFiles) {
+      return { title: "Channel restart needed to load uploaded game files" }
+    }
+    const onlyConfig =
+      laneA.configDirty &&
+      !laneA.shopsDirty &&
+      !laneA.payoutsDirty &&
+      !laneA.reportRewardsDirty &&
+      !laneA.channelDirty &&
+      !laneA.eventsSchedulePending &&
+      !laneA.goldenApplesDirty &&
+      !laneA.casinoDirty &&
+      !laneA.gameFilesDirty
+    if (onlyConfig) {
+      return { title: "Unpublished config — apply & restart from Config" }
+    }
     return { title: "Unpublished changes — publish / restart needed" }
   }
   if (itemHref === "/admin/reports" && openReportsPending) {
@@ -105,7 +134,7 @@ export function AdminShell({
                 const Icon = item.icon
                 const pendingDot = navPendingDot(
                   item.href,
-                  laneA.pending,
+                  laneA,
                   openReports.pending,
                   openFeedback.pending
                 )

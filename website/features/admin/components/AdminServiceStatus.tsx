@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/kyClient"
 import { signOutAfterLobbyRestart } from "@/features/auth/lobby-restart"
+import { OPS_FRESHNESS_EVENT } from "@/features/admin/lane-a-pending"
 
 const SERVICES = ["lobby", "world", "channel"] as const
 type ServiceName = (typeof SERVICES)[number]
@@ -193,6 +194,9 @@ export function AdminServiceStatus({
         }
         setOk(json.message || `${service} ${action} ok`)
         await refresh()
+        if (service === "channel" && (action === "start" || action === "restart")) {
+          window.dispatchEvent(new Event(OPS_FRESHNESS_EVENT))
+        }
         if (
           service === "lobby" &&
           (action === "start" || action === "restart")

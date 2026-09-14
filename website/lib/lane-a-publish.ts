@@ -32,6 +32,7 @@ import { getEventScheduleStatus } from "./events/event-schedule-fs.ts"
 import { setsEqual } from "./events/event-schedule-math.ts"
 import { listConfigStatus } from "./server-config/fs.ts"
 import { isGoldenApplesRestartPending } from "./golden-apple-fs.ts"
+import { isGameFilesRestartPending } from "./ops-freshness.ts"
 import { isCasinoRestartPending } from "./webgames-fs.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
@@ -530,12 +531,24 @@ export type LaneAPendingStatus = {
   goldenApplesDirty: boolean
   /** Casino webgame .nut odds edited — lobby restart needed. */
   casinoDirty: boolean
+  /**
+   * Server zip ingest (BinaryData / maps / packages) landed on disk after the
+   * last channel restart — channel must restart to load those files.
+   */
+  gameFilesDirty: boolean
+  /**
+   * Non-channel server-config drafts (lobby / world / constants / setup /
+   * new character) differ from live — Apply & restart from Config.
+   * channel.xml is tracked separately as channelDirty (Events + Config).
+   */
+  configDirty: boolean
 }
 
 /**
  * True when working shops/payouts differ from what is live on the game server
  * (admin must Publish shops & payouts on Overview), or when channel.xml /
- * event schedule needs apply/restart.
+ * event schedule / uploaded game files / other server-config drafts need
+ * apply/restart.
  *
  * Payouts compare working JSON to a stamp written on successful publish so
  * disabled / conflict-skipped drafts still show as pending.
@@ -555,6 +568,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     scheduleStatus,
     goldenApplesDirty,
     casinoDirty,
+    gameFilesDirty,
   ] = await Promise.all([
     shopsTreeDigest(shopsWorkingDir()),
     shopsTreeDigest(shopsLive),
@@ -566,6 +580,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     getEventScheduleStatus().catch(() => null),
     isGoldenApplesRestartPending(),
     isCasinoRestartPending(),
+    isGameFilesRestartPending(),
   ])
 
   const shopsDirty = shopsWorking !== shopsLiveDigest
@@ -581,6 +596,9 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
 
   const channelDirty =
     configStatuses.find((s) => s.id === "channel")?.dirty === true
+  const configDirty = configStatuses.some(
+    (s) => s.id !== "channel" && s.dirty === true
+  )
 
   // Only flag when live does not match *current* schedule day.
   // pendingRestartAt is always set to the next flip while awaiting — that is
@@ -601,7 +619,9 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
       channelDirty ||
       eventsSchedulePending ||
       goldenApplesDirty ||
-      casinoDirty,
+      casinoDirty ||
+      gameFilesDirty ||
+      configDirty,
     shopsDirty,
     payoutsDirty,
     reportRewardsDirty,
@@ -609,6 +629,8 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     eventsSchedulePending,
     goldenApplesDirty,
     casinoDirty,
+    gameFilesDirty,
+    configDirty,
   }
 }
 

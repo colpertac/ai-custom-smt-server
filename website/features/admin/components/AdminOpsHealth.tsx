@@ -542,6 +542,15 @@ export function AdminOpsHealth() {
   })()
   const staleText = health ? channelStaleMessage(health) : null
   const overlayText = health ? overlayStaleMessage(health) : null
+  const draftPending =
+    laneAPending.shopsDirty ||
+    laneAPending.payoutsDirty ||
+    laneAPending.reportRewardsDirty ||
+    laneAPending.channelDirty ||
+    laneAPending.eventsSchedulePending ||
+    laneAPending.goldenApplesDirty ||
+    laneAPending.casinoDirty ||
+    laneAPending.configDirty
   const publishing =
     publishPhase === "validating" ||
     publishPhase === "applying" ||
@@ -735,16 +744,25 @@ export function AdminOpsHealth() {
                 className="size-1.5 animate-pulse rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.9)]"
                 aria-hidden
               />
-              Unpublished changes
+              {draftPending ? "Unpublished changes" : "Restart needed"}
             </span>
           ) : null}
         </div>
         {laneAPending.pending ? (
           <div className="mt-1.5 space-y-1.5">
             <p className="text-xs text-cyan-100/90">
-              Draft differs from the live server. Run{" "}
-              <strong className="font-medium text-cyan-50">Validate</strong>{" "}
-              before publish so bad game content cannot brick the channel.
+              {draftPending ? (
+                <>
+                  Draft differs from the live server. Run{" "}
+                  <strong className="font-medium text-cyan-50">Validate</strong>{" "}
+                  before publish so bad game content cannot brick the channel.
+                </>
+              ) : (
+                <>
+                  Uploaded game files are on disk. Restart the game channel so
+                  the running process loads them.
+                </>
+              )}
             </p>
             <ul className="list-disc space-y-0.5 pl-4 text-xs text-cyan-100/90">
               {laneAPending.shopsDirty ? (
@@ -795,6 +813,20 @@ export function AdminOpsHealth() {
                   slot / roulette / kino odds saved; restart login (lobby) so
                   players get them (Publish &amp; restart does lobby then
                   channel)
+                </li>
+              ) : null}
+              {laneAPending.gameFilesDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Game files</span>{" "}
+                  — zip uploaded; restart the game channel (Power → Channel,
+                  or Publish &amp; restart) to load them
+                </li>
+              ) : null}
+              {laneAPending.configDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Config</span> —
+                  lobby / world / constants / setup draft differs from live;
+                  Apply &amp; restart from Config so those services reload
                 </li>
               ) : null}
             </ul>

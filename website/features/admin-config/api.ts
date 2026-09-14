@@ -1,3 +1,4 @@
+import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { fetcher } from "@/lib/fetcher"
 import { api } from "@/lib/kyClient"
 import type { ConfigFileStatus } from "@/lib/server-config/types"
@@ -53,6 +54,7 @@ export async function saveAdminConfig(
       Array.isArray(issues) ? issues : []
     )
   }
+  notifyLaneAPendingChanged()
   return {
     id: json.data?.id ?? id,
     warnings: Array.isArray(json.data?.warnings) ? json.data.warnings : [],
@@ -68,23 +70,31 @@ export const validateAdminConfigPublish = (only?: string[]) =>
     }
   )
 
-export const applyAdminConfigPublish = (
+export async function applyAdminConfigPublish(
   releaseId: string,
   restart = true
-) =>
-  fetcher<OpsLaneAConfigPublishResult>(
+): Promise<OpsLaneAConfigPublishResult> {
+  const result = await fetcher<OpsLaneAConfigPublishResult>(
     "admin/ops/publish/lane-a-config/apply",
     {
       method: "POST",
       json: { releaseId, restart },
     }
   )
+  notifyLaneAPendingChanged()
+  return result
+}
 
-export const rollbackAdminConfigPublish = (releaseId?: string) =>
-  fetcher<OpsLaneAConfigPublishResult>(
+export async function rollbackAdminConfigPublish(
+  releaseId?: string
+): Promise<OpsLaneAConfigPublishResult> {
+  const result = await fetcher<OpsLaneAConfigPublishResult>(
     "admin/ops/publish/lane-a-config/rollback",
     {
       method: "POST",
       json: { releaseId, restart: true },
     }
   )
+  notifyLaneAPendingChanged()
+  return result
+}

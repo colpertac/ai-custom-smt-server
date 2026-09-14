@@ -6,6 +6,8 @@ import { api } from "@/lib/kyClient"
 
 export const LANE_A_PENDING_EVENT = "smt:lane-a-pending"
 
+export const OPS_FRESHNESS_EVENT = "ops-freshness-changed"
+
 export type LaneAPendingClientStatus = {
   pending: boolean
   shopsDirty: boolean
@@ -15,6 +17,8 @@ export type LaneAPendingClientStatus = {
   eventsSchedulePending: boolean
   goldenApplesDirty: boolean
   casinoDirty: boolean
+  gameFilesDirty: boolean
+  configDirty: boolean
 }
 
 let notifyTimer: number | null = null
@@ -39,6 +43,8 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
     eventsSchedulePending: false,
     goldenApplesDirty: false,
     casinoDirty: false,
+    gameFilesDirty: false,
+    configDirty: false,
   })
 
   const refresh = useCallback(async () => {
@@ -58,6 +64,8 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
         eventsSchedulePending: Boolean(json.data.eventsSchedulePending),
         goldenApplesDirty: Boolean(json.data.goldenApplesDirty),
         casinoDirty: Boolean(json.data.casinoDirty),
+        gameFilesDirty: Boolean(json.data.gameFilesDirty),
+        configDirty: Boolean(json.data.configDirty),
       })
     } catch {
       /* ignore transient errors */
@@ -71,10 +79,12 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
       if (document.visibilityState === "visible") void refresh()
     }
     window.addEventListener(LANE_A_PENDING_EVENT, onEvent)
+    window.addEventListener(OPS_FRESHNESS_EVENT, onEvent)
     document.addEventListener("visibilitychange", onVis)
     const id = window.setInterval(() => void refresh(), pollMs)
     return () => {
       window.removeEventListener(LANE_A_PENDING_EVENT, onEvent)
+      window.removeEventListener(OPS_FRESHNESS_EVENT, onEvent)
       document.removeEventListener("visibilitychange", onVis)
       window.clearInterval(id)
     }
