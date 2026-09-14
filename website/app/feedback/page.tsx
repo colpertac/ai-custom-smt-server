@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function FeedbackPage() {
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col justify-center px-4 py-10">
+    <div className="mx-auto flex w-full max-w-2xl flex-col justify-center px-4 py-10">
       <Card>
         <CardHeader>
           <CardTitle className="font-heading text-xl tracking-wide">
@@ -23,7 +23,7 @@ export default function FeedbackPage() {
           </CardTitle>
           <CardDescription>
             Something off? Untranslated text, a crashy NPC, lag at 4am — tell
-            us.
+            us. A few screenshots and extra detail help a lot.
           </CardDescription>
         </CardHeader>
         <CardContent>

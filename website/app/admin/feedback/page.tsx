@@ -13,8 +13,8 @@ export default async function AdminFeedbackPage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Website feedback from the public footer form. Separate from in-game
-        player reports.
+        Website feedback from the public footer form, including up to four
+        screenshots. Separate from in-game player reports.
       </p>
       <AdminFeedbackPanel />
     </div>

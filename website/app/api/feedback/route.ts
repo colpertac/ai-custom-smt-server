@@ -2,11 +2,27 @@ import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import {
   FEEDBACK_IMAGE_MAX_BYTES,
+  FEEDBACK_IMAGE_MAX_COUNT,
   FeedbackImageValidationError,
   createFeedback,
 } from "@/lib/feedback-store"
 import { requireWebSession } from "@/lib/web-session"
 import { feedbackSchema } from "@/features/feedback/schemas/feedback.schema"
+
+function collectUploads(form: FormData): File[] {
+  const seen = new Set<File>()
+  const files: File[] = []
+  for (const key of ["files", "file"]) {
+    for (const value of form.getAll(key)) {
+      if (!(value instanceof File) || value.size <= 0 || seen.has(value)) {
+        continue
+      }
+      seen.add(value)
+      files.push(value)
+    }
+  }
+  return files
+}
 
 export async function POST(request: Request) {
   const blocked = await guardApiMutation("feedback-create", 5, 60_000)
@@ -31,14 +47,22 @@ export async function POST(request: Request) {
     )
   }
 
-  const file = form.get("file")
-  let imageBytes: Buffer | undefined
-  if (file instanceof File && file.size > 0) {
+  const uploaded = collectUploads(form)
+  if (uploaded.length > FEEDBACK_IMAGE_MAX_COUNT) {
+    return apiFail(
+      `At most ${FEEDBACK_IMAGE_MAX_COUNT} screenshots`,
+      400,
+      "VALIDATION"
+    )
+  }
+
+  const imageBytes: Buffer[] = []
+  for (const file of uploaded) {
     if (file.size > FEEDBACK_IMAGE_MAX_BYTES) {
       return apiFail("File too large (max 5 MiB)", 413, "PAYLOAD")
     }
     try {
-      imageBytes = Buffer.from(await file.arrayBuffer())
+      imageBytes.push(Buffer.from(await file.arrayBuffer()))
     } catch {
       return apiFail("Failed to read upload", 400, "VALIDATION")
     }

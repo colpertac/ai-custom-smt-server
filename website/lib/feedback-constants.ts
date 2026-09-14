@@ -19,7 +19,13 @@ export const FEEDBACK_STATUSES = ["open", "closed"] as const
 export type FeedbackStatus = (typeof FEEDBACK_STATUSES)[number]
 
 export const FEEDBACK_IMAGE_MAX_BYTES = 5 * 1024 * 1024
-export const FEEDBACK_BODY_MAX = 4000
+export const FEEDBACK_IMAGE_MAX_COUNT = 4
+export const FEEDBACK_BODY_MAX = 8000
+
+export type FeedbackImage = {
+  id: number
+  url: string
+}
 
 export type FeedbackItem = {
   id: number
@@ -28,6 +34,5 @@ export type FeedbackItem = {
   body: string
   status: FeedbackStatus
   createdAt: number
-  hasImage: boolean
-  imageUrl: string | null
+  images: FeedbackImage[]
 }

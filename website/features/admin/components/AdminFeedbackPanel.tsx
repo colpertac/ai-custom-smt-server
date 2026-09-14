@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { ImageIcon } from "lucide-react"
 
 import {
   useAdminFeedback,
@@ -9,9 +10,16 @@ import {
 } from "@/features/feedback/hooks"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import {
   FEEDBACK_CATEGORY_LABELS,
+  type FeedbackImage,
   type FeedbackStatus,
 } from "@/lib/feedback-constants"
 import { cn } from "@/lib/utils"
@@ -30,6 +38,7 @@ function previewBody(body: string): string {
 export function AdminFeedbackPanel() {
   const [status, setStatus] = useState<FeedbackStatus>("open")
   const [selected, setSelected] = useState<number | null>(null)
+  const [lightbox, setLightbox] = useState<FeedbackImage | null>(null)
   const listQuery = useAdminFeedback(status)
   const resolveMutation = useResolveAdminFeedback()
 
@@ -45,6 +54,7 @@ export function AdminFeedbackPanel() {
   function changeStatus(next: FeedbackStatus) {
     setStatus(next)
     setSelected(null)
+    setLightbox(null)
     resolveMutation.reset()
   }
 
@@ -110,13 +120,14 @@ export function AdminFeedbackPanel() {
                 <th className="px-2 py-1.5 font-semibold">Who</th>
                 <th className="px-2 py-1.5 font-semibold">Category</th>
                 <th className="px-2 py-1.5 font-semibold">Note</th>
+                <th className="px-2 py-1.5 font-semibold">Pics</th>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-2 py-6 text-center text-muted-foreground"
                   >
                     {listQuery.isLoading ? "Loading…" : "No feedback"}
@@ -132,6 +143,7 @@ export function AdminFeedbackPanel() {
                     )}
                     onClick={() => {
                       setSelected(item.id)
+                      setLightbox(null)
                       resolveMutation.reset()
                     }}
                   >
@@ -148,6 +160,16 @@ export function AdminFeedbackPanel() {
                     </td>
                     <td className="px-2 py-1.5 text-muted-foreground">
                       {previewBody(item.body)}
+                    </td>
+                    <td className="px-2 py-1.5 text-muted-foreground">
+                      {item.images.length > 0 ? (
+                        <span className="inline-flex items-center gap-1">
+                          <ImageIcon className="size-3.5" aria-hidden />
+                          {item.images.length}
+                        </span>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                   </tr>
                 ))
@@ -196,24 +218,29 @@ export function AdminFeedbackPanel() {
                 </div>
                 <p className="mt-1 whitespace-pre-wrap">{current.body}</p>
               </div>
-              {current.hasImage && current.imageUrl ? (
+              {current.images.length > 0 ? (
                 <div>
                   <div className="text-[0.65rem] text-muted-foreground uppercase">
-                    Screenshot
+                    Screenshots ({current.images.length})
                   </div>
-                  <a
-                    href={current.imageUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-1 block max-w-md"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={current.imageUrl}
-                      alt="Feedback screenshot"
-                      className="max-h-80 w-full border border-border bg-background/50 object-contain"
-                    />
-                  </a>
+                  <ul className="mt-1 grid grid-cols-2 gap-2">
+                    {current.images.map((image, index) => (
+                      <li key={image.id}>
+                        <button
+                          type="button"
+                          className="block w-full border border-border bg-background/50 text-left"
+                          onClick={() => setLightbox(image)}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={image.url}
+                            alt={`Screenshot ${index + 1}`}
+                            className="max-h-48 w-full object-contain"
+                          />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               ) : null}
               <div className="flex flex-wrap gap-2">
@@ -252,6 +279,37 @@ export function AdminFeedbackPanel() {
           )}
         </div>
       </div>
+
+      <Dialog
+        open={lightbox != null}
+        onOpenChange={(open) => {
+          if (!open) setLightbox(null)
+        }}
+      >
+        <DialogContent
+          className="sm:max-w-3xl"
+          aria-describedby={undefined}
+        >
+          <DialogHeader>
+            <DialogTitle>Screenshot</DialogTitle>
+          </DialogHeader>
+          {lightbox ? (
+            <a
+              href={lightbox.url}
+              target="_blank"
+              rel="noreferrer"
+              className="block"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={lightbox.url}
+                alt="Feedback screenshot"
+                className="max-h-[70vh] w-full border border-border bg-background/50 object-contain"
+              />
+            </a>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

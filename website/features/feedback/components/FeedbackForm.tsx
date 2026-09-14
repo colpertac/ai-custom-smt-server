@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { useSessionUser } from "@/features/auth/hooks"
+import { FeedbackImageDropzone } from "@/features/feedback/components/FeedbackImageDropzone"
 import { useSubmitFeedback } from "@/features/feedback/hooks"
 import {
   feedbackSchema,
@@ -15,40 +16,25 @@ import {
   FEEDBACK_BODY_MAX,
   FEEDBACK_CATEGORIES,
   FEEDBACK_CATEGORY_LABELS,
-  FEEDBACK_IMAGE_MAX_BYTES,
 } from "@/lib/feedback-constants"
 import { FieldMessage, FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-
-const ACCEPT = "image/png,image/jpeg,image/webp,image/gif"
 
 export function FeedbackForm() {
   const { data: session } = useSessionUser()
   const mutation = useSubmitFeedback()
   const [doneMessage, setDoneMessage] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([])
   const [fileError, setFileError] = useState<string | null>(null)
-  const [fileKey, setFileKey] = useState(0)
 
   const form = useForm<FeedbackInput>({
     resolver: zodResolver(feedbackSchema),
     mode: "onChange",
     defaultValues: { category: "other", body: "" },
   })
-
-  function onFileChange(next: File | null) {
-    setFileError(null)
-    if (next && next.size > FEEDBACK_IMAGE_MAX_BYTES) {
-      setFile(null)
-      setFileError("Screenshot must be 5 MiB or smaller")
-      setFileKey((k) => k + 1)
-      return
-    }
-    setFile(next)
-  }
+  const body = useWatch({ control: form.control, name: "body" }) ?? ""
 
   function onSubmit(data: FeedbackInput) {
     setDoneMessage(null)
@@ -56,15 +42,14 @@ export function FeedbackForm() {
     const payload = new FormData()
     payload.append("category", data.category)
     payload.append("body", data.body)
-    if (file) payload.append("file", file)
+    for (const file of files) payload.append("files", file)
 
     mutation.mutate(payload, {
       onSuccess: () => {
         setDoneMessage("Thanks — we got it.")
         form.reset({ category: "other", body: "" })
-        setFile(null)
+        setFiles([])
         setFileError(null)
-        setFileKey((k) => k + 1)
       },
       onError: (e) => {
         form.setError("root", {
@@ -124,30 +109,36 @@ export function FeedbackForm() {
           <FieldLabel htmlFor="feedback-body">What happened</FieldLabel>
           <Textarea
             id="feedback-body"
-            className="min-h-28 rounded-none"
-            placeholder="Untranslated NPC line, crashy demon, lag around 4am…"
+            className="min-h-40 rounded-none"
+            placeholder="Untranslated NPC line, crashy demon, lag around 4am… include where you were, who you talked to, and what you expected."
             maxLength={FEEDBACK_BODY_MAX}
             aria-invalid={!!errors.body || undefined}
             {...form.register("body")}
           />
-          {errors.body ? (
-            <FieldMessage>{errors.body.message}</FieldMessage>
-          ) : null}
+          <div className="flex items-start justify-between gap-3">
+            {errors.body ? (
+              <FieldMessage>{errors.body.message}</FieldMessage>
+            ) : (
+              <p className="text-[0.65rem] text-muted-foreground">
+                More detail is better — steps, map, time of day, who else was
+                around.
+              </p>
+            )}
+            <p className="shrink-0 text-[0.65rem] text-muted-foreground tabular-nums">
+              {body.length}/{FEEDBACK_BODY_MAX}
+            </p>
+          </div>
         </Field>
 
         <Field data-invalid={!!fileError || undefined}>
-          <FieldLabel htmlFor="feedback-file">Screenshot (optional)</FieldLabel>
-          <Input
-            id="feedback-file"
-            key={fileKey}
-            type="file"
-            accept={ACCEPT}
-            aria-invalid={!!fileError || undefined}
-            onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
+          <FieldLabel>Screenshots (optional)</FieldLabel>
+          <FeedbackImageDropzone
+            files={files}
+            onChange={setFiles}
+            error={fileError}
+            onError={setFileError}
+            disabled={mutation.isPending}
           />
-          {file ? (
-            <p className="text-xs text-muted-foreground">{file.name}</p>
-          ) : null}
           {fileError ? <FieldMessage>{fileError}</FieldMessage> : null}
         </Field>
       </FieldGroup>

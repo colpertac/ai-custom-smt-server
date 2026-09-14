@@ -28,7 +28,13 @@ export async function GET(_request: Request, ctx: Ctx) {
   const item = getFeedbackById(id)
   if (!item) return apiFail("Not found", 404, "NOT_FOUND")
 
-  const file = readFeedbackImageFile(id)
+  const imageIdRaw = new URL(_request.url).searchParams.get("imageId")
+  const imageId = imageIdRaw ? parseId(imageIdRaw) : null
+  if (imageIdRaw && imageId == null) {
+    return apiFail("Not found", 404, "NOT_FOUND")
+  }
+
+  const file = readFeedbackImageFile(id, imageId ?? undefined)
   if (!file) return apiFail("Not found", 404, "NOT_FOUND")
 
   return new NextResponse(new Uint8Array(file.bytes), {

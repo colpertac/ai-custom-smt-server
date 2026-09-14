@@ -4,6 +4,7 @@ import path from "node:path"
 import {
   FEEDBACK_CATEGORIES,
   FEEDBACK_IMAGE_MAX_BYTES,
+  FEEDBACK_IMAGE_MAX_COUNT,
   FEEDBACK_STATUSES,
   type FeedbackCategory,
   type FeedbackItem,
@@ -16,8 +17,10 @@ export {
   FEEDBACK_CATEGORIES,
   FEEDBACK_CATEGORY_LABELS,
   FEEDBACK_IMAGE_MAX_BYTES,
+  FEEDBACK_IMAGE_MAX_COUNT,
   FEEDBACK_STATUSES,
   type FeedbackCategory,
+  type FeedbackImage,
   type FeedbackItem,
   type FeedbackStatus,
 } from "./feedback-constants.ts"
@@ -78,10 +81,11 @@ function feedbackImageFilePath(
 
 export function feedbackImageAdminUrl(
   feedbackId: number,
+  imageId: number,
   createdAt?: number
 ): string {
   const v = createdAt ?? Date.now()
-  return `/api/admin/feedback/${feedbackId}/image?v=${v}`
+  return `/api/admin/feedback/${feedbackId}/image?imageId=${imageId}&v=${v}`
 }
 
 export function feedbackImageContentType(ext: FeedbackImageExt): string {
@@ -192,14 +196,51 @@ function getImageRow(feedbackId: number): ImageRow | null {
   return row ?? null
 }
 
-function mapRow(row: FeedbackRow, imageCreatedAt?: number | null): FeedbackItem {
+function getImageRowById(
+  feedbackId: number,
+  imageId: number
+): ImageRow | null {
+  const row = getDb()
+    .prepare(
+      `SELECT * FROM feedback_images WHERE feedback_id = ? AND id = ?`
+    )
+    .get(feedbackId, imageId) as ImageRow | undefined
+  return row ?? null
+}
+
+function getImageRows(feedbackId: number): ImageRow[] {
+  return getDb()
+    .prepare(
+      `SELECT * FROM feedback_images WHERE feedback_id = ? ORDER BY id ASC`
+    )
+    .all(feedbackId) as ImageRow[]
+}
+
+function listImageRows(feedbackIds: number[]): ImageRow[] {
+  if (feedbackIds.length === 0) return []
+  const placeholders = feedbackIds.map(() => "?").join(",")
+  return getDb()
+    .prepare(
+      `SELECT * FROM feedback_images WHERE feedback_id IN (${placeholders}) ORDER BY id ASC`
+    )
+    .all(...feedbackIds) as ImageRow[]
+}
+
+function countImages(feedbackId: number): number {
+  const row = getDb()
+    .prepare(
+      `SELECT COUNT(*) AS n FROM feedback_images WHERE feedback_id = ?`
+    )
+    .get(feedbackId) as { n: number }
+  return Number(row.n)
+}
+
+function mapRow(row: FeedbackRow, images: ImageRow[]): FeedbackItem {
   const category = parseCategory(row.category)
   const status = parseStatus(row.status)
   if (!category || !status) {
     throw new Error(`Invalid feedback row ${row.id}`)
   }
-  const createdAt = imageCreatedAt ?? null
-  const hasImage = createdAt != null
   return {
     id: row.id,
     username: row.username,
@@ -207,8 +248,10 @@ function mapRow(row: FeedbackRow, imageCreatedAt?: number | null): FeedbackItem 
     body: row.body,
     status,
     createdAt: row.created_at,
-    hasImage,
-    imageUrl: hasImage ? feedbackImageAdminUrl(row.id, createdAt) : null,
+    images: images.map((img) => ({
+      id: img.id,
+      url: feedbackImageAdminUrl(row.id, img.id, img.created_at),
+    })),
   }
 }
 
@@ -240,8 +283,10 @@ function addFeedbackImage(feedbackId: number, bytes: Buffer): void {
       "File must be PNG, JPEG, WebP, or GIF"
     )
   }
-  if (getImageRow(feedbackId)) {
-    throw new FeedbackImageValidationError("Only one screenshot per submission")
+  if (countImages(feedbackId) >= FEEDBACK_IMAGE_MAX_COUNT) {
+    throw new FeedbackImageValidationError(
+      `At most ${FEEDBACK_IMAGE_MAX_COUNT} screenshots per submission`
+    )
   }
 
   const now = Date.now()
@@ -273,7 +318,7 @@ export function createFeedback(input: {
   username: string | null
   category: FeedbackCategory
   body: string
-  imageBytes?: Buffer
+  imageBytes?: Buffer[]
 }): FeedbackItem {
   const now = Date.now()
   const result = getDb()
@@ -284,9 +329,11 @@ export function createFeedback(input: {
     .run(input.username, input.category, input.body, now)
   const id = Number(result.lastInsertRowid)
 
-  if (input.imageBytes) {
+  if (input.imageBytes?.length) {
     try {
-      addFeedbackImage(id, input.imageBytes)
+      for (const bytes of input.imageBytes) {
+        addFeedbackImage(id, bytes)
+      }
     } catch (error) {
       deleteFeedbackRow(id)
       throw error
@@ -303,22 +350,26 @@ export function getFeedbackById(id: number): FeedbackItem | null {
     .prepare(`SELECT * FROM feedback WHERE id = ?`)
     .get(id) as FeedbackRow | undefined
   if (!row) return null
-  const image = getImageRow(row.id)
-  return mapRow(row, image?.created_at)
+  return mapRow(row, getImageRows(row.id))
 }
 
 export function listFeedback(status: FeedbackStatus): FeedbackItem[] {
   const rows = getDb()
     .prepare(
-      `SELECT f.id, f.username, f.category, f.body, f.status, f.created_at,
-              i.created_at AS image_created_at
-       FROM feedback f
-       LEFT JOIN feedback_images i ON i.feedback_id = f.id
-       WHERE f.status = ?
-       ORDER BY f.created_at DESC, f.id DESC`
+      `SELECT id, username, category, body, status, created_at
+       FROM feedback
+       WHERE status = ?
+       ORDER BY created_at DESC, id DESC`
     )
-    .all(status) as Array<FeedbackRow & { image_created_at: number | null }>
-  return rows.map((row) => mapRow(row, row.image_created_at))
+    .all(status) as FeedbackRow[]
+  const images = listImageRows(rows.map((row) => row.id))
+  const byFeedback = new Map<number, ImageRow[]>()
+  for (const img of images) {
+    const list = byFeedback.get(img.feedback_id) ?? []
+    list.push(img)
+    byFeedback.set(img.feedback_id, list)
+  }
+  return rows.map((row) => mapRow(row, byFeedback.get(row.id) ?? []))
 }
 
 export function setFeedbackStatus(
@@ -334,9 +385,13 @@ export function setFeedbackStatus(
 }
 
 export function readFeedbackImageFile(
-  feedbackId: number
+  feedbackId: number,
+  imageId?: number
 ): { bytes: Buffer; contentType: string; createdAt: number } | null {
-  const row = getImageRow(feedbackId)
+  const row =
+    imageId != null
+      ? getImageRowById(feedbackId, imageId)
+      : getImageRow(feedbackId)
   if (!row) return null
   const ext = parseImageExt(row.ext)
   if (!ext) return null
