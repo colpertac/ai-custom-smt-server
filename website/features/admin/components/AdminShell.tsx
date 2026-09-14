@@ -11,6 +11,7 @@ import {
   navItemActive,
 } from "@/features/admin/admin-nav"
 import { useLaneAPending } from "@/features/admin/lane-a-pending"
+import { useOpenFeedbackPending } from "@/features/admin/open-feedback-pending"
 import { useOpenReportsPending } from "@/features/admin/open-reports-pending"
 import { api } from "@/lib/kyClient"
 import { cn } from "@/lib/utils"
@@ -18,13 +19,17 @@ import { cn } from "@/lib/utils"
 function navPendingDot(
   itemHref: string,
   laneAPending: boolean,
-  openReportsPending: boolean
+  openReportsPending: boolean,
+  openFeedbackPending: boolean
 ): { title: string } | null {
   if (itemHref === "/admin" && laneAPending) {
     return { title: "Unpublished changes — publish / restart needed" }
   }
   if (itemHref === "/admin/reports" && openReportsPending) {
     return { title: "Open player reports" }
+  }
+  if (itemHref === "/admin/feedback" && openFeedbackPending) {
+    return { title: "Open website feedback" }
   }
   return null
 }
@@ -42,6 +47,7 @@ export function AdminShell({
   const title = adminPageTitle(pathname)
   const laneA = useLaneAPending()
   const openReports = useOpenReportsPending()
+  const openFeedback = useOpenFeedbackPending()
   const [lobbyDown, setLobbyDown] = useState(false)
 
   useEffect(() => {
@@ -100,7 +106,8 @@ export function AdminShell({
                 const pendingDot = navPendingDot(
                   item.href,
                   laneA.pending,
-                  openReports.pending
+                  openReports.pending,
+                  openFeedback.pending
                 )
                 const navClass = cn(
                   "flex shrink-0 items-center gap-2 border-l-2 px-3 py-1.5 text-xs no-underline lg:w-full",
