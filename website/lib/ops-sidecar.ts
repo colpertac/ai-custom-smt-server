@@ -681,7 +681,7 @@ export async function publishOpsLaneC(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       confirm: options?.confirm ?? true,
-      includeWebsite: options?.includeWebsite ?? false,
+      includeWebsite: options?.includeWebsite ?? true,
     }),
   })
   if (status === 401) {

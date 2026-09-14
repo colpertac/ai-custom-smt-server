@@ -133,7 +133,6 @@ export function AdminOpsHealth() {
   const [rollbackOpen, setRollbackOpen] = useState(false)
   const [laneCOpen, setLaneCOpen] = useState(false)
   const [laneCBusy, setLaneCBusy] = useState(false)
-  const [laneCIncludeWebsite, setLaneCIncludeWebsite] = useState(false)
   const [retiringConflicts, setRetiringConflicts] = useState(false)
   const laneAPending = useLaneAPending()
   const showRetireConflicts =
@@ -474,7 +473,7 @@ export function AdminOpsHealth() {
       const response = await api.post("admin/ops/publish/lane-c", {
         json: {
           confirm: true,
-          includeWebsite: laneCIncludeWebsite,
+          includeWebsite: true,
         },
         timeout: 600_000,
       })
@@ -490,7 +489,7 @@ export function AdminOpsHealth() {
         : null
       setOk(
         [
-          json.message || "Game servers updated",
+          json.message || "Docker stack updated",
           services ? `(${services})` : null,
         ]
           .filter(Boolean)
@@ -498,11 +497,19 @@ export function AdminOpsHealth() {
       )
       await refresh()
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Update failed")
+      const msg = e instanceof Error ? e.message : "Update failed"
+      // Recreating website drops this page mid-request; ops may still finish.
+      if (/fetch|network|aborted|failed to fetch|load failed/i.test(msg)) {
+        setOk(
+          "Website restarted during the update (expected). Wait about a minute, then refresh this page."
+        )
+        return
+      }
+      setError(msg)
     } finally {
       setLaneCBusy(false)
     }
-  }, [laneCIncludeWebsite, refresh])
+  }, [refresh])
 
   useEffect(() => {
     void refresh()
@@ -866,15 +873,16 @@ export function AdminOpsHealth() {
           Software update
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Downloads new game server builds and restarts lobby, world, and
-          channel. Use this after a developer publishes a new image — not for
-          shops, config, or file uploads.
+          Pulls new Hub images and restarts game servers, this website, the
+          updater, and HTTPS proxy. Use this after a developer publishes
+          images — no SSH. Players disconnect. This page may blip; wait a
+          minute and refresh. The control sidecar is not updated here.
         </p>
         {!dockerBackend && controlOk ? (
           <p className="mt-2 text-xs text-muted-foreground">
-            This machine runs game servers directly (not Docker), so Update game
-            servers stays off here. Rebuild binaries with the usual build script
-            on this PC instead.
+            This machine runs game servers directly (not Docker), so Update
+            Docker stack stays off here. Rebuild binaries with the usual build
+            script on this PC instead.
           </p>
         ) : null}
         <div className="mt-2">
@@ -885,7 +893,7 @@ export function AdminOpsHealth() {
             disabled={busy || !controlOk || !dockerBackend}
             onClick={() => setLaneCOpen(true)}
           >
-            {laneCBusy ? "Updating…" : "Update game servers"}
+            {laneCBusy ? "Updating…" : "Update Docker stack"}
           </Button>
         </div>
       </div>
@@ -1076,23 +1084,14 @@ export function AdminOpsHealth() {
       <Dialog open={laneCOpen} onOpenChange={setLaneCOpen}>
         <DialogContent showCloseButton={!laneCBusy}>
           <DialogHeader>
-            <DialogTitle>Update game servers?</DialogTitle>
+            <DialogTitle>Update Docker stack?</DialogTitle>
             <DialogDescription>
-              Downloads the latest builds and recreates lobby, world, and
-              channel. Players disconnect. Only do this after a known-good
-              update was published — a bad build can leave the servers down
-              until someone fixes them.
+              Pulls the latest published images and rolls game servers, this
+              website, updater, and HTTPS proxy. Players disconnect. The page
+              may drop for a minute while the website restarts — refresh after
+              that. Only confirm after a known-good Hub publish.
             </DialogDescription>
           </DialogHeader>
-          <label className="mt-2 flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={laneCIncludeWebsite}
-              onChange={(e) => setLaneCIncludeWebsite(e.target.checked)}
-              disabled={laneCBusy}
-            />
-            Also update this website
-          </label>
           <DialogFooter>
             <Button
               type="button"

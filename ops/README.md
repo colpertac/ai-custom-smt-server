@@ -99,10 +99,13 @@ unpack. Kind `release`: `client/` → overlay, `server/BinaryData|Map|packages`
 **Content zip** panel (ingest kinds + Rehash overlay).
 
 **Lane C (Docker only):** `POST /publish/lane-c` with
-`{"confirm": true}` pulls and force-recreates `lobby`/`world`/`channel`
-(optional `includeWebsite: true`). Native backend returns
-`lane_c_docker_only`. Admin: **Pull & recreate images** (separate from
-content upload).
+`{"confirm": true}` pulls Hub images and `compose up -d --no-deps`
+for `lobby` / `world` / `channel` / `website` / `updater` (plus `caddy`
+when the `https` profile is on). Never pulls/recreates `ops`. Always
+ends with a full `compose up -d` heal so Created/Exited containers
+come back. `includeWebsite: false` skips website only. Native backend
+returns `lane_c_docker_only`. Admin: **Update Docker stack**. Host
+watchdog: `deploy/scripts/compose-heal.sh` every 5 minutes.
 
 | Env | Default | Notes |
 | --- | --- | --- |

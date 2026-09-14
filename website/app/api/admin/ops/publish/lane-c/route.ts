@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     return apiFail("Forbidden", 403, "FORBIDDEN")
   }
 
-  let includeWebsite = false
+  let includeWebsite = true
   let confirm = false
   try {
     const body = (await request.json()) as {
@@ -24,13 +24,15 @@ export async function POST(request: Request) {
       website?: boolean
     }
     confirm = body.confirm === true
-    includeWebsite = Boolean(body.includeWebsite || body.website)
+    if ("includeWebsite" in body || "website" in body) {
+      includeWebsite = Boolean(body.includeWebsite || body.website)
+    }
   } catch {
     /* empty */
   }
   if (!confirm) {
     return apiFail(
-      'Body must include {"confirm": true} — Lane C recreates game containers',
+      'Body must include {"confirm": true} — this recreates the Docker stack',
       400,
       "CONFIRM_REQUIRED"
     )

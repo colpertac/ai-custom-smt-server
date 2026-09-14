@@ -25,7 +25,9 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
     → merge into overlay CEventMessageData2.sbin + rehash
 
   Lane C (Docker only): POST /publish/lane-c {"confirm": true}
-    optional includeWebsite / website: also pull+recreate website
+    Pulls/recreates lobby, world, channel, website, updater, caddy
+    (--no-deps). Never pull/recreate ops (kills this process).
+    includeWebsite=false skips website only.
 
   python3 ops/sidecar.py
 """
@@ -2052,34 +2054,120 @@ def handle_publish_lane_a_config_rollback(handler: OpsHandler) -> tuple[int, byt
 
 LANE_C_SERVICES_COMP = ("lobby", "world", "channel")
 LANE_C_SERVICES_WEBSITE = ("website",)
+LANE_C_SERVICES_STACK = ("updater",)
+LANE_C_SERVICES_PULL_ONLY = ("ops",)
+LANE_C_SERVICES_CADDY = ("caddy",)
+LANE_C_ALLOWED = (
+    set(LANE_C_SERVICES_COMP)
+    | set(LANE_C_SERVICES_WEBSITE)
+    | set(LANE_C_SERVICES_STACK)
+    | set(LANE_C_SERVICES_PULL_ONLY)
+    | set(LANE_C_SERVICES_CADDY)
+)
+
+
+def _compose_profiles() -> set[str]:
+    raw = env("COMPOSE_PROFILES")
+    if not raw:
+        env_file = compose_dir() / ".env"
+        if env_file.is_file():
+            try:
+                for line in env_file.read_text(encoding="utf-8").splitlines():
+                    stripped = line.strip()
+                    if stripped.startswith("COMPOSE_PROFILES="):
+                        raw = stripped.split("=", 1)[1].strip().strip("\"'")
+                        break
+            except OSError:
+                raw = ""
+    return {p.strip() for p in raw.split(",") if p.strip()}
+
+
+def _https_profile_on() -> bool:
+    return "https" in _compose_profiles()
+
+
+def _lane_c_default_services(*, include_website: bool) -> tuple[list[str], list[str]]:
+    """Return (pull, recreate). Never recreate ops — that is this process."""
+    recreate = list(LANE_C_SERVICES_COMP) + list(LANE_C_SERVICES_STACK)
+    if include_website:
+        recreate.extend(LANE_C_SERVICES_WEBSITE)
+    if _https_profile_on():
+        recreate.extend(LANE_C_SERVICES_CADDY)
+    # Never pull ops here: a new ops image makes `compose up website`
+    # recreate this sidecar and abort the update (Created leftovers + 502).
+    pull = list(recreate)
+    return pull, recreate
+
+
+def _compose_heal() -> tuple[bool, str, str]:
+    """Start any Created/Exited stack containers without recreating running ones."""
+    return run_compose(
+        ["up", "-d"],
+        timeout=300,
+        ok_message="stack heal: compose up -d",
+    )
 
 
 def publish_lane_c_docker(
-    *, include_website: bool
+    *,
+    include_website: bool,
+    services: list[str] | None = None,
 ) -> tuple[bool, str, str, list[str]]:
-    """Pull images and force-recreate game containers (optional website)."""
-    services = list(LANE_C_SERVICES_COMP)
-    if include_website:
-        services.extend(LANE_C_SERVICES_WEBSITE)
+    """Pull Hub images and roll services (never ops). Always heal at the end."""
+    if services:
+        pull = [s for s in dict.fromkeys(services) if s not in LANE_C_SERVICES_PULL_ONLY]
+        recreate = list(pull)
+    else:
+        pull, recreate = _lane_c_default_services(include_website=include_website)
 
-    ok, code, detail = run_compose(
-        ["pull", *services],
-        timeout=600,
-        ok_message=f"pulled {', '.join(services)}",
-    )
-    if not ok:
-        return False, code, detail, services
+    details: list[str] = []
+    failed: tuple[str, str] | None = None
 
-    # Recreate so new image layers + EXTERNAL_IP entrypoint patch apply.
-    ok, code, detail2 = run_compose(
-        ["up", "-d", "--force-recreate", "--remove-orphans", *services],
-        timeout=300,
-        ok_message=f"recreated {', '.join(services)}",
-    )
-    combined = (detail or "") + (("\n" + detail2) if detail2 else "")
-    if not ok:
-        return False, code, combined.strip(), services
-    return True, "ok", combined.strip() or f"lane C: {', '.join(services)}", services
+    if pull:
+        ok, code, detail = run_compose(
+            ["pull", *pull],
+            timeout=600,
+            ok_message=f"pulled {', '.join(pull)}",
+        )
+        if detail:
+            details.append(detail)
+        if not ok:
+            failed = (code, "\n".join(details).strip())
+
+    # --no-deps: never recreate ops as a dependency of website/caddy.
+    # No --force-recreate: only bounce services whose image actually changed.
+    # Website then caddy so HTTPS stays up until the new site is starting.
+    if failed is None:
+        first = [s for s in recreate if s not in {"website", "caddy"}]
+        then_web = [s for s in recreate if s == "website"]
+        then_caddy = [s for s in recreate if s == "caddy"]
+        for group, timeout, label in (
+            (first, 300, "updated"),
+            (then_web, 180, "updated"),
+            (then_caddy, 120, "updated"),
+        ):
+            if not group:
+                continue
+            ok, code, detail2 = run_compose(
+                ["up", "-d", "--no-deps", *group],
+                timeout=timeout,
+                ok_message=f"{label} {', '.join(group)}",
+            )
+            if detail2:
+                details.append(detail2)
+            if not ok:
+                failed = (code, "\n".join(details).strip())
+                break
+
+    hok, hcode, hdetail = _compose_heal()
+    if hdetail:
+        details.append(hdetail)
+    combined = "\n".join(details).strip()
+    if failed is not None:
+        return False, failed[0], combined or failed[1], recreate
+    if not hok:
+        return False, hcode, combined, recreate
+    return True, "ok", combined or f"lane C: {', '.join(recreate)}", recreate
 
 
 def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
@@ -2116,71 +2204,25 @@ def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
             400,
         )
 
-    include_website = bool(body.get("includeWebsite") or body.get("website"))
-    # Optional explicit services allowlist (subset of known)
+    if "includeWebsite" in body or "website" in body:
+        include_website = bool(body.get("includeWebsite") or body.get("website"))
+    else:
+        include_website = True
+
+    picked: list[str] | None = None
     raw_services = body.get("services")
     if isinstance(raw_services, list) and raw_services:
-        allowed = set(LANE_C_SERVICES_COMP) | set(LANE_C_SERVICES_WEBSITE)
-        picked = [str(s).strip() for s in raw_services if str(s).strip() in allowed]
+        picked = [str(s).strip() for s in raw_services if str(s).strip() in LANE_C_ALLOWED]
         if not picked:
             return json_bytes(
                 {"ok": False, "error": "no_valid_services", "lane": "C"},
                 400,
             )
-        # If caller listed services explicitly, use that set via include flags
         include_website = "website" in picked
-        # Always pull/recreate at least the game trio if any game service listed
-        only_website = picked == ["website"]
-        if only_website:
-            ok, code, detail = run_compose(
-                ["pull", "website"],
-                timeout=600,
-                ok_message="pulled website",
-            )
-            if not ok:
-                return json_bytes(
-                    {
-                        "ok": False,
-                        "error": code,
-                        "lane": "C",
-                        "backend": backend,
-                        "detail": detail,
-                        "services": ["website"],
-                    },
-                    502,
-                )
-            ok, code, detail2 = run_compose(
-                ["up", "-d", "--force-recreate", "website"],
-                timeout=180,
-                ok_message="recreated website",
-            )
-            if not ok:
-                return json_bytes(
-                    {
-                        "ok": False,
-                        "error": code,
-                        "lane": "C",
-                        "backend": backend,
-                        "detail": detail2,
-                        "services": ["website"],
-                    },
-                    502,
-                )
-            return json_bytes(
-                {
-                    "ok": True,
-                    "lane": "C",
-                    "backend": backend,
-                    "message": "Website image pulled and recreated",
-                    "services": ["website"],
-                    "detail": ((detail or "") + "\n" + (detail2 or "")).strip(),
-                    **freshness_public(runtime_dir()),
-                },
-                200,
-            )
 
     ok, code, detail, services = publish_lane_c_docker(
-        include_website=include_website
+        include_website=include_website,
+        services=picked,
     )
     if not ok:
         return json_bytes(
@@ -2195,7 +2237,8 @@ def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:
             502,
         )
 
-    mark_channel_restart(runtime_dir())
+    if any(s in {"channel", "lobby", "world"} for s in services):
+        mark_channel_restart(runtime_dir())
     message = (
         f"Pulled and recreated {', '.join(services)} — players should log back in"
     )
