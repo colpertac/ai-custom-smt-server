@@ -206,7 +206,8 @@ services:
       # Lobby admin used for store checkout grants + in-game announces (level ≥1000).
       COMP_ANNOUNCE_USER: ${COMP_ANNOUNCE_USER:-admin}
       COMP_ANNOUNCE_PASSWORD: ${COMP_ANNOUNCE_PASSWORD:-admin123}
-      # Read updater overlay for optional CEventMessage zip download (Publish uses ops).
+      # Read updater overlay + write overlay/comp_client.xml (Game files).
+      # Must be read-write — :ro makes mkdir /updater/overlay fail as uid 1001.
       OPS_UPDATER_ROOT: /updater
     volumes:
       # Website publishes Lane A releases/shops/packages/config + casino SWFs.
@@ -214,7 +215,7 @@ services:
       - ${WEBSITE_DATA:-./website-data}:/website-data
       # Armory portrait cache. Website entrypoint chmod's this for uid 1001.
       - ${WEBSITE_DATA:-./website-data}/armory/portraits:/app/public/armory/portraits
-      - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater:ro
+      - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater
     ports:
       - "${WEBSITE_PORT:-3000}:3000"
     depends_on:

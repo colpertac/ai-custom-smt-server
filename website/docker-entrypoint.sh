@@ -16,6 +16,9 @@ if [ -d "$data" ]; then
   ensure_writable "$data/armory/portraits"
   ensure_writable "$data/portrait-captures"
 fi
+if [ -d /updater ]; then
+  ensure_writable /updater/overlay
+fi
 
 if [ "$(id -u)" = "0" ]; then
   exec setpriv --reuid=1001 --regid=1001 --init-groups -- "$@"

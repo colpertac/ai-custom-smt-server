@@ -29,7 +29,15 @@ export function updaterRoot(): string {
   const custom =
     process.env.OPS_UPDATER_ROOT?.trim() || process.env.UPDATER_ROOT?.trim()
   if (custom) return path.resolve(custom)
-  return path.join(REPO_ROOT, "updater")
+  const fallback = path.join(REPO_ROOT, "updater")
+  // Standalone image: website/lib/../../ is `/`, so this becomes `/updater`.
+  // That path is only valid when compose bind-mounts it (and sets the env).
+  if (fallback === path.resolve("/updater")) {
+    throw new Error(
+      "OPS_UPDATER_ROOT is not set; mount the updater tree at /updater in compose"
+    )
+  }
+  return fallback
 }
 
 export function overlayShieldPath(rel: string): string {
