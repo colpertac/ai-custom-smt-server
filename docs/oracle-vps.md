@@ -365,6 +365,11 @@ Cron already runs that daily. Archives: `backups/smt-runtime-*.tar.gz` +
 `.sha256`. First backup verified 2026-09-04 (sha256 OK; MANIFEST + SQLite
 extract drill).
 
+> **Note (historical):** That cron lived on the Oracle box when the **full stack**
+> ran there. Prefer **Admin → Backups** + rclone off-box on whatever host holds
+> `data/` and `website-data` today — see [backup-restore.md](backup-restore.md).
+> Do not treat a proxy-only VM as the data plane.
+
 Full data restore (keeps current images; **overwrites** `data/` after renaming
 it to `data.bak-*`):
 

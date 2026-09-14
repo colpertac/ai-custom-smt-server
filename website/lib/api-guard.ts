@@ -35,3 +35,12 @@ export async function guardApiMutation(
 
   return null
 }
+
+/** Same-origin only — no rate limit (ops busy-lock serializes long jobs). */
+export async function guardApiOrigin() {
+  const origin = await assertSameOrigin()
+  if (!origin.ok) {
+    return apiFail(origin.error, 403, "ORIGIN")
+  }
+  return null
+}

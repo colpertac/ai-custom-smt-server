@@ -32,7 +32,16 @@ def _new_id() -> str:
 def busy() -> bool:
     with _LOCK:
         return any(
-            j.get("phase") in {"receiving", "uploaded", "unpacking", "rehashing"}
+            j.get("phase")
+            in {
+                "receiving",
+                "uploaded",
+                "unpacking",
+                "rehashing",
+                "queued",
+                "running",
+                "syncing",
+            }
             for j in _JOBS.values()
         )
 

@@ -176,7 +176,12 @@ export function AdminShell({
                     ) : null}
                   </span>
                 )
-                if (restrictNav && item.href !== "/admin") {
+                if (
+                  restrictNav &&
+                  item.href !== "/admin" &&
+                  item.href !== "/admin/backups" &&
+                  item.href !== "/admin/game-files"
+                ) {
                   return (
                     <span
                       key={item.href}
@@ -231,8 +236,8 @@ export function AdminShell({
             className="border-b border-amber-500/40 bg-amber-950/40 px-4 py-2 text-xs text-amber-100"
           >
             Login service (lobby) is down. Use Overview to Start servers
-            {offlineOps ? ", then sign in again" : ""}. Other admin tools stay
-            disabled until lobby is up.
+            {offlineOps ? ", then sign in again" : ""}. Backups and Game files
+            still work; other admin tools stay disabled until lobby is up.
           </div>
         ) : null}
         <div

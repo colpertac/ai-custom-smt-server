@@ -21,6 +21,7 @@ import {
   ShoppingCart,
   Ticket,
   Users,
+  HardDrive,
 } from "lucide-react"
 
 export type AdminNavItem = {
@@ -115,6 +116,12 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         match: "prefix",
       },
       { href: "/admin/sql", label: "SQL", icon: Database, match: "prefix" },
+      {
+        href: "/admin/backups",
+        label: "Backups",
+        icon: HardDrive,
+        match: "prefix",
+      },
     ],
   },
 ]
@@ -151,6 +158,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/casino")) return "Casino"
   if (pathname.startsWith("/admin/studio")) return "Studio"
   if (pathname.startsWith("/admin/sql")) return "SQL"
+  if (pathname.startsWith("/admin/backups")) return "Backups"
   return "Admin"
 }
 

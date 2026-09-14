@@ -1,95 +1,113 @@
 # Backup, restore, upgrade, and rollback
 
-Portable runtime root: `comp_hack/runtime/` or `~/docker/smt/data/`.
 Scripts: [`deploy/scripts/backup.sh`](../deploy/scripts/backup.sh),
-[`deploy/scripts/restore.sh`](../deploy/scripts/restore.sh).
+[`deploy/scripts/restore.sh`](../deploy/scripts/restore.sh),
+[`deploy/scripts/backup-sync.sh`](../deploy/scripts/backup-sync.sh).
 
 Cold backup = brief downtime (COMP stopped; MariaDB stopped if present) so SQLite
 files and the MariaDB datadir are consistent.
+
+**Preferred path:** Admin → **Backups** (ops sidecar runs the same scripts). That
+UI can schedule backups and sync archives off-box with rclone so a destroyed VM
+is still recoverable.
 
 ---
 
 ## What is included
 
-| Path | Backed up |
-| --- | --- |
-| `data/config/` | yes (skips `.runtime-*.xml`; regenerated on start) |
-| `data/database/` | yes (SQLite) |
-| `data/mariadb/` | if lobby config is `MARIADB`, or `--include-mariadb` |
-| `data/datastore/` | yes |
-| `data/webroot/` | yes |
-| `data/logs/` | only with `--include-logs` |
-| compose `.env` | yes (as `env` inside the archive) |
+| Path | `standard` (default) | `full` |
+| --- | --- | --- |
+| `data/config/` | yes (skips `.runtime-*.xml`) | yes |
+| `data/database/` | yes (SQLite) | yes |
+| `data/mariadb/` | if lobby is `MARIADB` | same |
+| `website-data/` (`web.sqlite`, `comp-reset-secret`, `server-content/`) | yes | yes |
+| `data/datastore/` / `webroot/` | no | yes |
+| `data/logs/` | only `--include-logs` | only `--include-logs` |
+| compose `.env` | yes (as `env` in the archive) | yes |
 
 Archive name: `backups/smt-runtime-YYYYMMDD-HHMMSS.tar.gz` (+ `.sha256`).
 
-MariaDB files are usually root-owned on the host; the scripts copy them through a
-short-lived `alpine` container so backup/restore work without `sudo`.
+Portrait caches under `website-data` are skipped (regenerable).
 
 ---
 
-## Backup
+## Backup (CLI)
 
-From the homelab folder (or pass paths explicitly):
-
-```bash
-cd ~/docker/smt
-/home/cat/repos/smt/ai_custom_smt_server/deploy/scripts/backup.sh \
-  --data ./data --compose .
-```
-
-Or from `deploy/` after seeding `./data`:
+On the compose host (typical VPS install under `/opt/smt`):
 
 ```bash
-cd /home/cat/repos/smt/ai_custom_smt_server/deploy
-./scripts/backup.sh --data ./data --compose .
+cd /opt/smt   # or your install prefix
+./scripts/backup.sh --data ./data --compose . --mode standard
+./scripts/backup.sh --mode full    # also datastore / BinaryData / webroot
 ```
 
-Useful flags:
-
-```bash
-./scripts/backup.sh --include-logs
-./scripts/backup.sh --out /mnt/backups/smt
-```
+Useful flags: `--out DIR`, `--website-data DIR`, `--include-logs`,
+`--skip-website`.
 
 Stack is stopped, archived, then started again automatically.
+
+### Off-box sync (rclone)
+
+```bash
+# Once: create a remote (Google Drive, B2, S3, …)
+rclone config --config ./backups/rclone.conf
+
+./scripts/backup-sync.sh \
+  --out ./backups \
+  --remote gdrive \
+  --path smt-backups \
+  --rclone-config ./backups/rclone.conf \
+  --keep-local 7 \
+  --keep-remote 14
+```
+
+Or configure the same remote/path/schedule in **Admin → Backups** (ops stores
+`backups/rclone.conf` + `backups/schedule.json`).
 
 ---
 
 ## Restore
 
 ```bash
-cd ~/docker/smt
-/home/cat/repos/smt/ai_custom_smt_server/deploy/scripts/restore.sh \
+cd /opt/smt
+./scripts/restore.sh \
   --archive ./backups/smt-runtime-YYYYMMDD-HHMMSS.tar.gz \
   --data ./data --compose . --yes
+# optional: --restore-env
 ```
 
-- Current `data/` is renamed to `data.bak-YYYYMMDD-HHMMSS`.
-- Add `--restore-env` to overwrite `.env` from the archive.
+- Current `data/` (and `website-data/` if present in the archive) are renamed to
+  `*.bak-YYYYMMDD-HHMMSS`.
+- `website-data` is `chown`'d to uid **1001** after restore (Docker only; native keeps host ownership).
 - If restored configs use MariaDB, the script starts with `--profile mariadb`.
+- With `OPS_BACKEND=native`, restore uses `comp_hack` stop/start scripts instead of `docker compose`.
 
 Verify:
 
 ```bash
 docker compose ps
-docker compose logs --tail=30 lobby world channel
-# Expect (healthy) and "Server ready!"
+docker compose logs --tail=30 lobby world channel website
 ```
 
-Remove the `.bak-*` tree only after you confirm login works.
+### New VM (disaster)
+
+1. New VPS: run `install.sh --ip …` (and `--domain` if you use HTTPS).
+2. Pull an archive: `rclone copy gdrive:smt-backups ./backups` **or** Admin →
+   Import archive.
+3. `./scripts/restore.sh --archive … --yes --restore-env`
+4. `docker compose up -d` (add `--profile https` / `mariadb` if used).
+5. Smoke: website, updater hashlist, lobby/channel TCP, one account login.
+
+Local `./backups` on a dead VM are gone — only an off-box rclone copy (or a
+downloaded zip you kept) recovers player DBs.
 
 ---
 
 ## SQLite vs MariaDB
 
-Same commands for both. The archive stores whichever backend directories exist:
-
-- SQLite → `data/database/*.sqlite3`
-- MariaDB → `data/mariadb/` (full datadir; restore on the same major MariaDB image)
-
+Same commands for both. The archive stores whichever backend directories exist.
 Do not mix: restoring a MariaDB datadir while `data/config` still says `SQLITE3`
-(or the reverse) will fail. Restore keeps config + DB together from one archive.
+(or the reverse) will fail.
 
 ---
 
@@ -98,40 +116,21 @@ Do not mix: restoring a MariaDB datadir while `data/config` still says `SQLITE3`
 Data stays on the host; only the image changes.
 
 ```bash
-cd ~/docker/smt
+cd /opt/smt
 docker compose pull
 docker compose up -d
-# MariaDB: docker compose --profile mariadb pull && docker compose --profile mariadb up -d
 ```
 
-Optional dated pin:
-
-```bash
-COMP_IMAGE=colpertac/smt-comp:20260722 docker compose up -d
-```
-
-Take a backup before upgrading if you care about rollback of **data** (config /
-DB / datastore), not only the image tag.
+Take a backup before upgrading if you care about rollback of **data**.
 
 ---
 
 ## Rollback
 
-**Image rollback** (keep current data):
+**Image rollback** (keep current data): pin previous Hub tags in `.env`, then
+`docker compose up -d`.
 
-```bash
-cd ~/docker/smt
-COMP_IMAGE=colpertac/smt-comp:YYYYMMDD docker compose up -d
-```
-
-**Data rollback** (keep current image):
-
-```bash
-./scripts/restore.sh --archive ./backups/smt-runtime-….tar.gz --data ./data --compose . --yes
-```
-
-**Both:** restore archive, then set `COMP_IMAGE` to the tag recorded in the
-archive `MANIFEST.txt` (view with `tar -xOf archive.tar.gz ./MANIFEST.txt`).
+**Data rollback:** `./scripts/restore.sh --archive … --yes` (or Admin → Restore).
 
 ---
 
@@ -139,13 +138,8 @@ archive `MANIFEST.txt` (view with `tar -xOf archive.tar.gz ./MANIFEST.txt`).
 
 | When | Action |
 | --- | --- |
-| Before image upgrade | `backup.sh` |
-| Before MariaDB ↔ SQLite switch | `backup.sh` |
-| Daily / weekly on Oracle | cron `backup.sh --out /path` + off-box copy |
-| After successful restore test | delete old `data.bak-*` and aging archives |
+| Before image upgrade | Backup now (standard or full) |
+| Daily on a public VM | Admin schedule + rclone sync |
+| After successful restore test | delete old `*.bak-*` and aging archives |
 
-Off-box copy example:
-
-```bash
-rsync -a ~/docker/smt/backups/ user@backup-host:smt-backups/
-```
+Host crontab is optional; Admin → Backups can schedule inside the ops container.

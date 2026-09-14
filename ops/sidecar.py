@@ -37,6 +37,7 @@ from __future__ import annotations
 import json
 import os
 import hmac
+import shutil
 import subprocess
 import sys
 import threading
@@ -62,6 +63,7 @@ from freshness import (
     mark_overlay_change,
     mark_overlay_rehash,
 )
+import backup_ops
 import ingest_jobs
 from encrypt_tools import run_comp_encrypt
 from rehash import run_comp_rehash
@@ -306,6 +308,7 @@ def run_compose(
         run_env.setdefault("COMP_ENTRYPOINT", str(host / "entrypoint.sh"))
         run_env.setdefault("COMP_RUNTIME", str(host / "data"))
         run_env.setdefault("WEBSITE_DATA", str(host / "website-data"))
+        run_env.setdefault("SMT_BACKUPS", str(host / "backups"))
         if not run_env.get("UPDATER_ROOT"):
             run_env["UPDATER_ROOT"] = str(host / "updater")
     try:
@@ -2291,8 +2294,323 @@ def handle_updater_site_publish(handler: OpsHandler) -> tuple[int, bytes, str]:
     )
 
 
+def handle_backup_list(_handler: OpsHandler) -> tuple[int, bytes, str]:
+    archives = backup_ops.list_archives()
+    schedule = backup_ops.load_schedule()
+    return json_bytes(
+        {
+            "ok": True,
+            "archives": archives,
+            "schedule": schedule,
+            "backupsDir": str(backup_ops.backups_dir()),
+        },
+        200,
+    )
+
+
+def handle_backup_run(handler: OpsHandler) -> tuple[int, bytes, str]:
+    if ingest_jobs.busy():
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "busy",
+                "detail": "another backup/ingest job is running",
+            },
+            409,
+        )
+    body = _read_json_body(handler)
+    mode = str(body.get("mode") or "standard").strip().lower()
+    if mode not in {"standard", "full"}:
+        return json_bytes({"ok": False, "error": "bad_mode"}, 400)
+    sync = body.get("sync")
+    if sync is None:
+        sched = backup_ops.load_schedule()
+        sync = bool(sched.get("remote")) and backup_ops.rclone_config_path().is_file()
+    else:
+        sync = bool(sync)
+    job_id = ingest_jobs.create_job(kind="backup", mode=mode, bytes_expected=0)
+    ingest_jobs.set_phase(job_id, "queued", msg=f"Backup queued ({mode})")
+    threading.Thread(
+        target=backup_ops.run_backup_job,
+        kwargs={
+            "job_id": job_id,
+            "mode": mode,
+            "sync": sync,
+            "runtime": runtime_dir(),
+            "compose": compose_dir(),
+        },
+        daemon=True,
+        name=f"backup-{job_id}",
+    ).start()
+    return json_bytes(
+        {
+            "ok": True,
+            "jobId": job_id,
+            "message": f"Backup started ({mode})",
+            "mode": mode,
+            "sync": sync,
+        },
+        202,
+    )
+
+
+def handle_backup_job(handler: OpsHandler) -> tuple[int, bytes, str]:
+    return handle_ingest_job(handler)
+
+
+def handle_backup_archive(handler: OpsHandler) -> tuple[int, bytes, str] | None:
+    """Stream one archive. Returns None when the response was already written."""
+    qs = parse_qs(urlparse(handler.path).query)
+    name = (qs.get("name") or [""])[0].strip()
+    safe = backup_ops.safe_archive_name(name)
+    if not safe:
+        return json_bytes({"ok": False, "error": "bad_name"}, 400)
+    path = backup_ops.backups_dir() / safe
+    if not path.is_file():
+        return json_bytes({"ok": False, "error": "not_found"}, 404)
+    try:
+        size = path.stat().st_size
+        handler.send_response(200)
+        handler.send_header("Content-Type", "application/gzip")
+        handler.send_header("Content-Length", str(size))
+        handler.send_header(
+            "Content-Disposition", f'attachment; filename="{safe}"'
+        )
+        handler.send_header("Cache-Control", "no-store")
+        handler.end_headers()
+        with path.open("rb") as fh:
+            shutil.copyfileobj(fh, handler.wfile, length=1024 * 1024)
+    except OSError as e:
+        return json_bytes({"ok": False, "error": "read_failed", "detail": str(e)}, 502)
+    return None
+
+
+def handle_backup_import(handler: OpsHandler) -> tuple[int, bytes, str]:
+    qs = parse_qs(urlparse(handler.path).query)
+    name = (qs.get("name") or [""])[0].strip()
+    if not name:
+        name = (handler.headers.get("X-Ops-Archive-Name") or "").strip()
+    try:
+        length = int(handler.headers.get("Content-Length") or "0")
+    except ValueError:
+        length = 0
+    ok, err, saved = backup_ops.import_archive_stream(
+        handler.rfile, length=length, filename=name
+    )
+    if not ok:
+        status = 400
+        if err == "bad_size":
+            status = 413
+        return json_bytes({"ok": False, "error": err}, status)
+    return json_bytes(
+        {"ok": True, "name": saved, "message": f"Imported {saved}"},
+        200,
+    )
+
+
+def handle_backup_delete(handler: OpsHandler) -> tuple[int, bytes, str]:
+    body = _read_json_body(handler)
+    name = str(body.get("name") or "").strip()
+    if body.get("confirm") is not True:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "confirm_required",
+                "hint": 'POST body must include {"confirm": true, "name": "smt-runtime-….tar.gz"}',
+            },
+            400,
+        )
+    ok, detail = backup_ops.delete_archive(name)
+    if not ok:
+        status = 404 if detail == "not_found" else 400
+        return json_bytes({"ok": False, "error": detail}, status)
+    return json_bytes(
+        {"ok": True, "name": detail, "message": f"Deleted {detail}"},
+        200,
+    )
+
+
+def handle_backup_restore(handler: OpsHandler) -> tuple[int, bytes, str]:
+    if ingest_jobs.busy():
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "busy",
+                "detail": "another backup/ingest job is running",
+            },
+            409,
+        )
+    body = _read_json_body(handler)
+    if body.get("confirm") is not True:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "confirm_required",
+                "hint": 'POST body must include {"confirm": true, "name": "smt-runtime-….tar.gz"}',
+            },
+            400,
+        )
+    name = str(body.get("name") or "").strip()
+    safe = backup_ops.safe_archive_name(name)
+    if not safe:
+        return json_bytes({"ok": False, "error": "bad_name"}, 400)
+    restore_env = bool(body.get("restoreEnv") or body.get("restore_env"))
+    job_id = ingest_jobs.create_job(kind="restore", mode="restore", bytes_expected=0)
+    ingest_jobs.set_phase(job_id, "queued", msg=f"Restore queued ({safe})")
+    threading.Thread(
+        target=backup_ops.run_restore_job,
+        kwargs={
+            "job_id": job_id,
+            "name": safe,
+            "restore_env": restore_env,
+            "runtime": runtime_dir(),
+            "compose": compose_dir(),
+        },
+        daemon=True,
+        name=f"restore-{job_id}",
+    ).start()
+    return json_bytes(
+        {
+            "ok": True,
+            "jobId": job_id,
+            "message": f"Restore started ({safe})",
+            "name": safe,
+        },
+        202,
+    )
+
+
+def handle_backup_remote_get(_handler: OpsHandler) -> tuple[int, bytes, str]:
+    return json_bytes({"ok": True, "schedule": backup_ops.load_schedule()}, 200)
+
+
+def handle_backup_remote_put(handler: OpsHandler) -> tuple[int, bytes, str]:
+    body = _read_json_body(handler, max_bytes=256_000)
+    conf_text: str | None = None
+    if "rcloneConfig" in body and body["rcloneConfig"] is not None:
+        text = str(body["rcloneConfig"])
+        if len(text) > 200_000:
+            return json_bytes({"ok": False, "error": "config_too_large"}, 413)
+        if text.strip():
+            backup_ops.write_rclone_config(text)
+            conf_text = text
+        elif backup_ops.rclone_config_path().is_file():
+            backup_ops.rclone_config_path().unlink()
+    patch = {
+        k: body[k]
+        for k in (
+            "enabled",
+            "mode",
+            "intervalHours",
+            "remote",
+            "path",
+            "keepLocal",
+            "keepRemote",
+        )
+        if k in body
+    }
+    # Auto-fill remote from [section] headers when the field was left blank.
+    explicit = str(patch.get("remote") or "").strip()
+    inferred = backup_ops.infer_remote_name(explicit, conf_text)
+    if inferred and not explicit:
+        patch["remote"] = inferred
+    elif explicit.endswith(":"):
+        patch["remote"] = explicit[:-1].strip()
+    schedule = backup_ops.save_schedule(patch) if patch else backup_ops.load_schedule()
+    remotes = backup_ops.parse_rclone_remotes()
+    msg = "Backup remote settings saved"
+    if inferred and not explicit:
+        msg = f"Saved — remote auto-set to {inferred}"
+    elif not str(schedule.get("remote") or "").strip() and len(remotes) > 1:
+        msg = (
+            "Saved config, but set rclone remote name to one of: "
+            + ", ".join(remotes)
+        )
+    return json_bytes(
+        {
+            "ok": True,
+            "schedule": schedule,
+            "rcloneRemotes": remotes,
+            "message": msg,
+        },
+        200,
+    )
+
+
+def handle_backup_remote_test(_handler: OpsHandler) -> tuple[int, bytes, str]:
+    ok, detail = backup_ops.test_remote()
+    if not ok:
+        return json_bytes({"ok": False, "error": "rclone_failed", "detail": detail}, 502)
+    return json_bytes({"ok": True, "message": detail, "detail": detail}, 200)
+
+
+def handle_backup_sync(handler: OpsHandler) -> tuple[int, bytes, str]:
+    """Push newest (or named) local archive to rclone — no cold backup."""
+    if ingest_jobs.busy():
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "busy",
+                "detail": "another backup/ingest job is running",
+            },
+            409,
+        )
+    body = _read_json_body(handler)
+    name = str(body.get("name") or "").strip() or None
+    if name and not backup_ops.safe_archive_name(name):
+        return json_bytes({"ok": False, "error": "bad_name"}, 400)
+    if name and not (backup_ops.backups_dir() / name).is_file():
+        return json_bytes({"ok": False, "error": "not_found"}, 404)
+    sched = backup_ops.load_schedule()
+    if not backup_ops.rclone_config_path().is_file():
+        return json_bytes(
+            {"ok": False, "error": "rclone_missing", "detail": "rclone.conf missing"},
+            400,
+        )
+    if not backup_ops.infer_remote_name(str(sched.get("remote") or "")):
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "remote_missing",
+                "detail": "rclone remote name not set",
+            },
+            400,
+        )
+    archives = backup_ops.list_archives()
+    if not name and not archives:
+        return json_bytes(
+            {
+                "ok": False,
+                "error": "no_archives",
+                "detail": "No local archives to sync — Backup now first",
+            },
+            400,
+        )
+    job_id = ingest_jobs.create_job(kind="sync", mode="rclone", bytes_expected=0)
+    ingest_jobs.set_phase(
+        job_id,
+        "queued",
+        msg=f"rclone sync queued ({name or 'newest'})",
+    )
+    threading.Thread(
+        target=backup_ops.run_sync_job,
+        kwargs={"job_id": job_id, "archive_name": name},
+        daemon=True,
+        name=f"sync-{job_id}",
+    ).start()
+    return json_bytes(
+        {
+            "ok": True,
+            "jobId": job_id,
+            "message": f"rclone sync started ({name or 'newest archive'})",
+            "name": name,
+        },
+        202,
+    )
+
+
 # (METHOD, path) → handler
-ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]] = {
+ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str] | None]] = {
     ("GET", "/health"): handle_health,
     ("GET", "/metrics"): handle_metrics,
     ("GET", "/logs"): handle_service_logs,
@@ -2316,6 +2634,17 @@ ALLOWED: dict[tuple[str, str], Callable[["OpsHandler"], tuple[int, bytes, str]]]
     ("POST", "/tools/webaccess-encrypt"): handle_tools_webaccess_encrypt,
     ("POST", "/updater/site/publish"): handle_updater_site_publish,
     ("POST", "/client/ceventmessage/upsert"): handle_client_ceventmessage_upsert,
+    ("GET", "/backup/list"): handle_backup_list,
+    ("POST", "/backup/run"): handle_backup_run,
+    ("GET", "/backup/job"): handle_backup_job,
+    ("GET", "/backup/archive"): handle_backup_archive,
+    ("POST", "/backup/import"): handle_backup_import,
+    ("POST", "/backup/delete"): handle_backup_delete,
+    ("POST", "/backup/restore"): handle_backup_restore,
+    ("GET", "/backup/remote"): handle_backup_remote_get,
+    ("PUT", "/backup/remote"): handle_backup_remote_put,
+    ("POST", "/backup/remote/test"): handle_backup_remote_test,
+    ("POST", "/backup/sync"): handle_backup_sync,
 }
 
 
@@ -2383,7 +2712,21 @@ class OpsHandler(BaseHTTPRequestHandler):
             self._send(status, body, ctype)
             return
 
-        status, body, ctype = handler(self)
+        result = handler(self)
+        if result is None:
+            audit(
+                {
+                    "peer": peer,
+                    "actor": actor,
+                    "method": method,
+                    "path": path,
+                    "status": 200,
+                    "ok": True,
+                    "reason": "streamed",
+                }
+            )
+            return
+        status, body, ctype = result
         audit(
             {
                 "peer": peer,
@@ -2429,6 +2772,7 @@ def main() -> None:
         name="seed-server-datastore",
         daemon=True,
     ).start()
+    backup_ops.maybe_start_scheduler(runtime=runtime_dir(), compose=compose_dir())
     print(
         f"ops sidecar {bind}:{port} backend={env('OPS_BACKEND', 'native') or 'native'} "
         f"audit={audit_path()}",

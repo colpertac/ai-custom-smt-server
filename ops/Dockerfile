@@ -12,9 +12,14 @@ RUN apt-get update \
     ca-certificates \
     curl \
     python3 \
+    unzip \
     libmariadb3 \
     libphysfs1 \
-  && rm -rf /var/lib/apt/lists/*
+  && curl -fsSL https://downloads.rclone.org/rclone-current-linux-amd64.zip -o /tmp/rclone.zip \
+  && unzip -q /tmp/rclone.zip -d /tmp \
+  && mv /tmp/rclone-*/rclone /usr/local/bin/rclone \
+  && chmod 0755 /usr/local/bin/rclone \
+  && rm -rf /tmp/rclone.zip /tmp/rclone-* /var/lib/apt/lists/*
 
 # docker CLI + compose plugin (talks to mounted docker.sock)
 COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker
@@ -22,7 +27,7 @@ COPY --from=dockercli /usr/local/libexec/docker/cli-plugins/docker-compose \
   /usr/local/lib/docker/cli-plugins/docker-compose
 
 WORKDIR /ops
-COPY encrypt_tools.py first_boot.py freshness.py ingest_jobs.py metrics.py \
+COPY backup_ops.py encrypt_tools.py first_boot.py freshness.py ingest_jobs.py metrics.py \
   rehash.py sidecar.py zip_ingest.py ceventmessage.py service_logs.py \
   updater_site.py wiki_export.py ./
 # comp_encrypt / comp_rehash / … — staged by deploy/scripts/stage-ops-tools.sh

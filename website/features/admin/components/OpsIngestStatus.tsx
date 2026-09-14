@@ -40,6 +40,10 @@ export function OpsIngestStatus({
     headline = "Refreshing updater list…"
   } else if (job?.phase === "wiki") {
     headline = "Regenerating wiki catalog…"
+  } else if (job?.phase === "queued" || job?.phase === "running") {
+    headline = "Backup / restore running…"
+  } else if (job?.phase === "syncing") {
+    headline = "Syncing archive to rclone remote…"
   } else if (job?.phase === "done") {
     headline = files ? `Unpack complete (${files})` : "Unpack complete"
   } else if (job?.phase === "error") {

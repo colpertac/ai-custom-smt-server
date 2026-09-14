@@ -1123,3 +1123,328 @@ export async function upsertCeventMessagesViaSidecar(
     updated: typeof json.updated === "number" ? json.updated : messages.length,
   }
 }
+
+export type OpsBackupArchive = {
+  name: string
+  sizeBytes: number
+  mtime: string
+  sha256Present?: boolean
+  mode?: string | null
+  sqlite?: string | null
+  websiteSqlite?: string | null
+  image?: string | null
+}
+
+export type OpsBackupSchedule = {
+  enabled?: boolean
+  mode?: string
+  intervalHours?: number
+  remote?: string
+  path?: string
+  keepLocal?: number
+  keepRemote?: number
+  lastRunAt?: string | null
+  lastSyncAt?: string | null
+  lastError?: string | null
+  rcloneConfigured?: boolean
+  rcloneRemotes?: string[]
+}
+
+export type OpsBackupListResult = {
+  ok: boolean
+  archives?: OpsBackupArchive[]
+  schedule?: OpsBackupSchedule
+  backupsDir?: string
+  error?: string
+  detail?: string
+}
+
+function parseSchedule(raw: unknown): OpsBackupSchedule | undefined {
+  if (!raw || typeof raw !== "object") return undefined
+  const o = raw as Record<string, unknown>
+  return {
+    enabled: Boolean(o.enabled),
+    mode: typeof o.mode === "string" ? o.mode : undefined,
+    intervalHours:
+      typeof o.intervalHours === "number" ? o.intervalHours : undefined,
+    remote: typeof o.remote === "string" ? o.remote : undefined,
+    path: typeof o.path === "string" ? o.path : undefined,
+    keepLocal: typeof o.keepLocal === "number" ? o.keepLocal : undefined,
+    keepRemote: typeof o.keepRemote === "number" ? o.keepRemote : undefined,
+    lastRunAt: typeof o.lastRunAt === "string" ? o.lastRunAt : null,
+    lastSyncAt: typeof o.lastSyncAt === "string" ? o.lastSyncAt : null,
+    lastError: typeof o.lastError === "string" ? o.lastError : null,
+    rcloneConfigured: Boolean(o.rcloneConfigured),
+    rcloneRemotes: Array.isArray(o.rcloneRemotes)
+      ? o.rcloneRemotes.filter((v): v is string => typeof v === "string")
+      : undefined,
+  }
+}
+
+export async function listOpsBackups(
+  actor?: string
+): Promise<OpsBackupListResult> {
+  const { status, json } = await opsFetch("/backup/list", { actor })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  if (status === 404) {
+    return {
+      ok: false,
+      error: "not_allowed",
+      detail: "Ops sidecar missing backup verbs — rebuild/restart ops",
+    }
+  }
+  const archives = Array.isArray(json.archives)
+    ? (json.archives as Record<string, unknown>[])
+        .map((a) => ({
+          name: typeof a.name === "string" ? a.name : "",
+          sizeBytes: typeof a.sizeBytes === "number" ? a.sizeBytes : 0,
+          mtime: typeof a.mtime === "string" ? a.mtime : "",
+          sha256Present: Boolean(a.sha256Present),
+          mode: typeof a.mode === "string" ? a.mode : null,
+          sqlite: typeof a.sqlite === "string" ? a.sqlite : null,
+          websiteSqlite:
+            typeof a.websiteSqlite === "string" ? a.websiteSqlite : null,
+          image: typeof a.image === "string" ? a.image : null,
+        }))
+        .filter((a) => a.name)
+    : []
+  return {
+    ok: Boolean(json.ok),
+    archives,
+    schedule: parseSchedule(json.schedule),
+    backupsDir:
+      typeof json.backupsDir === "string" ? json.backupsDir : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+export async function runOpsBackup(
+  actor: string | undefined,
+  opts: { mode?: "standard" | "full"; sync?: boolean } = {}
+): Promise<{
+  ok: boolean
+  jobId?: string
+  message?: string
+  error?: string
+  detail?: string
+}> {
+  const { status, json } = await opsFetch("/backup/run", {
+    method: "POST",
+    actor,
+    timeoutMs: 60_000,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      mode: opts.mode ?? "standard",
+      sync: opts.sync,
+    }),
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    jobId: typeof json.jobId === "string" ? json.jobId : undefined,
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+export async function getOpsBackupJob(jobId: string, actor?: string) {
+  return getOpsIngestJob(jobId, actor)
+}
+
+export async function restoreOpsBackup(
+  actor: string | undefined,
+  opts: { name: string; confirm: true; restoreEnv?: boolean }
+): Promise<{
+  ok: boolean
+  jobId?: string
+  message?: string
+  error?: string
+  detail?: string
+}> {
+  const { status, json } = await opsFetch("/backup/restore", {
+    method: "POST",
+    actor,
+    timeoutMs: 60_000,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      confirm: true,
+      name: opts.name,
+      restoreEnv: Boolean(opts.restoreEnv),
+    }),
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    jobId: typeof json.jobId === "string" ? json.jobId : undefined,
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+export async function getOpsBackupRemote(actor?: string): Promise<{
+  ok: boolean
+  schedule?: OpsBackupSchedule
+  error?: string
+  detail?: string
+}> {
+  const { status, json } = await opsFetch("/backup/remote", { actor })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    schedule: parseSchedule(json.schedule),
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+export async function putOpsBackupRemote(
+  actor: string | undefined,
+  body: Record<string, unknown>
+): Promise<{
+  ok: boolean
+  schedule?: OpsBackupSchedule
+  message?: string
+  error?: string
+  detail?: string
+}> {
+  const { status, json } = await opsFetch("/backup/remote", {
+    method: "PUT",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    schedule: parseSchedule(json.schedule),
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+export async function testOpsBackupRemote(actor?: string): Promise<{
+  ok: boolean
+  message?: string
+  detail?: string
+  error?: string
+}> {
+  const { status, json } = await opsFetch("/backup/remote/test", {
+    method: "POST",
+    actor,
+    timeoutMs: 150_000,
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    message: typeof json.message === "string" ? json.message : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+  }
+}
+
+export async function syncOpsBackup(
+  actor: string | undefined,
+  opts: { name?: string } = {}
+): Promise<{
+  ok: boolean
+  jobId?: string
+  message?: string
+  error?: string
+  detail?: string
+}> {
+  const { status, json } = await opsFetch("/backup/sync", {
+    method: "POST",
+    actor,
+    timeoutMs: 60_000,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: opts.name }),
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    jobId: typeof json.jobId === "string" ? json.jobId : undefined,
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}
+
+/** Stream archive bytes from ops (caller returns Response). */
+export async function fetchOpsBackupArchive(
+  name: string,
+  actor?: string
+): Promise<Response> {
+  const secret = opsToken()
+  if (!secret) throw new Error("OPS_TOKEN is not set on the website")
+  const url = `${opsBaseUrl()}/backup/archive?name=${encodeURIComponent(name)}`
+  return fetch(url, {
+    headers: {
+      "X-Ops-Token": secret,
+      ...(actor ? { "X-Ops-Actor": actor } : {}),
+    },
+    cache: "no-store",
+  })
+}
+
+export async function importOpsBackupArchive(
+  actor: string | undefined,
+  opts: { name: string; body: ReadableStream<Uint8Array> | null; contentLength: string | null }
+): Promise<{ ok: boolean; name?: string; message?: string; error?: string }> {
+  const secret = opsToken()
+  if (!secret) throw new Error("OPS_TOKEN is not set on the website")
+  if (!opts.body) throw new Error("Missing body")
+  const url = `${opsBaseUrl()}/backup/import?name=${encodeURIComponent(opts.name)}`
+  const res = await fetch(url, {
+    method: "POST",
+    // @ts-expect-error Node fetch duplex for streamed body
+    duplex: "half",
+    headers: {
+      "X-Ops-Token": secret,
+      ...(actor ? { "X-Ops-Actor": actor } : {}),
+      "Content-Type": "application/gzip",
+      ...(opts.contentLength
+        ? { "Content-Length": opts.contentLength }
+        : {}),
+    },
+    body: opts.body,
+    cache: "no-store",
+  })
+  let json: Record<string, unknown> = {}
+  try {
+    json = (await res.json()) as Record<string, unknown>
+  } catch {
+    json = { ok: false, error: `HTTP ${res.status}` }
+  }
+  return {
+    ok: Boolean(json.ok),
+    name: typeof json.name === "string" ? json.name : undefined,
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+  }
+}
+
+export async function deleteOpsBackupArchive(
+  actor: string | undefined,
+  name: string
+): Promise<{ ok: boolean; name?: string; message?: string; error?: string; detail?: string }> {
+  const { status, json } = await opsFetch("/backup/delete", {
+    method: "POST",
+    actor,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ confirm: true, name }),
+  })
+  if (status === 401) return { ok: false, error: "unauthorized" }
+  return {
+    ok: Boolean(json.ok),
+    name: typeof json.name === "string" ? json.name : undefined,
+    message: typeof json.message === "string" ? json.message : undefined,
+    error: typeof json.error === "string" ? json.error : undefined,
+    detail: typeof json.detail === "string" ? json.detail : undefined,
+  }
+}

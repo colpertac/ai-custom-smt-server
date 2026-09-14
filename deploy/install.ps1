@@ -222,6 +222,7 @@ function Seed-UpdaterIfNeeded {
 Seed-UpdaterIfNeeded
 New-Item -ItemType Directory -Force -Path $DataDir | Out-Null
 New-Item -ItemType Directory -Force -Path $OpsTools | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $DeployDir "backups") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $DataDir "config") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $DataDir "webroot") | Out-Null
 
@@ -343,6 +344,7 @@ UPDATER_ROOT=$(To-ComposePath $UpdaterRoot)
 COMP_RUNTIME=$(To-ComposePath $DataDir)
 COMP_ENTRYPOINT=$(To-ComposePath (Join-Path $DeployDir "entrypoint.sh"))
 WEBSITE_DATA=$(To-ComposePath $WebsiteData)
+SMT_BACKUPS=$(To-ComposePath (Join-Path $DeployDir "backups"))
 OPS_HOST_DEPLOY_DIR=$(To-ComposePath $DeployDir)
 WEBSITE_PORT=$WebsitePort
 SITE_URL=$SiteUrl

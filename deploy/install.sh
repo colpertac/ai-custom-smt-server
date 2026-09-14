@@ -259,7 +259,7 @@ DATA_DIR="$DEPLOY_DIR/data"
 OPS_TOOLS="$DEPLOY_DIR/ops-tools"
 WEBSITE_DATA="$DEPLOY_DIR/website-data"
 
-mkdir -p "$UPDATER_ROOT/overlay" "$UPDATER_ROOT/base" "$UPDATER_ROOT/site" "$DATA_DIR" "$OPS_TOOLS"
+mkdir -p "$UPDATER_ROOT/overlay" "$UPDATER_ROOT/base" "$UPDATER_ROOT/site" "$DATA_DIR" "$OPS_TOOLS" "$DEPLOY_DIR/backups"
 
 seed_updater_if_needed() {
   local seed="$DEPLOY_DIR/seed/updater"
@@ -423,6 +423,7 @@ fi
   echo "COMP_RUNTIME=$DATA_DIR"
   echo "COMP_ENTRYPOINT=$DEPLOY_DIR/entrypoint.sh"
   echo "WEBSITE_DATA=$WEBSITE_DATA"
+  echo "SMT_BACKUPS=$DEPLOY_DIR/backups"
   echo "OPS_HOST_DEPLOY_DIR=$DEPLOY_DIR"
   echo "WEBSITE_PORT=$WEBSITE_PORT"
   echo "SITE_URL=$SITE_URL"

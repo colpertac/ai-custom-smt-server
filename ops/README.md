@@ -83,6 +83,13 @@ BinaryData / Maps / packages mark the channel **stale** until restart
 (`runtime/releases/ops-freshness.json`; exposed on `GET /health` as
 `channelStale`). Overlay does not.
 
+**Backups:** `GET /backup/list`, `POST /backup/run`, `GET /backup/job`,
+`GET /backup/archive?name=…`, `POST /backup/import`, `POST /backup/restore`
+(`confirm: true`), `GET|PUT /backup/remote`, `POST /backup/remote/test`.
+Mounts: `/backups`, `/website-data`. Website: Admin → **Backups**.
+Scripts: `deploy/scripts/backup.sh`, `restore.sh`, `backup-sync.sh`.
+Docs: [docs/backup-restore.md](../docs/backup-restore.md).
+
 **Ingest jobs:** `POST /ingest/zip` saves the zip then unpacks in the
 background (`202` + `jobId`). Poll `GET /ingest/job?id=` for unzip logs.
 Website uses XHR (no 10s ky timeout) plus a live log on `/admin`.

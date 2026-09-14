@@ -142,11 +142,16 @@ services:
       OPS_HOST_DEPLOY_DIR: ${OPS_HOST_DEPLOY_DIR:-}
       OPS_RUNTIME: /comp
       OPS_UPDATER_ROOT: /updater
+      OPS_BACKUPS: /backups
+      OPS_WEBSITE_DATA: /website-data
+      WEBSITE_DATA: /website-data
       BIN_DIR: ${OPS_BIN_DIR:-/opt/comp-tools}
       OPS_AUDIT: /var/log/smt-ops/audit.log
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${COMP_RUNTIME:-./data}:/comp
+      - ${WEBSITE_DATA:-./website-data}:/website-data
+      - ${SMT_BACKUPS:-./backups}:/backups
       - ${UPDATER_ROOT:?set UPDATER_ROOT in .env}:/updater
       - ./:/compose:ro
       - ops-audit:/var/log/smt-ops

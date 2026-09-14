@@ -10,6 +10,7 @@ Run from the **repository root** (or `cd deploy` and use `./scripts/…`).
 | `docker-push-hub.sh` | Pack + push `colpertac/smt-comp` |
 | `docker-push-website-hub.sh` | Build + push `colpertac/smt-website` |
 | `docker-push-ops-hub.sh` | Stage tools + push `colpertac/smt-ops` (`ops/*.py` is baked in) |
+| `backup.sh` / `restore.sh` / `backup-sync.sh` | Cold backup, restore, rclone off-box ([backup-restore.md](../docs/backup-restore.md)) |
 | `make-release-zip.sh` | Zip `deploy/` + `ops/` for a GitHub release asset. **Re-run and `--upload` whenever `deploy/` or `ops/` changes.** |
 | `make-studio-release-zip.sh` | Zip `deploy-studio/` for a GitHub release asset |
 | `make-deploy-bundle.sh` | Zip compose + local `data/` + `updater/` for scp |
