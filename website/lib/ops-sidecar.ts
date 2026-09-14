@@ -20,6 +20,7 @@ export type OpsFirstBoot = {
   serverdata?: OpsFirstBootBucket
   packages?: OpsFirstBootBucket
   overlay?: OpsFirstBootBucket
+  compClient?: OpsFirstBootBucket
 }
 
 export type OpsHealth = {
@@ -206,6 +207,7 @@ function parseFirstBoot(raw: unknown): OpsFirstBoot | undefined {
     serverdata: parseFirstBootBucket(o.serverdata),
     packages: parseFirstBootBucket(o.packages),
     overlay: parseFirstBootBucket(o.overlay),
+    compClient: parseFirstBootBucket(o.compClient),
   }
 }
 
@@ -443,6 +445,14 @@ async function clearCasinoPendingIfLobby(
   try {
     const { clearCasinoRestartPending } = await import("@/lib/webgames-fs")
     await clearCasinoRestartPending()
+  } catch {
+    /* non-fatal */
+  }
+  try {
+    const { clearClientVersionRestartPending } = await import(
+      "@/lib/client-version-pending"
+    )
+    await clearClientVersionRestartPending()
   } catch {
     /* non-fatal */
   }

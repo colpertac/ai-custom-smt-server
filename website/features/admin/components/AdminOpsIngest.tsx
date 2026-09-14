@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/dialog"
 import { OpsIngestStatus } from "@/features/admin/components/OpsIngestStatus"
 import {
+  ClientVersionBumpDialog,
+  fetchClientVersionStatus,
+  type ClientVersionStatus,
+} from "@/features/admin/components/ClientVersionBumpDialog"
+import {
   runIngestZip,
   type IngestJobView,
 } from "@/features/admin/ops-ingest-client"
@@ -77,6 +82,7 @@ type OpsIngestPanelProps = {
   helpTitle: string
   helpDescription: string
   helpBody: ReactNode
+  promptClientVersion?: boolean
 }
 
 function OpsIngestPanel({
@@ -90,6 +96,7 @@ function OpsIngestPanel({
   helpTitle,
   helpDescription,
   helpBody,
+  promptClientVersion = false,
 }: OpsIngestPanelProps) {
   const modeGroupId = useId()
   const [kind, setKind] = useState<IngestKindId>(defaultKind)
@@ -104,6 +111,10 @@ function OpsIngestPanel({
   const [uploadPct, setUploadPct] = useState<number | null>(null)
   const [job, setJob] = useState<IngestJobView | null>(null)
   const [overlayStale, setOverlayStale] = useState(false)
+  const [versionOpen, setVersionOpen] = useState(false)
+  const [versionStatus, setVersionStatus] = useState<ClientVersionStatus | null>(
+    null
+  )
 
   const refreshStale = useCallback(async () => {
     if (!trackOverlayStale) return
@@ -175,13 +186,23 @@ function OpsIngestPanel({
       setOk(message)
       setFile(null)
       window.dispatchEvent(new Event("ops-freshness-changed"))
+      if (promptClientVersion) {
+        try {
+          const status = await fetchClientVersionStatus()
+          setVersionStatus(status)
+          setVersionOpen(true)
+        } catch {
+          setVersionStatus(null)
+          setVersionOpen(true)
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "ingest failed")
     } finally {
       setPending(false)
       setUploadPct(null)
     }
-  }, [file, kind, mode, regenWiki, wikiEligible])
+  }, [file, kind, mode, regenWiki, wikiEligible, promptClientVersion])
 
   const rehash = useCallback(async () => {
     setRehashing(true)
@@ -388,6 +409,14 @@ function OpsIngestPanel({
           </div>
         </DialogContent>
       </Dialog>
+      {promptClientVersion ? (
+        <ClientVersionBumpDialog
+          open={versionOpen}
+          status={versionStatus}
+          onOpenChange={setVersionOpen}
+          onBumped={(message) => setOk(message)}
+        />
+      ) : null}
     </section>
   )
 }
@@ -465,6 +494,7 @@ export function AdminOpsClientUpload() {
       defaultKind="overlay"
       showRehash
       trackOverlayStale
+      promptClientVersion
       zipHint='Zip paths mirror the game install — e.g. Title/foo.txt lands in <game>/Title/foo.txt after ImagineUpdate.'
       helpTitle="Client updater uploads"
       helpDescription="These files are published to the updater overlay and listed in hashlist.dat after refresh."
@@ -491,7 +521,10 @@ export function AdminOpsClientUpload() {
           <p className="text-muted-foreground">
             After upload, the updater list is refreshed automatically. Players
             must run <span className="text-foreground">ImagineUpdate</span>{" "}
-            (not just launch the game) to fetch new or changed files.
+            (not just launch the game) to fetch new or changed files. You will
+            be asked whether to bump{" "}
+            <code className="text-foreground">comp_client.xml</code> and lobby
+            ClientVersion so installs that skip the updater cannot log in.
           </p>
         </>
       }

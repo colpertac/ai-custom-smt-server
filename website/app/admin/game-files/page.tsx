@@ -5,6 +5,7 @@ import {
   AdminOpsServerUpload,
 } from "@/features/admin/components/AdminOpsIngest"
 import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
+import { CompClientXmlPanel } from "@/features/admin/components/CompClientXmlPanel"
 import { requireAdmin } from "@/features/auth/server"
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default async function AdminGameFilesPage() {
         through ImagineUpdate.
       </p>
       <AdminOpsFirstBoot />
+      <CompClientXmlPanel />
       <AdminOpsServerUpload />
       <AdminOpsClientUpload />
     </div>

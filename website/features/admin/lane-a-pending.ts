@@ -8,6 +8,9 @@ export const LANE_A_PENDING_EVENT = "smt:lane-a-pending"
 
 export const OPS_FRESHNESS_EVENT = "ops-freshness-changed"
 
+/** Overlay / lobby ClientVersion files changed (bump or paste save). */
+export const COMP_CLIENT_CHANGED_EVENT = "smt:comp-client-changed"
+
 export type LaneAPendingClientStatus = {
   pending: boolean
   shopsDirty: boolean
@@ -19,6 +22,7 @@ export type LaneAPendingClientStatus = {
   casinoDirty: boolean
   gameFilesDirty: boolean
   configDirty: boolean
+  clientVersionDirty: boolean
 }
 
 let notifyTimer: number | null = null
@@ -45,6 +49,7 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
     casinoDirty: false,
     gameFilesDirty: false,
     configDirty: false,
+    clientVersionDirty: false,
   })
 
   const refresh = useCallback(async () => {
@@ -66,6 +71,7 @@ export function useLaneAPending(pollMs = 12_000): LaneAPendingClientStatus {
         casinoDirty: Boolean(json.data.casinoDirty),
         gameFilesDirty: Boolean(json.data.gameFilesDirty),
         configDirty: Boolean(json.data.configDirty),
+        clientVersionDirty: Boolean(json.data.clientVersionDirty),
       })
     } catch {
       /* ignore transient errors */

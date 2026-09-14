@@ -140,6 +140,7 @@ def first_boot_status(runtime: Path, updater: Path) -> dict[str, Any]:
     datastore = runtime / "datastore"
     packages = runtime / "datastore" / "packages"
     overlay = updater / "overlay"
+    comp_client = overlay / "comp_client.xml"
 
     # /health must stay cheap on Docker Desktop bind mounts. Counting thousands
     # of BinaryData/Map files is ~10s+ on Windows and the admin UI times out.
@@ -147,12 +148,14 @@ def first_boot_status(runtime: Path, updater: Path) -> dict[str, Any]:
     maps_ready = _has_any_file(maps)
     pkg_ready = _has_any_file(packages)
     overlay_ready = _has_any_file(overlay)
+    comp_client_ready = comp_client.is_file() and not comp_client.is_symlink()
     server_ready = _has_sentinel(datastore, SERVERDATA_SENTINELS)
     bd_files = 1 if bd_ready else 0
     map_files = 1 if maps_ready else 0
     pkg_files = 1 if pkg_ready else 0
     overlay_files = 1 if overlay_ready else 0
     server_files = 1 if server_ready else 0
+    comp_client_files = 1 if comp_client_ready else 0
 
     missing: list[str] = []
     if not bd_ready:
@@ -198,6 +201,13 @@ def first_boot_status(runtime: Path, updater: Path) -> dict[str, Any]:
             optional=True,
             path=overlay,
             hint="Optional updater overlay (Lane B / rehash later)",
+        ),
+        "compClient": _bucket(
+            files=comp_client_files,
+            ready=comp_client_ready,
+            optional=True,
+            path=comp_client,
+            hint="Paste your client's comp_client.xml below (patches, compressors, version)",
         ),
     }
 

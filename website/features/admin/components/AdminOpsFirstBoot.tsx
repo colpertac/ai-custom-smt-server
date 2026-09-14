@@ -28,6 +28,7 @@ type FirstBoot = {
   serverdata?: Bucket
   packages?: Bucket
   overlay?: Bucket
+  compClient?: Bucket
 }
 
 type KindId = "content" | "binarydata" | "maps" | "packages"
@@ -212,8 +213,10 @@ export function AdminOpsFirstBoot() {
         <p className="mt-0.5 text-xs text-muted-foreground">
           Upload character art (BinaryData) and zone maps from your game client,
           then start the game servers. Server zone definitions are usually
-          seeded automatically. Updater files can wait until you ship custom
-          content.
+          seeded automatically. Paste your client's{" "}
+          <code className="text-foreground">comp_client.xml</code> in Client
+          patches below if it has extra patches or compressors — that is not
+          required to Start.
         </p>
       </div>
       {error ? (
@@ -248,6 +251,11 @@ export function AdminOpsFirstBoot() {
           label="Updater files"
           required={false}
           bucket={boot?.overlay}
+        />
+        <BucketRow
+          label="comp_client.xml"
+          required={false}
+          bucket={boot?.compClient}
         />
       </ul>
       {!ready ? (

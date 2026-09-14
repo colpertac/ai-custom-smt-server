@@ -45,7 +45,8 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
   WebListeningPort: "HTTP port for lobby web/API (account tools, import, admin HTTP).",
   WebCertificate: "TLS certificate path for the lobby web listener (empty = plain HTTP).",
   WebRoot: "Directory served / used by lobby web endpoints.",
-  ClientVersion: "Client version string the lobby accepts (e.g. 1.666).",
+  ClientVersion:
+    "Client version the lobby accepts (e.g. 1.666). Must match <version>1666</version> in overlay/comp_client.xml (integer × 1000). Game files client uploads can bump both together.",
   WebAuthTimeOut: "Seconds before a web/auth session times out.",
   CharacterDeletionDelay:
     "Minutes a deleted character stays recoverable before permanent wipe (0 = immediate).",

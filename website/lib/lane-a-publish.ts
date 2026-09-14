@@ -34,6 +34,7 @@ import { listConfigStatus } from "./server-config/fs.ts"
 import { isGoldenApplesRestartPending } from "./golden-apple-fs.ts"
 import { isGameFilesRestartPending } from "./ops-freshness.ts"
 import { isCasinoRestartPending } from "./webgames-fs.ts"
+import { isClientVersionRestartPending } from "./client-version-pending.ts"
 
 export const LANE_A_PAYOUTS_ZIP = "zzz_ai_custom_payouts_admin.zip"
 export const LANE_A_REPORT_REWARDS_ZIP = "zzz_ai_custom_report_rewards_admin.zip"
@@ -531,6 +532,8 @@ export type LaneAPendingStatus = {
   goldenApplesDirty: boolean
   /** Casino webgame .nut odds edited — lobby restart needed. */
   casinoDirty: boolean
+  /** Lobby ClientVersion / overlay bump copied live — lobby restart needed. */
+  clientVersionDirty: boolean
   /**
    * Server zip ingest (BinaryData / maps / packages) landed on disk after the
    * last channel restart — channel must restart to load those files.
@@ -569,6 +572,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     goldenApplesDirty,
     casinoDirty,
     gameFilesDirty,
+    clientVersionDirty,
   ] = await Promise.all([
     shopsTreeDigest(shopsWorkingDir()),
     shopsTreeDigest(shopsLive),
@@ -581,6 +585,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     isGoldenApplesRestartPending(),
     isCasinoRestartPending(),
     isGameFilesRestartPending(),
+    isClientVersionRestartPending(),
   ])
 
   const shopsDirty = shopsWorking !== shopsLiveDigest
@@ -621,7 +626,8 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
       goldenApplesDirty ||
       casinoDirty ||
       gameFilesDirty ||
-      configDirty,
+      configDirty ||
+      clientVersionDirty,
     shopsDirty,
     payoutsDirty,
     reportRewardsDirty,
@@ -631,6 +637,7 @@ export async function getLaneAPendingStatus(): Promise<LaneAPendingStatus> {
     casinoDirty,
     gameFilesDirty,
     configDirty,
+    clientVersionDirty,
   }
 }
 

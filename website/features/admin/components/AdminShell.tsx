@@ -35,7 +35,8 @@ function navPendingDot(
       !laneA.eventsSchedulePending &&
       !laneA.goldenApplesDirty &&
       !laneA.casinoDirty &&
-      !laneA.configDirty
+      !laneA.configDirty &&
+      !laneA.clientVersionDirty
     if (onlyGameFiles) {
       return { title: "Channel restart needed to load uploaded game files" }
     }
@@ -48,9 +49,24 @@ function navPendingDot(
       !laneA.eventsSchedulePending &&
       !laneA.goldenApplesDirty &&
       !laneA.casinoDirty &&
-      !laneA.gameFilesDirty
+      !laneA.gameFilesDirty &&
+      !laneA.clientVersionDirty
     if (onlyConfig) {
       return { title: "Unpublished config — apply & restart from Config" }
+    }
+    if (
+      laneA.clientVersionDirty &&
+      !laneA.shopsDirty &&
+      !laneA.payoutsDirty &&
+      !laneA.reportRewardsDirty &&
+      !laneA.channelDirty &&
+      !laneA.eventsSchedulePending &&
+      !laneA.goldenApplesDirty &&
+      !laneA.casinoDirty &&
+      !laneA.gameFilesDirty &&
+      !laneA.configDirty
+    ) {
+      return { title: "Login restart needed for new client version" }
     }
     return { title: "Unpublished changes — publish / restart needed" }
   }

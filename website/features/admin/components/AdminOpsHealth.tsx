@@ -317,7 +317,8 @@ export function AdminOpsHealth() {
         }
         // Casino odds live in lobby webgame scripts — restart lobby before
         // channel when those edits are pending (lobby → world → channel order).
-        const needLobby = laneAPending.casinoDirty
+        const needLobby =
+          laneAPending.casinoDirty || laneAPending.clientVersionDirty
         if (needLobby) {
           const lobbyRes = await api.post("admin/ops/restart/lobby", {
             timeout: 180_000,
@@ -384,7 +385,7 @@ export function AdminOpsHealth() {
         setPublishPhase((p) => (p === "done" || p === "failed" ? "idle" : p))
       }, 800)
     }
-  }, [refresh, laneAPending.casinoDirty, laneAPending.channelDirty])
+  }, [refresh, laneAPending.casinoDirty, laneAPending.channelDirty, laneAPending.clientVersionDirty])
 
   const openPublishDialog = useCallback((restart: boolean) => {
     setPublishWithRestart(restart)
@@ -550,7 +551,8 @@ export function AdminOpsHealth() {
     laneAPending.eventsSchedulePending ||
     laneAPending.goldenApplesDirty ||
     laneAPending.casinoDirty ||
-    laneAPending.configDirty
+    laneAPending.configDirty ||
+    laneAPending.clientVersionDirty
   const publishing =
     publishPhase === "validating" ||
     publishPhase === "applying" ||
@@ -815,6 +817,14 @@ export function AdminOpsHealth() {
                   channel)
                 </li>
               ) : null}
+              {laneAPending.clientVersionDirty ? (
+                <li>
+                  <span className="font-medium text-cyan-50">Client version</span>{" "}
+                  — lobby ClientVersion / overlay{" "}
+                  <code className="text-cyan-50">comp_client.xml</code> updated;
+                  restart login (Power → lobby, or Publish &amp; restart)
+                </li>
+              ) : null}
               {laneAPending.gameFilesDirty ? (
                 <li>
                   <span className="font-medium text-cyan-50">Game files</span>{" "}
@@ -1043,8 +1053,8 @@ export function AdminOpsHealth() {
                 ? ", publish draft channel.xml (events)"
                 : ""}
               {publishWithRestart
-                ? laneAPending.casinoDirty
-                  ? ", and restart login (lobby) then the game channel so casino odds and other live content apply."
+                ? laneAPending.casinoDirty || laneAPending.clientVersionDirty
+                  ? ", and restart login (lobby) then the game channel so casino odds, client version, and other live content apply."
                   : ", and restart the game channel so players pick them up right away."
                 : ". The running channel keeps the old data until you restart it (Power → Channel, or Publish & restart)."}{" "}
               Use Undo last publish if something looks wrong.

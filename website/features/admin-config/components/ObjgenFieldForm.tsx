@@ -2,6 +2,7 @@
 
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ClientVersionFieldGuard } from "@/features/admin/components/ClientVersionMismatchBanner"
 import { RegistrationUserLevelHelp } from "@/features/admin-config/components/RegistrationUserLevelHelp"
 import { fieldHelpOrFallback } from "@/lib/server-config/field-help"
 import type {
@@ -334,6 +335,12 @@ function FieldRow({
             : undefined
         }
       />
+      {field.name === "ClientVersion" ? (
+        <ClientVersionFieldGuard
+          lobbyValue={value}
+          onSynced={(version) => onChange(version)}
+        />
+      ) : null}
       <FieldHelp field={field} />
     </Field>
   )
