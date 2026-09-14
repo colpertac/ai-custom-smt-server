@@ -49,7 +49,7 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
-from first_boot import first_boot_public, first_boot_status
+from first_boot import ensure_server_datastore, first_boot_public, first_boot_status
 from metrics import collect_metrics
 from freshness import (
     destinations_include_overlay,
@@ -2380,6 +2380,12 @@ def main() -> None:
     httpd = ThreadingHTTPServer((bind, port), OpsHandler)
     httpd.timeout = 7200
     OpsHandler.timeout = 7200
+    threading.Thread(
+        target=ensure_server_datastore,
+        args=(runtime_dir(),),
+        name="seed-server-datastore",
+        daemon=True,
+    ).start()
     print(
         f"ops sidecar {bind}:{port} backend={env('OPS_BACKEND', 'native') or 'native'} "
         f"audit={audit_path()}",

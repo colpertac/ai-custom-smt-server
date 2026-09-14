@@ -66,6 +66,16 @@ def _has_sentinel(root: Path, rels: tuple[str, ...]) -> bool:
     return False
 
 
+def _has_any_file(root: Path) -> bool:
+    """True if root has at least one real file. Stops at the first hit."""
+    if not root.is_dir():
+        return False
+    for path in root.rglob("*"):
+        if path.is_file() and not path.is_symlink():
+            return True
+    return False
+
+
 def _bucket(
     *,
     files: int,
@@ -125,27 +135,24 @@ def ensure_server_datastore(runtime: Path) -> bool:
 
 
 def first_boot_status(runtime: Path, updater: Path) -> dict[str, Any]:
-    # Auto-seed AGPL zone/event XML from the ops image when the volume is empty.
-    ensure_server_datastore(runtime)
-
     binarydata = runtime / "datastore" / "BinaryData"
     maps = runtime / "datastore" / "Map"
     datastore = runtime / "datastore"
     packages = runtime / "datastore" / "packages"
     overlay = updater / "overlay"
 
-    bd_files = _count_files(binarydata)
-    map_files = _count_files(maps)
-    pkg_files = _count_files(packages)
-    overlay_files = _count_files(overlay)
+    # /health must stay cheap on Docker Desktop bind mounts. Counting thousands
+    # of BinaryData/Map files is ~10s+ on Windows and the admin UI times out.
+    bd_ready = _has_sentinel(binarydata, BINARYDATA_SENTINELS)
+    maps_ready = _has_any_file(maps)
+    pkg_ready = _has_any_file(packages)
+    overlay_ready = _has_any_file(overlay)
     server_ready = _has_sentinel(datastore, SERVERDATA_SENTINELS)
-    server_files = 0
-    if server_ready:
-        for name in SERVERDATA_DIRS:
-            server_files += _count_files(datastore / name)
-
-    bd_ready = bd_files > 0 and _has_sentinel(binarydata, BINARYDATA_SENTINELS)
-    maps_ready = map_files > 0
+    bd_files = 1 if bd_ready else 0
+    map_files = 1 if maps_ready else 0
+    pkg_files = 1 if pkg_ready else 0
+    overlay_files = 1 if overlay_ready else 0
+    server_files = 1 if server_ready else 0
 
     missing: list[str] = []
     if not bd_ready:
@@ -180,14 +187,14 @@ def first_boot_status(runtime: Path, updater: Path) -> dict[str, Any]:
         ),
         "packages": _bucket(
             files=pkg_files,
-            ready=pkg_files > 0,
+            ready=pkg_ready,
             optional=True,
             path=packages,
             hint="Optional datastore packages (*.zip)",
         ),
         "overlay": _bucket(
             files=overlay_files,
-            ready=overlay_files > 0,
+            ready=overlay_ready,
             optional=True,
             path=overlay,
             hint="Optional updater overlay (Lane B / rehash later)",
