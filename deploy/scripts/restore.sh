@@ -322,6 +322,10 @@ if [[ "$IN_OPS" -eq 1 ]]; then
   host_backup_tree "${host_deploy}/data" "$bak"
   echo "==> merging restored data members into /comp"
   merge_tree_members "${staging}/data" "$DATA"
+  # Ops/website run as non-root; alpine copies above can leave root:root 755 on
+  # /comp (breaks mkdir releases, Lane A publish). Match install world-writable.
+  echo "==> ensuring /comp is writable"
+  chmod -R a+rwX "$DATA" 2>/dev/null || true
 
   if [[ -d "${staging}/website-data" ]]; then
     wbak="${host_deploy}/website-data.bak-${stamp}"

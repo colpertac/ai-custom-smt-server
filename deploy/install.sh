@@ -363,6 +363,8 @@ if [[ -f "$ENV_FILE" ]]; then
   SESSION_SECRET="$(grep -E '^SESSION_SECRET=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   OPS_TOKEN="$(grep -E '^OPS_TOKEN=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   COMP_RESET_SECRET="$(grep -E '^COMP_RESET_SECRET=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
+  COMP_ANNOUNCE_USER="$(grep -E '^COMP_ANNOUNCE_USER=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
+  COMP_ANNOUNCE_PASSWORD="$(grep -E '^COMP_ANNOUNCE_PASSWORD=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   RESEND_API_KEY="$(grep -E '^RESEND_API_KEY=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   RESEND_FROM_EMAIL="$(grep -E '^RESEND_FROM_EMAIL=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   RESEND_FROM_NAME="$(grep -E '^RESEND_FROM_NAME=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
@@ -381,6 +383,10 @@ else
   OPS_TOKEN="$(rand_hex)"
   COMP_RESET_SECRET="$(rand_hex)"
 fi
+
+# Service account for public status / announces — keep existing or default.
+COMP_ANNOUNCE_USER="${COMP_ANNOUNCE_USER:-admin}"
+COMP_ANNOUNCE_PASSWORD="${COMP_ANNOUNCE_PASSWORD:-admin123}"
 
 STAGE_SCRIPT="$DEPLOY_DIR/scripts/stage-ops-tools.sh"
 OPS_DIR="$(cd "$DEPLOY_DIR/.." && pwd)/ops"

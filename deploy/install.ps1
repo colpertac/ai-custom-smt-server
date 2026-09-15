@@ -298,6 +298,8 @@ function To-ComposePath([string] $Path) {
 $SessionSecret = New-SecretBase64
 $OpsToken = New-SecretHex
 $CompResetSecret = New-SecretHex
+$CompAnnounceUser = "admin"
+$CompAnnouncePassword = "admin123"
 $ResendApiKey = ""
 $ResendFromEmail = ""
 $ResendFromName = ""
@@ -316,6 +318,14 @@ if (Test-Path $EnvFile) {
   if ($existing -match '(?m)^COMP_RESET_SECRET=(.+)$') {
     $prev = $Matches[1].Trim()
     if ($prev) { $CompResetSecret = $prev }
+  }
+  if ($existing -match '(?m)^COMP_ANNOUNCE_USER=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $CompAnnounceUser = $prev }
+  }
+  if ($existing -match '(?m)^COMP_ANNOUNCE_PASSWORD=(.+)$') {
+    $prev = $Matches[1].Trim()
+    if ($prev) { $CompAnnouncePassword = $prev }
   }
   if ($existing -match '(?m)^RESEND_API_KEY=(.+)$') {
     $prev = $Matches[1].Trim()
@@ -355,8 +365,8 @@ OPS_URL=http://ops:14710
 COMP_IMAGE=colpertac/smt-comp:latest
 WEBSITE_IMAGE=colpertac/smt-website:latest
 OPS_IMAGE=colpertac/smt-ops:latest
-COMP_ANNOUNCE_USER=admin
-COMP_ANNOUNCE_PASSWORD=admin123
+COMP_ANNOUNCE_USER=$CompAnnounceUser
+COMP_ANNOUNCE_PASSWORD=$CompAnnouncePassword
 "@
 if ($ResendApiKey) { $envBody += "`nRESEND_API_KEY=$ResendApiKey" }
 if ($ResendFromEmail) { $envBody += "`nRESEND_FROM_EMAIL=$ResendFromEmail" }
