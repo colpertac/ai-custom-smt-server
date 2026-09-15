@@ -85,6 +85,10 @@ echo "==> compose / deploy files"
 rsync -a \
   --exclude bin \
   --exclude data \
+  --exclude updater \
+  --exclude website-data \
+  --exclude backups \
+  --exclude ops-tools \
   --exclude .env \
   --exclude '.env.*' \
   "${DEPLOY_DIR}/" "${TREE}/"

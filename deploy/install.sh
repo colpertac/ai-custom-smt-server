@@ -158,6 +158,7 @@ copy_install_tree() {
     # Anchor excludes at transfer root so seed/updater is still copied.
     rsync -a \
       --exclude /data/ --exclude /updater/ --exclude /website-data/ \
+      --exclude /backups/ \
       --exclude /.env \
       "$SCRIPT_DIR/" "$dest_deploy/"
     rsync -a --exclude audit.log "$SOURCE_OPS_DIR/" "$dest_ops/"

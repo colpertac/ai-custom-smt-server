@@ -82,12 +82,14 @@ echo "==> staging under $TREE"
 mkdir -p "$TREE"
 
 # Root-anchored excludes so seed/updater stays in the zip.
+# Never ship cold archives or rclone OAuth (local Admin → Backups state).
 echo "==> deploy/"
 rsync -a \
   --exclude /bin/ \
   --exclude /data/ \
   --exclude /updater/ \
   --exclude /website-data/ \
+  --exclude /backups/ \
   --exclude /ops-tools/ \
   --exclude /.env \
   --exclude '/.env.local' \

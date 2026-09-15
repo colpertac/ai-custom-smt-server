@@ -184,6 +184,9 @@ the GitHub release zip (`smt-deploy-ops.zip` on tag `v1.0.0`). Fresh
 | `ops/*.py` (sidecar) | `./deploy/scripts/docker-push-ops-hub.sh` **and** rezip the release (below) |
 | `deploy/` (compose, `install.sh`, seed, …) | Rezip the release (below) |
 
+Release zip packing **excludes** `deploy/backups/` (cold archives + rclone
+OAuth). Never commit or ship that directory.
+
 If **`deploy/` or `ops/`** changed, rebuild the install zip and replace the
 asset on the existing release (`--clobber` overwrites `smt-deploy-ops.zip`):
 

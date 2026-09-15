@@ -78,6 +78,7 @@ function Copy-InstallTree([string] $DestPrefix) {
     (Join-Path $ScriptRoot "data"),
     (Join-Path $ScriptRoot "updater"),
     (Join-Path $ScriptRoot "website-data"),
+    (Join-Path $ScriptRoot "backups"),
     (Join-Path $ScriptRoot "ops-tools")
   )
   robocopy $ScriptRoot $destDeploy /E /NFL /NDL /NJH /NJS /nc /ns /np `
