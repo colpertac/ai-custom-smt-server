@@ -2,8 +2,10 @@
 # Pack deploy-studio/ for a GitHub release asset (Wine / portrait host).
 #
 #   ./deploy/scripts/make-studio-release-zip.sh
-#   ./deploy/scripts/make-studio-release-zip.sh -o /tmp/smt-deploy-studio.zip
 #   ./deploy/scripts/make-studio-release-zip.sh --upload v1.0.0   # needs gh + existing release tag
+#
+# Default output / release asset name is always smt-deploy-studio.zip so
+# ``--upload`` can ``--clobber`` the same asset each time.
 #
 # Zip layout (extract anywhere):
 #   deploy-studio/
@@ -18,13 +20,15 @@ STUDIO_DIR="${ROOT_DIR}/deploy-studio"
 OUT=""
 UPLOAD_TAG=""
 KEEP_STAGE=0
+ASSET_NAME="smt-deploy-studio.zip"
 
 usage() {
   cat <<'EOF'
 Usage: make-studio-release-zip.sh [-o FILE.zip] [--upload TAG] [--keep-stage]
 
-  -o FILE.zip    Output path (default: ./smt-deploy-studio-YYYYMMDD-HHMMSS.zip)
-  --upload TAG   Attach the zip to an existing GitHub release (gh release upload)
+  -o FILE.zip    Output path (default: ./smt-deploy-studio.zip)
+  --upload TAG   Attach as smt-deploy-studio.zip on an existing GitHub release
+                 (gh release upload --clobber; replaces prior asset)
   --keep-stage   Leave the staging directory next to the zip
   -h, --help     This help
 
@@ -51,9 +55,8 @@ need rsync
   exit 1
 }
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
 if [[ -z "$OUT" ]]; then
-  OUT="${PWD}/smt-deploy-studio-${STAMP}.zip"
+  OUT="${PWD}/${ASSET_NAME}"
 fi
 OUT="$(mkdir -p "$(dirname "$OUT")" && cd "$(dirname "$OUT")" && pwd)/$(basename "$OUT")"
 STAGE="$(mktemp -d "${TMPDIR:-/tmp}/smt-studio-release.XXXXXX")"
@@ -100,7 +103,13 @@ echo "done: $OUT"
 
 if [[ -n "$UPLOAD_TAG" ]]; then
   need gh
-  echo "==> uploading to release $UPLOAD_TAG"
-  gh release upload "$UPLOAD_TAG" "$OUT" --clobber
-  echo "attached to release $UPLOAD_TAG"
+  # Always publish under the stable asset name so --clobber replaces it.
+  UPLOAD_FILE="$OUT"
+  if [[ "$(basename "$OUT")" != "$ASSET_NAME" ]]; then
+    UPLOAD_FILE="$(dirname "$OUT")/${ASSET_NAME}"
+    cp -f "$OUT" "$UPLOAD_FILE"
+  fi
+  echo "==> uploading ${ASSET_NAME} to release $UPLOAD_TAG (clobber)"
+  gh release upload "$UPLOAD_TAG" "$UPLOAD_FILE" --clobber
+  echo "attached ${ASSET_NAME} to release $UPLOAD_TAG"
 fi
