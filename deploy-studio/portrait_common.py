@@ -1225,6 +1225,8 @@ def wine_tap_key(
         "backtab",
     ):
         key_l = "shift+tab"
+    elif key_l in ("ctrl+a", "control+a", "ctrl-a"):
+        key_l = "ctrl+a"
     return _wine_sendinput_cmd(
         *_wine_x11_wid_args(x11_wid),
         *_wine_title_args(title),

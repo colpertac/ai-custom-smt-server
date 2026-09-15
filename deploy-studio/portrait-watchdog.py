@@ -355,9 +355,15 @@ def tick(st: WatchState, *, now: float | None = None) -> None:
     except Exception:
         pass
     # Keep Wine GL from idling out while mannequins are online.
-    # Skip while a drone mission is driving a window (focus fight).
+    # Skip while drone / orch / login owns focus (otherwise 2nd-client typing flakes).
     try:
-        if not drone_is_busy():
+        from portrait_queue_gate import orch_or_login_busy
+
+        input_busy = drone_is_busy() or bool(orch_or_login_busy())
+    except Exception:
+        input_busy = drone_is_busy()
+    try:
+        if not input_busy:
             nudge_mannequin_windows()
     except Exception as e:
         print(f"idle nudge: {e}", file=sys.stderr)

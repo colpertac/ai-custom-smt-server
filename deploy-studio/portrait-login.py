@@ -9,6 +9,12 @@ Flow (as on your PC):
   5. Wait for char-select (black screen)
   6. Spam-click bottom-left "Start Game" (cluster around the button)
 
+Dual-client: both Wine processes share one install (Remember ID) and one
+DISPLAY. xdotool XTEST often works for the *first* login, then flakes for the
+second while the other is in-world — status snaps / idle nudges steal X focus,
+and DirectInput ignores XTEST. Prefer Wine SendInput with ``--x11-wid`` (same
+path as drone / camera); hide the sibling window while typing.
+
 Credentials via env (do not commit passwords):
   PORTRAIT_LOGIN_USER / PORTRAIT_LOGIN_PASS
   or role presets:
@@ -142,18 +148,42 @@ def xdo(*args: str, check: bool = True) -> None:
     subprocess.run(["xdotool", *args], check=check)
 
 
-def key_focus(*keys: str) -> None:
-    """Send keys to the focused window (Wine often ignores --window chords)."""
+def key_via_sendinput(wid: str, name: str) -> bool:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import wine_tap_key
+
+    return wine_tap_key(name, x11_wid=wid)
+
+
+def key_focus(wid: str, *keys: str) -> None:
+    """Send keys into ``wid`` — Wine SendInput first, xdotool fallback."""
+    joined = "+".join(keys).lower().replace(" ", "")
+    send_name = {
+        "shift+tab": "shift+tab",
+        "ctrl+a": "ctrl+a",
+        "control+a": "ctrl+a",
+        "return": "return",
+        "enter": "return",
+        "tab": "tab",
+        "escape": "escape",
+        "esc": "escape",
+        "backspace": "backspace",
+    }.get(joined)
+    if send_name and key_via_sendinput(wid, send_name):
+        return
+    if len(keys) == 1 and key_via_sendinput(wid, keys[0]):
+        return
+    focus(wid)
     xdo("key", "--clearmodifiers", *keys)
 
 
-def shift_tab() -> None:
-    """Move focus backward from the password field to username.
-
-    Wine/Xwayland often drops xdotool's `shift+Tab` chord and `--window`
-    modifiers; holding Shift_L then Tab on the focused window works.
-    """
+def shift_tab(wid: str) -> None:
+    """Move focus backward from the password field to username."""
     hold = max(0.05, min(0.25, FIELD_GAP_SEC * 0.2))
+    if key_via_sendinput(wid, "shift+tab"):
+        time.sleep(FIELD_GAP_SEC)
+        return
+    focus(wid)
     xdo("keydown", "--clearmodifiers", "Shift_L")
     time.sleep(hold)
     xdo("key", "Tab")
@@ -162,21 +192,26 @@ def shift_tab() -> None:
     time.sleep(FIELD_GAP_SEC)
 
 
-def press_tab() -> None:
-    """Move focus forward (username → password).
-
-    Same Wine flakiness as Shift+Tab: a bare ``key Tab`` is often dropped when
-    sent immediately after typing, so we clear modifiers and wait afterward.
-    """
+def press_tab(wid: str) -> None:
+    """Move focus forward (username → password)."""
     hold = max(0.05, min(0.25, FIELD_GAP_SEC * 0.2))
+    if key_via_sendinput(wid, "tab"):
+        time.sleep(FIELD_GAP_SEC)
+        return
+    focus(wid)
     xdo("key", "--clearmodifiers", "Tab")
     time.sleep(hold)
-    # Second Tab is harmful (would leave password). Just settle.
     time.sleep(FIELD_GAP_SEC)
 
 
-def type_text(text: str) -> None:
-    # Type into the focused field (no --window — Wine login UI needs this).
+def type_text(wid: str, text: str) -> None:
+    """Type into ``wid`` (never log ``text``). Prefer Wine SendInput."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from portrait_common import wine_type_text
+
+    if wine_type_text(text, x11_wid=wid):
+        return
+    focus(wid)
     xdo(
         "type",
         "--clearmodifiers",
@@ -318,7 +353,7 @@ def skip_splash(
         print(f"skip splash: Esc ×{n}")
         for i in range(n):
             focus(wid)
-            key_focus("Escape")
+            key_focus(wid, "Escape")
             time.sleep(SPLASH_ESC_GAP_SEC)
         focus(wid)
         time.sleep(0.4)
@@ -388,19 +423,22 @@ def login(
 
         focus(wid)
         # Default focus is the password field. Back-tab → username.
-        shift_tab()
-        key_focus("ctrl+a")
+        # Shared ImagineClient.dat Remember-ID often still shows the *other*
+        # account — select-all before typing. Prefer SendInput so the sibling
+        # in-world client / status snaps cannot eat xdotool XTEST keys.
+        shift_tab(wid)
+        key_focus(wid, "ctrl+a")
         time.sleep(max(0.1, FIELD_GAP_SEC * 0.35))
-        type_text(user)
+        type_text(wid, user)
         time.sleep(max(0.15, FIELD_GAP_SEC * 0.5))
 
-        press_tab()
-        key_focus("ctrl+a")
+        press_tab(wid)
+        key_focus(wid, "ctrl+a")
         time.sleep(max(0.1, FIELD_GAP_SEC * 0.35))
-        type_text(password)
+        type_text(wid, password)
         time.sleep(max(0.15, FIELD_GAP_SEC * 0.5))
 
-        key_focus("Return")
+        key_focus(wid, "Return")
         print(f"submitted login; waiting {AFTER_ENTER_SEC}s for char select…")
         time.sleep(AFTER_ENTER_SEC)
         snap(role, "after-enter", wid)

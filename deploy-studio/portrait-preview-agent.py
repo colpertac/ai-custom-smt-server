@@ -704,6 +704,17 @@ def collect_status() -> dict:
             # Status snaps call focus_x_window and steal keys from the drone.
             info["screen"] = "drone"
             continue
+        try:
+            from portrait_queue_gate import orch_or_login_busy
+
+            busy = orch_or_login_busy()
+        except Exception:
+            busy = None
+        if busy:
+            # Same for orch/login — focusing vam1 mid-vaf1 typing leaves
+            # Remember-ID username unchanged (looks like "typed wrong user").
+            info["screen"] = "login"
+            continue
         # Always classify from a local snap — channel "online" can lag behind
         # disconnect dialogs / black frames after channel restart.
         try:

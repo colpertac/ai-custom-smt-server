@@ -339,6 +339,18 @@ int main(int argc, char **argv) {
       key_event(VK_SHIFT, TRUE);
       return 0;
     }
+    /* Select-all for login ID/password fields (shared Remember-ID between clients). */
+    if (!_stricmp(key, "ctrl+a") || !_stricmp(key, "control+a") ||
+        !_stricmp(key, "ctrl-a")) {
+      key_event(VK_CONTROL, FALSE);
+      Sleep(30);
+      key_event('A', FALSE);
+      Sleep(40);
+      key_event('A', TRUE);
+      Sleep(15);
+      key_event(VK_CONTROL, TRUE);
+      return 0;
+    }
     vk = lookup_vk(key);
     if (!vk) {
       fprintf(stderr, "unknown key: %s\n", key);
