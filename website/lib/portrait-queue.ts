@@ -128,12 +128,17 @@ export function buildPortraitJobPayload(
   characterName: string,
   input: PortraitFingerprintInput
 ): PortraitJobPayload {
-  const fingerprint = appearanceFingerprint(input)
-  return {
+  const withName: PortraitFingerprintInput = {
     ...input,
+    characterName: input.characterName?.trim() || characterName,
+    equippedItems: input.equippedItems ?? [],
+  }
+  const fingerprint = appearanceFingerprint(withName)
+  return {
+    ...withName,
     fingerprint,
     characterName,
-    canonical: portraitFingerprintCanonical(input),
+    canonical: portraitFingerprintCanonical(withName),
   }
 }
 

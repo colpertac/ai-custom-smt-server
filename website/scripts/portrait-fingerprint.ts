@@ -80,7 +80,19 @@ if (weaponUid && weaponUid !== NULL_UUID) {
   weaponType = it?.Type ?? 0
 }
 
+const equipUids = decodeEquippedItemUids(row.EquippedItems)
+const equippedItems: { slot: number; itemType: number }[] = []
+for (let slot = 0; slot < equipUids.length; slot++) {
+  const uid = equipUids[slot]
+  if (!uid || uid === NULL_UUID) continue
+  const it = db
+    .prepare(`SELECT Type FROM Item WHERE UID = ?`)
+    .get(uid) as { Type: number } | undefined
+  if (it?.Type) equippedItems.push({ slot, itemType: it.Type })
+}
+
 const input: PortraitFingerprintInput = {
+  characterName: row.Name,
   appearance: {
     gender: row.Gender,
     skinType: row.SkinType,
@@ -93,6 +105,7 @@ const input: PortraitFingerprintInput = {
   },
   title: row.CurrentTitle,
   equippedVA: decodeEquippedVA(row.EquippedVA),
+  equippedItems,
   weaponType,
   demonType: 0,
 }
@@ -103,6 +116,7 @@ console.log(`canonical    ${portraitFingerprintCanonical(input)}`)
 console.log(`fingerprint  ${fingerprint}`)
 console.log(`weaponType   ${weaponType}`)
 console.log(`va count     ${input.equippedVA.length}`)
+console.log(`item count   ${input.equippedItems.length}`)
 
 const enq = enqueuePortraitJob(row.Name, input)
 console.log(`queue        ${enq.status}`)

@@ -9,6 +9,7 @@ function sample(
   over: Partial<PortraitFingerprintInput> = {}
 ): PortraitFingerprintInput {
   return {
+    characterName: "cat2",
     appearance: {
       gender: 0,
       skinType: 101,
@@ -21,6 +22,7 @@ function sample(
     },
     title: 0,
     equippedVA: [{ slot: 3, itemType: 23602 }],
+    equippedItems: [],
     weaponType: 0,
     demonType: 0,
     ...over,
@@ -48,20 +50,30 @@ describe("portrait-queue", () => {
     return mod
   }
 
-  it("enqueues once per fingerprint and refreshes the source name", async () => {
+  it("keeps one pending job per character fingerprint (name is part of hash)", async () => {
     const q = await load()
-    const first = q.enqueuePortraitJob("cat2", sample())
-    const again = q.enqueuePortraitJob("mannequin", sample())
+    const first = q.enqueuePortraitJob("cat2", sample({ characterName: "cat2" }))
+    const again = q.enqueuePortraitJob("cat2", sample({ characterName: "cat2" }))
     expect(first.fingerprint).toBe(again.fingerprint)
     expect(again.status).toBe("pending")
     expect(q.listPortraitJobs("pending")).toHaveLength(1)
-    expect(q.getPortraitJob(first.fingerprint)?.characterName).toBe("mannequin")
+
+    // Same look, different character → different fingerprint (no shared PNG).
+    const other = q.enqueuePortraitJob(
+      "mannequin",
+      sample({ characterName: "mannequin" })
+    )
+    expect(other.fingerprint).not.toBe(first.fingerprint)
+    expect(q.listPortraitJobs("pending")).toHaveLength(2)
 
     q.enqueuePortraitJob(
       "cat2",
-      sample({ equippedVA: [{ slot: 3, itemType: 1 }] })
+      sample({
+        characterName: "cat2",
+        equippedVA: [{ slot: 3, itemType: 1 }],
+      })
     )
-    expect(q.listPortraitJobs("pending")).toHaveLength(2)
+    expect(q.listPortraitJobs("pending")).toHaveLength(3)
   })
 
   it("claims one job at a time and returns the in-flight claim", async () => {

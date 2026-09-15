@@ -5,20 +5,19 @@ import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import {
   StudioAgentError,
-  clientAction,
+  setQueueProcessing,
 } from "@/lib/studio-agent-remote"
 import { requireWebSession } from "@/lib/web-session"
 
 const bodySchema = z.object({
-  role: z.enum(["vam1", "vaf1"]),
-  action: z.enum(["start", "launch", "stop", "restart"]),
+  enabled: z.boolean(),
 })
 
-/** Per-role start / launch-only / stop / restart on the Wine host. */
+/** Pause / resume portrait queue claims on the Wine host worker. */
 export async function POST(request: Request) {
   const blocked = await guardApiMutation(
-    "admin-studio-clients-action",
-    20,
+    "admin-studio-queue",
+    30,
     60_000
   )
   if (blocked) return blocked
@@ -45,22 +44,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await clientAction(parsed.data)
-    const status =
-      parsed.data.action === "stop"
-        ? 200
-        : 202
+    const result = await setQueueProcessing({ enabled: parsed.data.enabled })
     return apiOk(
       result,
-      `${parsed.data.action} ${parsed.data.role}`,
-      { status }
+      parsed.data.enabled
+        ? "Queue processing on — worker will claim jobs"
+        : "Queue processing paused — start clients first, then enable"
     )
   } catch (e) {
     if (e instanceof StudioAgentError) {
       return apiFail(e.message, e.status, "STUDIO_AGENT")
     }
     return apiFail(
-      e instanceof Error ? e.message : "Client action failed",
+      e instanceof Error ? e.message : "Queue toggle failed",
       502,
       "STUDIO_AGENT"
     )

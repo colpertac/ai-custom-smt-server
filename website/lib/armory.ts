@@ -724,9 +724,13 @@ export async function loadArmoryProfile(
     rightEyeColor: row.RightEyeColor,
   }
   const portraitInput: PortraitFingerprintInput = {
+    characterName: row.Name,
     appearance,
     title: row.CurrentTitle,
     equippedVA: decodeEquippedVA(row.EquippedVA),
+    equippedItems: equipment
+      .filter((s): s is typeof s & { itemType: number } => s.itemType != null)
+      .map((s) => ({ slot: s.index, itemType: s.itemType })),
     weaponType: equipment.find((s) => s.slot === "weapon")?.itemType ?? 0,
     demonType: activeDemon?.type ?? 0,
   }

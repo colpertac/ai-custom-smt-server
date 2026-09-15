@@ -25,7 +25,7 @@ export function StudioPortraitClearCard() {
     const okConfirm = await confirm({
       title: `Clear portrait for ${trimmed}?`,
       description:
-        "Deletes the cached PNG and queue row. Opening the armory page will show the placeholder, then re-enqueue capture (worker must be running).",
+        "Deletes the cached PNG and queue row. Opening the armory page will show the placeholder, then re-enqueue capture (worker must be running with Process queue on).",
       confirmLabel: "Clear portrait",
       variant: "destructive",
     })

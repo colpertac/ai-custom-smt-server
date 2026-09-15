@@ -3,11 +3,16 @@ import fs from "node:fs"
 import path from "node:path"
 
 /** Bump when the canonical string format changes (invalidates all hashes). */
-export const PORTRAIT_FINGERPRINT_VERSION = 1
+export const PORTRAIT_FINGERPRINT_VERSION = 2
 
 export type EquippedVAEntry = { slot: number; itemType: number }
 
 export type PortraitFingerprintInput = {
+  /**
+   * Character identity for the hash. Two chars with the same default face /
+   * empty VA must not share one PNG (Lain vs slowdan on production).
+   */
+  characterName: string
   appearance: {
     gender: number
     skinType: number
@@ -21,6 +26,11 @@ export type PortraitFingerprintInput = {
   /** CurrentTitle — shows as floating nameplate in captures. */
   title: number
   equippedVA: EquippedVAEntry[]
+  /**
+   * Real EquippedItems slot→type (top/bottom/etc.). Many alts never write
+   * EquippedVA; without this the hash only sees face + weapon.
+   */
+  equippedItems: EquippedVAEntry[]
   /** Real weapon item Type (slot 13); 0 if empty. VA guns need a matching class. */
   weaponType: number
   /**
@@ -67,17 +77,24 @@ export function decodeEquippedVA(
   return out
 }
 
-export function portraitFingerprintCanonical(
-  input: PortraitFingerprintInput
-): string {
-  const va = [...input.equippedVA]
+function slotTypeKey(entries: EquippedVAEntry[]): string {
+  return [...entries]
     .filter((e) => e.itemType)
     .sort((a, b) => a.slot - b.slot || a.itemType - b.itemType)
     .map((e) => `${e.slot}:${e.itemType}`)
     .join(",")
+}
+
+export function portraitFingerprintCanonical(
+  input: PortraitFingerprintInput
+): string {
+  const va = slotTypeKey(input.equippedVA)
+  const eq = slotTypeKey(input.equippedItems ?? [])
   const a = input.appearance
+  const name = input.characterName.trim().toLowerCase()
   return [
     `v${PORTRAIT_FINGERPRINT_VERSION}`,
+    `n=${name}`,
     `g=${a.gender}`,
     `skin=${a.skinType}`,
     `hair=${a.hairType}`,
@@ -87,6 +104,7 @@ export function portraitFingerprintCanonical(
     `el=${a.leftEyeColor}`,
     `er=${a.rightEyeColor}`,
     `title=${input.title}`,
+    `eq=${eq}`,
     `va=${va}`,
     `w=${input.weaponType}`,
     // Always 0: armory PNGs never include the partner demon.
@@ -141,7 +159,10 @@ export function resolveArmoryPortrait(
   input: PortraitFingerprintInput,
   characterName: string
 ): ArmoryPortrait {
-  const fingerprint = appearanceFingerprint(input)
+  const fingerprint = appearanceFingerprint({
+    ...input,
+    characterName: input.characterName || characterName,
+  })
   const hashed = findPortraitFile(fingerprint)
   if (hashed) {
     return { fingerprint, url: hashed, status: "ready" }

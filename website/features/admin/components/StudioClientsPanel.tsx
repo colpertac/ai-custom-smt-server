@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import {
   KeyRound,
   LogIn,
+  MonitorPlay,
   Play,
   RotateCcw,
   Square,
@@ -13,6 +14,7 @@ import {
 import { FormAlert } from "@/components/form-alert"
 import { useConfirm } from "@/components/confirm-dialog"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +47,8 @@ type AgentStatus = {
   workerAlive?: boolean
   workerPid?: number | null
   watchdogAlive?: boolean
+  queueProcessing?: { enabled?: boolean; updatedAt?: number | null }
+  queueBlockedReason?: string | null
   liveWindows?: string[]
   mapped?: Record<string, RoleInfo>
   studioHealth?: Record<string, boolean>
@@ -129,6 +133,7 @@ export function StudioClientsPanel({
   const [loginJob, setLoginJob] = useState<
     (OrchJob & { role?: string; step?: string }) | null
   >(null)
+  const [queueToggling, setQueueToggling] = useState(false)
 
   const refreshStatus = useCallback(async (opts?: { silent?: boolean }) => {
     if (inFlight.current && opts?.silent) return
@@ -255,6 +260,49 @@ export function StudioClientsPanel({
     }
   }
 
+  async function toggleQueueProcessing(enabled: boolean) {
+    setQueueToggling(true)
+    setError(null)
+    setOk(null)
+    try {
+      const response = await api.post("admin/studio/queue", {
+        json: { enabled },
+      })
+      const json = (await response.json()) as {
+        success?: boolean
+        message?: string
+        data?: {
+          queueProcessing?: { enabled?: boolean }
+          queueBlockedReason?: string | null
+        }
+      }
+      if (!response.ok || !json.success) {
+        setError(json.message || `HTTP ${response.status}`)
+        return
+      }
+      setStatus((prev) =>
+        prev
+          ? {
+              ...prev,
+              queueProcessing: {
+                enabled: Boolean(json.data?.queueProcessing?.enabled ?? enabled),
+              },
+              queueBlockedReason: json.data?.queueBlockedReason ?? null,
+            }
+          : prev
+      )
+      setOk(
+        json.message ||
+          (enabled ? "Queue processing on" : "Queue processing paused")
+      )
+      void refreshStatus({ silent: true })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Queue toggle failed")
+    } finally {
+      setQueueToggling(false)
+    }
+  }
+
   async function runLoginStep(
     role: "vam1" | "vaf1",
     step: "login" | "credentials" | "start" | "full"
@@ -291,7 +339,7 @@ export function StudioClientsPanel({
 
   async function runClientAction(
     role: "vam1" | "vaf1",
-    action: "start" | "stop" | "restart"
+    action: "start" | "launch" | "stop" | "restart"
   ) {
     const key = `action:${role}:${action}`
     setStepBusy(key)
@@ -332,7 +380,11 @@ export function StudioClientsPanel({
         setStepBusy(null)
         return
       }
-      setOk(json.message || `${action} ${role}`)
+      const label =
+        action === "launch"
+          ? `launch ${role} (no login script)`
+          : `${action} ${role}`
+      setOk(json.message || label)
       if (json.data?.job) {
         setJob(json.data.job)
         jobWasRunning.current = true
@@ -356,6 +408,7 @@ export function StudioClientsPanel({
   const atCapacity = liveCount >= maxClients
   const dualAtCapacity = liveCount > 0
   const canStart = !busy && !dualAtCapacity
+  const queueEnabled = Boolean(status?.queueProcessing?.enabled)
 
   return (
     <div
@@ -398,11 +451,55 @@ export function StudioClientsPanel({
           <span className="font-mono">./studio up</span>.
         </FormAlert>
       ) : null}
-      {status?.workerAlive ? (
-        <p className="text-[11px] text-muted-foreground font-mono">
-          worker pid {status.workerPid ?? "?"}
-          {status.watchdogAlive === false ? " · watchdog stopped" : ""}
-        </p>
+
+      <div className="flex flex-wrap items-center gap-3 rounded-sm border border-border/70 bg-muted/20 px-3 py-2.5">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium">Process queue</span>
+            <Switch
+              size="sm"
+              checked={queueEnabled}
+              disabled={
+                queueToggling ||
+                loading ||
+                !status ||
+                status.workerAlive === false
+              }
+              onCheckedChange={(on) => void toggleQueueProcessing(on)}
+              aria-label="Process portrait queue"
+            />
+            <span
+              className={cn(
+                "text-xs font-medium uppercase tracking-wide",
+                queueEnabled ? "text-teal-400" : "text-amber-500/90"
+              )}
+            >
+              {queueToggling ? "…" : queueEnabled ? "On" : "Paused"}
+            </span>
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Leave paused while starting / logging in vam1 and vaf1 so the worker
+            does not steal focus. Turn on once both are in-world.
+          </p>
+          {status?.workerAlive ? (
+            <p className="text-[11px] text-muted-foreground font-mono">
+              worker pid {status.workerPid ?? "?"}
+              {status.watchdogAlive === false ? " · watchdog stopped" : ""}
+              {!queueEnabled
+                ? ""
+                : status.queueBlockedReason
+                  ? ` · ${status.queueBlockedReason}`
+                  : " · claiming"}
+            </p>
+          ) : null}
+        </div>
+      </div>
+
+      {status?.workerAlive && !queueEnabled ? (
+        <FormAlert variant="warning">
+          Queue processing is paused — armory jobs stay pending until you turn
+          Process queue on.
+        </FormAlert>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
@@ -523,7 +620,22 @@ export function StudioClientsPanel({
                         variant="outline"
                         className={iconBtn}
                         disabled={!canAct || live || atCapacity}
-                        title={`Start ${role.id} (launch + login)`}
+                        title={`Launch ${role.id} only (no splash / login script)`}
+                        onClick={() => void runClientAction(role.id, "launch")}
+                      >
+                        {stepBusy === `action:${role.id}:launch` ? (
+                          "…"
+                        ) : (
+                          <MonitorPlay aria-hidden />
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className={iconBtn}
+                        disabled={!canAct || live || atCapacity}
+                        title={`Start ${role.id} (launch + login script)`}
                         onClick={() => void runClientAction(role.id, "start")}
                       >
                         {stepBusy === `action:${role.id}:start` ? (

@@ -14,6 +14,7 @@ import {
 
 function sample(over: Partial<PortraitFingerprintInput> = {}): PortraitFingerprintInput {
   return {
+    characterName: "cat2",
     appearance: {
       gender: 0,
       skinType: 101,
@@ -29,6 +30,7 @@ function sample(over: Partial<PortraitFingerprintInput> = {}): PortraitFingerpri
       { slot: 3, itemType: 23602 },
       { slot: 24, itemType: 2004 },
     ],
+    equippedItems: [],
     weaponType: 0,
     demonType: 0,
     ...over,
@@ -72,12 +74,20 @@ describe("appearanceFingerprint", () => {
     expect(appearanceFingerprint(a)).toBe(appearanceFingerprint(b))
   })
 
-  it("changes when VA, weapon, or hair color changes (not demon)", () => {
+  it("changes when VA, weapon, gear, name, or hair color changes (not demon)", () => {
     const base = appearanceFingerprint(sample())
     expect(
       appearanceFingerprint(sample({ equippedVA: [{ slot: 3, itemType: 1 }] }))
     ).not.toBe(base)
     expect(appearanceFingerprint(sample({ weaponType: 2001 }))).not.toBe(base)
+    expect(
+      appearanceFingerprint(
+        sample({ equippedItems: [{ slot: 3, itemType: 6806 }] })
+      )
+    ).not.toBe(base)
+    expect(
+      appearanceFingerprint(sample({ characterName: "other" }))
+    ).not.toBe(base)
     // Partner demon is not in portraits — summon state must not change the hash.
     expect(appearanceFingerprint(sample({ demonType: 99 }))).toBe(base)
     expect(
@@ -90,7 +100,8 @@ describe("appearanceFingerprint", () => {
   })
 
   it("canonical string is explicit and versioned", () => {
-    expect(portraitFingerprintCanonical(sample())).toContain("v1|")
+    expect(portraitFingerprintCanonical(sample())).toContain("v2|")
+    expect(portraitFingerprintCanonical(sample())).toContain("n=cat2")
     expect(portraitFingerprintCanonical(sample())).toContain("va=3:23602,24:2004")
   })
 })

@@ -877,10 +877,11 @@ def cmd_loop(args: argparse.Namespace) -> None:
     )
     while True:
         try:
-            from portrait_drone import drone_is_busy
+            from portrait_queue_gate import claim_blocked_reason
 
-            if drone_is_busy():
-                print("drone busy — skip claim (do not steal focus)")
+            blocked = claim_blocked_reason()
+            if blocked:
+                print(blocked)
                 time.sleep(args.interval)
                 continue
         except Exception:

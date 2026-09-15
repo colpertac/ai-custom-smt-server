@@ -7,6 +7,7 @@ Started by ``./studio up`` (with the worker). Website Admin talks here for:
   - orch start/kill/status (async job)
   - drone queued click/type/key missions
   - worker init-camera (in-world framing)
+  - queue processing on/off (Admin Studio toggle)
 
   ./studio up
   # or: uv run python portrait-preview-agent.py
@@ -55,6 +56,11 @@ from portrait_drone import (  # noqa: E402
     read_drone_lock,
     release_drone_lock,
     run_drone_mission,
+)
+from portrait_queue_gate import (  # noqa: E402
+    claim_blocked_reason,
+    read_queue_gate,
+    set_queue_processing_enabled,
 )
 
 WORKER = HERE / "portrait-worker.py"
@@ -278,11 +284,19 @@ def _watch_orch(proc: subprocess.Popen, started: dict) -> None:
             pass
 
 
-def start_orch_up(*, male_only: bool = False, roles: list[str] | None = None) -> dict:
+def start_orch_up(
+    *,
+    male_only: bool = False,
+    roles: list[str] | None = None,
+    skip_login: bool = False,
+    skip_camera: bool | None = None,
+) -> dict:
     if not ORCH.is_file():
         raise RuntimeError(f"missing {ORCH}")
     role_list = normalize_role_list(roles) if roles else None
     want = 1 if male_only else (len(role_list) if role_list else MAX_MANNEQUIN_CLIENTS)
+    # Launch-only: no splash/creds — also skip camera (needs in-world).
+    skip_cam = skip_login if skip_camera is None else bool(skip_camera)
     # Preflight before spawning orch — Admin never passes --ok-existing.
     if role_list and len(role_list) == 1:
         live_n = count_imagine_clients()["count"]
@@ -312,6 +326,10 @@ def start_orch_up(*, male_only: bool = False, roles: list[str] | None = None) ->
             cmd.extend(["--roles", ",".join(role_list)])
         elif male_only:
             cmd.append("--male-only")
+        if skip_login:
+            cmd.append("--skip-login")
+        if skip_cam:
+            cmd.append("--skip-camera")
         # Never pass --ok-existing from Admin control plane.
         with ORCH_JOB_LOG.open("a", encoding="utf-8") as log:
             log.write(
@@ -326,14 +344,16 @@ def start_orch_up(*, male_only: bool = False, roles: list[str] | None = None) ->
                 start_new_session=True,
                 env=os.environ.copy(),
             )
+        kind = "launch-only" if skip_login else "orch up"
         started = {
             "state": "running",
             "pid": proc.pid,
             "cmd": cmd,
             "maleOnly": male_only,
             "roles": role_list,
+            "skipLogin": skip_login,
             "startedAt": time.time(),
-            "message": f"orch up started (want ≤{want} client(s))",
+            "message": f"{kind} started (want ≤{want} client(s))",
         }
         ORCH_JOB_PID.write_text(f"{proc.pid}\n", encoding="utf-8")
         _write_job_meta(started)
@@ -739,6 +759,8 @@ def collect_status() -> dict:
         "workerAlive": worker_alive(),
         "workerPid": _read_pidfile(WORKER_PID),
         "watchdogAlive": _read_pidfile(WATCHDOG_PID) is not None,
+        "queueProcessing": read_queue_gate(),
+        "queueBlockedReason": claim_blocked_reason(),
         "job": orch_job_status(),
         "loginJob": login_job_status(),
         "droneJob": read_drone_lock(),
@@ -989,6 +1011,19 @@ class Handler(BaseHTTPRequestHandler):
                 return
             self._send_json(200, {"ok": True, "job": read_drone_lock()})
             return
+        if path == "/worker/queue":
+            if not check_auth(self):
+                return
+            gate = read_queue_gate()
+            self._send_json(
+                200,
+                {
+                    "ok": True,
+                    "queueProcessing": gate,
+                    "queueBlockedReason": claim_blocked_reason(),
+                },
+            )
+            return
         self.send_error(404)
 
     def do_POST(self) -> None:
@@ -1002,10 +1037,29 @@ class Handler(BaseHTTPRequestHandler):
             "/client",
             "/drone",
             "/camera",
+            "/worker/queue",
         }:
             self.send_error(404)
             return
         if not check_auth(self):
+            return
+
+        if path == "/worker/queue":
+            body = self._read_json()
+            if body is None:
+                return
+            if "enabled" not in body:
+                self._send_err(400, "enabled (bool) required")
+                return
+            gate = set_queue_processing_enabled(bool(body.get("enabled")))
+            self._send_json(
+                200,
+                {
+                    "ok": True,
+                    "queueProcessing": gate,
+                    "queueBlockedReason": claim_blocked_reason(),
+                },
+            )
             return
 
         if path == "/orch/up":
@@ -1070,11 +1124,21 @@ class Handler(BaseHTTPRequestHandler):
                         raise RuntimeError("role must be vam1 or vaf1")
                     job = start_orch_up(roles=[role_n])
                     self._send_json(202, {"ok": True, "job": job})
+                elif action == "launch":
+                    role_n = normalize_role(role)
+                    if not role_n:
+                        raise RuntimeError("role must be vam1 or vaf1")
+                    job = start_orch_up(
+                        roles=[role_n], skip_login=True, skip_camera=True
+                    )
+                    self._send_json(202, {"ok": True, "job": job})
                 elif action == "restart":
                     result = restart_client_role(role)
                     self._send_json(202, {"ok": True, **result})
                 else:
-                    self._send_err(400, "action must be start, stop, or restart")
+                    self._send_err(
+                        400, "action must be start, launch, stop, or restart"
+                    )
             except Exception as e:
                 msg = str(e)[:500]
                 code = 409 if "already" in msg.lower() or "running" in msg.lower() else 502
@@ -1152,8 +1216,8 @@ def main() -> None:
     httpd = ThreadingHTTPServer((host, port), Handler)
     print(
         f"portrait agent on http://{host}:{port} "
-        f"(GET /status /orch/job /drone /health; "
-        f"POST /preview /debug-snap /orch/up /orch/down /login /client /drone /camera; token required)",
+        f"(GET /status /orch/job /drone /worker/queue /health; "
+        f"POST /preview /debug-snap /orch/up /orch/down /login /client /drone /camera /worker/queue; token required)",
         flush=True,
     )
     try:

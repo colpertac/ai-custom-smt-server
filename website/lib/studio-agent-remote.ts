@@ -168,7 +168,7 @@ export async function startLoginStep(input: {
   return (data.loginJob as OrchJob) || { state: "running" }
 }
 
-export type ClientAction = "start" | "stop" | "restart"
+export type ClientAction = "start" | "launch" | "stop" | "restart"
 
 export type DroneAction =
   | { op: "click"; xFrac: number; yFrac: number; button?: number }
@@ -275,4 +275,40 @@ export async function clientAction(input: {
       input.action === "stop" ? ORCH_DOWN_TIMEOUT_MS : DEFAULT_TIMEOUT_MS,
   })
   return readAgentJson(res)
+}
+
+export type QueueProcessingGate = {
+  enabled: boolean
+  updatedAt?: number | null
+  source?: string
+}
+
+export async function setQueueProcessing(input: {
+  enabled: boolean
+}): Promise<{
+  queueProcessing: QueueProcessingGate
+  queueBlockedReason?: string | null
+}> {
+  const res = await agentFetch("/worker/queue", {
+    method: "POST",
+    body: JSON.stringify({ enabled: Boolean(input.enabled) }),
+    timeoutMs: DEFAULT_TIMEOUT_MS,
+  })
+  const data = await readAgentJson(res)
+  const gate =
+    data.queueProcessing && typeof data.queueProcessing === "object"
+      ? (data.queueProcessing as QueueProcessingGate)
+      : { enabled: Boolean(input.enabled) }
+  return {
+    queueProcessing: {
+      enabled: Boolean(gate.enabled),
+      updatedAt:
+        typeof gate.updatedAt === "number" ? gate.updatedAt : null,
+      source: typeof gate.source === "string" ? gate.source : undefined,
+    },
+    queueBlockedReason:
+      typeof data.queueBlockedReason === "string"
+        ? data.queueBlockedReason
+        : null,
+  }
 }
