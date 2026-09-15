@@ -51,6 +51,10 @@ export type ExpertiseProgress = {
   atMax: boolean
 }
 
+export function hasDevilType(type: number): boolean {
+  return Object.prototype.hasOwnProperty.call(devilNames, String(type))
+}
+
 export function getDevilName(type: number): string {
   return devilNames[String(type)] ?? `Demon ${type}`
 }

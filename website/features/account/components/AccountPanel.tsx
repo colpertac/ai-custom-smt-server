@@ -6,6 +6,7 @@ import { useEffect } from "react"
 
 import { AccountGearBuilds } from "@/features/account/components/AccountGearBuilds"
 import { AccountGmCommands } from "@/features/account/components/AccountGmCommands"
+import { CharacterImportPanel } from "@/features/account/components/CharacterImportPanel"
 import { ChangeEmailForm } from "@/features/auth/components/ChangeEmailForm"
 import { ChangePasswordForm } from "@/features/auth/components/ChangePasswordForm"
 import { useLogout, useSessionDetails } from "@/features/auth/hooks"
@@ -159,6 +160,10 @@ export function AccountPanel() {
             <ChangePasswordForm />
           </div>
         </section>
+      </div>
+
+      <div className="mt-3">
+        <CharacterImportPanel />
       </div>
 
       <div className="mt-3">
