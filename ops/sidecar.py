@@ -27,6 +27,7 @@ admin requests here with OPS_TOKEN. Verbs register in ALLOWED; unknown paths
   Lane C (Docker only): POST /publish/lane-c {"confirm": true}
     Pulls/recreates lobby, world, channel, website, updater, caddy
     (--no-deps). Never pull/recreate ops (kills this process).
+    Heals with --no-recreate; flocks data/.smt-compose.lock vs host cron.
     includeWebsite=false skips website only.
 
   python3 ops/sidecar.py
@@ -296,7 +297,25 @@ def run_compose(
     compose_file = deploy / "docker-compose.yml"
     if not compose_file.is_file():
         return False, "missing_compose", f"not found: {compose_file}"
-    cmd = ["docker", "compose", *args]
+    # Serialize with host cron compose-heal.sh (same lock file on COMP_RUNTIME).
+    lock = Path(
+        env("OPS_COMPOSE_LOCK")
+        or str(Path(runtime_dir()) / ".smt-compose.lock")
+    )
+    try:
+        lock.parent.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    # flock keeps Lane C from racing the */5 host heal (Created leftovers + 502).
+    cmd = [
+        "flock",
+        "-w",
+        "600",
+        str(lock),
+        "docker",
+        "compose",
+        *args,
+    ]
     # When this process runs inside the ops container, compose resolves
     # relative bind sources like ./entrypoint.sh to /compose/entrypoint.sh.
     # Docker Engine then looks on the *host*, creates a directory there, and
@@ -2102,12 +2121,20 @@ def _lane_c_default_services(*, include_website: bool) -> tuple[list[str], list[
     return pull, recreate
 
 
-def _compose_heal() -> tuple[bool, str, str]:
-    """Start any Created/Exited stack containers without recreating running ones."""
+def _compose_heal(services: list[str]) -> tuple[bool, str, str]:
+    """Start Created/Exited targets without recreating (or touching ops).
+
+    Bare ``compose up -d`` is unsafe here: it can recreate ``ops`` (this
+    process) mid-update and race the host cron heal, leaving Created
+    leftovers and Caddy 502s.
+    """
+    targets = [s for s in dict.fromkeys(services) if s != "ops"]
+    if not targets:
+        return True, "ok", "stack heal: nothing"
     return run_compose(
-        ["up", "-d"],
+        ["up", "-d", "--no-deps", "--no-recreate", *targets],
         timeout=300,
-        ok_message="stack heal: compose up -d",
+        ok_message=f"stack heal: {', '.join(targets)}",
     )
 
 
@@ -2162,7 +2189,7 @@ def publish_lane_c_docker(
                 failed = (code, "\n".join(details).strip())
                 break
 
-    hok, hcode, hdetail = _compose_heal()
+    hok, hcode, hdetail = _compose_heal(recreate)
     if hdetail:
         details.append(hdetail)
     combined = "\n".join(details).strip()

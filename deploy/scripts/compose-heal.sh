@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Bring back Created/Exited SMT containers without recreating healthy ones.
-# Safe to run every few minutes (compose up -d is a no-op when already up).
+# Safe to run every few minutes.
+#
+# Uses the same flock as ops Lane C (data/.smt-compose.lock) so this never
+# races Admin → Update Docker stack (that race left Created leftovers + 502).
 #
 #   ./scripts/compose-heal.sh
 #   ./scripts/compose-heal.sh /path/to/deploy
@@ -16,4 +19,10 @@ cd "$DEPLOY"
   exit 1
 }
 
-exec docker compose --env-file .env up -d
+LOCK="${COMPOSE_LOCK:-$DEPLOY/data/.smt-compose.lock}"
+mkdir -p "$(dirname "$LOCK")"
+
+# --no-recreate: start Created/Exited only; never bounce a running ops/website
+# mid Lane C update. Omit --force-recreate forever in this script.
+exec flock -w 60 "$LOCK" \
+  docker compose --env-file .env up -d --no-recreate

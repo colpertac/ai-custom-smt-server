@@ -109,10 +109,12 @@ unpack. Kind `release`: `client/` → overlay, `server/BinaryData|Map|packages`
 `{"confirm": true}` pulls Hub images and `compose up -d --no-deps`
 for `lobby` / `world` / `channel` / `website` / `updater` (plus `caddy`
 when the `https` profile is on). Never pulls/recreates `ops`. Always
-ends with a full `compose up -d` heal so Created/Exited containers
-come back. `includeWebsite: false` skips website only. Native backend
-returns `lane_c_docker_only`. Admin: **Update Docker stack**. Host
-watchdog: `deploy/scripts/compose-heal.sh` every 5 minutes.
+ends with `compose up -d --no-deps --no-recreate` for those services
+(heals Created/Exited leftovers without bouncing `ops`). Compose
+mutations take `data/.smt-compose.lock` (shared with host
+`compose-heal.sh`). `includeWebsite: false` skips website only. Native
+backend returns `lane_c_docker_only`. Admin: **Update Docker stack**.
+Host watchdog: `deploy/scripts/compose-heal.sh` every 5 minutes.
 
 | Env | Default | Notes |
 | --- | --- | --- |
