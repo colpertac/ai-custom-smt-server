@@ -13,6 +13,29 @@
 }
 
 {$DOMAIN} {
+	# Always allow the maintenance status probe (even when ENABLED is set).
+	handle /.maintenance-status {
+		root * /srv/maintenance
+		rewrite * /status.txt
+		header Content-Type "text/plain; charset=utf-8"
+		header Cache-Control "no-store"
+		file_server
+	}
+
+	# Lane C / ops sets ENABLED while a stack update is running.
+	@maint {
+		file {
+			root /srv/maintenance
+			try_files /ENABLED
+		}
+	}
+	handle @maint {
+		root * /srv/maintenance
+		rewrite * /index.html
+		header Cache-Control "no-store"
+		file_server
+	}
+
 	# Large admin zip ingest: long upstream timeouts, unbuffered proxy.
 	handle /api/admin/ops/ingest/zip* {
 		reverse_proxy website:3000 {
@@ -35,6 +58,19 @@
 	# Next.js website portal
 	handle {
 		encode zstd gzip
-		reverse_proxy website:3000
+		reverse_proxy website:3000 {
+			# Fail fast so handle_errors can show maintenance HTML.
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+
+	# Website down / restarting → static maintenance page (not a bare 502).
+	handle_errors 502 503 504 {
+		root * /srv/maintenance
+		rewrite * /index.html
+		header Cache-Control "no-store"
+		file_server
 	}
 }

@@ -108,10 +108,10 @@ unpack. Kind `release`: `client/` → overlay, `server/BinaryData|Map|packages`
 **Lane C (Docker only):** `POST /publish/lane-c` with
 `{"confirm": true}` pulls Hub images and `compose up -d --no-deps`
 for `lobby` / `world` / `channel` / `website` / `updater` (plus `caddy`
-when the `https` profile is on). Never pulls/recreates `ops`. Always
-ends with `compose up -d --no-deps --no-recreate` for those services
-(heals Created/Exited leftovers without bouncing `ops`). Compose
-mutations take `data/.smt-compose.lock` (shared with host
+when the `https` profile is on). Never pulls/recreates `ops`. Sets a
+Caddy maintenance page (`website-data/maintenance/ENABLED`) for the
+duration, then heals with `compose up -d --no-deps --no-recreate`.
+Compose mutations take `data/.smt-compose.lock` (shared with host
 `compose-heal.sh`). `includeWebsite: false` skips website only. Native
 backend returns `lane_c_docker_only`. Admin: **Update Docker stack**.
 Host watchdog: `deploy/scripts/compose-heal.sh` every 5 minutes.

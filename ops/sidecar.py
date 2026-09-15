@@ -2121,6 +2121,78 @@ def _lane_c_default_services(*, include_website: bool) -> tuple[list[str], list[
     return pull, recreate
 
 
+def _maintenance_dir() -> Path:
+    from backup_ops import website_data_dir
+
+    return website_data_dir() / "maintenance"
+
+
+def set_public_maintenance(active: bool, message: str = "") -> None:
+    """Flip Caddy maintenance page (ENABLED + status.txt under website-data)."""
+    root = _maintenance_dir()
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return
+
+    index_dst = root / "index.html"
+    if not index_dst.is_file():
+        src = compose_dir() / "caddy" / "maintenance" / "index.html"
+        if src.is_file():
+            try:
+                index_dst.write_bytes(src.read_bytes())
+            except OSError:
+                pass
+
+    enabled = root / "ENABLED"
+    status = root / "status.txt"
+    if active:
+        text = (message or "Docker stack update in progress…").strip() + "\n"
+        try:
+            status.write_text(text, encoding="utf-8")
+            enabled.write_text("1\n", encoding="utf-8")
+        except OSError:
+            pass
+        return
+
+    try:
+        enabled.unlink(missing_ok=True)
+    except OSError:
+        pass
+    try:
+        status.write_text(
+            (
+                message.strip()
+                if message.strip()
+                else "Update finished — refresh if this page lingers."
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
+
+
+def _website_http_ok(*, timeout: float = 2.0) -> bool:
+    """True when the website container answers on the compose network."""
+    import urllib.error
+    import urllib.request
+
+    try:
+        urllib.request.urlopen("http://website:3000/", timeout=timeout)
+        return True
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return False
+
+
+def _wait_website_ready(*, seconds: int = 60) -> None:
+    deadline = time.monotonic() + max(0, seconds)
+    while time.monotonic() < deadline:
+        if _website_http_ok():
+            return
+        time.sleep(2)
+
+
 def _compose_heal(services: list[str]) -> tuple[bool, str, str]:
     """Start Created/Exited targets without recreating (or touching ops).
 
@@ -2152,52 +2224,71 @@ def publish_lane_c_docker(
 
     details: list[str] = []
     failed: tuple[str, str] | None = None
+    set_public_maintenance(
+        True,
+        "Docker stack update in progress — pulling images and restarting services…",
+    )
 
-    if pull:
-        ok, code, detail = run_compose(
-            ["pull", *pull],
-            timeout=600,
-            ok_message=f"pulled {', '.join(pull)}",
-        )
-        if detail:
-            details.append(detail)
-        if not ok:
-            failed = (code, "\n".join(details).strip())
-
-    # --no-deps: never recreate ops as a dependency of website/caddy.
-    # No --force-recreate: only bounce services whose image actually changed.
-    # Website then caddy so HTTPS stays up until the new site is starting.
-    if failed is None:
-        first = [s for s in recreate if s not in {"website", "caddy"}]
-        then_web = [s for s in recreate if s == "website"]
-        then_caddy = [s for s in recreate if s == "caddy"]
-        for group, timeout, label in (
-            (first, 300, "updated"),
-            (then_web, 180, "updated"),
-            (then_caddy, 120, "updated"),
-        ):
-            if not group:
-                continue
-            ok, code, detail2 = run_compose(
-                ["up", "-d", "--no-deps", *group],
-                timeout=timeout,
-                ok_message=f"{label} {', '.join(group)}",
+    try:
+        if pull:
+            ok, code, detail = run_compose(
+                ["pull", *pull],
+                timeout=600,
+                ok_message=f"pulled {', '.join(pull)}",
             )
-            if detail2:
-                details.append(detail2)
+            if detail:
+                details.append(detail)
             if not ok:
                 failed = (code, "\n".join(details).strip())
-                break
 
-    hok, hcode, hdetail = _compose_heal(recreate)
-    if hdetail:
-        details.append(hdetail)
-    combined = "\n".join(details).strip()
-    if failed is not None:
-        return False, failed[0], combined or failed[1], recreate
-    if not hok:
-        return False, hcode, combined, recreate
-    return True, "ok", combined or f"lane C: {', '.join(recreate)}", recreate
+        # --no-deps: never recreate ops as a dependency of website/caddy.
+        # No --force-recreate: only bounce services whose image actually changed.
+        # Website then caddy so HTTPS stays up until the new site is starting.
+        if failed is None:
+            set_public_maintenance(
+                True,
+                "Docker stack update in progress — recreating containers…",
+            )
+            first = [s for s in recreate if s not in {"website", "caddy"}]
+            then_web = [s for s in recreate if s == "website"]
+            then_caddy = [s for s in recreate if s == "caddy"]
+            for group, timeout, label in (
+                (first, 300, "updated"),
+                (then_web, 180, "updated"),
+                (then_caddy, 120, "updated"),
+            ):
+                if not group:
+                    continue
+                ok, code, detail2 = run_compose(
+                    ["up", "-d", "--no-deps", *group],
+                    timeout=timeout,
+                    ok_message=f"{label} {', '.join(group)}",
+                )
+                if detail2:
+                    details.append(detail2)
+                if not ok:
+                    failed = (code, "\n".join(details).strip())
+                    break
+
+        hok, hcode, hdetail = _compose_heal(recreate)
+        if hdetail:
+            details.append(hdetail)
+        combined = "\n".join(details).strip()
+        if failed is not None:
+            return False, failed[0], combined or failed[1], recreate
+        if not hok:
+            return False, hcode, combined, recreate
+        return True, "ok", combined or f"lane C: {', '.join(recreate)}", recreate
+    finally:
+        set_public_maintenance(
+            True,
+            "Almost done — waiting for the website to become healthy…",
+        )
+        _wait_website_ready(seconds=90)
+        set_public_maintenance(
+            False,
+            "Update finished — refresh if this page lingers.",
+        )
 
 
 def handle_publish_lane_c(handler: OpsHandler) -> tuple[int, bytes, str]:

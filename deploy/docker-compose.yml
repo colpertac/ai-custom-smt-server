@@ -275,6 +275,8 @@ services:
       DOMAIN: ${DOMAIN:-}
     volumes:
       - ${CADDY_FILE:-./caddy/Caddyfile}:/etc/caddy/Caddyfile:ro
+      # Static maintenance page + ENABLED flag (ops writes status during Lane C).
+      - ${WEBSITE_DATA:-./website-data}/maintenance:/srv/maintenance
       - caddy-data:/data
       - caddy-config:/config
     depends_on:

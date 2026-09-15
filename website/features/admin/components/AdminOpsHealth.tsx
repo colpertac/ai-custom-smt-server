@@ -1129,9 +1129,10 @@ export function AdminOpsHealth() {
             <DialogTitle>Update Docker stack?</DialogTitle>
             <DialogDescription>
               Pulls the latest published images and rolls game servers, this
-              website, updater, and HTTPS proxy. Players disconnect. The page
-              may drop for a minute while the website restarts — refresh after
-              that. Only confirm after a known-good Hub publish.
+              website, updater, and HTTPS proxy. Players disconnect. While the
+              website is down you&apos;ll see a maintenance page (auto-refresh)
+              instead of an error — wait until the normal site returns. Only
+              confirm after a known-good Hub publish.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
