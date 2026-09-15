@@ -33,7 +33,7 @@ import sys
 import time
 from pathlib import Path
 
-WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
+WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version")
 CLIENT_CMD = os.environ.get("PORTRAIT_CLIENT_CMD", "").strip()
 # Fraction of window size for "Start Game" (bottom-left).
 # Derived from char-select mask (black button on white): center ≈ 0.051 × 0.937
@@ -71,7 +71,7 @@ def reload_login_config() -> None:
     global TYPE_DELAY_MS, SPLASH_ESC_COUNT, SPLASH_ESC_GAP_SEC, SPLASH_SETTLE_SEC
     global START_CLICK_COUNT, START_CLICK_GAP_SEC, START_CLICK_JITTER_PX
     global FIELD_GAP_SEC
-    WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
+    WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version")
     CLIENT_CMD = os.environ.get("PORTRAIT_CLIENT_CMD", "").strip()
     START_X_FRAC = float(os.environ.get("PORTRAIT_START_X_FRAC", "0.051270"))
     START_Y_FRAC = float(os.environ.get("PORTRAIT_START_Y_FRAC", "0.936719"))

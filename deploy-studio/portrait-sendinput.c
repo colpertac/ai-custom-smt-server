@@ -8,7 +8,7 @@
  *   # or: i686-w64-mingw32-gcc -O2 -o portrait-sendinput.exe portrait-sendinput.c -luser32
  *
  * Usage (same DISPLAY / WINEPREFIX as Imagine):
- *   wine portrait-sendinput.exe [--title "IMAGINE Version 1.666"] hold s 2000
+ *   wine portrait-sendinput.exe [--title "IMAGINE Version"] hold s 2000
  *   wine portrait-sendinput.exe hold home 1100
  *   wine portrait-sendinput.exe hold prior 500
  *   wine portrait-sendinput.exe wheel -8

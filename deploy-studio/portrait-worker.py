@@ -54,7 +54,7 @@ STUDIO_URL = os.environ.get("PORTRAIT_STUDIO_URL", "http://127.0.0.1:14700")
 STUDIO_TOKEN = os.environ.get(
     "PORTRAIT_STUDIO_TOKEN", "dev-studio-token-change-me"
 )
-WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
+WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version")
 CROP_PRESET = os.environ.get("PORTRAIT_CROP_PRESET", "studio")
 MANNEQUIN_M = os.environ.get("PORTRAIT_MANNEQUIN_M", "vam1")
 MANNEQUIN_F = os.environ.get("PORTRAIT_MANNEQUIN_F", "vaf1")

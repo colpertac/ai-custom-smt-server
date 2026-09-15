@@ -50,7 +50,8 @@ WORK_DIR = Path(
         ),
     )
 )
-WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666")
+# Substring match — omit patch so 1.666 / 1.667 / … all count as started.
+WINDOW_TITLE = os.environ.get("PORTRAIT_WINDOW_TITLE", "IMAGINE Version")
 WINDOWS_PATH = Path(
     os.environ.get("PORTRAIT_WINDOWS_STATE", str(WORK_DIR / "windows.json"))
 )
@@ -484,7 +485,7 @@ def _find_windows_xwininfo(needle: str) -> list[str]:
         return []
     hits: list[str] = []
     for line in out.splitlines():
-        # "     0x1234567 \"IMAGINE Version 1.666\": ..."
+        # "     0x1234567 \"IMAGINE Version 1.667\": ..."
         if needle not in line.lower():
             continue
         line = line.strip()
@@ -1146,7 +1147,7 @@ def _wine_title(title: str | None) -> str:
     if title is not None:
         return title.strip()
     return os.environ.get(
-        "PORTRAIT_WINDOW_TITLE", "IMAGINE Version 1.666"
+        "PORTRAIT_WINDOW_TITLE", "IMAGINE Version"
     ).strip()
 
 
