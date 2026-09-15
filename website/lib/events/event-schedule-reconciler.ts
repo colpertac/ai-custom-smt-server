@@ -21,7 +21,7 @@ import {
   loadConflictGroups,
   writeReconcilerStatus,
   readReconcilerStatus,
-  SCHEDULE_PATH,
+  schedulePath,
   type ReconcilerPersistedStatus,
 } from "./event-schedule-fs"
 import { sendScheduleAnnounce } from "./schedule-announce"
@@ -321,7 +321,7 @@ export async function runEventScheduleReconcile(
   const config = await getEventSchedule()
   if (!config.enabled) {
     console.warn(
-      `[EventSchedule] skipped: schedule_disabled (enabled=${config.enabled}, path=${SCHEDULE_PATH})`
+      `[EventSchedule] skipped: schedule_disabled (enabled=${config.enabled}, path=${schedulePath()})`
     )
     await writeReconcilerStatus({
       lastSkippedReason: "schedule_disabled",

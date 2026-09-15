@@ -5,7 +5,9 @@ when changing seeds or rebuilding `colpertac/smt-website`.
 
 Existing installs only pick up `deploy/seed/**` when the matching
 `website-data/` (or `data/config/`) directory is **empty**. Website image
-content (`content/events/`, compiled news seed) applies on new containers.
+catalog (`content/events/events-catalog.json`, etc.) ships with each image;
+mutable Admin Events schedule is seeded **once** into `website-data/events/`
+and is never overwritten by later image pulls.
 
 ## Ship
 
@@ -13,11 +15,11 @@ content (`content/events/`, compiled news seed) applies on new containers.
 | --- | --- | --- |
 | **News** | One post: Hello world | `website/content/news.ts` → empty `web.sqlite` |
 | **Download reminder** | Download URL **empty**; label `Download client` | Empty `site_settings` in new `web.sqlite` |
-| **Events control** | **Manual** (`enabled: false`) | `website/content/events/event-schedule.json` |
+| **Events control** | **Manual** (`enabled: false`) | Image seed `content/events/event-schedule.json` → `website-data/events/event-schedule.json` (first boot only) |
 | **Events always-on / live** | Shinjuku Under Wonderground (`201506_wonder`) + Daily Mission Chests & Hack Limits 2016 (`201604_misc`) | Schedule `alwaysOnIds` + `deploy/seed/config/channel.xml` DataStore partials |
-| **Events loop (Schedule mode)** | Dense archive cycle preloaded (14 days); flip **00:00** America/New_York; day 1 date **2026-01-01** | Same `event-schedule.json` (built from `lib/events/dense-archive-cycle.ts`) |
+| **Events loop (Schedule mode)** | Dense archive cycle preloaded (14 days); flip **00:00** America/New_York; day 1 date **2026-01-01** | Same schedule file (built from `lib/events/dense-archive-cycle.ts`) |
 | **Events calendar** | Empty | Same file |
-| **Events profiles** | No user profiles; Dense archive remains the builtin Load button | `event-schedule-profiles.json` empty; builtin in code |
+| **Events profiles** | No user profiles; Dense archive remains the builtin Load button | `website-data/events/event-schedule-profiles.json` empty; builtin in code |
 | **COMP shops** | `compshop-6001`…`6014` (DCO → ATM) + `shop-order.json` | `deploy/seed/server-content/shops/` |
 | **Store** | Code price formula + cart enabled; **no** price overrides | `website/lib/store-pricing.ts` / empty SQLite |
 | **Promos** | None | Lobby DB starts empty |

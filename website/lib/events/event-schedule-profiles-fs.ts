@@ -4,6 +4,10 @@ import { randomUUID } from "node:crypto"
 
 import { denseArchiveAsProfile } from "./dense-archive-cycle"
 import { getEventsCatalog } from "./events-fs"
+import {
+  ensureEventsDataSeeded,
+  eventsDataDir,
+} from "./events-paths"
 import { normalizeIds } from "./event-schedule-math"
 import type {
   EventScheduleLoopDay,
@@ -11,20 +15,11 @@ import type {
   EventScheduleProfilesFile,
 } from "./types"
 
-function eventsContentDir(): string {
-  return path.resolve(process.cwd(), "content", "events")
-}
-
 function profilesPath(): string {
-  return path.join(eventsContentDir(), "event-schedule-profiles.json")
+  return path.join(eventsDataDir(), "event-schedule-profiles.json")
 }
 
-export const PROFILES_PATH = path.resolve(
-  process.cwd(),
-  "content",
-  "events",
-  "event-schedule-profiles.json"
-)
+export const PROFILES_PATH = profilesPath()
 
 function emptyFile(): EventScheduleProfilesFile {
   return { version: 1, profiles: [] }
@@ -44,6 +39,7 @@ function isProfile(raw: unknown): raw is EventScheduleLoopProfile {
 }
 
 async function readUserFile(): Promise<EventScheduleProfilesFile> {
+  await ensureEventsDataSeeded()
   try {
     const raw = await fs.readFile(profilesPath(), "utf8")
     const parsed = JSON.parse(raw) as EventScheduleProfilesFile
@@ -64,7 +60,8 @@ async function readUserFile(): Promise<EventScheduleProfilesFile> {
 }
 
 async function writeUserFile(file: EventScheduleProfilesFile): Promise<void> {
-  await fs.mkdir(eventsContentDir(), { recursive: true })
+  await ensureEventsDataSeeded()
+  await fs.mkdir(eventsDataDir(), { recursive: true })
   const normalized: EventScheduleProfilesFile = {
     version: 1,
     profiles: file.profiles.map((p) => ({

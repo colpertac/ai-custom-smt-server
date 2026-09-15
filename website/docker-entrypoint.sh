@@ -15,6 +15,7 @@ data=${WEBSITE_DATA_DIR:-/website-data}
 if [ -d "$data" ]; then
   ensure_writable "$data/armory/portraits"
   ensure_writable "$data/portrait-captures"
+  ensure_writable "$data/events"
 fi
 if [ -d /updater ]; then
   ensure_writable /updater/overlay

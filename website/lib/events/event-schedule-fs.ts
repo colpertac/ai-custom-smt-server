@@ -28,47 +28,32 @@ import type {
   PublicEventsResponse,
 } from "./types"
 import { getLiveConfigDir } from "../server-config/fs"
+import {
+  ensureEventsDataSeeded,
+  eventsDataDir,
+  eventsImageContentDir,
+} from "./events-paths"
 
 /**
- * Always resolve from the Next.js app cwd. Do not use import.meta.url —
- * Turbopack/webpack rewrite it to chunk paths, which made the reconciler
- * miss website/content/events and fall back to enabled:false forever.
+ * Mutable schedule + reconciler status live under WEBSITE_DATA_DIR/events so
+ * Admin edits survive website image pulls. Catalog/conflicts stay in the image.
  */
-function eventsContentDir(): string {
-  return path.resolve(process.cwd(), "content", "events")
-}
-
-function schedulePath(): string {
-  return path.join(eventsContentDir(), "event-schedule.json")
+export function schedulePath(): string {
+  return path.join(eventsDataDir(), "event-schedule.json")
 }
 
 function conflictsPath(): string {
-  return path.join(eventsContentDir(), "event-conflicts.json")
+  return path.join(eventsImageContentDir(), "event-conflicts.json")
 }
 
 function statusPath(): string {
-  return path.join(eventsContentDir(), "event-schedule-status.json")
+  return path.join(eventsDataDir(), "event-schedule-status.json")
 }
 
 /** @deprecated Prefer schedulePath() — kept for tests/debug. */
-export const SCHEDULE_PATH = path.resolve(
-  process.cwd(),
-  "content",
-  "events",
-  "event-schedule.json"
-)
-export const STATUS_PATH = path.resolve(
-  process.cwd(),
-  "content",
-  "events",
-  "event-schedule-status.json"
-)
-export const CONFLICTS_PATH = path.resolve(
-  process.cwd(),
-  "content",
-  "events",
-  "event-conflicts.json"
-)
+export const SCHEDULE_PATH = schedulePath()
+export const STATUS_PATH = statusPath()
+export const CONFLICTS_PATH = conflictsPath()
 
 export type ReconcilerPersistedStatus = {
   lastTickAt: string | null
@@ -157,6 +142,7 @@ export async function loadConflictGroups(): Promise<EventConflictGroup[]> {
 }
 
 export async function getEventSchedule(): Promise<EventScheduleConfig> {
+  await ensureEventsDataSeeded()
   const file = schedulePath()
   try {
     const raw = await fs.readFile(file, "utf8")
@@ -198,7 +184,8 @@ export async function saveEventSchedule(
     return { config: normalized, validation }
   }
 
-  await fs.mkdir(eventsContentDir(), { recursive: true })
+  await ensureEventsDataSeeded()
+  await fs.mkdir(eventsDataDir(), { recursive: true })
   await fs.writeFile(
     schedulePath(),
     `${JSON.stringify(normalized, null, 2)}\n`,
@@ -219,6 +206,7 @@ export async function saveEventSchedule(
 }
 
 export async function readReconcilerStatus(): Promise<ReconcilerPersistedStatus> {
+  await ensureEventsDataSeeded()
   try {
     const raw = await fs.readFile(statusPath(), "utf8")
     const parsed = JSON.parse(raw) as Partial<ReconcilerPersistedStatus>
@@ -245,7 +233,7 @@ export async function writeReconcilerStatus(
 ): Promise<ReconcilerPersistedStatus> {
   const prev = await readReconcilerStatus()
   const next: ReconcilerPersistedStatus = { ...prev, ...patch }
-  await fs.mkdir(eventsContentDir(), { recursive: true })
+  await fs.mkdir(eventsDataDir(), { recursive: true })
   await fs.writeFile(statusPath(), `${JSON.stringify(next, null, 2)}\n`, "utf8")
   return next
 }
