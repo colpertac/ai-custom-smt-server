@@ -93,19 +93,35 @@ WINE_LANG="${PORTRAIT_WINE_LANG:-ja_JP.UTF-8}"
 if locale -a 2>/dev/null | grep -qiE '^ja_JP\.(utf8|UTF-8)$'; then
   ok "Japanese locale (ja_JP.UTF-8)"
 else
-  printf '  note  ja_JP.UTF-8 missing — login errors may show as □ (run ./requirements.sh)\n'
+  printf '  note  ja_JP.UTF-8 missing — UI may show □ (run ./requirements.sh)\n'
+  HINT_REQUIREMENTS=1
 fi
 PREFIX="${WINEPREFIX:-$HOME/.wine}"
 FONTS_DIR="$PREFIX/drive_c/windows/Fonts"
-if [[ -d "$FONTS_DIR" ]] && find "$FONTS_DIR" -type f 2>/dev/null | head -1 | grep -q .; then
-  ok "Wine Fonts dir has files ($FONTS_DIR)"
+if [[ -d "$FONTS_DIR" ]] && find "$FONTS_DIR" \( -iname '*noto*' -o -iname '*gothic*' -o -iname '*sourcehan*' \) 2>/dev/null | head -1 | grep -q .; then
+  ok "Wine CJK fonts present ($FONTS_DIR)"
 else
-  printf '  note  Wine Fonts empty/missing — run ./requirements.sh (winetricks cjkfonts)\n'
+  printf '  note  Wine CJK fonts missing — run ./requirements.sh (Noto link + cjkfonts)\n'
+  HINT_REQUIREMENTS=1
 fi
 if [[ -n "${PORTRAIT_WINE_LANG-}${LANG-}${LC_ALL-}" ]]; then
   ok "Wine locale env (PORTRAIT_WINE_LANG/LANG/LC_ALL)"
 else
   printf '  note  set PORTRAIT_WINE_LANG=%s in .env (requirements.sh appends this)\n' "$WINE_LANG"
+fi
+if command -v wine >/dev/null 2>&1; then
+  WINE_LOCALE="$(
+    WINEPREFIX="$PREFIX" WINEDEBUG=-all wine reg query \
+      'HKCU\Control Panel\International' /v Locale 2>/dev/null \
+      | awk '/Locale/{print $NF}' || true
+  )"
+  if [[ "$WINE_LOCALE" == "00000411" ]]; then
+    ok "Wine HKCU locale ja-JP (00000411)"
+  else
+    printf '  note  Wine HKCU locale is %s (want 00000411) — run ./requirements.sh, then restart clients\n' \
+      "${WINE_LOCALE:-unset}"
+    HINT_REQUIREMENTS=1
+  fi
 fi
 
 # --- SendInput helper ---

@@ -78,41 +78,79 @@ else
   echo "warning: ja_JP.UTF-8 not in locale -a — Wine may still show □ until locale-gen works" >&2
 fi
 
-echo "==> Wine CJK fonts (winetricks cjkfonts → prefix Fonts/)"
+echo "==> Wine CJK fonts + Japanese user locale (tofu □ fix)"
+# Honor WINEPREFIX / LANG from .env if present (do not override shell).
+if [[ -f .env ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  # shellcheck disable=SC1090
+  source .env
+  set +a
+fi
+PREFIX="${WINEPREFIX:-$HOME/.wine}"
+FONTS_DIR="$PREFIX/drive_c/windows/Fonts"
 WINE_BIN="$(command -v wine || command -v wine32 || true)"
+export WINEDEBUG="${WINEDEBUG:--all}"
+export WINEPREFIX="$PREFIX"
+
 if [[ -z "$WINE_BIN" ]]; then
-  echo "warning: wine not on PATH — skip winetricks; install Wine and re-run" >&2
-elif ! command -v winetricks >/dev/null 2>&1; then
-  echo "warning: winetricks missing — skip cjkfonts" >&2
+  echo "warning: wine not on PATH — skip Wine font/locale setup; install Wine and re-run" >&2
 else
-  # Honor WINEPREFIX from .env if present (do not override shell).
-  if [[ -f .env ]]; then
-    # shellcheck disable=SC1091
-    set -a
-    source .env
-    set +a
-  fi
-  PREFIX="${WINEPREFIX:-$HOME/.wine}"
-  FONTS_DIR="$PREFIX/drive_c/windows/Fonts"
-  FONT_COUNT=0
-  if [[ -d "$FONTS_DIR" ]]; then
-    FONT_COUNT="$(find "$FONTS_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')"
-  fi
-  # Heuristic: stock empty prefix often has 0; cjkfonts installs many.
-  if [[ "${FONT_COUNT:-0}" -ge 20 ]] \
-    && find "$FONTS_DIR" \( -iname '*gothic*' -o -iname '*msgothic*' -o -iname '*noto*' \) 2>/dev/null \
-      | head -1 | grep -q .; then
-    echo "  OK  CJK-ish fonts already in $FONTS_DIR ($FONT_COUNT files)"
-  else
-    echo "  → winetricks -q cjkfonts  (prefix=$PREFIX; may take several minutes)"
-    # DISPLAY not required for font install; silence wine GUI where possible.
-    export WINEDEBUG="${WINEDEBUG:--all}"
-    if ! winetricks -q cjkfonts; then
-      echo "warning: winetricks cjkfonts failed — try manually: WINEPREFIX=$PREFIX winetricks -q cjkfonts" >&2
-    else
-      echo "  OK  winetricks cjkfonts finished"
+  # 1) Optional winetricks bundle (slow; often incomplete if interrupted).
+  if command -v winetricks >/dev/null 2>&1; then
+    FONT_COUNT=0
+    if [[ -d "$FONTS_DIR" ]]; then
+      FONT_COUNT="$(find "$FONTS_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')"
     fi
+    if [[ "${FONT_COUNT:-0}" -ge 20 ]] \
+      && find "$FONTS_DIR" \( -iname '*gothic*' -o -iname '*msgothic*' -o -iname '*noto*' \) 2>/dev/null \
+        | head -1 | grep -q .; then
+      echo "  OK  CJK-ish fonts already in $FONTS_DIR ($FONT_COUNT files)"
+    else
+      echo "  → winetricks -q cjkfonts  (prefix=$PREFIX; may take several minutes)"
+      if ! winetricks -q cjkfonts; then
+        echo "warning: winetricks cjkfonts failed — continuing with system Noto links" >&2
+      else
+        echo "  OK  winetricks cjkfonts finished"
+      fi
+    fi
+  else
+    echo "  note  winetricks missing — using system fonts-noto-cjk only"
   fi
+
+  # 2) Always link Debian/Ubuntu Noto CJK into the prefix (reliable vs partial cjkfonts).
+  mkdir -p "$FONTS_DIR"
+  NOTO_LINKED=0
+  for f in /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc \
+    /usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc \
+    /usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc; do
+    if [[ -f "$f" ]]; then
+      ln -sfn "$f" "$FONTS_DIR/$(basename "$f")"
+      NOTO_LINKED=1
+    fi
+  done
+  if [[ "$NOTO_LINKED" -eq 1 ]]; then
+    echo "  OK  linked system Noto CJK into $FONTS_DIR"
+  else
+    echo "warning: fonts-noto-cjk files not found under /usr/share/fonts/opentype/noto/" >&2
+  fi
+
+  # 3) Point common JP face names at Noto (GDI / Scaleform lookups).
+  for face in "MS Gothic" "MS PGothic" "MS UI Gothic" "ＭＳ ゴシック" "ＭＳ Ｐゴシック" \
+    "Meiryo" "Meiryo UI" "Yu Gothic" "メイリオ" "游ゴシック"; do
+    "$WINE_BIN" reg add "HKCU\\Software\\Wine\\Fonts\\Replacements" \
+      /v "$face" /t REG_SZ /d "Noto Sans CJK JP" /f >/dev/null 2>&1 || true
+  done
+
+  # 4) Wine user locale → Japanese so GetACP/_setmbcp(932) work with LANG=ja_JP.UTF-8.
+  #    Host LANG alone is not enough while HKCU International stays en-US.
+  "$WINE_BIN" reg add "HKCU\\Control Panel\\International" /v Locale /t REG_SZ /d 00000411 /f >/dev/null 2>&1 || true
+  "$WINE_BIN" reg add "HKCU\\Control Panel\\International" /v LocaleName /t REG_SZ /d ja-JP /f >/dev/null 2>&1 || true
+  "$WINE_BIN" reg add "HKCU\\Control Panel\\International" /v sLanguage /t REG_SZ /d JPN /f >/dev/null 2>&1 || true
+  "$WINE_BIN" reg add "HKCU\\Control Panel\\International" /v sCountry /t REG_SZ /d Japan /f >/dev/null 2>&1 || true
+  "$WINE_BIN" reg add "HKCU\\Control Panel\\International" /v iCountry /t REG_SZ /d 81 /f >/dev/null 2>&1 || true
+  echo "  OK  Wine HKCU locale set to ja-JP (00000411)"
+  echo "  note  restart Imagine clients after this (./studio kill && ./studio orch-up)"
 fi
 
 if ! command -v uv >/dev/null 2>&1; then
