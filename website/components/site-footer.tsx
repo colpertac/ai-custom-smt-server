@@ -20,6 +20,10 @@ export function SiteFooter() {
           Armory
         </Link>
         <span className="mx-2 text-faint">·</span>
+        <Link href="/help" className="text-muted-foreground hover:text-gold-dim">
+          Help
+        </Link>
+        <span className="mx-2 text-faint">·</span>
         <Link
           href="/events?tab=payouts"
           className="text-muted-foreground hover:text-gold-dim"

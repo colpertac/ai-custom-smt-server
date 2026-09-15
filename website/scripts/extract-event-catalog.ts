@@ -11,6 +11,7 @@ import {
   extractRawNpcPlacements,
   SpotResolver,
 } from "./lib/spot-resolver"
+import { ZONE_COMMENT_EN, ZONE_NAMES } from "../lib/zone-names"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -34,45 +35,8 @@ type I18nFile = {
   npcs: Record<string, string | null>
 }
 
-const ZONE_COMMENT_EN: Record<string, string> = {
-  第三ホーム: "Home III",
-  第二ホーム: "Home II",
-  第一ホーム: "Home I",
-  スギナミ: "Suginami",
-  ナカノ: "Nakano",
-  新宿バベル: "Shinjuku Babel",
-  シンジュクドック: "Shinjuku Dock",
-  シブヤ: "Shibuya",
-  イチガヤ: "Ichigaya",
-  シナガワ: "Shinagawa",
-  聖都アルカディア: "Holy City Arcadia",
-  ウエノ: "Ueno",
-  シンジュク: "Shinjuku",
-  ハロウィンパーティ: "Halloween Party",
-  パイ投げ合戦会場: "Pie-Throwing Arena",
-  ヴァーチャルバトル: "Virtual Battle",
-  ヴァーチャルビーチ・南国: "Virtual Tropical Beach",
-  "ヴァーチャルビーチ・南国（昼）": "Virtual Tropical Beach (Day)",
-  ネットワーク: "Network",
-}
-
-/** Fallback when zone XML is missing — IDs verified against datastore zone comments. */
-const KNOWN_MAP_NAMES: Record<number, string> = {
-  10101: "Virtual Battle",
-  20101: "Home III",
-  30101: "Suginami",
-  40101: "Nakano",
-  50101: "Shinjuku Babel",
-  60101: "Shinjuku Dock",
-  70101: "Shibuya",
-  80101: "Ichigaya",
-  90101: "Shinagawa",
-  100101: "Holy City Arcadia",
-  110101: "Ueno",
-  150101: "Shinjuku",
-  241001: "Halloween Party",
-  1131601: "Pie-Throwing Arena",
-}
+/** Fallback when zone XML is missing — shared with Ask / walkthroughs via zones.json. */
+const KNOWN_MAP_NAMES: Record<number, string> = ZONE_NAMES
 
 /** Max DynamicMapIDs in a ServerZonePartial before we treat it as a blanket/global overlay. */
 const BLANKET_MAP_THRESHOLD = 12

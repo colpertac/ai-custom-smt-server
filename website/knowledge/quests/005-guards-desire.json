@@ -1,0 +1,164 @@
+{
+  "id": 5,
+  "title": "The Guard's Desire",
+  "type": "NORMAL",
+  "giver": {
+    "name": "Father Figure Guard",
+    "npcId": 382,
+    "zoneID": 20101,
+    "zoneName": "Home III",
+    "zoneLabel": "Home III (20101)",
+    "coordinates": {
+      "x": 16,
+      "y": 19
+    }
+  },
+  "zone": {
+    "id": 20101,
+    "name": "Home III",
+    "label": "Home III (20101)"
+  },
+  "npcs": {
+    "start": [
+      {
+        "npcId": 382,
+        "npcName": "新人想いの守衛",
+        "zoneID": 20101,
+        "eventId": "Z20101_382_Q5_15",
+        "phase": 0,
+        "sourceFile": "events/zone_events-20101.xml",
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)"
+      }
+    ],
+    "advance": [
+      {
+        "npcId": 27,
+        "npcName": "邪教の主",
+        "zoneID": 20107,
+        "eventId": "Z20107_27_Q5_02",
+        "phase": 1,
+        "sourceFile": "events/zone_events-20107.xml",
+        "zoneName": "Cathedral of Shadows",
+        "zoneLabel": "Cathedral of Shadows (20107)"
+      },
+      {
+        "npcId": 382,
+        "npcName": "新人想いの守衛",
+        "zoneID": 20101,
+        "eventId": "Z20101_382_Q5_22",
+        "phase": 2,
+        "sourceFile": "events/zone_events-20101.xml",
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)"
+      },
+      {
+        "npcId": 219,
+        "npcName": "ホームポイントガール",
+        "zoneID": 20101,
+        "eventId": "Z20101_219_Q5_03",
+        "phase": 3,
+        "sourceFile": "events/zone_events-20101.xml",
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)"
+      }
+    ],
+    "complete": [
+      {
+        "npcId": 219,
+        "npcName": "ホームポイントガール",
+        "zoneID": 20101,
+        "eventId": "Z20101_219_Q5_10",
+        "phase": -1,
+        "sourceFile": "events/zone_events-20101.xml",
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)"
+      }
+    ]
+  },
+  "phases": [
+    {
+      "phaseNumber": 1,
+      "requirementCount": 0,
+      "requirements": []
+    },
+    {
+      "phaseNumber": 2,
+      "requirementCount": 0,
+      "requirements": []
+    },
+    {
+      "phaseNumber": 3,
+      "requirementCount": 0,
+      "requirements": []
+    },
+    {
+      "phaseNumber": 4,
+      "requirementCount": 0,
+      "requirements": []
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "phaseNumber": 1,
+      "journalText": "Visit the Cathedral of Shadows\nand ask the Master about demons.",
+      "imageRefs": [
+        "qid_005_p01_01.dds"
+      ],
+      "advanceNpc": {
+        "npcId": 27,
+        "npcName": "邪教の主",
+        "zoneID": 20107,
+        "zoneName": "Cathedral of Shadows",
+        "zoneLabel": "Cathedral of Shadows (20107)",
+        "eventId": "Z20107_27_Q5_02",
+        "sourceFile": "events/zone_events-20107.xml"
+      }
+    },
+    {
+      "stepNumber": 2,
+      "phaseNumber": 2,
+      "journalText": "Report back to the Guard.",
+      "imageRefs": [],
+      "advanceNpc": {
+        "npcId": 382,
+        "npcName": "新人想いの守衛",
+        "zoneID": 20101,
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)",
+        "eventId": "Z20101_382_Q5_22",
+        "sourceFile": "events/zone_events-20101.xml"
+      }
+    },
+    {
+      "stepNumber": 3,
+      "phaseNumber": 3,
+      "journalText": "Take the Guard's Letter\nto the Home Point girl.",
+      "imageRefs": [
+        "qid_005_p03_01.dds"
+      ],
+      "advanceNpc": {
+        "npcId": 219,
+        "npcName": "ホームポイントガール",
+        "zoneID": 20101,
+        "zoneName": "Home III",
+        "zoneLabel": "Home III (20101)",
+        "eventId": "Z20101_219_Q5_03",
+        "sourceFile": "events/zone_events-20101.xml"
+      }
+    },
+    {
+      "stepNumber": 4,
+      "phaseNumber": 4,
+      "journalText": "Set this spot as your Home Point.\nOnce you are done\ntalk to the Home Point girl.",
+      "imageRefs": []
+    }
+  ],
+  "sources": {
+    "questsJson": "/home/cat/repos/smt/ai_custom_smt_server/website/content/wiki/quests.json",
+    "questNpcsJson": "/home/cat/repos/smt/ai_custom_smt_server/website/content/wiki/quest-npcs.json",
+    "questsGeneratedAt": "2026-09-14T18:21:39Z",
+    "questNpcsGeneratedAt": "2026-09-14T18:23:21Z"
+  }
+}

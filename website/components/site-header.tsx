@@ -174,6 +174,12 @@ export function SiteHeader() {
           >
             Armory
           </Link>
+          <Link
+            href="/help"
+            className={cn(navClass, pathname.startsWith("/help") && "text-gold")}
+          >
+            Help
+          </Link>
           {wikiEnabled ? (
             <Link
               href="/builder"
