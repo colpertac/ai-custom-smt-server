@@ -88,6 +88,26 @@ else
   printf '  note  openbox not installed (optional; helps window focus)\n'
 fi
 
+# Soft: JP locale + Wine fonts (login error banners otherwise show as □)
+WINE_LANG="${PORTRAIT_WINE_LANG:-ja_JP.UTF-8}"
+if locale -a 2>/dev/null | grep -qiE '^ja_JP\.(utf8|UTF-8)$'; then
+  ok "Japanese locale (ja_JP.UTF-8)"
+else
+  printf '  note  ja_JP.UTF-8 missing — login errors may show as □ (run ./requirements.sh)\n'
+fi
+PREFIX="${WINEPREFIX:-$HOME/.wine}"
+FONTS_DIR="$PREFIX/drive_c/windows/Fonts"
+if [[ -d "$FONTS_DIR" ]] && find "$FONTS_DIR" -type f 2>/dev/null | head -1 | grep -q .; then
+  ok "Wine Fonts dir has files ($FONTS_DIR)"
+else
+  printf '  note  Wine Fonts empty/missing — run ./requirements.sh (winetricks cjkfonts)\n'
+fi
+if [[ -n "${PORTRAIT_WINE_LANG-}${LANG-}${LC_ALL-}" ]]; then
+  ok "Wine locale env (PORTRAIT_WINE_LANG/LANG/LC_ALL)"
+else
+  printf '  note  set PORTRAIT_WINE_LANG=%s in .env (requirements.sh appends this)\n' "$WINE_LANG"
+fi
+
 # --- SendInput helper ---
 SENDINPUT="${PORTRAIT_SENDINPUT_EXE:-./portrait-sendinput.exe}"
 if [[ -f "$SENDINPUT" ]]; then

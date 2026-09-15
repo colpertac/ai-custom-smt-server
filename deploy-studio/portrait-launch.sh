@@ -11,6 +11,7 @@
 #   PORTRAIT_CLIENT_EXE   default ImagineClient.exe
 #   PORTRAIT_WINE         default wine
 #   WINEPREFIX            optional separate prefix per mannequin
+#   PORTRAIT_WINE_LANG    default ja_JP.UTF-8 (JP UI / avoid tofu □)
 #
 # After launch, login with:
 #   ./studio   # or: PORTRAIT_VAM1_PASS=… python portrait-login.py vam1
@@ -18,9 +19,24 @@
 
 set -euo pipefail
 
+# Load .env so LANG / WINEPREFIX apply when orch calls us with a clean env.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
+
 CLIENT_DIR="${PORTRAIT_CLIENT_DIR:-/home/cat/software/smt/game/reimagine}"
 CLIENT_EXE="${PORTRAIT_CLIENT_EXE:-ImagineClient.exe}"
 WINE_BIN="${PORTRAIT_WINE:-wine}"
+
+# Imagine stock strings are JP; without this locale (+ CJK fonts) banners are □.
+WINE_LANG="${PORTRAIT_WINE_LANG:-${LANG:-ja_JP.UTF-8}}"
+export LANG="$WINE_LANG"
+export LC_ALL="${LC_ALL:-$WINE_LANG}"
+export LC_CTYPE="${LC_CTYPE:-$WINE_LANG}"
 
 if [[ -z "${DISPLAY:-}" ]]; then
   echo "error: DISPLAY is unset (Wine needs X11). Use portrait-orch/cli (starts Xvfb) or export DISPLAY=:99" >&2
@@ -38,7 +54,7 @@ if [[ ! -f "$CLIENT_DIR/$CLIENT_EXE" ]]; then
 fi
 
 cd "$CLIENT_DIR"
-echo "launch: $WINE_BIN $CLIENT_EXE  (cwd=$CLIENT_DIR)"
+echo "launch: $WINE_BIN $CLIENT_EXE  (cwd=$CLIENT_DIR LANG=$LANG)"
 if [[ -n "${WINEPREFIX:-}" ]]; then
   echo "WINEPREFIX=$WINEPREFIX"
 fi

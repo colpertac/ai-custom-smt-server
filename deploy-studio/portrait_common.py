@@ -1083,6 +1083,15 @@ def _proc_environ(pid: int) -> dict[str, str]:
 def wine_runtime_env() -> dict[str, str]:
     """Env for ``wine`` helpers: match a running ImagineClient (DISPLAY/prefix)."""
     env = os.environ.copy()
+    # Prefer JP locale for stock Imagine strings (tofu □ without CJK fonts + locale).
+    wine_lang = (
+        os.environ.get("PORTRAIT_WINE_LANG", "").strip()
+        or os.environ.get("LANG", "").strip()
+        or "ja_JP.UTF-8"
+    )
+    env.setdefault("LANG", wine_lang)
+    env.setdefault("LC_ALL", wine_lang)
+    env.setdefault("LC_CTYPE", wine_lang)
     for pid, _ in list_imagine_processes():
         pe = _proc_environ(pid)
         if pe.get("DISPLAY"):

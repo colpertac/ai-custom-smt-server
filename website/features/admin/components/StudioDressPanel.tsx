@@ -14,6 +14,7 @@ import {
 } from "@/features/admin/components/StudioConnectionFieldHelp"
 import { StudioDronePanel } from "@/features/admin/components/StudioDronePanel"
 import { StudioPortraitClearCard } from "@/features/admin/components/StudioPortraitClearCard"
+import { StudioPortraitQueueCard } from "@/features/admin/components/StudioPortraitQueueCard"
 import { notifyLaneAPendingChanged } from "@/features/admin/lane-a-pending"
 import { api } from "@/lib/kyClient"
 
@@ -697,6 +698,8 @@ export function StudioDressPanel() {
           </div>
 
           <StudioClientsPanel />
+
+          <StudioPortraitQueueCard />
 
           <StudioPortraitClearCard />
 

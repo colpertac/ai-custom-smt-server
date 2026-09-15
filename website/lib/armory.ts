@@ -723,21 +723,20 @@ export async function loadArmoryProfile(
     leftEyeColor: row.LeftEyeColor,
     rightEyeColor: row.RightEyeColor,
   }
-  const portraitInput: PortraitFingerprintInput = {
-    characterName: row.Name,
+  const portraitInput = buildPortraitFingerprintInput({
+    name: row.Name,
     appearance,
     title: row.CurrentTitle,
-    equippedVA: decodeEquippedVA(row.EquippedVA),
-    equippedItems: equipment
-      .filter((s): s is typeof s & { itemType: number } => s.itemType != null)
-      .map((s) => ({ slot: s.index, itemType: s.itemType })),
-    weaponType: equipment.find((s) => s.slot === "weapon")?.itemType ?? 0,
+    equippedVA: row.EquippedVA,
+    equipment,
     demonType: activeDemon?.type ?? 0,
-  }
+  })
   const portrait = resolveArmoryPortrait(portraitInput, row.Name)
   let portraitStatus: ArmoryProfile["portraitStatus"] = portrait.status
   if (portraitStatus === "missing" && opts?.enqueuePortrait !== false) {
-    const canCapture = await isPortraitCaptureAvailable()
+    const canCapture = await isPortraitCaptureAvailable({
+      gender: row.Gender,
+    })
     if (canCapture) {
       try {
         enqueuePortraitJob(row.Name, portraitInput)
@@ -768,6 +767,150 @@ export async function loadArmoryProfile(
     portraitStatus,
     statsSource: "estimate",
   }
+}
+
+function buildPortraitFingerprintInput(args: {
+  name: string
+  appearance: ArmoryAppearance
+  title: number
+  equippedVA: Uint8Array | Buffer | null | undefined
+  equipment: ArmoryEquipmentSlot[]
+  demonType: number
+}): PortraitFingerprintInput {
+  return {
+    characterName: args.name,
+    appearance: args.appearance,
+    title: args.title,
+    equippedVA: decodeEquippedVA(args.equippedVA),
+    equippedItems: args.equipment
+      .filter((s): s is typeof s & { itemType: number } => s.itemType != null)
+      .map((s) => ({ slot: s.index, itemType: s.itemType })),
+    weaponType: args.equipment.find((s) => s.slot === "weapon")?.itemType ?? 0,
+    demonType: args.demonType,
+  }
+}
+
+/**
+ * Portrait enqueue context for Admin Studio (no auto-enqueue).
+ * Returns null for missing / hidden characters (vam/vaf/…).
+ */
+export function getArmoryPortraitEnqueueTarget(rawName: string): {
+  name: string
+  input: PortraitFingerprintInput
+  hasPortrait: boolean
+  fingerprint: string
+} | null {
+  const name = rawName.trim()
+  if (!isValidCharacterName(name)) return null
+  if (isArmoryHiddenCharacter(name)) return null
+
+  const db = getWorldDb()
+  const row = db
+    .prepare(
+      `SELECT
+         c.Name, c.Gender, c.SkinType, c.HairType, c.FaceType, c.EyeType,
+         c.HairColor, c.LeftEyeColor, c.RightEyeColor, c.CurrentTitle,
+         c.ActiveDemon, c.EquippedItems, c.EquippedVA
+       FROM Character c
+       WHERE c.Name = ?`
+    )
+    .get(name) as
+    | {
+        Name: string
+        Gender: number
+        SkinType: number
+        HairType: number
+        FaceType: number
+        EyeType: number
+        HairColor: number
+        LeftEyeColor: number
+        RightEyeColor: number
+        CurrentTitle: number
+        ActiveDemon: string
+        EquippedItems: Uint8Array | Buffer | null
+        EquippedVA: Uint8Array | Buffer | null
+      }
+    | undefined
+  if (!row) return null
+
+  const equipUids = decodeEquippedItemUids(row.EquippedItems)
+  const present = equipUids.filter((u): u is string => u != null)
+  const items = new Map<string, { Type: number }>()
+  if (present.length) {
+    const placeholders = present.map(() => "?").join(",")
+    const itemRows = db
+      .prepare(`SELECT UID, Type FROM Item WHERE UID IN (${placeholders})`)
+      .all(...present) as { UID: string; Type: number }[]
+    for (const it of itemRows) items.set(it.UID, it)
+  }
+
+  const equipment: ArmoryEquipmentSlot[] = EQUIP_SLOTS.map((slot) => {
+    const uid = equipUids[slot.index]
+    const it = uid != null ? items.get(uid) : undefined
+    const itemType = it?.Type ?? null
+    return {
+      slot: slot.key,
+      label: slot.label,
+      index: slot.index,
+      itemType,
+      name: null,
+      level: null,
+      iconSrc: null,
+      tarot: 0,
+      soul: 0,
+      basicEffect: 0,
+      specialEffect: 0,
+      modSlots: [],
+    }
+  })
+
+  let demonType = 0
+  if (row.ActiveDemon && row.ActiveDemon !== NULL_UUID) {
+    const d = db
+      .prepare(`SELECT Type FROM Demon WHERE UID = ?`)
+      .get(row.ActiveDemon) as { Type: number } | undefined
+    demonType = d?.Type ?? 0
+  }
+
+  const appearance: ArmoryAppearance = {
+    gender: row.Gender,
+    skinType: row.SkinType,
+    hairType: row.HairType,
+    faceType: row.FaceType,
+    eyeType: row.EyeType,
+    hairColor: row.HairColor,
+    leftEyeColor: row.LeftEyeColor,
+    rightEyeColor: row.RightEyeColor,
+  }
+  const input = buildPortraitFingerprintInput({
+    name: row.Name,
+    appearance,
+    title: row.CurrentTitle,
+    equippedVA: row.EquippedVA,
+    equipment,
+    demonType,
+  })
+  const portrait = resolveArmoryPortrait(input, row.Name)
+  return {
+    name: row.Name,
+    input,
+    hasPortrait: portrait.status === "ready",
+    fingerprint: portrait.fingerprint,
+  }
+}
+
+/** All public armory character names (excludes vam/vaf/…), alphabetical. */
+export function listAllArmoryCharacterNames(): string[] {
+  const out: string[] = []
+  let offset = 0
+  const pageSize = 100
+  for (;;) {
+    const page = listArmoryCharacters({ limit: pageSize, offset })
+    for (const hit of page.items) out.push(hit.name)
+    offset += page.items.length
+    if (page.items.length === 0 || offset >= page.total) break
+  }
+  return out
 }
 
 export { formatSkillId, getDevilName }

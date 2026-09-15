@@ -68,7 +68,8 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
   ImportStripCP: "Strip CP from imported accounts.",
   ImportMaxPayload: "Max import XML payload size in kilobytes.",
   ImportWorld: "World ID stamped onto imported characters.",
-  MaxClients: "Max concurrent lobby clients (0 = unlimited).",
+  MaxClients:
+    "Max Imagine clients allowed per machine UUID (comp_client). 0 = unlimited. This is not a total lobby player cap — set ≥2 (or 0) for dual studio mannequins on one Wine host.",
 
   // World
   ID: "World ID presented to the lobby/clients.",

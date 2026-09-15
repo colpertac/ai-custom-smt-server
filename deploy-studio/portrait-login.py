@@ -286,8 +286,15 @@ def launch_client() -> None:
     die("client window never appeared")
 
 
-def skip_splash(wid: str, role: str | None = None) -> None:
-    """Press Esc to skip cave/ATLUS (and similar) splash screens."""
+def skip_splash(
+    wid: str, role: str | None = None, *, keep_others_hidden: bool = False
+) -> list[str]:
+    """Press Esc to skip cave/ATLUS (and similar) splash screens.
+
+    Returns window ids that were hidden. By default they are shown again when
+    splash ends. Pass ``keep_others_hidden=True`` when credentials follow so the
+    other mannequin cannot steal focus mid-type (dual-client login).
+    """
     hidden: list[str] = []
     try:
         from portrait_common import (
@@ -317,14 +324,24 @@ def skip_splash(wid: str, role: str | None = None) -> None:
         time.sleep(0.4)
         if role:
             snap(role, "after-splash", wid)
-    finally:
-        if hidden:
+    except BaseException:
+        if hidden and not keep_others_hidden:
             try:
                 from portrait_common import show_imagine_windows
 
                 show_imagine_windows(hidden)
             except Exception:
                 pass
+        raise
+    if hidden and not keep_others_hidden:
+        try:
+            from portrait_common import show_imagine_windows
+
+            show_imagine_windows(hidden)
+        except Exception:
+            pass
+        return []
+    return hidden
 
 
 def login(
@@ -343,12 +360,33 @@ def login(
     focus(wid)
     print(f"login as {user} (window {wid})")
 
+    hidden_others: list[str] = []
     try:
         if skip_splash_screens:
             print("skip splash: already on login (--no-splash)")
-        else:
-            skip_splash(wid, role=role)
+            # Still hide siblings so Shift+Tab / type cannot land on the other role.
+            try:
+                from portrait_common import (
+                    _norm_wid,
+                    find_imagine_windows,
+                    hide_imagine_windows,
+                )
 
+                hidden_others = hide_imagine_windows(
+                    [
+                        w
+                        for w in find_imagine_windows()
+                        if _norm_wid(w) != _norm_wid(wid)
+                    ]
+                )
+            except Exception:
+                hidden_others = []
+        else:
+            hidden_others = skip_splash(
+                wid, role=role, keep_others_hidden=True
+            )
+
+        focus(wid)
         # Default focus is the password field. Back-tab → username.
         shift_tab()
         key_focus("ctrl+a")
@@ -381,6 +419,14 @@ def login(
     except BaseException:
         snap(role, "login-failure", wid)
         raise
+    finally:
+        if hidden_others:
+            try:
+                from portrait_common import show_imagine_windows
+
+                show_imagine_windows(hidden_others)
+            except Exception:
+                pass
 
 
 def main() -> None:

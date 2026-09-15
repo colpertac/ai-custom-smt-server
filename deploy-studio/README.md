@@ -74,5 +74,5 @@ PORTRAIT_WORKER_TOKEN=…   # same as deploy-studio
 
 ## Requirements vs install
 
-- `./requirements.sh` — installs apt packages, uv, venv, builds sendinput
+- `./requirements.sh` — installs apt packages (incl. JP locale + winetricks cjkfonts), uv, venv, builds sendinput
 - `./install.sh` / `./studio check` — verifies everything; does not install

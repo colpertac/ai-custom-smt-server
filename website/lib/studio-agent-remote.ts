@@ -283,6 +283,42 @@ export type QueueProcessingGate = {
   source?: string
 }
 
+function parseQueueProcessingGate(
+  data: Record<string, unknown>,
+  fallbackEnabled = false
+): QueueProcessingGate {
+  const gate =
+    data.queueProcessing && typeof data.queueProcessing === "object"
+      ? (data.queueProcessing as QueueProcessingGate)
+      : { enabled: fallbackEnabled }
+  return {
+    enabled: Boolean(gate.enabled),
+    updatedAt: typeof gate.updatedAt === "number" ? gate.updatedAt : null,
+    source: typeof gate.source === "string" ? gate.source : undefined,
+  }
+}
+
+/** Lightweight GET — used by armory capture availability probe. */
+export async function fetchQueueProcessing(init?: {
+  timeoutMs?: number
+}): Promise<{
+  queueProcessing: QueueProcessingGate
+  queueBlockedReason?: string | null
+}> {
+  const res = await agentFetch("/worker/queue", {
+    method: "GET",
+    timeoutMs: init?.timeoutMs ?? 1_500,
+  })
+  const data = await readAgentJson(res)
+  return {
+    queueProcessing: parseQueueProcessingGate(data, false),
+    queueBlockedReason:
+      typeof data.queueBlockedReason === "string"
+        ? data.queueBlockedReason
+        : null,
+  }
+}
+
 export async function setQueueProcessing(input: {
   enabled: boolean
 }): Promise<{
@@ -295,17 +331,8 @@ export async function setQueueProcessing(input: {
     timeoutMs: DEFAULT_TIMEOUT_MS,
   })
   const data = await readAgentJson(res)
-  const gate =
-    data.queueProcessing && typeof data.queueProcessing === "object"
-      ? (data.queueProcessing as QueueProcessingGate)
-      : { enabled: Boolean(input.enabled) }
   return {
-    queueProcessing: {
-      enabled: Boolean(gate.enabled),
-      updatedAt:
-        typeof gate.updatedAt === "number" ? gate.updatedAt : null,
-      source: typeof gate.source === "string" ? gate.source : undefined,
-    },
+    queueProcessing: parseQueueProcessingGate(data, Boolean(input.enabled)),
     queueBlockedReason:
       typeof data.queueBlockedReason === "string"
         ? data.queueBlockedReason

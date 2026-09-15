@@ -27,6 +27,11 @@ APT_PACKAGES=(
   imagemagick
   openbox
   g++-mingw-w64-i686
+  # JP UI text under Wine (login errors show as □ without these)
+  locales
+  fonts-noto-cjk
+  cabextract
+  winetricks
 )
 
 # Wine package name varies by distro / winehq vs debian.
@@ -55,6 +60,61 @@ else
   exit 1
 fi
 
+echo "==> Japanese locale (Wine / Imagine UI — fixes tofu □ on error banners)"
+WINE_LANG="${PORTRAIT_WINE_LANG:-ja_JP.UTF-8}"
+if ! locale -a 2>/dev/null | grep -qiE '^ja_JP\.(utf8|UTF-8)$'; then
+  # Uncomment/generate ja_JP.UTF-8 without clobbering the whole locale.gen.
+  if [[ -f /etc/locale.gen ]]; then
+    need_sudo sed -i -E 's/^#\s*(ja_JP\.UTF-8.*)$/\1/' /etc/locale.gen || true
+    if ! grep -qE '^\s*ja_JP\.UTF-8' /etc/locale.gen 2>/dev/null; then
+      echo "ja_JP.UTF-8 UTF-8" | need_sudo tee -a /etc/locale.gen >/dev/null
+    fi
+  fi
+  need_sudo locale-gen ja_JP.UTF-8 || need_sudo locale-gen "$WINE_LANG" || true
+fi
+if locale -a 2>/dev/null | grep -qiE '^ja_JP\.(utf8|UTF-8)$'; then
+  echo "  OK  ja_JP.UTF-8 available"
+else
+  echo "warning: ja_JP.UTF-8 not in locale -a — Wine may still show □ until locale-gen works" >&2
+fi
+
+echo "==> Wine CJK fonts (winetricks cjkfonts → prefix Fonts/)"
+WINE_BIN="$(command -v wine || command -v wine32 || true)"
+if [[ -z "$WINE_BIN" ]]; then
+  echo "warning: wine not on PATH — skip winetricks; install Wine and re-run" >&2
+elif ! command -v winetricks >/dev/null 2>&1; then
+  echo "warning: winetricks missing — skip cjkfonts" >&2
+else
+  # Honor WINEPREFIX from .env if present (do not override shell).
+  if [[ -f .env ]]; then
+    # shellcheck disable=SC1091
+    set -a
+    source .env
+    set +a
+  fi
+  PREFIX="${WINEPREFIX:-$HOME/.wine}"
+  FONTS_DIR="$PREFIX/drive_c/windows/Fonts"
+  FONT_COUNT=0
+  if [[ -d "$FONTS_DIR" ]]; then
+    FONT_COUNT="$(find "$FONTS_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')"
+  fi
+  # Heuristic: stock empty prefix often has 0; cjkfonts installs many.
+  if [[ "${FONT_COUNT:-0}" -ge 20 ]] \
+    && find "$FONTS_DIR" \( -iname '*gothic*' -o -iname '*msgothic*' -o -iname '*noto*' \) 2>/dev/null \
+      | head -1 | grep -q .; then
+    echo "  OK  CJK-ish fonts already in $FONTS_DIR ($FONT_COUNT files)"
+  else
+    echo "  → winetricks -q cjkfonts  (prefix=$PREFIX; may take several minutes)"
+    # DISPLAY not required for font install; silence wine GUI where possible.
+    export WINEDEBUG="${WINEDEBUG:--all}"
+    if ! winetricks -q cjkfonts; then
+      echo "warning: winetricks cjkfonts failed — try manually: WINEPREFIX=$PREFIX winetricks -q cjkfonts" >&2
+    else
+      echo "  OK  winetricks cjkfonts finished"
+    fi
+  fi
+fi
+
 if ! command -v uv >/dev/null 2>&1; then
   echo "==> installing uv"
   curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -81,6 +141,20 @@ if [[ ! -f .env && -f .env.example ]]; then
   echo "==> created .env from .env.example — edit PORTRAIT_CLIENT_DIR, tokens, passwords"
 fi
 
+# Ensure Wine locale knobs exist in .env (do not overwrite user values).
+ensure_env_line() {
+  local key="$1" val="$2"
+  [[ -f .env ]] || return 0
+  if grep -qE "^[[:space:]]*${key}=" .env 2>/dev/null; then
+    return 0
+  fi
+  printf '\n# Added by ./requirements.sh (Imagine JP UI under Wine)\n%s=%s\n' "$key" "$val" >> .env
+  echo "==> appended $key=$val to .env"
+}
+ensure_env_line PORTRAIT_WINE_LANG "$WINE_LANG"
+ensure_env_line LANG "$WINE_LANG"
+ensure_env_line LC_ALL "$WINE_LANG"
+
 echo "==> build portrait-sendinput.exe"
 bash ./build-sendinput.sh
 
@@ -89,3 +163,4 @@ echo "ok — next:"
 echo "  1. edit .env  (PORTRAIT_CLIENT_DIR, PORTRAIT_STUDIO_URL/TOKEN, PORTRAIT_QUEUE_URL, passwords)"
 echo "  2. ./install.sh"
 echo "  3. ./studio up"
+echo "  Wine UI locale: ${WINE_LANG} (override with PORTRAIT_WINE_LANG)"
