@@ -1,7 +1,9 @@
+import { purgeWorldDataForUsername } from "@/lib/admin-account-purge"
 import { adminDeleteAccount, adminUpdateAccount } from "@/lib/comp-api"
 import { guardApiMutation } from "@/lib/api-guard"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
+import { clearPortraitForCharacter } from "@/lib/portrait-queue"
 import { clearSession } from "@/lib/session"
 import {
   CompSessionMissingError,
@@ -129,13 +131,45 @@ export async function DELETE(_request: Request, { params }: Params) {
   const username = rawUser.toLowerCase()
 
   try {
+    // World first so a lobby-only delete can't leave armory orphans.
+    let worldPurge: ReturnType<typeof purgeWorldDataForUsername> = null
+    try {
+      worldPurge = purgeWorldDataForUsername(username)
+    } catch (error) {
+      return apiFail(
+        error instanceof Error
+          ? `World character purge failed: ${error.message}`
+          : "World character purge failed",
+        502,
+        "WORLD_PURGE"
+      )
+    }
+
+    for (const name of worldPurge?.characterNames ?? []) {
+      try {
+        clearPortraitForCharacter(name)
+      } catch {
+        /* portraits.db optional / best-effort */
+      }
+    }
+
     return await withCompSession(async (session) => {
       await adminDeleteAccount(session, username)
       if (session.username === username) {
         await clearSession()
-        return apiOk({ username, selfDeleted: true })
+        return apiOk({
+          username,
+          selfDeleted: true,
+          charactersDeleted: worldPurge?.charactersDeleted ?? 0,
+          characterNames: worldPurge?.characterNames ?? [],
+        })
       }
-      return apiOk({ username, selfDeleted: false })
+      return apiOk({
+        username,
+        selfDeleted: false,
+        charactersDeleted: worldPurge?.charactersDeleted ?? 0,
+        characterNames: worldPurge?.characterNames ?? [],
+      })
     })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {

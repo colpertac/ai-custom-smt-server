@@ -169,7 +169,7 @@ export function AdminAccountsPanel() {
                 void (async () => {
                   const ok = await confirm({
                     title: "Delete this account?",
-                    description: `Account ${current.username} will be removed permanently. This cannot be undone.`,
+                    description: `Account ${current.username} and its world characters will be removed permanently. This cannot be undone.`,
                     confirmLabel: "Delete",
                     variant: "destructive",
                   })
