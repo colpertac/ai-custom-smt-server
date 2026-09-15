@@ -198,11 +198,16 @@ start_stack() {
     fi
     return 0
   fi
-  if [[ ${#PROFILE_ARGS[@]} -gt 0 ]]; then
-    compose up -d
-  else
-    docker compose -f "${COMPOSE_DIR}/docker-compose.yml" --project-directory "$COMPOSE_DIR" up -d
+  # Only bring back what stop_stack stopped. A bare `compose up -d` recreates
+  # ops/website/caddy too — when backup runs inside ops that SIGKILLs the job
+  # (exit 137), skips the EXIT trap, and leaves the stack half-Created.
+  local services=(lobby world channel)
+  if [[ "$MARIADB_WAS_UP" -eq 1 ]]; then
+    services+=(mariadb)
   fi
+  compose start "${services[@]}" 2>/dev/null \
+    || compose up -d --no-recreate "${services[@]}" \
+    || compose up -d "${services[@]}"
 }
 
 stop_stack() {

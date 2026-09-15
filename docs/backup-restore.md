@@ -5,11 +5,15 @@ Scripts: [`deploy/scripts/backup.sh`](../deploy/scripts/backup.sh),
 [`deploy/scripts/backup-sync.sh`](../deploy/scripts/backup-sync.sh).
 
 Cold backup = brief downtime (COMP stopped; MariaDB stopped if present) so SQLite
-files and the MariaDB datadir are consistent.
+files and the MariaDB datadir are consistent. Website/Caddy/ops stay up during
+**backup**.
 
 **Preferred path:** Admin → **Backups** (ops sidecar runs the same scripts). That
 UI can schedule backups and sync archives off-box with rclone so a destroyed VM
-is still recoverable.
+is still recoverable. On Docker, those jobs run *inside* `smt-ops` and must not
+`compose down` / bare `compose up -d` (that kills ops mid-job). Backup only
+restarts lobby/world/channel; restore stops peers and merges archive members
+into the live bind mounts.
 
 ---
 
@@ -76,11 +80,14 @@ cd /opt/smt
 # optional: --restore-env
 ```
 
-- Current `data/` (and `website-data/` if present in the archive) are renamed to
-  `*.bak-YYYYMMDD-HHMMSS`.
+- Current `data/` / `website-data/` are snapshotted to `*.bak-YYYYMMDD-HHMMSS`,
+  then **archive members are merged** into the live trees. Standard backups omit
+  `datastore/` (BinaryData/Map/zones) and most of `website-data/` — those stay put
+  so restore does not look like a fresh install.
 - `website-data` is `chown`'d to uid **1001** after restore (Docker only; native keeps host ownership).
 - If restored configs use MariaDB, the script starts with `--profile mariadb`.
 - With `OPS_BACKEND=native`, restore uses `comp_hack` stop/start scripts instead of `docker compose`.
+- With Docker Admin restore (`OPS_BACKEND=docker` inside ops): peers stop, data is snapshotted on the host and written into the live bind mounts; ops itself is never recreated mid-job.
 
 Verify:
 

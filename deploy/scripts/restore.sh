@@ -27,7 +27,8 @@ Usage: restore.sh --archive FILE [options]
   --yes                Skip confirmation prompt
   -h, --help           Show this help
 
-Current trees are moved to <path>.bak-YYYYMMDD-HHMMSS before extract.
+Current trees are snapshotted to <path>.bak-YYYYMMDD-HHMMSS; archive members
+are merged in (standard backups omit datastore/BinaryData — those stay put).
 website-data is chown'd to uid 1001 after restore (Next.js container user).
 EOF
 }
@@ -137,6 +138,18 @@ compose() {
   docker compose -f "${COMPOSE_DIR}/docker-compose.yml" --project-directory "$COMPOSE_DIR" "${PROFILE_ARGS[@]}" "$@"
 }
 
+# Services that share bind mounts with ops. Never stop/recreate ops from inside
+# ops — `compose down` / full `up -d` SIGKILLs the restore job (same as backup).
+PEER_SERVICES=(lobby world channel website updater caddy)
+
+peer_services() {
+  local out=("${PEER_SERVICES[@]}")
+  if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -qx 'smt-mariadb'; then
+    out+=(mariadb)
+  fi
+  printf '%s\n' "${out[@]}"
+}
+
 start_stack() {
   if [[ "$NATIVE" -eq 1 ]]; then
     if [[ -x "${COMP_SCRIPTS}/start.sh" ]]; then
@@ -144,6 +157,13 @@ start_stack() {
     else
       echo "    (native: no start.sh — start game processes yourself)"
     fi
+    return 0
+  fi
+  if [[ "$IN_OPS" -eq 1 ]]; then
+    mapfile -t peers < <(peer_services)
+    compose start "${peers[@]}" 2>/dev/null \
+      || compose up -d --no-recreate "${peers[@]}" \
+      || compose up -d "${peers[@]}"
     return 0
   fi
   if [[ ${#PROFILE_ARGS[@]} -gt 0 ]]; then
@@ -162,30 +182,46 @@ stop_stack() {
     fi
     return 0
   fi
+  if [[ "$IN_OPS" -eq 1 ]]; then
+    mapfile -t peers < <(peer_services)
+    echo "    (ops: stop peers only — ${peers[*]})"
+    compose stop "${peers[@]}" 2>/dev/null || true
+    return 0
+  fi
+  # Host-side CLI restore: full teardown is fine (ops is not the caller).
   compose down 2>/dev/null || \
     docker compose -f "${COMPOSE_DIR}/docker-compose.yml" --project-directory "$COMPOSE_DIR" down 2>/dev/null || true
 }
 
-docker_install_tree() {
+# Merge archive members into a live tree. Standard backups omit datastore/
+# (BinaryData/Map/zones) and only a subset of website-data — never wipe those.
+merge_tree_members() {
   local src="$1" dst="$2"
-  mkdir -p "$(dirname "$dst")"
-  local tmp="${dst}.incoming-$$"
-  rm -rf "$tmp"
-  mkdir -p "$tmp"
-  if [[ "$IN_OPS" -eq 1 || "$NATIVE" -eq 1 ]]; then
-    cp -a "${src}/." "$tmp/"
-  else
-    docker run --rm \
-      -v "${src}:/from:ro" \
-      -v "${tmp}:/to" \
-      alpine:3.20 \
-      sh -c 'cp -a /from/. /to/'
-  fi
-  if [[ -e "$dst" ]]; then
-    echo "error: destination exists unexpectedly: $dst" >&2
-    exit 1
-  fi
-  mv "$tmp" "$dst"
+  [[ -d "$src" ]] || return 1
+  mkdir -p "$dst"
+  local name
+  for name in "$src"/* "$src"/.[!.]* "$src"/..?*; do
+    [[ -e "$name" ]] || continue
+    local base
+    base="$(basename "$name")"
+    [[ "$base" == "." || "$base" == ".." ]] && continue
+    echo "    + ${base}"
+    if [[ -d "$name" ]]; then
+      rm -rf "${dst}/${base}"
+      cp -a "$name" "${dst}/${base}"
+    else
+      cp -a "$name" "${dst}/${base}"
+    fi
+  done
+}
+
+# Snapshot a host bind source aside before in-place replace (ops mounts).
+host_backup_tree() {
+  local host_src="$1" host_bak="$2"
+  docker run --rm \
+    -v "$(dirname "$host_src"):/parent" \
+    alpine:3.20 \
+    sh -c "rm -rf '/parent/$(basename "$host_bak")' && cp -a '/parent/$(basename "$host_src")' '/parent/$(basename "$host_bak")'"
 }
 
 chown_website() {
@@ -247,7 +283,18 @@ else
   staging="${COMPOSE_DIR}/backups/.restore-${stamp}"
 fi
 mkdir -p "$staging"
-trap 'rm -rf "$staging"' EXIT
+
+STACK_ENSURED=0
+on_exit() {
+  local code=$?
+  if [[ "$STACK_ENSURED" -eq 0 && "$WAS_UP" -eq 1 ]]; then
+    echo "==> ensuring stack is up (exit=$code)"
+    start_stack || true
+  fi
+  rm -rf "$staging"
+  exit "$code"
+}
+trap on_exit EXIT
 
 echo "==> extracting"
 tar -C "$staging" -xzf "$ARCHIVE"
@@ -258,29 +305,56 @@ if [[ "$WAS_UP" -eq 1 ]]; then
   stop_stack
 else
   echo "    (nothing running — cold restore)"
-  # Still try a soft stop in case processes exist outside our detection.
   stop_stack
 fi
 
-if [[ -e "$DATA" ]]; then
-  bak="${DATA}.bak-${stamp}"
-  echo "==> moving current data → $bak"
-  mv "$DATA" "$bak"
-fi
-
-echo "==> installing restored data"
-docker_install_tree "${staging}/data" "$DATA"
-
-if [[ -d "${staging}/website-data" ]]; then
-  if [[ -e "$WEBSITE_DATA_DIR" ]]; then
-    wbak="${WEBSITE_DATA_DIR}.bak-${stamp}"
-    echo "==> moving current website-data → $wbak"
-    mv "$WEBSITE_DATA_DIR" "$wbak"
+if [[ "$IN_OPS" -eq 1 ]]; then
+  # Ops bind-mounts /comp and /website-data. Never `mv` those mount points —
+  # snapshot on the host, then merge archive members so omitted dirs
+  # (datastore/BinaryData, portraits, …) survive a standard backup restore.
+  host_deploy="${OPS_HOST_DEPLOY_DIR:-}"
+  if [[ -z "$host_deploy" ]]; then
+    echo "error: OPS_HOST_DEPLOY_DIR required for in-ops restore" >&2
+    exit 1
   fi
-  echo "==> installing restored website-data"
-  docker_install_tree "${staging}/website-data" "$WEBSITE_DATA_DIR"
-  echo "==> chown website-data → 1001:1001"
-  chown_website "$WEBSITE_DATA_DIR"
+  bak="${host_deploy}/data.bak-${stamp}"
+  echo "==> snapshot host data → $bak"
+  host_backup_tree "${host_deploy}/data" "$bak"
+  echo "==> merging restored data members into /comp"
+  merge_tree_members "${staging}/data" "$DATA"
+
+  if [[ -d "${staging}/website-data" ]]; then
+    wbak="${host_deploy}/website-data.bak-${stamp}"
+    echo "==> snapshot host website-data → $wbak"
+    host_backup_tree "${host_deploy}/website-data" "$wbak"
+    echo "==> merging restored website-data members into /website-data"
+    merge_tree_members "${staging}/website-data" "$WEBSITE_DATA_DIR"
+    echo "==> chown website-data → 1001:1001"
+    chown_website "$WEBSITE_DATA_DIR"
+  fi
+else
+  if [[ -e "$DATA" ]]; then
+    bak="${DATA}.bak-${stamp}"
+    echo "==> snapshot current data → $bak"
+    rm -rf "$bak"
+    cp -a "$DATA" "$bak"
+  fi
+
+  echo "==> merging restored data members"
+  merge_tree_members "${staging}/data" "$DATA"
+
+  if [[ -d "${staging}/website-data" ]]; then
+    if [[ -e "$WEBSITE_DATA_DIR" ]]; then
+      wbak="${WEBSITE_DATA_DIR}.bak-${stamp}"
+      echo "==> snapshot current website-data → $wbak"
+      rm -rf "$wbak"
+      cp -a "$WEBSITE_DATA_DIR" "$wbak"
+    fi
+    echo "==> merging restored website-data members"
+    merge_tree_members "${staging}/website-data" "$WEBSITE_DATA_DIR"
+    echo "==> chown website-data → 1001:1001"
+    chown_website "$WEBSITE_DATA_DIR"
+  fi
 fi
 
 if [[ "$RESTORE_ENV" -eq 1 && -f "${staging}/env" ]]; then
@@ -302,12 +376,20 @@ fi
 
 echo "==> starting stack"
 start_stack
+STACK_ENSURED=1
 
 echo
 echo "restore ok: $DATA"
-echo "previous tree (if any): ${DATA}.bak-${stamp}"
-if [[ -d "${staging}/website-data" ]]; then
-  echo "website-data: $WEBSITE_DATA_DIR (prev: ${WEBSITE_DATA_DIR}.bak-${stamp})"
+if [[ "$IN_OPS" -eq 1 ]]; then
+  echo "previous tree snapshot: ${OPS_HOST_DEPLOY_DIR}/data.bak-${stamp}"
+  if [[ -d "${OPS_HOST_DEPLOY_DIR}/website-data.bak-${stamp}" ]]; then
+    echo "website-data snapshot: ${OPS_HOST_DEPLOY_DIR}/website-data.bak-${stamp}"
+  fi
+else
+  echo "previous tree (if any): ${DATA}.bak-${stamp}"
+  if [[ -d "${WEBSITE_DATA_DIR}.bak-${stamp}" ]]; then
+    echo "website-data: $WEBSITE_DATA_DIR (prev: ${WEBSITE_DATA_DIR}.bak-${stamp})"
+  fi
 fi
 if [[ "$NATIVE" -eq 1 ]]; then
   echo "check: native restore complete (restart website/dev if needed)"
