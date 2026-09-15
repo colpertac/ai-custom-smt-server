@@ -295,7 +295,14 @@ function seedRoleInDatabases(
     | undefined
 
   let accountUid: string
-  const salt = existingAccount?.Salt || crypto.randomBytes(5).toString("hex")
+  // SQLite declares Salt as NUMERIC affinity — a bad prior write can come back
+  // as number Infinity ("Inf"). Never reuse non-string / non-hex salts.
+  const existingSalt =
+    typeof existingAccount?.Salt === "string" &&
+    /^[0-9a-f]{6,32}$/i.test(existingAccount.Salt)
+      ? existingAccount.Salt
+      : null
+  const salt = existingSalt || crypto.randomBytes(5).toString("hex")
   const passwordHash = hashPassword(password, salt)
 
   if (existingAccount) {
