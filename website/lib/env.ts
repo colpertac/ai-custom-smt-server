@@ -120,7 +120,7 @@ export function getPublicAppUrl(): string {
   return getSiteUrl() || "http://localhost:3500"
 }
 
-/** Outgoing Discord webhook for server crash alerts (bootleg Sentry). */
+/** Outgoing Discord webhook (Admin → Notifications / crash + event alerts). */
 export function getServerAlertDiscordWebhook(): string | undefined {
   const envVal = process.env.SERVER_ALERT_DISCORD_WEBHOOK?.trim()
   return envVal || undefined

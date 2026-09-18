@@ -367,7 +367,7 @@ export async function runWatchdogCheck(options?: {
       enabled: false,
       webhookConfigured: Boolean(webhookUrl),
       skipped: true,
-      skipReason: "Watchdog alerts are disabled in settings",
+      skipReason: "Services-down notifications are disabled in settings",
       results: [],
     }
   }
@@ -586,14 +586,14 @@ export async function sendTestDiscordAlert(
   }
 
   const embed: DiscordEmbed = {
-    title: "🔍 [TEST] SMT Server Watchdog Connected",
+    title: "🔍 [TEST] SMT Notifications Connected",
     description:
-      "This is a test notification from the SMT Server Watchdog (Bootleg Sentry). Your Discord webhook is configured properly and ready to receive crash alerts.",
+      "This is a test notification from Admin → Notifications. Your Discord webhook is configured properly.",
     color: 0x5865f2, // Discord Blurple
     fields: [
       {
-        name: "Monitored Services",
-        value: "`lobby`, `world`, `channel`",
+        name: "Events",
+        value: "services · mannequins · feedback · reports",
         inline: true,
       },
       {
@@ -608,7 +608,7 @@ export async function sendTestDiscordAlert(
       },
     ],
     footer: {
-      text: "Bootleg Sentry • SMT Watchdog",
+      text: "SMT Notifications",
     },
     timestamp: new Date().toISOString(),
   }

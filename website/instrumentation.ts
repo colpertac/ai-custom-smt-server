@@ -50,5 +50,31 @@ export async function register() {
         g.__eventScheduleInterval.unref()
       }
     }
+
+    // New in-game report → Discord (COMP_ANNOUNCE_* poll)
+    const gReports = globalThis as unknown as {
+      __reportNotifyInterval?: NodeJS.Timeout
+    }
+    if (!gReports.__reportNotifyInterval) {
+      const { runReportNotifyPoll } = await import(
+        "@/lib/report-notify-poller"
+      )
+
+      setTimeout(() => {
+        void runReportNotifyPoll().catch((err) => {
+          console.error("[ReportNotify]", err)
+        })
+      }, 30_000)
+
+      gReports.__reportNotifyInterval = setInterval(() => {
+        void runReportNotifyPoll().catch((err) => {
+          console.error("[ReportNotify]", err)
+        })
+      }, 45_000)
+
+      if (typeof gReports.__reportNotifyInterval.unref === "function") {
+        gReports.__reportNotifyInterval.unref()
+      }
+    }
   }
 }

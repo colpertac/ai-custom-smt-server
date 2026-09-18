@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  Bell,
   BookOpenText,
   Database,
   Dices,
@@ -64,6 +65,12 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     label: "Website",
     items: [
       { href: "/admin/website", label: "Website", icon: Globe, match: "prefix" },
+      {
+        href: "/admin/notifications",
+        label: "Notifications",
+        icon: Bell,
+        match: "prefix",
+      },
       { href: "/admin/news", label: "News", icon: Newspaper, match: "prefix" },
       {
         href: "/admin/download",
@@ -134,6 +141,7 @@ export const ADMIN_NAV: AdminNavItem[] = ADMIN_NAV_SECTIONS.flatMap(
 export function adminPageTitle(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Overview"
   if (pathname.startsWith("/admin/website")) return "Website"
+  if (pathname.startsWith("/admin/notifications")) return "Notifications"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
   if (pathname.startsWith("/admin/reports")) return "Reports"
   if (pathname.startsWith("/admin/feedback")) return "Feedback"

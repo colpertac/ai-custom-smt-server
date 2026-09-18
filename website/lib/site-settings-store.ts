@@ -467,18 +467,51 @@ export function setAboutMarkdown(markdown: string): string {
 }
 
 const KEY_SERVER_ALERT_WEBHOOK = "server_alert_discord_webhook"
+/** Reused as notifyServicesDown (legacy key name). */
 const KEY_SERVER_ALERT_ENABLED = "server_alert_enabled"
 const KEY_SERVER_ALERT_THRESHOLD_SEC = "server_alert_threshold_sec"
 const KEY_SERVER_ALERT_MENTION = "server_alert_mention"
+const KEY_NOTIFY_MANNEQUINS = "notify_mannequins"
+const KEY_NOTIFY_FEEDBACK = "notify_feedback"
+const KEY_NOTIFY_REPORTS = "notify_reports"
 
+function parseBoolSetting(
+  raw: string | null,
+  envRaw: string | undefined,
+  defaultWhenUnset: boolean
+): boolean {
+  if (raw !== null) {
+    return raw === "1" || raw === "true"
+  }
+  if (envRaw !== undefined && envRaw !== "") {
+    const lower = envRaw.trim().toLowerCase()
+    return lower === "1" || lower === "true"
+  }
+  return defaultWhenUnset
+}
+
+export type NotificationSettings = {
+  discordWebhook: string
+  mention: string
+  offlineThresholdSec: number
+  notifyServicesDown: boolean
+  notifyMannequins: boolean
+  notifyFeedback: boolean
+  notifyReports: boolean
+}
+
+/** @deprecated Prefer NotificationSettings; `enabled` mirrors notifyServicesDown. */
 export type ServerAlertSettings = {
   discordWebhook: string
   enabled: boolean
   offlineThresholdSec: number
   mention: string
+  notifyMannequins: boolean
+  notifyFeedback: boolean
+  notifyReports: boolean
 }
 
-export function getServerAlertSettings(): ServerAlertSettings {
+export function getNotificationSettings(): NotificationSettings {
   const envWebhook = process.env.SERVER_ALERT_DISCORD_WEBHOOK?.trim() || ""
   const envEnabled = process.env.SERVER_ALERT_ENABLED?.trim().toLowerCase()
   const envThreshold =
@@ -489,25 +522,32 @@ export function getServerAlertSettings(): ServerAlertSettings {
   let dbEnabled: string | null = null
   let dbThreshold: string | null = null
   let dbMention: string | null = null
+  let dbMannequins: string | null = null
+  let dbFeedback: string | null = null
+  let dbReports: string | null = null
 
   try {
     dbWebhook = getSiteSetting(KEY_SERVER_ALERT_WEBHOOK)
     dbEnabled = getSiteSetting(KEY_SERVER_ALERT_ENABLED)
     dbThreshold = getSiteSetting(KEY_SERVER_ALERT_THRESHOLD_SEC)
     dbMention = getSiteSetting(KEY_SERVER_ALERT_MENTION)
+    dbMannequins = getSiteSetting(KEY_NOTIFY_MANNEQUINS)
+    dbFeedback = getSiteSetting(KEY_NOTIFY_FEEDBACK)
+    dbReports = getSiteSetting(KEY_NOTIFY_REPORTS)
   } catch {
     // DB not available (e.g. lightweight test runner)
   }
 
   const discordWebhook = dbWebhook !== null ? dbWebhook.trim() : envWebhook
-  let enabled: boolean
-  if (dbEnabled !== null) {
-    enabled = dbEnabled === "1" || dbEnabled === "true"
-  } else if (envEnabled !== undefined && envEnabled !== "") {
-    enabled = envEnabled === "1" || envEnabled === "true"
-  } else {
-    enabled = Boolean(discordWebhook)
-  }
+  const notifyServicesDown = parseBoolSetting(
+    dbEnabled,
+    envEnabled,
+    Boolean(discordWebhook)
+  )
+  // Portrait alerts historically fired whenever a webhook existed (ignored master enable).
+  const notifyMannequins = parseBoolSetting(dbMannequins, undefined, true)
+  const notifyFeedback = parseBoolSetting(dbFeedback, undefined, false)
+  const notifyReports = parseBoolSetting(dbReports, undefined, false)
 
   const thresholdRaw = dbThreshold !== null ? Number(dbThreshold) : envThreshold
   const offlineThresholdSec =
@@ -516,21 +556,27 @@ export function getServerAlertSettings(): ServerAlertSettings {
 
   return {
     discordWebhook,
-    enabled,
-    offlineThresholdSec,
     mention,
+    offlineThresholdSec,
+    notifyServicesDown,
+    notifyMannequins,
+    notifyFeedback,
+    notifyReports,
   }
 }
 
-export function setServerAlertSettings(
-  input: Partial<ServerAlertSettings>
-): ServerAlertSettings {
+export function setNotificationSettings(
+  input: Partial<NotificationSettings>
+): NotificationSettings {
   try {
     if (input.discordWebhook !== undefined) {
       setSiteSetting(KEY_SERVER_ALERT_WEBHOOK, input.discordWebhook.trim())
     }
-    if (input.enabled !== undefined) {
-      setSiteSetting(KEY_SERVER_ALERT_ENABLED, input.enabled ? "1" : "0")
+    if (input.notifyServicesDown !== undefined) {
+      setSiteSetting(
+        KEY_SERVER_ALERT_ENABLED,
+        input.notifyServicesDown ? "1" : "0"
+      )
     }
     if (input.offlineThresholdSec !== undefined) {
       setSiteSetting(
@@ -541,8 +587,62 @@ export function setServerAlertSettings(
     if (input.mention !== undefined) {
       setSiteSetting(KEY_SERVER_ALERT_MENTION, input.mention.trim())
     }
+    if (input.notifyMannequins !== undefined) {
+      setSiteSetting(KEY_NOTIFY_MANNEQUINS, input.notifyMannequins ? "1" : "0")
+    }
+    if (input.notifyFeedback !== undefined) {
+      setSiteSetting(KEY_NOTIFY_FEEDBACK, input.notifyFeedback ? "1" : "0")
+    }
+    if (input.notifyReports !== undefined) {
+      setSiteSetting(KEY_NOTIFY_REPORTS, input.notifyReports ? "1" : "0")
+    }
   } catch {
     // DB not available
   }
+  return getNotificationSettings()
+}
+
+export function getServerAlertSettings(): ServerAlertSettings {
+  const n = getNotificationSettings()
+  return {
+    discordWebhook: n.discordWebhook,
+    enabled: n.notifyServicesDown,
+    offlineThresholdSec: n.offlineThresholdSec,
+    mention: n.mention,
+    notifyMannequins: n.notifyMannequins,
+    notifyFeedback: n.notifyFeedback,
+    notifyReports: n.notifyReports,
+  }
+}
+
+export function setServerAlertSettings(
+  input: Partial<ServerAlertSettings> & {
+    notifyServicesDown?: boolean
+  }
+): ServerAlertSettings {
+  const {
+    enabled,
+    notifyServicesDown,
+    notifyMannequins,
+    notifyFeedback,
+    notifyReports,
+    discordWebhook,
+    offlineThresholdSec,
+    mention,
+  } = input
+  setNotificationSettings({
+    discordWebhook,
+    offlineThresholdSec,
+    mention,
+    notifyServicesDown:
+      notifyServicesDown !== undefined
+        ? notifyServicesDown
+        : enabled !== undefined
+          ? enabled
+          : undefined,
+    notifyMannequins,
+    notifyFeedback,
+    notifyReports,
+  })
   return getServerAlertSettings()
 }

@@ -185,6 +185,9 @@ describe("server-watchdog", () => {
         enabled: true,
         offlineThresholdSec: 60,
         mention: "",
+        notifyMannequins: true,
+        notifyFeedback: false,
+        notifyReports: false,
       })
 
       // Channel is down according to metrics
@@ -243,6 +246,9 @@ describe("server-watchdog", () => {
         enabled: true,
         offlineThresholdSec: 60,
         mention: "",
+        notifyMannequins: true,
+        notifyFeedback: false,
+        notifyReports: false,
       })
 
       vi.spyOn(opsSidecar, "getOpsMetrics").mockResolvedValue({

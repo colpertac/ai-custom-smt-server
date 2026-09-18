@@ -78,6 +78,11 @@ export async function POST(request: Request) {
       body: parsed.data.body,
       imageBytes,
     })
+    void import("@/lib/discord-notify")
+      .then(({ notifyNewFeedback }) => notifyNewFeedback(item))
+      .catch((err) => {
+        console.error("[FeedbackNotify]", err)
+      })
     return apiOk({ id: item.id }, "Thanks")
   } catch (error) {
     if (error instanceof FeedbackImageValidationError) {

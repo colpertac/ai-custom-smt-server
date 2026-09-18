@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { apiFail, apiOk } from "@/lib/api-response"
 import { requirePortraitWorker } from "@/lib/portrait-worker-auth"
-import { getServerAlertSettings } from "@/lib/site-settings-store"
+import { getNotificationSettings } from "@/lib/site-settings-store"
 import { sendDiscordWebhook } from "@/lib/server-watchdog"
 
 const bodySchema = z.object({
@@ -14,7 +14,7 @@ const bodySchema = z.object({
 })
 
 /**
- * Wine-host portrait watchdog → Discord via Admin Watchdog webhook settings.
+ * Wine-host portrait watchdog → Discord via Admin → Notifications webhook.
  */
 export async function POST(request: Request) {
   const denied = requirePortraitWorker(request)
@@ -35,14 +35,17 @@ export async function POST(request: Request) {
     )
   }
 
-  const settings = getServerAlertSettings()
+  const settings = getNotificationSettings()
   const webhook = settings.discordWebhook.trim()
   if (!webhook) {
     return apiFail(
-      "Discord webhook not configured (Admin → Watchdog / SERVER_ALERT_DISCORD_WEBHOOK)",
+      "Discord webhook not configured (Admin → Notifications / SERVER_ALERT_DISCORD_WEBHOOK)",
       400,
       "CONFIG"
     )
+  }
+  if (!settings.notifyMannequins) {
+    return apiOk({ sent: false, skipped: true }, "Mannequin notifications disabled")
   }
 
   const severity = parsed.data.severity ?? "warning"
