@@ -40,7 +40,8 @@ export async function POST() {
         result.detail ||
         result.error ||
         "Restart all services failed"
-      return apiFail(msg, 502, "OPS")
+      const status = result.error === "dependency" ? 409 : 502
+      return apiFail(msg, status, "OPS")
     }
     return apiOk(result, result.message || "All services restarted")
   } catch (error) {

@@ -18,8 +18,12 @@ export async function POST() {
     const result = await restartOpsServices(["lobby"], session.username)
     if (!result.ok) {
       const msg =
-        result.detail || result.error || "Lobby restart failed"
-      return apiFail(msg, 502, "OPS")
+        result.message ||
+        result.detail ||
+        result.error ||
+        "Lobby restart failed"
+      const status = result.error === "dependency" ? 409 : 502
+      return apiFail(msg, status, "OPS")
     }
     return apiOk(result, result.message || "Lobby restarted")
   } catch (error) {

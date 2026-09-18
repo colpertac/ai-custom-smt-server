@@ -63,8 +63,10 @@ lobby/world/channel as listed in the release (`POST /restart/services`).
 
 **Restart channel:** `POST /restart/channel` — native
 `comp_hack/scripts/restart-channel.sh` or docker `compose restart channel`.
+Requires lobby+world online (`409 dependency` otherwise).
 **Restart services:** `POST /restart/services` body
 `{"services":["lobby","world","channel"]}` — native `restart-service.sh`.
+Restarting lobby always expands to include world (lobby bounce kills world).
 **Start / stop services:** `POST /start/services` and `POST /stop/services`
 with the same body — native `start-service.sh` / `stop-service.sh`, or Docker
 `compose up -d <svc>` / `compose stop <svc>`. World/channel start still

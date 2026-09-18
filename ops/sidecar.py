@@ -499,9 +499,41 @@ def publish_lane_a_copy() -> tuple[bool, str, dict]:
 
 
 def _restart_channel_for_backend(backend: str) -> tuple[bool, str, str]:
+    # Channel cannot init without world (and lobby). Refuse early with a
+    # plain-language dependency error instead of a 502 init failure.
+    msg = _service_deps_message(
+        ["channel"],
+        running=_running_service_names(backend),
+        verb="restart",
+    )
+    if msg:
+        return False, "dependency", msg
     if backend == "docker":
         return restart_channel_docker()
     return restart_channel_native()
+
+
+def _channel_restart_failure_response(
+    *,
+    rcode: str,
+    restart_detail: str,
+    applied_message: str,
+    extra: dict,
+) -> tuple[int, bytes, str]:
+    """Shared Lane A / restart-channel failure payload."""
+    dependency = rcode == "dependency"
+    return json_bytes(
+        {
+            "ok": False,
+            "error": "dependency" if dependency else "restart_failed",
+            "message": restart_detail if dependency else applied_message,
+            "detail": restart_detail,
+            "restartError": rcode,
+            **extra,
+            **freshness_public(runtime_dir()),
+        },
+        409 if dependency else 502,
+    )
 
 
 def _backend_or_400() -> tuple[str | None, tuple[int, bytes, str] | None]:
@@ -550,21 +582,19 @@ def handle_restart_channel(_handler: OpsHandler) -> tuple[int, bytes, str]:
     if err is not None:
         return err
     assert backend is not None
-    if backend == "docker":
-        ok, code, detail = restart_channel_docker()
-    else:
-        ok, code, detail = restart_channel_native()
+    ok, code, detail = _restart_channel_for_backend(backend)
     if not ok:
-        return json_bytes(
-            {
-                "ok": False,
-                "error": code,
-                "service": "channel",
-                "backend": backend,
-                "detail": detail,
-            },
-            502,
-        )
+        status = 409 if code == "dependency" else 502
+        body: dict = {
+            "ok": False,
+            "error": code,
+            "service": "channel",
+            "backend": backend,
+            "detail": detail,
+        }
+        if code == "dependency":
+            body["message"] = detail
+        return json_bytes(body, status)
     mark_channel_restart(runtime_dir())
     return json_bytes(
         {
@@ -783,17 +813,11 @@ def handle_publish_lane_a_apply(handler: OpsHandler) -> tuple[int, bytes, str]:
     if restart:
         rok, rcode, restart_detail = _restart_channel_for_backend(backend)
         if not rok:
-            return json_bytes(
-                {
-                    "ok": False,
-                    "error": "restart_failed",
-                    "message": "Applied but channel restart failed",
-                    "detail": restart_detail,
-                    "restartError": rcode,
-                    **_lane_a_payload(backend, payload),
-                    **freshness_public(runtime_dir()),
-                },
-                502,
+            return _channel_restart_failure_response(
+                rcode=rcode,
+                restart_detail=restart_detail,
+                applied_message="Applied but channel restart failed",
+                extra=_lane_a_payload(backend, payload),
             )
         mark_channel_restart(runtime_dir())
         restarted = True
@@ -854,17 +878,11 @@ def handle_publish_lane_a_rollback(handler: OpsHandler) -> tuple[int, bytes, str
     if restart:
         rok, rcode, restart_detail = _restart_channel_for_backend(backend)
         if not rok:
-            return json_bytes(
-                {
-                    "ok": False,
-                    "error": "restart_failed",
-                    "message": "Rolled back but channel restart failed",
-                    "detail": restart_detail,
-                    "restartError": rcode,
-                    **_lane_a_payload(backend, payload),
-                    **freshness_public(runtime_dir()),
-                },
-                502,
+            return _channel_restart_failure_response(
+                rcode=rcode,
+                restart_detail=restart_detail,
+                applied_message="Rolled back but channel restart failed",
+                extra=_lane_a_payload(backend, payload),
             )
         mark_channel_restart(runtime_dir())
         restarted = True
@@ -936,17 +954,11 @@ def handle_publish_lane_a(handler: OpsHandler) -> tuple[int, bytes, str]:
     if restart:
         rok, rcode, restart_detail = _restart_channel_for_backend(backend)
         if not rok:
-            return json_bytes(
-                {
-                    "ok": False,
-                    "error": "restart_failed",
-                    "message": "Published but channel restart failed",
-                    "detail": restart_detail,
-                    "restartError": rcode,
-                    **_lane_a_payload(backend, payload),
-                    **freshness_public(runtime_dir()),
-                },
-                502,
+            return _channel_restart_failure_response(
+                rcode=rcode,
+                restart_detail=restart_detail,
+                applied_message="Published but channel restart failed",
+                extra=_lane_a_payload(backend, payload),
             )
         mark_channel_restart(runtime_dir())
         restarted = True
@@ -1631,6 +1643,7 @@ def _parse_services_body(handler: "OpsHandler") -> tuple[list[str] | None, tuple
 
 
 # Start/restart order: lobby → world → channel.
+_SERVICE_ORDER: tuple[str, ...] = ("lobby", "world", "channel")
 _SERVICE_DEPS: dict[str, tuple[str, ...]] = {
     "lobby": (),
     "world": ("lobby",),
@@ -1679,6 +1692,22 @@ def _service_deps_message(
             return f"{need} must be online before restarting {svc}."
         satisfied.add(svc)
     return None
+
+
+def expand_restart_services_for_lobby_cascade(
+    services: list[str],
+) -> list[str]:
+    """Expand a restart list so a lobby bounce cannot strand world.
+
+    Restarting lobby makes world exit (clean Bye). Always follow lobby with
+    world. Channel is only included when the caller already asked for it —
+    Lane A / Power restart channel separately after lobby.
+    """
+    selected = {s for s in services if s in _SERVICE_ORDER}
+    if "lobby" not in selected:
+        return [s for s in _SERVICE_ORDER if s in selected]
+    selected.add("world")
+    return [s for s in _SERVICE_ORDER if s in selected]
 
 
 def _deps_error_response(
@@ -1768,22 +1797,25 @@ def handle_restart_services(handler: OpsHandler) -> tuple[int, bytes, str]:
         return bad
     assert services is not None
 
+    services = expand_restart_services_for_lobby_cascade(services)
+
     dep_err = _deps_error_response(backend, services, "restart")
     if dep_err is not None:
         return dep_err
 
     ok, code, detail = _restart_services_for_backend(backend, services)
     if not ok:
-        return json_bytes(
-            {
-                "ok": False,
-                "error": code,
-                "services": services,
-                "backend": backend,
-                "detail": detail,
-            },
-            502,
-        )
+        status = 409 if code == "dependency" else 502
+        body: dict = {
+            "ok": False,
+            "error": code,
+            "services": services,
+            "backend": backend,
+            "detail": detail,
+        }
+        if code == "dependency":
+            body["message"] = detail
+        return json_bytes(body, status)
     if "channel" in services:
         mark_channel_restart(runtime_dir())
     return json_bytes(
@@ -2446,6 +2478,8 @@ def handle_backup_run(handler: OpsHandler) -> tuple[int, bytes, str]:
         sync = bool(sched.get("remote")) and backup_ops.rclone_config_path().is_file()
     else:
         sync = bool(sync)
+    no_start = bool(body.get("noStart") or body.get("no_start"))
+    no_stop = bool(body.get("noStop") or body.get("no_stop"))
     job_id = ingest_jobs.create_job(kind="backup", mode=mode, bytes_expected=0)
     ingest_jobs.set_phase(job_id, "queued", msg=f"Backup queued ({mode})")
     threading.Thread(
@@ -2456,6 +2490,8 @@ def handle_backup_run(handler: OpsHandler) -> tuple[int, bytes, str]:
             "sync": sync,
             "runtime": runtime_dir(),
             "compose": compose_dir(),
+            "no_start": no_start,
+            "no_stop": no_stop,
         },
         daemon=True,
         name=f"backup-{job_id}",
@@ -2467,6 +2503,8 @@ def handle_backup_run(handler: OpsHandler) -> tuple[int, bytes, str]:
             "message": f"Backup started ({mode})",
             "mode": mode,
             "sync": sync,
+            "noStart": no_start,
+            "noStop": no_stop,
         },
         202,
     )
@@ -2624,6 +2662,8 @@ def handle_backup_remote_put(handler: OpsHandler) -> tuple[int, bytes, str]:
             "path",
             "keepLocal",
             "keepRemote",
+            "announceEnabled",
+            "coalesceMinutes",
         )
         if k in body
     }
