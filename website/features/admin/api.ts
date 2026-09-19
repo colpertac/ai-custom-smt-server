@@ -8,6 +8,22 @@ export type AdminAccount = SessionUser & {
 export const fetchAdminAccounts = () =>
   fetcher<AdminAccount[]>("admin/accounts")
 
+export type ExpertiseDigiEditSettings = {
+  enabled: boolean
+  minUserLevel: number
+}
+
+export const fetchExpertiseDigiEditSettings = () =>
+  fetcher<ExpertiseDigiEditSettings>("admin/expertise-digi-edit")
+
+export const updateExpertiseDigiEditSettings = (
+  payload: Partial<ExpertiseDigiEditSettings>
+) =>
+  fetcher<ExpertiseDigiEditSettings>("admin/expertise-digi-edit", {
+    method: "POST",
+    json: payload,
+  })
+
 export const updateAdminAccount = (
   username: string,
   payload: Record<string, unknown>

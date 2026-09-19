@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useQueryClient } from "@tanstack/react-query"
 import { Mars, Venus, VenusAndMars } from "lucide-react"
@@ -17,7 +17,9 @@ import {
   useAdminAccountCharacters,
   useAdminAccounts,
   useDeleteAdminAccount,
+  useExpertiseDigiEditSettings,
   useUpdateAdminAccount,
+  useUpdateExpertiseDigiEditSettings,
 } from "@/features/admin/hooks"
 import { useSessionUser } from "@/features/auth/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
@@ -88,19 +90,18 @@ export function AdminAccountsPanel() {
 
   const current = accounts.find((a) => a.username === selected) ?? null
 
-  if (isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading accounts…</p>
-  }
-  if (isError) {
-    return (
-      <p className="mt-8 text-sm font-medium text-[#ff9b9b]">
-        {error instanceof Error ? error.message : "Failed to load accounts"}
-      </p>
-    )
-  }
-
   return (
-    <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
+    <div className="mt-3 space-y-6">
+      <ExpertiseDigiEditGlobalCard />
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading accounts…</p>
+      ) : isError ? (
+        <p className="text-sm font-medium text-[#ff9b9b]">
+          {error instanceof Error ? error.message : "Failed to load accounts"}
+        </p>
+      ) : (
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Accounts</CardTitle>
@@ -202,7 +203,119 @@ export function AdminAccountsPanel() {
           )}
         </CardContent>
       </Card>
+      </div>
+      )}
     </div>
+  )
+}
+
+function ExpertiseDigiEditGlobalCard() {
+  const { data, isLoading, isError, error } = useExpertiseDigiEditSettings()
+  const saveMutation = useUpdateExpertiseDigiEditSettings()
+  const [enabled, setEnabled] = useState(false)
+  const [minUserLevel, setMinUserLevel] = useState(0)
+  const [savedFlash, setSavedFlash] = useState(false)
+
+  useEffect(() => {
+    if (!data) return
+    setEnabled(data.enabled)
+    setMinUserLevel(data.minUserLevel)
+  }, [data])
+
+  const dirty =
+    data != null &&
+    (enabled !== data.enabled || minUserLevel !== data.minUserLevel)
+
+  const saving = saveMutation.isPending
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Armory expertise / digi edit</CardTitle>
+        <CardDescription>
+          Global: when enabled, any account with GM/admin level at or above the
+          minimum can edit expertise and digi on their own characters at
+          /armory/mychar (must be logged out of the game).
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading settings…</p>
+        ) : isError ? (
+          <FormAlert>
+            {error instanceof Error ? error.message : "Failed to load settings"}
+          </FormAlert>
+        ) : (
+          <>
+            {saveMutation.isError ? (
+              <FormAlert>
+                {saveMutation.error instanceof Error
+                  ? saveMutation.error.message
+                  : "Save failed"}
+              </FormAlert>
+            ) : null}
+            {savedFlash && !dirty ? (
+              <p className="text-sm text-[#4ade80]">Saved.</p>
+            ) : null}
+            <div className="flex flex-wrap items-center justify-between gap-3 border border-border bg-muted/30 p-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground">
+                  {enabled ? "Enabled" : "Disabled"}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Master switch for the website editor.
+                </p>
+              </div>
+              <Switch
+                checked={enabled}
+                disabled={saving}
+                onCheckedChange={(on) => {
+                  setSavedFlash(false)
+                  setEnabled(on)
+                }}
+                aria-label="Enable expertise and digi edit"
+              />
+            </div>
+            <Field>
+              <FieldLabel>Minimum GM level</FieldLabel>
+              <Input
+                type="number"
+                min={0}
+                max={1000}
+                className="max-w-[10rem]"
+                disabled={saving || !enabled}
+                value={minUserLevel}
+                onChange={(e) => {
+                  setSavedFlash(false)
+                  setMinUserLevel(Number(e.target.value) || 0)
+                }}
+              />
+              <p className="mt-1 text-[0.7rem] text-muted-foreground">
+                Accounts with Admin/GM level ≥ this value get the edit toggle
+                (0 = all accounts when enabled).
+              </p>
+            </Field>
+            <Button
+              type="button"
+              disabled={saving || !dirty}
+              onClick={() => {
+                setSavedFlash(false)
+                saveMutation.mutate(
+                  { enabled, minUserLevel },
+                  {
+                    onSuccess: () => {
+                      setSavedFlash(true)
+                    },
+                  }
+                )
+              }}
+            >
+              {saving ? "Saving…" : "Save global setting"}
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

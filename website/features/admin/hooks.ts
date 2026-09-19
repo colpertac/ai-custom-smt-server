@@ -7,13 +7,32 @@ import {
   deleteAdminAccount,
   fetchAdminAccountCharacters,
   fetchAdminAccounts,
+  fetchExpertiseDigiEditSettings,
   updateAdminAccount,
+  updateExpertiseDigiEditSettings,
 } from "@/features/admin/api"
 
 export function useAdminAccounts() {
   return useQuery({
     queryKey: ["admin", "accounts"],
     queryFn: fetchAdminAccounts,
+  })
+}
+
+export function useExpertiseDigiEditSettings() {
+  return useQuery({
+    queryKey: ["admin", "expertise-digi-edit"],
+    queryFn: fetchExpertiseDigiEditSettings,
+  })
+}
+
+export function useUpdateExpertiseDigiEditSettings() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateExpertiseDigiEditSettings,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admin", "expertise-digi-edit"], data)
+    },
   })
 }
 

@@ -604,7 +604,11 @@ export async function loadArmoryProfile(
   for (const e of expRows) {
     // Chains are derived — ignore any stray stored chain rows.
     if (getExpertiseMeta(e.ExpertiseID).isChain) continue
-    basePoints.set(e.ExpertiseID, e.Points)
+    const prev = basePoints.get(e.ExpertiseID)
+    // World DB can contain duplicate Expertise rows for one ID; keep the highest.
+    if (prev == null || e.Points > prev) {
+      basePoints.set(e.ExpertiseID, e.Points)
+    }
   }
 
   const expertisePoints = new Map<number, number>(basePoints)
@@ -674,12 +678,18 @@ export async function loadArmoryProfile(
     }
   }
 
-  const expertises: ArmoryExpertise[] = expRows
-    .filter((e) => {
-      if (getExpertiseMeta(e.ExpertiseID).isChain) return false
-      return e.Points > 0 || e.Disabled
-    })
-    .map((e) => toArmoryExpertise(e.ExpertiseID, e.Points, Boolean(e.Disabled)))
+  const expertises: ArmoryExpertise[] = []
+  const seenExpertiseIds = new Set<number>()
+  for (const e of expRows) {
+    const id = e.ExpertiseID
+    if (getExpertiseMeta(id).isChain) continue
+    if (!(e.Points > 0 || e.Disabled)) continue
+    if (seenExpertiseIds.has(id)) continue
+    seenExpertiseIds.add(id)
+    // Prefer the aggregated points (max) when duplicates exist.
+    const points = basePoints.get(id) ?? e.Points
+    expertises.push(toArmoryExpertise(id, points, Boolean(e.Disabled)))
+  }
 
   for (const chainId of listChainExpertiseIds()) {
     const meta = getExpertiseMeta(chainId)

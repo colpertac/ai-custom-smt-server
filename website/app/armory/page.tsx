@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import {
   ArmoryCharacterListPanel,
@@ -54,6 +55,11 @@ export default async function ArmoryPage({ searchParams }: Props) {
       <p className="mt-4 max-w-xl text-sm text-muted-foreground">
         Browse all characters or search by name. Shows level, stats, clan, and
         equipped gear. Account login names and bags stay private.
+      </p>
+      <p className="mt-2 text-sm">
+        <Link href="/armory/mychar" className="text-gold underline-offset-2 hover:underline">
+          My characters
+        </Link>
       </p>
       <div className="mt-8 border-2 border-border bg-card/60 p-4">
         <ArmorySearch autoFocus />

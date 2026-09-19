@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
+import { ArmoryOwnerEditPanel } from "@/features/armory/components/ArmoryOwnerEditPanel"
 import { ArmoryProfileView } from "@/features/armory/components/ArmoryProfileView"
 import { ArmorySearch } from "@/features/armory/components/ArmorySearch"
 import { ArmoryTabs } from "@/features/armory/components/ArmoryTabs"
@@ -53,7 +54,7 @@ export default async function ArmoryCharacterPage({ params }: Props) {
   }
 
   return (
-    <section className="site-atmosphere mx-auto max-w-5xl px-4 py-8">
+    <section className="site-atmosphere mx-auto w-full max-w-5xl px-4 py-8">
       <div className="mb-6 border-2 border-border bg-card/60 p-4">
         <ArmorySearch initialName="" />
       </div>
@@ -61,6 +62,10 @@ export default async function ArmoryCharacterPage({ params }: Props) {
       <p className="mb-4 text-xs">
         <Link href="/armory" className="hover:text-gold-dim">
           ← Armory search
+        </Link>
+        {" · "}
+        <Link href="/armory/mychar" className="hover:text-gold-dim">
+          My characters
         </Link>
       </p>
 
@@ -71,7 +76,10 @@ export default async function ArmoryCharacterPage({ params }: Props) {
       {dbError ? (
         <p className="text-sm text-[#ff9b9b]">{dbError}</p>
       ) : profile ? (
-        <ArmoryProfileView profile={profile} />
+        <>
+          <ArmoryOwnerEditPanel characterName={profile.name} />
+          <ArmoryProfileView profile={profile} />
+        </>
       ) : null}
     </section>
   )

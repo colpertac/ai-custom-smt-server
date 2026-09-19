@@ -202,7 +202,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
   const level = profile.stats?.level
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       <header className="border-2 border-border bg-muted/20 px-4 py-3">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h1 className="font-heading text-3xl font-semibold tracking-[0.1em] text-[#e8ecf4] uppercase">
@@ -276,7 +276,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
         ) : null}
       </header>
 
-      <div className="grid gap-3 lg:grid-cols-[minmax(12rem,0.9fr)_minmax(14rem,1.2fr)_minmax(12rem,0.9fr)]">
+      <div className="grid w-full gap-3 lg:grid-cols-[minmax(12rem,0.9fr)_minmax(14rem,1.2fr)_minmax(12rem,0.9fr)]">
         <div className="flex flex-col gap-1.5">
           {left.map((s) => (
             <ArmoryEquipSlot key={s.slot} slot={s} align="left" />
@@ -297,7 +297,7 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
         </div>
       </div>
 
-      <section className="border-2 border-border bg-card/50 p-4">
+      <section className="w-full border-2 border-border bg-card/50 p-4">
         <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
           Expertises
         </h2>
@@ -306,11 +306,46 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
           are calculated from standard ones (same formulas as in-game).
         </p>
         {profile.expertises.length === 0 ? (
-          <p className="mt-3 text-sm text-muted-foreground">None recorded.</p>
+          <ExpertiseEmptyStubs />
         ) : (
           <ExpertiseGroups expertises={profile.expertises} />
         )}
       </section>
+    </div>
+  )
+}
+
+function ExpertiseEmptyStubs() {
+  return (
+    <div className="mt-3 space-y-5">
+      <p className="text-sm text-muted-foreground">None recorded.</p>
+      {/* Keep the same 3-col footprint as a populated expertise grid. */}
+      <div
+        className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3"
+        aria-hidden
+      >
+        {Array.from({ length: 6 }, (_, i) => (
+          <div
+            key={i}
+            className="border border-dashed border-border/50 px-2.5 py-2 text-xs opacity-50"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="size-7 shrink-0 border border-border/50 bg-muted/40" />
+                <span className="text-muted-foreground">—</span>
+              </div>
+              <span className="shrink-0 tabular-nums text-muted-foreground">
+                C0 R0
+              </span>
+            </div>
+            <div className="mt-1.5 h-1.5 bg-muted/40" />
+            <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+              <span>0%</span>
+              <span>max C—</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

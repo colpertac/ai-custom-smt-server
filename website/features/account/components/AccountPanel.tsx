@@ -139,6 +139,24 @@ export function AccountPanel() {
 
         <section className="border border-border bg-card/60 px-4 py-4">
           <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
+            My characters
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Open armory profiles for characters on this account. Admins can
+            enable expertise / digi editing globally by GM level.
+          </p>
+          <p className="mt-3">
+            <Link
+              href="/armory/mychar"
+              className="text-sm text-gold underline-offset-2 hover:underline"
+            >
+              Go to my characters →
+            </Link>
+          </p>
+        </section>
+
+        <section className="border border-border bg-card/60 px-4 py-4">
+          <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
             Email
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
