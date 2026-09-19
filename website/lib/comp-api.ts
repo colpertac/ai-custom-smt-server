@@ -629,6 +629,122 @@ export async function adminDeleteAccount(
   return true
 }
 
+function lobbyErrorOrThrow(data: JsonObject, fallback: string): string {
+  return String(data.error ?? fallback)
+}
+
+/** Lobby `/admin/rename_character` — character must be offline. */
+export async function adminRenameCharacter(
+  auth: CompAuthState,
+  payload: { character_name: string; new_name: string; world_id?: number }
+): Promise<{ error: string; name?: string; old_name?: string }> {
+  const data = await authenticatedRequest(auth, "/admin/rename_character", payload)
+  return {
+    error: lobbyErrorOrThrow(data, "Unknown error"),
+    name: typeof data.name === "string" ? data.name : undefined,
+    old_name: typeof data.old_name === "string" ? data.old_name : undefined,
+  }
+}
+
+/** Lobby `/admin/delete_character` — immediate hard delete; offline only. */
+export async function adminDeleteCharacter(
+  auth: CompAuthState,
+  payload: { character_name: string; world_id?: number }
+): Promise<{ error: string; name?: string }> {
+  const data = await authenticatedRequest(auth, "/admin/delete_character", payload)
+  return {
+    error: lobbyErrorOrThrow(data, "Unknown error"),
+    name: typeof data.name === "string" ? data.name : undefined,
+  }
+}
+
+/** Lobby `/admin/transfer_character` — move to another account; both offline. */
+export async function adminTransferCharacter(
+  auth: CompAuthState,
+  payload: {
+    character_name: string
+    to_username: string
+    world_id?: number
+  }
+): Promise<{ error: string; name?: string; to_username?: string }> {
+  const data = await authenticatedRequest(
+    auth,
+    "/admin/transfer_character",
+    payload
+  )
+  return {
+    error: lobbyErrorOrThrow(data, "Unknown error"),
+    name: typeof data.name === "string" ? data.name : undefined,
+    to_username:
+      typeof data.to_username === "string" ? data.to_username : undefined,
+  }
+}
+
+export type AdminInventorySlot = {
+  slot: number
+  empty: boolean
+  uid?: string
+  type?: number
+  stack_size?: number
+  equipped?: boolean
+}
+
+/** Lobby `/admin/get_character_inventory` — bag slots 1–50. */
+export async function adminGetCharacterInventory(
+  auth: CompAuthState,
+  payload: { character_name: string; world_id?: number }
+): Promise<{
+  error: string
+  character_name?: string
+  slots: AdminInventorySlot[]
+}> {
+  const data = await authenticatedRequest(
+    auth,
+    "/admin/get_character_inventory",
+    payload
+  )
+  const rawSlots = Array.isArray(data.slots) ? data.slots : []
+  const slots: AdminInventorySlot[] = rawSlots.map((s) => {
+    const o = (s ?? {}) as JsonObject
+    return {
+      slot: Number(o.slot ?? 0),
+      empty: Boolean(o.empty),
+      uid: typeof o.uid === "string" ? o.uid : undefined,
+      type: o.type !== undefined ? Number(o.type) : undefined,
+      stack_size: o.stack_size !== undefined ? Number(o.stack_size) : undefined,
+      equipped: Boolean(o.equipped),
+    }
+  })
+  return {
+    error: lobbyErrorOrThrow(data, "Unknown error"),
+    character_name:
+      typeof data.character_name === "string" ? data.character_name : undefined,
+    slots,
+  }
+}
+
+export type AdminInventoryOp =
+  | { op: "set" | "add"; slot: number; item_type: number; stack_size?: number }
+  | { op: "set_qty"; slot: number; stack_size: number }
+  | { op: "remove"; slot: number }
+
+/** Lobby `/admin/update_character_inventory` — bag mutate; offline only. */
+export async function adminUpdateCharacterInventory(
+  auth: CompAuthState,
+  payload: {
+    character_name: string
+    ops: AdminInventoryOp[]
+    world_id?: number
+  }
+): Promise<{ error: string }> {
+  const data = await authenticatedRequest(
+    auth,
+    "/admin/update_character_inventory",
+    payload as unknown as JsonObject
+  )
+  return { error: lobbyErrorOrThrow(data, "Unknown error") }
+}
+
 /**
  * Website→lobby only. Requires COMP_RESET_SECRET on both sides.
  * Lookup by username or recovery email. Returns real email or "" when

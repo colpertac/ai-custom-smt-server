@@ -2,10 +2,17 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import { useQueryClient } from "@tanstack/react-query"
 import { Mars, Venus, VenusAndMars } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 
 import type { AdminAccount } from "@/features/admin/api"
+import {
+  deleteAdminCharacter,
+  renameAdminCharacter,
+  transferAdminCharacter,
+} from "@/features/admin/api"
+import { CharacterInventoryDialog } from "@/features/admin/components/CharacterInventoryDialog"
 import {
   useAdminAccountCharacters,
   useAdminAccounts,
@@ -16,6 +23,14 @@ import { useSessionUser } from "@/features/auth/hooks"
 import { useConfirm } from "@/components/confirm-dialog"
 import { FormAlert } from "@/components/form-alert"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
@@ -403,9 +418,139 @@ function formatLastLogin(ts: number): string {
   return d.toISOString().slice(0, 10)
 }
 
+type CharDialog =
+  | { kind: "rename"; name: string }
+  | { kind: "transfer"; name: string }
+  | { kind: "delete"; name: string }
+  | null
+
 function AccountCharactersList({ username }: { username: string }) {
+  const queryClient = useQueryClient()
   const { data, isLoading, isError, error } = useAdminAccountCharacters(username)
   const characters = data?.characters ?? []
+  const [dialogError, setDialogError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [inventoryName, setInventoryName] = useState<string | null>(null)
+  const [dialog, setDialog] = useState<CharDialog>(null)
+  const [renameValue, setRenameValue] = useState("")
+  const [transferValue, setTransferValue] = useState("")
+  const [deleteConfirm, setDeleteConfirm] = useState("")
+
+  async function refreshChars() {
+    await queryClient.invalidateQueries({
+      queryKey: ["admin", "accounts", username, "characters"],
+    })
+    await queryClient.invalidateQueries({ queryKey: ["admin", "accounts"] })
+  }
+
+  function closeDialog() {
+    if (busy) return
+    setDialog(null)
+    setDialogError(null)
+    setRenameValue("")
+    setTransferValue("")
+    setDeleteConfirm("")
+  }
+
+  function openRename(name: string) {
+    setDialogError(null)
+    setRenameValue(name)
+    setDialog({ kind: "rename", name })
+  }
+
+  function openTransfer(name: string) {
+    setDialogError(null)
+    setTransferValue("")
+    setDialog({ kind: "transfer", name })
+  }
+
+  function openDelete(name: string) {
+    setDialogError(null)
+    setDeleteConfirm("")
+    setDialog({ kind: "delete", name })
+  }
+
+  async function submitRename() {
+    if (!dialog || dialog.kind !== "rename") return
+    const newName = renameValue.trim()
+    if (!newName) {
+      setDialogError("Enter a new name.")
+      return
+    }
+    if (newName === dialog.name) {
+      closeDialog()
+      return
+    }
+    setBusy(true)
+    setDialogError(null)
+    try {
+      await renameAdminCharacter({
+        characterName: dialog.name,
+        newName,
+      })
+      setDialog(null)
+      setRenameValue("")
+      await refreshChars()
+    } catch (e) {
+      setDialogError(e instanceof Error ? e.message : "Rename failed")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function submitTransfer() {
+    if (!dialog || dialog.kind !== "transfer") return
+    const toUsername = transferValue.trim().toLowerCase()
+    if (!toUsername) {
+      setDialogError("Enter a destination username.")
+      return
+    }
+    setBusy(true)
+    setDialogError(null)
+    try {
+      await transferAdminCharacter({
+        characterName: dialog.name,
+        toUsername,
+      })
+      setDialog(null)
+      setTransferValue("")
+      await refreshChars()
+    } catch (e) {
+      setDialogError(e instanceof Error ? e.message : "Transfer failed")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function submitDelete() {
+    if (!dialog || dialog.kind !== "delete") return
+    if (deleteConfirm.trim() !== dialog.name) {
+      setDialogError("Name did not match.")
+      return
+    }
+    setBusy(true)
+    setDialogError(null)
+    try {
+      await deleteAdminCharacter({ characterName: dialog.name })
+      setDialog(null)
+      setDeleteConfirm("")
+      await refreshChars()
+    } catch (e) {
+      setDialogError(e instanceof Error ? e.message : "Delete failed")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const busyName = busy && dialog ? dialog.name : null
+  const renameReady =
+    dialog?.kind === "rename" &&
+    renameValue.trim().length > 0 &&
+    renameValue.trim() !== dialog.name
+  const transferReady =
+    dialog?.kind === "transfer" && transferValue.trim().length > 0
+  const deleteReady =
+    dialog?.kind === "delete" && deleteConfirm.trim() === dialog.name
 
   return (
     <div className="border border-border bg-muted/30 p-3">
@@ -436,6 +581,7 @@ function AccountCharactersList({ username }: { username: string }) {
                 <th className="px-2 py-1.5 font-medium">Lv</th>
                 <th className="px-2 py-1.5 font-medium">G</th>
                 <th className="px-2 py-1.5 font-medium">Last</th>
+                <th className="px-2 py-1.5 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -459,12 +605,247 @@ function AccountCharactersList({ username }: { username: string }) {
                   <td className="px-2 py-1.5 text-muted-foreground">
                     {formatLastLogin(c.lastLogin)}
                   </td>
+                  <td className="px-2 py-1.5">
+                    <div className="flex flex-wrap gap-1">
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        disabled={busyName === c.name}
+                        onClick={() => openRename(c.name)}
+                      >
+                        Rename
+                      </Button>
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        disabled={busyName === c.name}
+                        onClick={() => openTransfer(c.name)}
+                      >
+                        Transfer
+                      </Button>
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        disabled={busyName === c.name}
+                        onClick={() => setInventoryName(c.name)}
+                      >
+                        Inventory
+                      </Button>
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="destructive"
+                        disabled={busyName === c.name}
+                        onClick={() => openDelete(c.name)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : null}
+
+      <Dialog
+        open={dialog?.kind === "rename"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog()
+        }}
+      >
+        <DialogContent showCloseButton={!busy}>
+          <DialogHeader>
+            <DialogTitle>Rename character</DialogTitle>
+            <DialogDescription>
+              Character must be offline (not in lobby or world).
+              {dialog?.kind === "rename" ? (
+                <>
+                  {" "}
+                  Renaming{" "}
+                  <span className="font-mono text-foreground">{dialog.name}</span>
+                  .
+                </>
+              ) : null}
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="char-rename-name">New name</FieldLabel>
+              <Input
+                id="char-rename-name"
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                maxLength={32}
+                autoComplete="off"
+                disabled={busy}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    void submitRename()
+                  }
+                }}
+              />
+            </Field>
+          </FieldGroup>
+          {dialogError ? <FormAlert variant="error">{dialogError}</FormAlert> : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={closeDialog}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={busy || !renameReady}
+              onClick={() => void submitRename()}
+            >
+              {busy ? "Renaming…" : "Rename"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={dialog?.kind === "transfer"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog()
+        }}
+      >
+        <DialogContent showCloseButton={!busy}>
+          <DialogHeader>
+            <DialogTitle>Transfer character</DialogTitle>
+            <DialogDescription>
+              Move{" "}
+              <span className="font-mono text-foreground">
+                {dialog?.kind === "transfer" ? dialog.name : ""}
+              </span>{" "}
+              to another account. Both accounts must be offline; destination
+              needs a free character slot.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="char-transfer-user">
+                Destination username
+              </FieldLabel>
+              <Input
+                id="char-transfer-user"
+                value={transferValue}
+                onChange={(e) => setTransferValue(e.target.value)}
+                maxLength={32}
+                autoComplete="off"
+                disabled={busy}
+                placeholder="username"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    void submitTransfer()
+                  }
+                }}
+              />
+            </Field>
+          </FieldGroup>
+          {dialogError ? <FormAlert variant="error">{dialogError}</FormAlert> : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={closeDialog}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={busy || !transferReady}
+              onClick={() => void submitTransfer()}
+            >
+              {busy ? "Transferring…" : "Transfer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={dialog?.kind === "delete"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog()
+        }}
+      >
+        <DialogContent showCloseButton={!busy}>
+          <DialogHeader>
+            <DialogTitle>Delete character?</DialogTitle>
+            <DialogDescription>
+              Immediate hard delete (not KillTime delay). This cannot be undone.
+              Character must be offline. Type{" "}
+              <span className="font-mono text-foreground">
+                {dialog?.kind === "delete" ? dialog.name : ""}
+              </span>{" "}
+              to confirm.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="char-delete-confirm">Confirmation</FieldLabel>
+              <Input
+                id="char-delete-confirm"
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                autoComplete="off"
+                disabled={busy}
+                placeholder={dialog?.kind === "delete" ? dialog.name : ""}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    void submitDelete()
+                  }
+                }}
+              />
+            </Field>
+          </FieldGroup>
+          {dialogError ? <FormAlert variant="error">{dialogError}</FormAlert> : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              onClick={closeDialog}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              disabled={busy || !deleteReady}
+              onClick={() => void submitDelete()}
+            >
+              {busy ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <CharacterInventoryDialog
+        characterName={inventoryName}
+        open={inventoryName != null}
+        onOpenChange={(open) => {
+          if (!open) setInventoryName(null)
+        }}
+      />
     </div>
   )
 }

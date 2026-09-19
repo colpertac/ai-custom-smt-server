@@ -90,11 +90,20 @@ Require `user_level >= 1000` (plus per-route level constants).
 | `/api/admin/get_promos` | List promos (`code`, `startTime`, `endTime`, `useLimit`, `limitType`, `items` as shop product IDs). Wired in website Admin → Promos. |
 | `/api/admin/create_promo` | Create promo: `code` (exactly 16 letters A–Z; client Promotion Code field), `startTime`, `endTime`, `useLimit` (0–255; 0 = unlimited), `limitType` (`account`\|`character`\|`world`), `items` (non-empty shop product IDs). |
 | `/api/admin/delete_promo` | Delete all promos with `code`. |
+| `/api/admin/rename_character` | Rename offline character (`character_name` or `character_uuid`, `new_name`). Level: update_account. |
+| `/api/admin/delete_character` | Immediate hard delete via `AccountManager::DeleteCharacter` (offline). Level: delete_account. |
+| `/api/admin/transfer_character` | Move character to `to_username` (both offline; dest needs free slot). |
+| `/api/admin/get_character_inventory` | Bag slots 1–50 (`type`, `stack_size`, `equipped`). |
+| `/api/admin/update_character_inventory` | Batch bag ops: `set`/`add`/`set_qty`/`remove` (refuses equipped). |
 | `/api/admin/kick_player`, … | Other tools (not wired in website yet) |
 
 Updating/deleting the session’s own account clears the COMP API session.
 
+Character mutate endpoints refuse when the owning account has a lobby or world
+session (`error: character_online`). Website wiring: Admin → Accounts →
+character row actions (IDEA 16K).
+
 ## Not available over HTTP today
 
-Friends, clan chat, messaging, character create/delete, login-username rename.
-Those remain in-game packets / future lobby REST work.
+Friends, clan chat, messaging, character **create**, login-username rename.
+Character create remains in-game packets / import / studio seed.
