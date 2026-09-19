@@ -24,6 +24,8 @@ SCHEDULE_DEFAULTS: dict[str, Any] = {
     "path": "smt-backups",
     "keepLocal": 7,
     "keepRemote": 14,
+    "announceEnabled": True,
+    "coalesceMinutes": 10,
     "lastRunAt": None,
     "lastSyncAt": None,
     "lastError": None,
@@ -172,6 +174,8 @@ def save_schedule(patch: dict[str, Any]) -> dict[str, Any]:
         "path",
         "keepLocal",
         "keepRemote",
+        "announceEnabled",
+        "coalesceMinutes",
         "lastRunAt",
         "lastSyncAt",
         "lastError",
@@ -180,11 +184,16 @@ def save_schedule(patch: dict[str, Any]) -> dict[str, Any]:
             data[key] = patch[key]
     # Normalize types
     data["enabled"] = bool(data.get("enabled"))
+    data["announceEnabled"] = bool(data.get("announceEnabled", True))
     data["mode"] = "full" if str(data.get("mode")) == "full" else "standard"
     try:
         data["intervalHours"] = max(1, int(data.get("intervalHours") or 24))
     except (TypeError, ValueError):
         data["intervalHours"] = 24
+    try:
+        data["coalesceMinutes"] = max(0, int(data.get("coalesceMinutes") or 10))
+    except (TypeError, ValueError):
+        data["coalesceMinutes"] = 10
     try:
         data["keepLocal"] = max(0, int(data.get("keepLocal") or 0))
     except (TypeError, ValueError):
@@ -304,6 +313,8 @@ def run_backup_job(
     sync: bool,
     runtime: Path,
     compose: Path,
+    no_start: bool = False,
+    no_stop: bool = False,
 ) -> None:
     mode = "full" if mode == "full" else "standard"
     out = backups_dir()
@@ -321,6 +332,10 @@ def run_backup_job(
     ]
     if website.is_dir():
         args.extend(["--website-data", str(website)])
+    if no_start:
+        args.append("--no-start")
+    if no_stop:
+        args.append("--no-stop")
 
     def log(msg: str) -> None:
         ingest_jobs.log(job_id, msg)
@@ -361,6 +376,7 @@ def run_backup_job(
                 "message": f"Backup complete ({mode})",
                 "archive": archive_name,
                 "mode": mode,
+                "noStart": no_start,
                 "detail": detail[-500:] if detail else None,
             },
         )
@@ -667,12 +683,18 @@ def _scheduler_tick(*, runtime: Path, compose: Path) -> None:
     sched = load_schedule()
     if not sched.get("enabled"):
         return
+    last = sched.get("lastRunAt")
+    # When announce lead-in is on, the website maintenance coordinator owns
+    # scheduled cold backups. Still anchor lastRunAt so nextBackupAt is known.
+    if sched.get("announceEnabled", True):
+        if not isinstance(last, str) or not last.strip():
+            save_schedule({"lastRunAt": _now()})
+        return
     if ingest_jobs.busy():
         return
     started = _scheduler_started_at or 0.0
     if time.time() - started < SCHEDULER_STARTUP_GRACE_SEC:
         return
-    last = sched.get("lastRunAt")
     interval_h = int(sched.get("intervalHours") or 24)
     if not isinstance(last, str) or not last.strip():
         # First enable / never ran: anchor the clock without stopping the stack.

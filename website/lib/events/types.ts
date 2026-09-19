@@ -196,6 +196,7 @@ export interface EventScheduleStatus {
     announced10: boolean
     announced5: boolean
     announced1: boolean
+    announcedSeconds: boolean
   }
 }
 

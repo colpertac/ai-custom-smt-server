@@ -7,6 +7,7 @@ export async function register() {
     const g = globalThis as unknown as {
       __serverWatchdogInterval?: NodeJS.Timeout
       __eventScheduleInterval?: NodeJS.Timeout
+      __maintenanceCoordinatorInterval?: NodeJS.Timeout
     }
 
     if (!g.__serverWatchdogInterval) {
@@ -48,6 +49,29 @@ export async function register() {
 
       if (typeof g.__eventScheduleInterval.unref === "function") {
         g.__eventScheduleInterval.unref()
+      }
+    }
+
+    // Backup announce + coalesce with event flip into one downtime window
+    if (!g.__maintenanceCoordinatorInterval) {
+      const { runMaintenanceCoordinator } = await import(
+        "@/lib/maintenance-coordinator"
+      )
+
+      setTimeout(() => {
+        void runMaintenanceCoordinator().catch((err) => {
+          console.error("[MaintenanceCoordinator]", err)
+        })
+      }, 50_000)
+
+      g.__maintenanceCoordinatorInterval = setInterval(() => {
+        void runMaintenanceCoordinator().catch((err) => {
+          console.error("[MaintenanceCoordinator]", err)
+        })
+      }, 60_000)
+
+      if (typeof g.__maintenanceCoordinatorInterval.unref === "function") {
+        g.__maintenanceCoordinatorInterval.unref()
       }
     }
 

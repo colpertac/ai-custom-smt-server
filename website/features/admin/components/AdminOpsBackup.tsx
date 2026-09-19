@@ -40,6 +40,8 @@ type BackupSchedule = {
   path?: string
   keepLocal?: number
   keepRemote?: number
+  announceEnabled?: boolean
+  coalesceMinutes?: number
   lastRunAt?: string | null
   lastSyncAt?: string | null
   lastError?: string | null
@@ -47,11 +49,75 @@ type BackupSchedule = {
   rcloneRemotes?: string[]
 }
 
+type MaintenanceWindow = {
+  windowAt?: string | null
+  kind?: string | null
+  includeBackup?: boolean
+  includeEvents?: boolean
+  coalesced?: boolean
+  nextBackupAt?: string | null
+  nextFlipAt?: string | null
+  lastError?: string | null
+  executing?: boolean
+}
+
 function formatBytes(n: number): string {
   if (n < 1024) return `${n} B`
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KiB`
   if (n < 1024 * 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MiB`
   return `${(n / (1024 * 1024 * 1024)).toFixed(2)} GiB`
+}
+
+/** ISO → `HH:MM` for `<input type="time">` (local wall clock). */
+function toTimeLocalValue(iso: string | null | undefined): string {
+  if (!iso) return ""
+  const ms = Date.parse(iso)
+  if (!Number.isFinite(ms)) return ""
+  const d = new Date(ms)
+  const pad = (n: number) => String(n).padStart(2, "0")
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+/**
+ * Time of day → ISO lastRunAt. Date is chosen automatically: today at that
+ * time if it already passed, otherwise yesterday (so next due lands today).
+ */
+function lastRunAtFromTimeLocal(
+  timeLocal: string,
+  now: Date = new Date()
+): string | null {
+  const trimmed = timeLocal.trim()
+  if (!trimmed) return null
+  const match = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(trimmed)
+  if (!match) return null
+  const hh = Number(match[1])
+  const mm = Number(match[2])
+  if (
+    !Number.isFinite(hh) ||
+    !Number.isFinite(mm) ||
+    hh < 0 ||
+    hh > 23 ||
+    mm < 0 ||
+    mm > 59
+  ) {
+    return null
+  }
+  const d = new Date(now)
+  d.setSeconds(0, 0)
+  d.setHours(hh, mm, 0, 0)
+  if (d.getTime() > now.getTime()) {
+    d.setDate(d.getDate() - 1)
+  }
+  return d.toISOString()
+}
+
+function nextBackupDueLabel(timeLocal: string, hours: number): string | null {
+  const startIso = lastRunAtFromTimeLocal(timeLocal)
+  if (!startIso) return null
+  const startMs = Date.parse(startIso)
+  if (!Number.isFinite(startMs)) return null
+  const h = Math.max(1, hours || 24)
+  return new Date(startMs + h * 3600_000).toLocaleString()
 }
 
 function sleep(ms: number): Promise<void> {
@@ -114,11 +180,15 @@ export function AdminOpsBackup() {
   const [enabled, setEnabled] = useState(false)
   const [mode, setMode] = useState<"standard" | "full">("standard")
   const [intervalHours, setIntervalHours] = useState(24)
+  const [intervalStartsAt, setIntervalStartsAt] = useState("")
+  const [announceEnabled, setAnnounceEnabled] = useState(true)
+  const [coalesceMinutes, setCoalesceMinutes] = useState(10)
   const [remote, setRemote] = useState("")
   const [remotePath, setRemotePath] = useState("smt-backups")
   const [keepLocal, setKeepLocal] = useState(7)
   const [keepRemote, setKeepRemote] = useState(14)
   const [rcloneConfig, setRcloneConfig] = useState("")
+  const [maintenance, setMaintenance] = useState<MaintenanceWindow | null>(null)
 
   const [restoreName, setRestoreName] = useState<string | null>(null)
   const [restoreEnv, setRestoreEnv] = useState(false)
@@ -140,6 +210,7 @@ export function AdminOpsBackup() {
         data?: {
           archives?: BackupArchive[]
           schedule?: BackupSchedule
+          maintenance?: MaintenanceWindow | null
         }
       }
       if (!response.ok || !json.success || !json.data) {
@@ -152,10 +223,16 @@ export function AdminOpsBackup() {
       setEnabled(Boolean(s.enabled))
       setMode(s.mode === "full" ? "full" : "standard")
       setIntervalHours(Number(s.intervalHours) || 24)
+      setIntervalStartsAt(toTimeLocalValue(s.lastRunAt))
+      setAnnounceEnabled(s.announceEnabled !== false)
+      setCoalesceMinutes(
+        typeof s.coalesceMinutes === "number" ? s.coalesceMinutes : 10
+      )
       setRemote(s.remote || "")
       setRemotePath(s.path || "smt-backups")
       setKeepLocal(Number(s.keepLocal) || 7)
       setKeepRemote(Number(s.keepRemote) || 14)
+      setMaintenance(json.data.maintenance ?? null)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load backups")
     } finally {
@@ -356,6 +433,9 @@ export function AdminOpsBackup() {
         enabled,
         mode,
         intervalHours,
+        lastRunAt: lastRunAtFromTimeLocal(intervalStartsAt),
+        announceEnabled,
+        coalesceMinutes,
         remote: remoteName,
         path: remotePath,
         keepLocal,
@@ -411,6 +491,8 @@ export function AdminOpsBackup() {
           enabled,
           mode,
           intervalHours,
+          announceEnabled,
+          coalesceMinutes,
           remote: remoteName,
           path: remotePath,
           keepLocal,
@@ -642,6 +724,23 @@ export function AdminOpsBackup() {
               Enable scheduled backups
             </FieldLabel>
           </Field>
+          <Field>
+            <FieldLabel>
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={announceEnabled}
+                onChange={(e) => setAnnounceEnabled(e.target.checked)}
+              />
+              In-game 10/5/1 announce before cold backup
+            </FieldLabel>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              When on, the website coordinator owns scheduled runs (ops interval
+              scheduler stays idle). In the last minute it announces, counts
+              10…1, then runs the cold backup. Manual Backup now is still
+              immediate.
+            </p>
+          </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field>
               <FieldLabel htmlFor="backup-mode">Default mode</FieldLabel>
@@ -666,6 +765,42 @@ export function AdminOpsBackup() {
                 value={intervalHours}
                 onChange={(e) => setIntervalHours(Number(e.target.value) || 24)}
               />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="backup-interval-start">
+                Interval starts at
+              </FieldLabel>
+              <Input
+                id="backup-interval-start"
+                type="time"
+                value={intervalStartsAt}
+                onChange={(e) => setIntervalStartsAt(e.target.value)}
+              />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Local time of day only — date is inferred (most recent that
+                time). Next due ={" "}
+                {nextBackupDueLabel(intervalStartsAt, intervalHours) ||
+                  "— (set a time, or run Backup now)"}
+                . Clear and Save to unset until the next run.
+              </p>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="backup-coalesce">
+                Coalesce with event flip (± minutes)
+              </FieldLabel>
+              <Input
+                id="backup-coalesce"
+                type="number"
+                min={0}
+                value={coalesceMinutes}
+                onChange={(e) =>
+                  setCoalesceMinutes(Math.max(0, Number(e.target.value) || 0))
+                }
+              />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                If the next event flip is within this many minutes of the next
+                backup, both run in one downtime window. 0 disables coalesce.
+              </p>
             </Field>
             <Field>
               <FieldLabel htmlFor="backup-remote">rclone remote name</FieldLabel>
@@ -771,7 +906,7 @@ export function AdminOpsBackup() {
           uploading={false}
           job={syncJobActive ? job : null}
         />
-        <p className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground">
           Last run: {schedule.lastRunAt || "—"} · Last sync:{" "}
           {schedule.lastSyncAt || "—"}
           {schedule.lastError ? (
@@ -780,7 +915,23 @@ export function AdminOpsBackup() {
               · Error: <span className="text-destructive">{schedule.lastError}</span>
             </>
           ) : null}
-        </p>
+          {maintenance?.windowAt ? (
+            <div className="mt-1">
+              Next downtime: {maintenance.windowAt}
+              {maintenance.kind ? ` (${maintenance.kind}` : ""}
+              {maintenance.coalesced ? ", coalesced with events" : ""}
+              {maintenance.kind ? ")" : ""}
+              {maintenance.executing ? " — executing…" : ""}
+            </div>
+          ) : maintenance?.nextBackupAt ? (
+            <div className="mt-1">Next backup due: {maintenance.nextBackupAt}</div>
+          ) : null}
+          {maintenance?.lastError ? (
+            <div className="mt-1 text-destructive">
+              Coordinator: {maintenance.lastError}
+            </div>
+          ) : null}
+        </div>
       </section>
 
       <Dialog

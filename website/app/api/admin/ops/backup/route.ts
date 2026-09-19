@@ -1,5 +1,6 @@
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
+import { getMaintenanceCoordinatorStatus } from "@/lib/maintenance-coordinator"
 import { listOpsBackups } from "@/lib/ops-sidecar"
 import { requireWebSession } from "@/lib/web-session"
 
@@ -22,7 +23,8 @@ export async function GET() {
         "OPS"
       )
     }
-    return apiOk(result)
+    const maintenance = await getMaintenanceCoordinatorStatus().catch(() => null)
+    return apiOk({ ...result, maintenance })
   } catch (error) {
     return apiFail(
       error instanceof Error ? error.message : "Backup list failed",

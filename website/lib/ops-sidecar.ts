@@ -1143,6 +1143,8 @@ export type OpsBackupSchedule = {
   path?: string
   keepLocal?: number
   keepRemote?: number
+  announceEnabled?: boolean
+  coalesceMinutes?: number
   lastRunAt?: string | null
   lastSyncAt?: string | null
   lastError?: string | null
@@ -1171,6 +1173,10 @@ function parseSchedule(raw: unknown): OpsBackupSchedule | undefined {
     path: typeof o.path === "string" ? o.path : undefined,
     keepLocal: typeof o.keepLocal === "number" ? o.keepLocal : undefined,
     keepRemote: typeof o.keepRemote === "number" ? o.keepRemote : undefined,
+    announceEnabled:
+      o.announceEnabled === undefined ? true : Boolean(o.announceEnabled),
+    coalesceMinutes:
+      typeof o.coalesceMinutes === "number" ? o.coalesceMinutes : 10,
     lastRunAt: typeof o.lastRunAt === "string" ? o.lastRunAt : null,
     lastSyncAt: typeof o.lastSyncAt === "string" ? o.lastSyncAt : null,
     lastError: typeof o.lastError === "string" ? o.lastError : null,
@@ -1221,7 +1227,12 @@ export async function listOpsBackups(
 
 export async function runOpsBackup(
   actor: string | undefined,
-  opts: { mode?: "standard" | "full"; sync?: boolean } = {}
+  opts: {
+    mode?: "standard" | "full"
+    sync?: boolean
+    noStart?: boolean
+    noStop?: boolean
+  } = {}
 ): Promise<{
   ok: boolean
   jobId?: string
@@ -1237,6 +1248,8 @@ export async function runOpsBackup(
     body: JSON.stringify({
       mode: opts.mode ?? "standard",
       sync: opts.sync,
+      noStart: opts.noStart,
+      noStop: opts.noStop,
     }),
   })
   if (status === 401) return { ok: false, error: "unauthorized" }

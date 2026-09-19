@@ -15,6 +15,23 @@ is still recoverable. On Docker, those jobs run *inside* `smt-ops` and must not
 restarts lobby/world/channel; restore stops peers and merges archive members
 into the live bind mounts.
 
+### Scheduled announce + event coalesce
+
+With **In-game 10/5/1 announce** enabled (default), the website
+`maintenance-coordinator` owns scheduled cold backups:
+
+1. Computes next backup from `lastRunAt + intervalHours`.
+2. If Schedule-mode event flip is within **Coalesce (± minutes)** (default 10),
+   arms one combined window at the earlier instant.
+3. When within the last minute: announce 1 minute, wait until ~10s before the
+   window, run a blocking **10…1** ticker+console countdown, then stop COMP,
+   archive (`backup.sh --no-start`), apply event rotation if coalesced, start
+   COMP, then rclone sync (no downtime).
+
+Event-only flips still use the lighter channel restart path (same final-minute
+sequence). Ops interval scheduler stays idle while announce is on (manual
+**Backup now** is unchanged).
+
 ---
 
 ## What is included
@@ -46,7 +63,7 @@ cd /opt/smt   # or your install prefix
 ```
 
 Useful flags: `--out DIR`, `--website-data DIR`, `--include-logs`,
-`--skip-website`.
+`--skip-website`, `--no-start` / `--no-stop` (staged combined maintenance).
 
 Stack is stopped, archived, then started again automatically.
 

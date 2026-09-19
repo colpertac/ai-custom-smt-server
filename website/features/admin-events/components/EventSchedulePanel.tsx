@@ -623,6 +623,12 @@ export function EventSchedulePanel({
             Live: {status.liveActiveIds.join(", ") || "(none)"} · Pending
             restart: {formatIso(status.reconciler.pendingRestartAt, timezone)}
           </div>
+          {status.reconciler.lastSkippedReason === "coalesced_maintenance" ? (
+            <div>
+              Flip downtime coalesced with scheduled backup (see Admin →
+              Backups).
+            </div>
+          ) : null}
           {status.reconciler.lastError && (
             <div className="text-destructive">
               Last error: {status.reconciler.lastError}

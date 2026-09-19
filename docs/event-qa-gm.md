@@ -150,6 +150,9 @@ Before enabling schedule mode for a day set:
 2. Fix hard collisions (remove an event or promote a conflict group).
 3. Accept soft collisions consciously.
 4. Save schedule; confirm reconciler / flip announcements as needed.
+   If Admin → Backups has announce + coalesce enabled and the next backup falls
+   within coalesce minutes of flipTime, expect one combined downtime (see
+   `docs/backup-restore.md` — Scheduled announce + event coalesce).
 
 ## Pass E — Aggregates
 

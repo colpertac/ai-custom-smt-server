@@ -68,6 +68,7 @@ export type ReconcilerPersistedStatus = {
   announced10: boolean
   announced5: boolean
   announced1: boolean
+  announcedSeconds: boolean
 }
 
 const emptyReconcilerStatus = (): ReconcilerPersistedStatus => ({
@@ -82,6 +83,7 @@ const emptyReconcilerStatus = (): ReconcilerPersistedStatus => ({
   announced10: false,
   announced5: false,
   announced1: false,
+  announcedSeconds: false,
 })
 
 function isV1(raw: unknown): raw is EventScheduleConfigV1 {
@@ -199,6 +201,7 @@ export async function saveEventSchedule(
     announced10: false,
     announced5: false,
     announced1: false,
+    announcedSeconds: false,
     lastSkippedReason: "config_saved",
     lastError: null,
   })
@@ -222,6 +225,7 @@ export async function readReconcilerStatus(): Promise<ReconcilerPersistedStatus>
       announced10: Boolean(parsed.announced10),
       announced5: Boolean(parsed.announced5),
       announced1: Boolean(parsed.announced1),
+      announcedSeconds: Boolean(parsed.announcedSeconds),
     }
   } catch {
     return emptyReconcilerStatus()
@@ -293,6 +297,7 @@ export async function getEventScheduleStatus(
       announced10: reconciler.announced10,
       announced5: reconciler.announced5,
       announced1: reconciler.announced1,
+      announcedSeconds: reconciler.announcedSeconds,
     },
   }
 }

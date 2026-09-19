@@ -24,7 +24,10 @@ import {
   schedulePath,
   type ReconcilerPersistedStatus,
 } from "./event-schedule-fs"
-import { sendScheduleAnnounce } from "./schedule-announce"
+import {
+  runFinalMinuteSequence,
+  sendScheduleAnnounce,
+} from "./schedule-announce"
 import {
   applyLaneAConfigOps,
   validateLaneAConfigOps,
@@ -91,7 +94,8 @@ export type ReconcileResult = {
 }
 
 async function applyDesired(
-  desiredIds: string[]
+  desiredIds: string[],
+  opts?: { restart?: boolean }
 ): Promise<{ ok: boolean; error?: string }> {
   await updateActiveEvents(desiredIds)
 
@@ -108,16 +112,19 @@ async function applyDesired(
     }
   }
 
-  setPlannedMaintenance(
-    ["channel", "world"],
-    "admin_restart",
-    180,
-    ACTOR,
-    `Event schedule flip (${validated.releaseId})`
-  )
+  const wantRestart = opts?.restart !== false
+  if (wantRestart) {
+    setPlannedMaintenance(
+      ["channel", "world"],
+      "admin_restart",
+      180,
+      ACTOR,
+      `Event schedule flip (${validated.releaseId})`
+    )
+  }
 
   const applied = await applyLaneAConfigOps(validated.releaseId, ACTOR, {
-    restart: true,
+    restart: wantRestart,
   })
   if (!applied.ok) {
     return {
@@ -132,16 +139,45 @@ async function applyDesired(
   return { ok: true }
 }
 
+/** Apply schedule event ids (optionally without channel restart). */
+export async function applyEventScheduleIds(
+  desiredIds: string[],
+  opts?: { restart?: boolean }
+): Promise<{ ok: boolean; error?: string }> {
+  return applyDesired(desiredIds, opts)
+}
+
+/** Record that a flip window was applied (e.g. by maintenance coordinator). */
+export async function markEventFlipApplied(
+  flipAt: Date,
+  targetIds: string[]
+): Promise<void> {
+  await writeReconcilerStatus({
+    lastAppliedAt: new Date().toISOString(),
+    lastAppliedFlipAt: flipAt.toISOString(),
+    lastDesiredIds: targetIds,
+    lastError: null,
+    lastSkippedReason: "coalesced_maintenance",
+    pendingRestartAt: null,
+    pendingDesiredIds: [],
+    announced10: false,
+    announced5: false,
+    announced1: false,
+    announcedSeconds: false,
+  })
+}
+
 function maintenanceSecondsUntil(restartAtMs: number, nowMs: number): number {
   return Math.max(60, Math.ceil((restartAtMs - nowMs) / 1000))
 }
 
 async function applyFlip(
   flipAt: Date,
-  targetIds: string[]
+  targetIds: string[],
+  opts?: { alreadyLocked?: boolean }
 ): Promise<ReconcileResult> {
   const flipIso = flipAt.toISOString()
-  const locked = await tryAcquireLock()
+  const locked = opts?.alreadyLocked ? true : await tryAcquireLock()
   if (!locked) {
     return {
       applied: false,
@@ -182,6 +218,7 @@ async function applyFlip(
       announced10: false,
       announced5: false,
       announced1: false,
+      announcedSeconds: false,
     })
     console.info(
       `[EventSchedule] applied ${targetIds.length} events → channel restart`,
@@ -203,7 +240,7 @@ async function applyFlip(
       error: msg,
     }
   } finally {
-    await releaseLock()
+    if (!opts?.alreadyLocked) await releaseLock()
   }
 }
 
@@ -230,6 +267,7 @@ async function runLeadInCountdown(
       announced10: false,
       announced5: false,
       announced1: false,
+      announcedSeconds: false,
       lastDesiredIds: targetIds,
       lastSkippedReason: awaitingReason,
       lastError: null,
@@ -280,23 +318,46 @@ async function runLeadInCountdown(
       ACTOR,
       "Event schedule flip countdown"
     )
-  } else if (remaining <= 60_000 && remaining > 0 && !fresh.announced1) {
-    const ann = await sendScheduleAnnounce(1)
-    if (!ann.ok) console.warn("[EventSchedule] announce 1m:", ann.error)
-    await writeReconcilerStatus({
-      announced10: true,
-      announced5: true,
-      announced1: true,
-      lastError: ann.ok ? null : ann.error ?? null,
-      lastSkippedReason: "countdown_waiting",
-    })
-    setPlannedMaintenance(
-      ["channel", "world"],
-      "admin_restart",
-      maintenanceSecondsUntil(restartAtMs, nowMs),
-      ACTOR,
-      "Event schedule flip countdown"
-    )
+  } else if (remaining <= 60_000 && remaining > 0 && !fresh.announcedSeconds) {
+    // Own this window under lock: 1m → sleep → 10…1 → apply/restart.
+    const locked = await tryAcquireLock()
+    if (!locked) {
+      return {
+        applied: false,
+        skipped: true,
+        reason: "lock_held",
+        desiredIds: targetIds,
+      }
+    }
+    try {
+      await writeReconcilerStatus({
+        announced10: true,
+        announced5: true,
+        announced1: true,
+        announcedSeconds: true,
+        lastSkippedReason: "countdown_waiting",
+        lastError: null,
+      })
+      setPlannedMaintenance(
+        ["channel", "world"],
+        "admin_restart",
+        Math.max(60, Math.ceil(remaining / 1000) + 15),
+        ACTOR,
+        "Event schedule flip countdown"
+      )
+      const seq = await runFinalMinuteSequence({
+        windowAtMs: restartAtMs,
+        reason: "events",
+        alreadyAnnounced1: fresh.announced1,
+      })
+      if (!seq.ok) {
+        console.warn("[EventSchedule] final countdown:", seq.error)
+        await writeReconcilerStatus({ lastError: seq.error ?? null })
+      }
+      return await applyFlip(restartAt, targetIds, { alreadyLocked: true })
+    } finally {
+      await releaseLock()
+    }
   } else {
     await writeReconcilerStatus({
       lastSkippedReason:
@@ -331,6 +392,7 @@ export async function runEventScheduleReconcile(
       announced10: false,
       announced5: false,
       announced1: false,
+      announcedSeconds: false,
     })
     return { applied: false, skipped: true, reason: "schedule_disabled" }
   }
@@ -354,6 +416,23 @@ export async function runEventScheduleReconcile(
     const shouldCatchUp = ageMs <= FLIP_CATCH_UP_MS || pendingWasThisFlip
 
     if (shouldCatchUp) {
+      const { isEventFlipOwnedByCoordinator } = await import(
+        "../maintenance-coordinator"
+      )
+      if (await isEventFlipOwnedByCoordinator(dueFlip, now)) {
+        await writeReconcilerStatus({
+          lastSkippedReason: "coalesced_maintenance",
+          lastDesiredIds: computeDesiredActiveIds(config, dueFlip),
+          pendingRestartAt: dueFlipIso,
+          pendingDesiredIds: computeDesiredActiveIds(config, dueFlip),
+        })
+        return {
+          applied: false,
+          skipped: true,
+          reason: "coalesced_maintenance",
+          desiredIds: computeDesiredActiveIds(config, dueFlip),
+        }
+      }
       const targetIds = computeDesiredActiveIds(config, dueFlip)
       const conflicts = conflictsInActiveSet(targetIds, groups)
       if (conflicts.length > 0) {
@@ -374,6 +453,39 @@ export async function runEventScheduleReconcile(
         }
       }
       // Always restart at flip — even if live ids already match.
+      if (!status.announcedSeconds) {
+        const locked = await tryAcquireLock()
+        if (!locked) {
+          return {
+            applied: false,
+            skipped: true,
+            reason: "lock_held",
+            desiredIds: targetIds,
+          }
+        }
+        try {
+          await writeReconcilerStatus({
+            announced10: true,
+            announced5: true,
+            announced1: true,
+            announcedSeconds: true,
+          })
+          const seq = await runFinalMinuteSequence({
+            windowAtMs: dueFlipMs,
+            reason: "events",
+            alreadyAnnounced1: status.announced1,
+          })
+          if (!seq.ok) {
+            console.warn(
+              "[EventSchedule] final countdown (catch-up):",
+              seq.error
+            )
+          }
+          return await applyFlip(dueFlip, targetIds, { alreadyLocked: true })
+        } finally {
+          await releaseLock()
+        }
+      }
       return applyFlip(dueFlip, targetIds)
     }
 
@@ -422,6 +534,25 @@ export async function runEventScheduleReconcile(
   const flipAt = nextFlipInstant(config, now)
   const targetIds = computeDesiredActiveIds(config, flipAt)
 
+  const { isEventFlipOwnedByCoordinator } = await import(
+    "../maintenance-coordinator"
+  )
+  if (await isEventFlipOwnedByCoordinator(flipAt, now)) {
+    await writeReconcilerStatus({
+      lastDesiredIds: targetIds,
+      lastSkippedReason: "coalesced_maintenance",
+      lastError: null,
+      pendingRestartAt: flipAt.toISOString(),
+      pendingDesiredIds: targetIds,
+    })
+    return {
+      applied: false,
+      skipped: true,
+      reason: "coalesced_maintenance",
+      desiredIds: targetIds,
+    }
+  }
+
   const conflicts = conflictsInActiveSet(targetIds, groups)
   if (conflicts.length > 0) {
     const msg = conflicts.map((c) => c.reason).join("; ")
@@ -434,6 +565,7 @@ export async function runEventScheduleReconcile(
       announced10: false,
       announced5: false,
       announced1: false,
+      announcedSeconds: false,
     })
     return {
       applied: false,

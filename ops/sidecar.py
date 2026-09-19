@@ -2664,9 +2664,16 @@ def handle_backup_remote_put(handler: OpsHandler) -> tuple[int, bytes, str]:
             "keepRemote",
             "announceEnabled",
             "coalesceMinutes",
+            "lastRunAt",
         )
         if k in body
     }
+    if "lastRunAt" in patch:
+        raw = patch["lastRunAt"]
+        if raw is None or (isinstance(raw, str) and not raw.strip()):
+            patch["lastRunAt"] = None
+        else:
+            patch["lastRunAt"] = str(raw).strip()
     # Auto-fill remote from [section] headers when the field was left blank.
     explicit = str(patch.get("remote") or "").strip()
     inferred = backup_ops.infer_remote_name(explicit, conf_text)

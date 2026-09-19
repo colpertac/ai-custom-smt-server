@@ -6,6 +6,8 @@ export type MaintenanceReason =
   | "map_upload"
   | "content_upload"
   | "manual"
+  | "scheduled_backup"
+  | "scheduled_maintenance"
 
 export type MaintenanceWindow = {
   service: string

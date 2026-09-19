@@ -41,11 +41,16 @@ Usage: backup.sh [options]
   --skip-mariadb      Never include data/mariadb/
   --include-website   Always include website-data (default on)
   --skip-website      Omit website-data
+  --no-stop           Skip stopping COMP (caller already stopped)
+  --no-start          Skip starting COMP after archive (caller will start)
   -h, --help          Show this help
 
 Creates: <out>/smt-runtime-YYYYMMDD-HHMMSS.tar.gz (+ .sha256)
 EOF
 }
+
+NO_STOP=0
+NO_START=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -59,6 +64,8 @@ while [[ $# -gt 0 ]]; do
     --skip-mariadb) INCLUDE_MARIADB=0; shift ;;
     --include-website) INCLUDE_WEBSITE=1; shift ;;
     --skip-website) INCLUDE_WEBSITE=0; shift ;;
+    --no-stop) NO_STOP=1; shift ;;
+    --no-start) NO_START=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown arg: $1" >&2; usage >&2; exit 1 ;;
   esac
@@ -313,7 +320,7 @@ echo "==> website: $([ "$want_website" -eq 1 ] && echo include || echo skip)"
 
 on_exit() {
   local code=$?
-  if [[ "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ]]; then
+  if [[ "$NO_START" -eq 0 && ( "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ) ]]; then
     echo "==> ensuring stack is up (exit=$code)"
     start_stack || true
   fi
@@ -323,7 +330,9 @@ on_exit() {
 trap on_exit EXIT
 
 echo "==> stopping COMP stack (brief downtime)"
-if [[ "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ]]; then
+if [[ "$NO_STOP" -eq 1 ]]; then
+  echo "    (--no-stop — caller already stopped)"
+elif [[ "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ]]; then
   stop_stack
 else
   echo "    (nothing running — cold copy only)"
@@ -411,7 +420,11 @@ echo "==> compressing"
 tar -C "$staging" -czf "$archive" .
 sha256sum "$archive" | tee "${archive}.sha256"
 
-if [[ "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ]]; then
+if [[ "$NO_START" -eq 1 ]]; then
+  echo "==> (--no-start — leave stack stopped for caller)"
+  WAS_UP=0
+  MARIADB_WAS_UP=0
+elif [[ "$WAS_UP" -eq 1 || "$MARIADB_WAS_UP" -eq 1 ]]; then
   echo "==> starting stack"
   start_stack
   WAS_UP=0
