@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { AdminOpsMetrics } from "@/features/admin/components/AdminOpsMetrics"
+import { AdminRecoveryPanel } from "@/features/admin/components/AdminRecoveryPanel"
 import { AdminServiceStatus } from "@/features/admin/components/AdminServiceStatus"
 import {
   notifyLaneAPendingChanged,
@@ -62,6 +63,7 @@ type OpsActionResponse = {
     releaseId?: string
     phase?: string
     restarted?: boolean
+    restart?: string[]
     clientOverlayUpdated?: boolean
   }
 }
@@ -273,13 +275,31 @@ export function AdminOpsHealth() {
 
       if (restart) {
         setPublishPhase("restarting")
-        // Manual Events / Config drafts live in working channel.xml — shops
-        // publish does not copy them. Apply config before process restart so
-        // the Events/channel bullet clears with Publish & restart.
-        if (laneAPending.channelDirty) {
+        // Working config XMLs are not part of shops publish. Copy only dirty
+        // files (same as Config → Apply), then restart here so Overview can
+        // clear Config/Events bullets. restart:false on apply — we drive
+        // lobby→world→channel ourselves and roll back if a bounce fails.
+        let configReleaseId: string | null = null
+        let configRestart: string[] = []
+        if (laneAPending.channelDirty || laneAPending.configDirty) {
+          const listRes = await api.get("admin/config", { timeout: 60_000 })
+          const listJson = (await listRes.json()) as {
+            success?: boolean
+            data?: { files?: Array<{ id?: string; dirty?: boolean }> }
+          }
+          const dirtyIds = (listJson.data?.files ?? [])
+            .filter((f) => f.dirty && typeof f.id === "string")
+            .map((f) => f.id as string)
+          const only =
+            dirtyIds.length > 0
+              ? dirtyIds
+              : laneAPending.channelDirty
+                ? ["channel"]
+                : undefined
+
           const cfgValidateRes = await api.post(
             "admin/ops/publish/lane-a-config/validate",
-            { json: { only: ["channel"] }, timeout: 120_000 }
+            { json: only ? { only } : {}, timeout: 120_000 }
           )
           const cfgValidateJson =
             (await cfgValidateRes.json()) as OpsActionResponse
@@ -291,15 +311,17 @@ export function AdminOpsHealth() {
             setPublishPhase("failed")
             setError(
               cfgValidateJson.message ||
-                "Shops published but channel.xml failed validation — fix Events/Config, then Publish & restart again"
+                "Shops published but config failed validation — fix Config/Events drafts, then Publish & restart again"
             )
             return
           }
+          configReleaseId = cfgValidateJson.data.releaseId
+          configRestart = cfgValidateJson.data.restart ?? []
           const cfgApplyRes = await api.post(
             "admin/ops/publish/lane-a-config/apply",
             {
               json: {
-                releaseId: cfgValidateJson.data.releaseId,
+                releaseId: configReleaseId,
                 restart: false,
               },
               timeout: 120_000,
@@ -310,25 +332,62 @@ export function AdminOpsHealth() {
             setPublishPhase("failed")
             setError(
               cfgApplyJson.message ||
-                "Shops published but channel.xml did not copy live — fix Config/Events drafts, then Publish & restart again"
+                "Shops published but config did not copy live — fix Config/Events drafts, then Publish & restart again"
             )
             return
           }
+          if (cfgApplyJson.data?.restart?.length) {
+            configRestart = cfgApplyJson.data.restart
+          }
         }
-        // Casino odds live in lobby webgame scripts — restart lobby before
-        // channel when those edits are pending (lobby → world → channel order).
+
         const needLobby =
-          laneAPending.casinoDirty || laneAPending.clientVersionDirty
+          laneAPending.casinoDirty ||
+          laneAPending.clientVersionDirty ||
+          configRestart.includes("lobby")
+        // Lobby bounce drops world (clean Bye) — always follow with world when
+        // lobby restarts, or when config itself asks for world.
+        const needWorld = needLobby || configRestart.includes("world")
+
+        const rollbackConfig = async () => {
+          if (!configReleaseId) return
+          try {
+            await api.post("admin/ops/publish/lane-a-config/rollback", {
+              json: { releaseId: configReleaseId, restart: false },
+              timeout: 120_000,
+            })
+          } catch {
+            /* best-effort */
+          }
+        }
+
         if (needLobby) {
           const lobbyRes = await api.post("admin/ops/restart/lobby", {
             timeout: 180_000,
           })
           const lobbyJson = (await lobbyRes.json()) as OpsActionResponse
           if (!lobbyRes.ok || !lobbyJson.success) {
+            await rollbackConfig()
             setPublishPhase("failed")
             setError(
               lobbyJson.message ||
-                "Content published but login (lobby) did not restart — use Power → restart lobby, then channel"
+                "Config/content published but login (lobby) did not restart — drafts were rolled back where possible"
+            )
+            return
+          }
+        }
+        if (needWorld) {
+          const worldRes = await api.post("admin/ops/services", {
+            json: { action: "restart", service: "world" },
+            timeout: 180_000,
+          })
+          const worldJson = (await worldRes.json()) as OpsActionResponse
+          if (!worldRes.ok || !worldJson.success) {
+            await rollbackConfig()
+            setPublishPhase("failed")
+            setError(
+              worldJson.message ||
+                "Config/content published but world did not restart — drafts were rolled back where possible"
             )
             return
           }
@@ -338,12 +397,13 @@ export function AdminOpsHealth() {
         })
         const restartJson = (await restartRes.json()) as OpsActionResponse
         if (!restartRes.ok || !restartJson.success) {
+          await rollbackConfig()
           setPublishPhase("failed")
           setError(
             restartJson.message ||
               (needLobby
-                ? "Content published and lobby restarted, but the game channel did not — use Power → Channel"
-                : "Content published but the game channel did not restart — use Restart on the Channel row under Power")
+                ? "Content published and lobby restarted, but the game channel did not — config rolled back where possible"
+                : "Content published but the game channel did not restart — config rolled back where possible")
           )
           return
         }
@@ -385,7 +445,13 @@ export function AdminOpsHealth() {
         setPublishPhase((p) => (p === "done" || p === "failed" ? "idle" : p))
       }, 800)
     }
-  }, [refresh, laneAPending.casinoDirty, laneAPending.channelDirty, laneAPending.clientVersionDirty])
+  }, [
+    refresh,
+    laneAPending.casinoDirty,
+    laneAPending.channelDirty,
+    laneAPending.clientVersionDirty,
+    laneAPending.configDirty,
+  ])
 
   const openPublishDialog = useCallback((restart: boolean) => {
     setPublishWithRestart(restart)
@@ -723,6 +789,20 @@ export function AdminOpsHealth() {
         </div>
       </div>
 
+      <div className="border border-border/80 bg-muted/20 px-3 py-3">
+        <p className="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          Recovery
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Channel died after loot/shop publish? Snapshot first, then restore
+          shops &amp; loot — or open full Recovery for stock knobs / disable
+          packages.
+        </p>
+        <div className="mt-2">
+          <AdminRecoveryPanel compact />
+        </div>
+      </div>
+
       <div
         className={cn(
           "border px-3 py-3 transition-colors",
@@ -836,7 +916,8 @@ export function AdminOpsHealth() {
                 <li>
                   <span className="font-medium text-cyan-50">Config</span> —
                   lobby / world / constants / setup draft differs from live;
-                  Apply &amp; restart from Config so those services reload
+                  Publish &amp; restart here, or Apply &amp; restart from
+                  Config, so those services reload
                 </li>
               ) : null}
             </ul>
@@ -1049,8 +1130,9 @@ export function AdminOpsHealth() {
             <DialogDescription>
               We validate your drafts first (nothing live changes if validation fails),
               then copy shops and dungeon payouts to the live server
-              {publishWithRestart && laneAPending.channelDirty
-                ? ", publish draft channel.xml (events)"
+              {publishWithRestart &&
+              (laneAPending.channelDirty || laneAPending.configDirty)
+                ? ", publish draft server config (channel, lobby, world, constants, setup, new character)"
                 : ""}
               {publishWithRestart
                 ? laneAPending.casinoDirty || laneAPending.clientVersionDirty

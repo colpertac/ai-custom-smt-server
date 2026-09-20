@@ -53,11 +53,27 @@ async function maybeRestart(
   try {
     const restart = await restartOpsServices(services, actor)
     if (!restart.ok) {
+      const restartError =
+        restart.detail || restart.error || "Service restart failed"
+      // Roll back live XML so a bad constants/lobby draft cannot leave
+      // processes dead while the UI thinks publish succeeded.
+      let rolledBack = false
+      if (mapped.releaseId) {
+        try {
+          const rb = mapLocal(await rollbackLaneAConfig(mapped.releaseId))
+          rolledBack = rb.ok
+        } catch {
+          /* best-effort */
+        }
+      }
       return {
         ...mapped,
-        restartError:
-          restart.detail || restart.error || "Service restart failed",
-        message: "Config applied but service restart failed",
+        ok: false,
+        restartError,
+        error: restartError,
+        message: rolledBack
+          ? `Config restart failed and changes were rolled back: ${restartError}`
+          : `Config applied but service restart failed: ${restartError}`,
       }
     }
     return {
@@ -66,10 +82,25 @@ async function maybeRestart(
       message: `${mapped.message}; restarted ${services.join(", ")}`,
     }
   } catch (e) {
+    const restartError =
+      e instanceof Error ? e.message : "Service restart failed"
+    let rolledBack = false
+    if (mapped.releaseId) {
+      try {
+        const rb = mapLocal(await rollbackLaneAConfig(mapped.releaseId))
+        rolledBack = rb.ok
+      } catch {
+        /* best-effort */
+      }
+    }
     return {
       ...mapped,
-      restartError: e instanceof Error ? e.message : "Service restart failed",
-      message: "Config applied but service restart failed",
+      ok: false,
+      restartError,
+      error: restartError,
+      message: rolledBack
+        ? `Config restart failed and changes were rolled back: ${restartError}`
+        : `Config applied but service restart failed: ${restartError}`,
     }
   }
 }

@@ -12,6 +12,7 @@ import {
   Globe,
   Inbox,
   LayoutDashboard,
+  LifeBuoy,
   Mail,
   MessageSquareText,
   Newspaper,
@@ -49,6 +50,12 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     label: "Monitor",
     items: [
       { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
+      {
+        href: "/admin/recovery",
+        label: "Recovery",
+        icon: LifeBuoy,
+        match: "prefix",
+      },
       { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
       { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
       { href: "/admin/feedback", label: "Feedback", icon: Inbox, match: "prefix" },
@@ -140,6 +147,7 @@ export const ADMIN_NAV: AdminNavItem[] = ADMIN_NAV_SECTIONS.flatMap(
 
 export function adminPageTitle(pathname: string): string {
   if (pathname === "/admin" || pathname === "/admin/") return "Overview"
+  if (pathname.startsWith("/admin/recovery")) return "Recovery"
   if (pathname.startsWith("/admin/website")) return "Website"
   if (pathname.startsWith("/admin/notifications")) return "Notifications"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"

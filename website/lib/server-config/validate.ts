@@ -248,9 +248,12 @@ export function validateObjgenDocument(
   const issues: ValidationIssue[] = []
   validateMembers("", doc.members, fields, issues)
 
-  // Semantic: database backend vs config block
+  // Semantic: database backend vs config block — only when the schema
+  // declares the pointer (lobby/world). ChannelConfig has DatabaseType but
+  // no SQLite3Config/MariaDBConfig members; warning there is a false positive.
+  const fieldNames = new Set(fields.map((f) => f.name))
   const dbType = doc.members.DatabaseType
-  if (dbType === "SQLITE3") {
+  if (dbType === "SQLITE3" && fieldNames.has("SQLite3Config")) {
     const sqlite = doc.members.SQLite3Config
     if (
       sqlite == null ||
@@ -264,7 +267,7 @@ export function validateObjgenDocument(
       )
     }
   }
-  if (dbType === "MARIADB") {
+  if (dbType === "MARIADB" && fieldNames.has("MariaDBConfig")) {
     const maria = doc.members.MariaDBConfig
     if (
       maria == null ||

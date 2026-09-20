@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Loader2, Play, RotateCcw, ScrollText, Square } from "lucide-react"
 
@@ -78,6 +79,22 @@ function startingHint(name: string, proc: ProcessRow): string {
       : "Restarting…"
   }
   return "Still starting…"
+}
+
+/** Heuristic: boot failure often from bad shops/loot/config — point at Recovery. */
+function looksLikeContentBootFailure(text: string | null | undefined): boolean {
+  if (!text) return false
+  const t = text.toLowerCase()
+  return (
+    t.includes("shop") ||
+    t.includes("payout") ||
+    t.includes("could not be initialized") ||
+    t.includes("exited before listening") ||
+    t.includes("exited after") ||
+    t.includes("dropset") ||
+    t.includes("bad shop") ||
+    t.includes("script_failed")
+  )
 }
 
 const DOT: Record<Tone, string> = {
@@ -237,10 +254,27 @@ export function AdminServiceStatus({
 
   const byName = new Map((rows ?? []).map((p) => [p.name.toLowerCase(), p]))
   const anyBusy = busy !== null || workingAll
+  const channelProc = byName.get("channel")
+  const recoveryHint =
+    looksLikeContentBootFailure(error) ||
+    looksLikeContentBootFailure(channelProc?.logSummary) ||
+    looksLikeContentBootFailure(channelProc?.error)
 
   return (
     <div className="mt-3 space-y-2">
       {error ? <FormAlert variant="error">{error}</FormAlert> : null}
+      {recoveryHint ? (
+        <FormAlert variant="warning">
+          Channel may be failing on shops/loot or config. Try{" "}
+          <Link
+            href="/admin/recovery"
+            className="font-medium underline underline-offset-2"
+          >
+            Recovery → Restore shops &amp; loot
+          </Link>{" "}
+          (or Restore config / Disable admin packages).
+        </FormAlert>
+      ) : null}
       {ok ? <FormAlert variant="success">{ok}</FormAlert> : null}
       <ul className="space-y-1.5">
         {SERVICES.map((name) => {

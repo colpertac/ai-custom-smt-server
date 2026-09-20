@@ -52,7 +52,9 @@ function navPendingDot(
       !laneA.gameFilesDirty &&
       !laneA.clientVersionDirty
     if (onlyConfig) {
-      return { title: "Unpublished config — apply & restart from Config" }
+      return {
+        title: "Unpublished config — Publish & restart, or Apply from Config",
+      }
     }
     if (
       laneA.clientVersionDirty &&

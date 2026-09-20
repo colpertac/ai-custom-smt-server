@@ -8,6 +8,10 @@ export type MaintenanceReason =
   | "manual"
   | "scheduled_backup"
   | "scheduled_maintenance"
+  | "recovery_restore_config"
+  | "recovery_restore_content"
+  | "recovery_reset_stock"
+  | "recovery_disable_packages"
 
 export type MaintenanceWindow = {
   service: string
