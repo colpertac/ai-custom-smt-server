@@ -1,10 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
+import { listDevils } from "@/lib/armory-catalogs"
 import { countWikiItems, countWikiCatalog } from "@/lib/wiki-catalog"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WikiPageHeader } from "@/features/wiki/components/WikiShell"
-import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
+import {
+  WIKI_CATEGORY_META,
+  WIKI_DEMONS_META,
+} from "@/features/wiki/wiki-nav"
 
 export const metadata: Metadata = {
   title: "Item wiki",
@@ -12,6 +16,7 @@ export const metadata: Metadata = {
 
 export default function WikiIndexPage() {
   const total = countWikiCatalog()
+  const demonCount = listDevils().length
 
   return (
     <div className="space-y-10">
@@ -39,6 +44,18 @@ export default function WikiIndexPage() {
             consumables.
           </li>
           <li>
+            <span className="font-medium text-foreground">Demons</span> lists
+            DevilData IDs for GM{" "}
+            <code className="text-foreground">@contract</code> — see{" "}
+            <Link
+              href="/wiki/demons"
+              className="text-gold-dim hover:text-gold-hot"
+            >
+              Demons
+            </Link>
+            .
+          </li>
+          <li>
             <span className="font-medium text-foreground">Builder</span> plans
             combat loadouts (cooldown, limit break, crit, and more) with set
             bonuses counted once — see{" "}
@@ -58,7 +75,7 @@ export default function WikiIndexPage() {
         <h2 className="font-heading text-sm font-semibold tracking-[0.14em] uppercase text-gold-dim">
           Categories
         </h2>
-        <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(
             Object.keys(WIKI_CATEGORY_META) as Array<
               keyof typeof WIKI_CATEGORY_META
@@ -68,30 +85,57 @@ export default function WikiIndexPage() {
             const n = countWikiItems(key)
             return (
               <li key={card.href}>
-                <Link
+                <CategoryCard
                   href={card.href}
-                  className="group flex h-full flex-col border border-border bg-muted/40 p-4 no-underline transition-colors hover:border-gold-dim hover:bg-card/60"
-                >
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h3 className="font-heading text-lg font-semibold tracking-wide text-foreground group-hover:text-gold-hot">
-                      {card.title}
-                    </h3>
-                    <span className="text-xs text-muted-foreground">
-                      {n.toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {card.blurb}
-                  </p>
-                  <span className="mt-4 text-xs uppercase tracking-wider text-gold-dim group-hover:text-gold-hot">
-                    Browse →
-                  </span>
-                </Link>
+                  title={card.title}
+                  blurb={card.blurb}
+                  count={n}
+                />
               </li>
             )
           })}
+          <li>
+            <CategoryCard
+              href={WIKI_DEMONS_META.href}
+              title={WIKI_DEMONS_META.title}
+              blurb={WIKI_DEMONS_META.blurb}
+              count={demonCount}
+            />
+          </li>
         </ul>
       </section>
     </div>
+  )
+}
+
+function CategoryCard({
+  href,
+  title,
+  blurb,
+  count,
+}: {
+  href: string
+  title: string
+  blurb: string
+  count: number
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex h-full flex-col border border-border bg-muted/40 p-4 no-underline transition-colors hover:border-gold-dim hover:bg-card/60"
+    >
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="font-heading text-lg font-semibold tracking-wide text-foreground group-hover:text-gold-hot">
+          {title}
+        </h3>
+        <span className="text-xs text-muted-foreground">
+          {count.toLocaleString()}
+        </span>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">{blurb}</p>
+      <span className="mt-4 text-xs uppercase tracking-wider text-gold-dim group-hover:text-gold-hot">
+        Browse →
+      </span>
+    </Link>
   )
 }

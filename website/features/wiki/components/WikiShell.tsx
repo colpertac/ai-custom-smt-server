@@ -15,7 +15,13 @@ type WikiStatusCounts = {
   items: number
 }
 
-export function WikiShell({ children }: { children: React.ReactNode }) {
+export function WikiShell({
+  children,
+  demonCount,
+}: {
+  children: React.ReactNode
+  demonCount: number
+}) {
   const pathname = usePathname()
   const [counts, setCounts] = useState<WikiStatusCounts | null>(null)
 
@@ -93,6 +99,7 @@ export function WikiShell({ children }: { children: React.ReactNode }) {
             <WikiCount label="Weapons" count={counts?.weapons} />
             <WikiCount label="Armor" count={counts?.armor} />
             <WikiCount label="Items" count={counts?.items} />
+            <WikiCount label="Demons" count={demonCount} />
           </dl>
         </aside>
 

@@ -6,7 +6,15 @@ export const WIKI_NAV = [
   { href: "/wiki/weapons", label: "Weapons", prefix: "/wiki/weapons" },
   { href: "/wiki/armor", label: "Armor", prefix: "/wiki/armor" },
   { href: "/wiki/items", label: "Items", prefix: "/wiki/items" },
+  { href: "/wiki/demons", label: "Demons", prefix: "/wiki/demons" },
 ] as const
+
+export const WIKI_DEMONS_META = {
+  href: "/wiki/demons",
+  title: "Demons",
+  blurb:
+    "DevilData IDs and names for GM @contract — look up Phoenix as 105, etc.",
+} as const
 
 export const WIKI_CATEGORY_META: Record<
   WikiItemCategory,

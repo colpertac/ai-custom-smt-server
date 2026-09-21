@@ -1,5 +1,6 @@
 import { WikiShell } from "@/features/wiki/components/WikiShell"
 import { WikiUnavailable } from "@/features/wiki/components/WikiUnavailable"
+import { listDevils } from "@/lib/armory-catalogs"
 import { isWikiAvailable } from "@/lib/wiki-availability"
 
 export default function WikiLayout({
@@ -10,5 +11,7 @@ export default function WikiLayout({
   if (!isWikiAvailable()) {
     return <WikiUnavailable />
   }
-  return <WikiShell>{children}</WikiShell>
+  return (
+    <WikiShell demonCount={listDevils().length}>{children}</WikiShell>
+  )
 }

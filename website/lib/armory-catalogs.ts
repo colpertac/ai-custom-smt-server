@@ -51,6 +51,24 @@ export type ExpertiseProgress = {
   atMax: boolean
 }
 
+export type DevilCatalogEntry = {
+  id: number
+  name: string
+}
+
+let devilListCache: DevilCatalogEntry[] | null = null
+
+/** All DevilData IDs with display names, sorted by id (for wiki / @contract lookup). */
+export function listDevils(): DevilCatalogEntry[] {
+  if (!devilListCache) {
+    devilListCache = Object.entries(devilNames)
+      .map(([id, name]) => ({ id: Number(id), name }))
+      .filter((e) => Number.isFinite(e.id))
+      .sort((a, b) => a.id - b.id)
+  }
+  return devilListCache
+}
+
 export function hasDevilType(type: number): boolean {
   return Object.prototype.hasOwnProperty.call(devilNames, String(type))
 }
