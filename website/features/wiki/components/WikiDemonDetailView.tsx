@@ -18,6 +18,7 @@ import {
   formatDevilFamily,
 } from "@/lib/devil-inheritance"
 import { getSkill } from "@/lib/skill-catalog"
+import { getGrowthTypeLabel } from "@/lib/growth-type-catalog"
 import { WikiBreadcrumb } from "@/features/wiki/components/WikiShell"
 import { cn } from "@/lib/utils"
 
@@ -424,7 +425,7 @@ export function WikiDemonDetailView({
             <MetaRow label="Agility" value={demon.stats.speed} />
             <MetaRow label="Luck" value={demon.stats.luck} />
             <MetaRow label="Force stack" value={demon.forceStack || "—"} />
-            <MetaRow label="Growth type" value={demon.growthType || "—"} />
+            <MetaRow label="Growth type" value={getGrowthTypeLabel(demon.growthType) || "—"} />
             <MetaRow
               label="Fusion difficulty"
               value={demon.fusionDifficulty || "—"}

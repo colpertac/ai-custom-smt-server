@@ -1,6 +1,8 @@
 import Link from "next/link"
 
+import { ArmorySkillChip } from "@/features/armory/components/ArmorySkillChip"
 import type { ArmoryDemon, ArmoryDemonsPayload } from "@/lib/armory-demons"
+import { getGrowthTypeLabel } from "@/lib/growth-type-catalog"
 import { cn } from "@/lib/utils"
 
 function DemonCard({ demon }: { demon: ArmoryDemon }) {
@@ -33,7 +35,7 @@ function DemonCard({ demon }: { demon: ArmoryDemon }) {
         {demon.stats ? ` · Lv ${demon.stats.level}` : ""}
         {` · Fam ${demon.familiarity}`}
         {demon.mitamaRank > 0 ? ` · Mitama ${demon.mitamaRank}` : ""}
-        {` · Growth ${demon.growthType}`}
+        {` · Growth ${getGrowthTypeLabel(demon.growthType)}`}
       </p>
       {demon.stats ? (
         <dl className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] tracking-wide uppercase text-foreground">
@@ -54,13 +56,16 @@ function DemonCard({ demon }: { demon: ArmoryDemon }) {
           ))}
         </dl>
       ) : null}
-      {demon.skills.length > 0 ? (
-        <p className="mt-2 text-xs text-muted-foreground">
-          Skills:{" "}
-          <span className="text-foreground/90">
-            {demon.skills.map((sid) => `#${sid}`).join(", ")}
-          </span>
-        </p>
+      {demon.skills.filter((sid) => sid > 0).length > 0 ? (
+        <ul className="mt-2 flex flex-wrap gap-1.5">
+          {demon.skills
+            .filter((sid) => sid > 0)
+            .map((sid) => (
+              <li key={sid}>
+                <ArmorySkillChip skillId={sid} link={false} size={16} />
+              </li>
+            ))}
+        </ul>
       ) : null}
       {gear.length > 0 ? (
         <ul className="mt-2 space-y-0.5 text-xs text-[#c9a0ff]">

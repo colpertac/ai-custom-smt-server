@@ -2,8 +2,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
+import { ArmoryDemonOwnerEditPanel } from "@/features/armory/components/ArmoryDemonOwnerEditPanel"
 import { ArmoryDemonProfileView } from "@/features/armory/components/ArmoryDemonProfileView"
 import { ArmorySearch } from "@/features/armory/components/ArmorySearch"
+import { MitamaBranchSetsProvider } from "@/features/armory/components/MitamaBranchSetsSidebar"
 import {
   isValidDemonId,
   loadArmoryDemonDetail,
@@ -46,7 +48,7 @@ export default async function ArmoryDemonPage({ params }: Props) {
     : "/armory"
 
   return (
-    <section className="site-atmosphere mx-auto max-w-5xl px-4 py-8">
+    <MitamaBranchSetsProvider>
       <div className="mb-6 border-2 border-border bg-card/60 p-4">
         <ArmorySearch />
       </div>
@@ -63,8 +65,11 @@ export default async function ArmoryDemonPage({ params }: Props) {
       {dbError ? (
         <p className="text-sm text-[#ff9b9b]">{dbError}</p>
       ) : demon ? (
-        <ArmoryDemonProfileView demon={demon} />
+        <>
+          <ArmoryDemonOwnerEditPanel demonId={demon.id} />
+          <ArmoryDemonProfileView demon={demon} />
+        </>
       ) : null}
-    </section>
+    </MitamaBranchSetsProvider>
   )
 }

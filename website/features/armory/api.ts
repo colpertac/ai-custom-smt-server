@@ -3,10 +3,15 @@ import type {
   CharacterEditState,
   OwnedCharacterRow,
 } from "@/lib/character-expertise-digi-shared"
+import type {
+  DemonEditState,
+  DemonReunionApplyPayload,
+} from "@/lib/demon-reunion-edit-shared"
 
 export type AccountCharactersPayload = {
   username: string
   allowExpertiseDigiEdit: boolean
+  allowDemonReunionEdit: boolean
   characters: OwnedCharacterRow[]
 }
 
@@ -17,6 +22,16 @@ export type CharacterEditAccessPayload = {
   allowExpertiseDigiEdit: boolean
   online: boolean
   state: CharacterEditState | null
+}
+
+export type DemonEditAccessPayload = {
+  demonId: string
+  canEdit: boolean
+  owned: boolean
+  allowDemonReunionEdit: boolean
+  online: boolean
+  ownerCharacter: string | null
+  state: DemonEditState | null
 }
 
 export const fetchAccountCharacters = () =>
@@ -48,4 +63,18 @@ export const updateCharacterDigitalize = (
   fetcher<{ state: CharacterEditState }>(
     `account/characters/${encodeURIComponent(name)}/digitalize`,
     { method: "POST", json: { updates } }
+  )
+
+export const fetchDemonEditAccess = (id: string) =>
+  fetcher<DemonEditAccessPayload>(
+    `account/demons/${encodeURIComponent(id)}/edit`
+  )
+
+export const updateDemonReunion = (
+  id: string,
+  payload: DemonReunionApplyPayload
+) =>
+  fetcher<{ state: DemonEditState }>(
+    `account/demons/${encodeURIComponent(id)}/reunion`,
+    { method: "POST", json: payload }
   )

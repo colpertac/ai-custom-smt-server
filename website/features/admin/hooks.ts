@@ -7,8 +7,10 @@ import {
   deleteAdminAccount,
   fetchAdminAccountCharacters,
   fetchAdminAccounts,
+  fetchDemonReunionEditSettings,
   fetchExpertiseDigiEditSettings,
   updateAdminAccount,
+  updateDemonReunionEditSettings,
   updateExpertiseDigiEditSettings,
 } from "@/features/admin/api"
 
@@ -32,6 +34,23 @@ export function useUpdateExpertiseDigiEditSettings() {
     mutationFn: updateExpertiseDigiEditSettings,
     onSuccess: (data) => {
       queryClient.setQueryData(["admin", "expertise-digi-edit"], data)
+    },
+  })
+}
+
+export function useDemonReunionEditSettings() {
+  return useQuery({
+    queryKey: ["admin", "demon-reunion-edit"],
+    queryFn: fetchDemonReunionEditSettings,
+  })
+}
+
+export function useUpdateDemonReunionEditSettings() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateDemonReunionEditSettings,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admin", "demon-reunion-edit"], data)
     },
   })
 }

@@ -1,4 +1,5 @@
 import { listOwnedCharacters } from "@/lib/character-expertise-digi"
+import { canEditDemonReunion } from "@/lib/demon-reunion-edit-settings"
 import { canEditExpertiseDigi } from "@/lib/expertise-digi-edit-settings"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { LobbyDbMissingError } from "@/lib/lobby-db"
@@ -17,6 +18,7 @@ export async function GET() {
     return apiOk({
       username: session.username,
       allowExpertiseDigiEdit: canEditExpertiseDigi(session.userLevel),
+      allowDemonReunionEdit: canEditDemonReunion(session.userLevel),
       characters,
     })
   } catch (error) {

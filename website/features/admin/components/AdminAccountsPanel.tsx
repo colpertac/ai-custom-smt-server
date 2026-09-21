@@ -17,8 +17,10 @@ import {
   useAdminAccountCharacters,
   useAdminAccounts,
   useDeleteAdminAccount,
+  useDemonReunionEditSettings,
   useExpertiseDigiEditSettings,
   useUpdateAdminAccount,
+  useUpdateDemonReunionEditSettings,
   useUpdateExpertiseDigiEditSettings,
 } from "@/features/admin/hooks"
 import { useSessionUser } from "@/features/auth/hooks"
@@ -93,6 +95,7 @@ export function AdminAccountsPanel() {
   return (
     <div className="mt-3 space-y-6">
       <ExpertiseDigiEditGlobalCard />
+      <DemonReunionEditGlobalCard />
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading accounts…</p>
@@ -274,6 +277,119 @@ function ExpertiseDigiEditGlobalCard() {
                   setEnabled(on)
                 }}
                 aria-label="Enable expertise and digi edit"
+              />
+            </div>
+            <Field>
+              <FieldLabel>Minimum GM level</FieldLabel>
+              <Input
+                type="number"
+                min={0}
+                max={1000}
+                className="max-w-[10rem]"
+                disabled={saving || !enabled}
+                value={minUserLevel}
+                onChange={(e) => {
+                  setSavedFlash(false)
+                  setMinUserLevel(Number(e.target.value) || 0)
+                }}
+              />
+              <p className="mt-1 text-[0.7rem] text-muted-foreground">
+                Accounts with Admin/GM level ≥ this value get the edit toggle
+                (0 = all accounts when enabled).
+              </p>
+            </Field>
+            <Button
+              type="button"
+              disabled={saving || !dirty}
+              onClick={() => {
+                setSavedFlash(false)
+                saveMutation.mutate(
+                  { enabled, minUserLevel },
+                  {
+                    onSuccess: () => {
+                      setSavedFlash(true)
+                    },
+                  }
+                )
+              }}
+            >
+              {saving ? "Saving…" : "Save global setting"}
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function DemonReunionEditGlobalCard() {
+  const { data, isLoading, isError, error } = useDemonReunionEditSettings()
+  const saveMutation = useUpdateDemonReunionEditSettings()
+  const [enabled, setEnabled] = useState(false)
+  const [minUserLevel, setMinUserLevel] = useState(0)
+  const [savedFlash, setSavedFlash] = useState(false)
+
+  useEffect(() => {
+    if (!data) return
+    setEnabled(data.enabled)
+    setMinUserLevel(data.minUserLevel)
+  }, [data])
+
+  const dirty =
+    data != null &&
+    (enabled !== data.enabled || minUserLevel !== data.minUserLevel)
+
+  const saving = saveMutation.isPending
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">
+          Armory demon reunion / mitama edit
+        </CardTitle>
+        <CardDescription>
+          Global: when enabled, any account with GM/admin level at or above the
+          minimum can edit reunion ranks, mitama reunion slots, mitama rank, and
+          mitama type on their own demons at /armory/demon/… (must be logged out
+          of the game).
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading settings…</p>
+        ) : isError ? (
+          <FormAlert>
+            {error instanceof Error ? error.message : "Failed to load settings"}
+          </FormAlert>
+        ) : (
+          <>
+            {saveMutation.isError ? (
+              <FormAlert>
+                {saveMutation.error instanceof Error
+                  ? saveMutation.error.message
+                  : "Save failed"}
+              </FormAlert>
+            ) : null}
+            {savedFlash && !dirty ? (
+              <p className="text-sm text-[#4ade80]">Saved.</p>
+            ) : null}
+            <div className="flex flex-wrap items-center justify-between gap-3 border border-border bg-muted/30 p-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground">
+                  {enabled ? "Enabled" : "Disabled"}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Master switch for the website demon editor.
+                </p>
+              </div>
+              <Switch
+                checked={enabled}
+                disabled={saving}
+                onCheckedChange={(on) => {
+                  setSavedFlash(false)
+                  setEnabled(on)
+                }}
+                aria-label="Enable demon reunion and mitama edit"
               />
             </div>
             <Field>

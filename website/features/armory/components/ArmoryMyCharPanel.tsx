@@ -64,8 +64,23 @@ export function ArmoryMyCharPanel() {
         </p>
       ) : (
         <p className="text-sm text-muted-foreground">
-          Editing is enabled for your GM level. Open a character and use the
-          Edit toggle. Log out of the game client before saving.
+          Expertise / digi editing is enabled for your GM level. Open a
+          character and use the Edit toggle. Log out of the game client before
+          saving.
+        </p>
+      )}
+
+      {!data.allowDemonReunionEdit ? (
+        <p className="text-sm text-muted-foreground">
+          Demon reunion / mitama editing is not enabled for your GM level. An
+          admin can turn it on under Admin → Accounts (separate global toggle +
+          minimum GM level).
+        </p>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Demon reunion / mitama editing is enabled. Open a character&apos;s
+          demons list, then a demon profile, and use the Edit toggle. Log out of
+          the game client before saving.
         </p>
       )}
 

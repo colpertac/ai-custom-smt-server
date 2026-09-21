@@ -24,6 +24,22 @@ export const updateExpertiseDigiEditSettings = (
     json: payload,
   })
 
+export type DemonReunionEditSettings = {
+  enabled: boolean
+  minUserLevel: number
+}
+
+export const fetchDemonReunionEditSettings = () =>
+  fetcher<DemonReunionEditSettings>("admin/demon-reunion-edit")
+
+export const updateDemonReunionEditSettings = (
+  payload: Partial<DemonReunionEditSettings>
+) =>
+  fetcher<DemonReunionEditSettings>("admin/demon-reunion-edit", {
+    method: "POST",
+    json: payload,
+  })
+
 export const updateAdminAccount = (
   username: string,
   payload: Record<string, unknown>

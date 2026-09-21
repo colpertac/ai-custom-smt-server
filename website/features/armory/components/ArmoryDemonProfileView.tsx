@@ -2,7 +2,17 @@ import Link from "next/link"
 
 import { ArmoryEquipSlot } from "@/features/armory/components/ArmoryEquipSlot"
 import { ArmoryHero } from "@/features/armory/components/ArmoryHero"
+import { ArmorySkillChip } from "@/features/armory/components/ArmorySkillChip"
+import { MitamaBranchSetsSidebar } from "@/features/armory/components/MitamaBranchSetsSidebar"
 import type { ArmoryDemonDetail } from "@/lib/armory-demons"
+import {
+  getMitamaSpiritOption,
+  getMitamaTypeName,
+  getReunionBranchName,
+  mitamaSlotsAvailableForRank,
+  mitamaSpiritFromBonusId,
+} from "@/lib/demon-reunion-edit-shared"
+import { getGrowthTypeLabel } from "@/lib/growth-type-catalog"
 import { cn } from "@/lib/utils"
 
 function StatStrip({
@@ -66,11 +76,20 @@ export function ArmoryDemonProfileView({
 }) {
   const left = demon.equipment.slice(0, 2)
   const right = demon.equipment.slice(2, 4)
-  const mitamaGroups = Array.from({ length: 12 }, (_, g) => {
-    const ranks = demon.mitamaReunion.slice(g * 8, g * 8 + 8)
-    return ranks.reduce((a, b) => a + b, 0)
+  const mitamaBranches = Array.from({ length: 12 }, (_, g) => {
+    const available = mitamaSlotsAvailableForRank(demon.reunion[g] ?? 0)
+    const slots = demon.mitamaReunion.slice(g * 8, g * 8 + 8)
+    const filled = slots
+      .slice(0, available)
+      .filter((id) => id > 0).length
+    return { slots, filled, available }
   })
-  const hasMitamaBonus = mitamaGroups.some((v) => v > 0)
+  const hasMitamaBonus = mitamaBranches.some((b) => b.filled > 0)
+  const mitamaTotals = [0, 0, 0, 0]
+  for (const id of demon.mitamaReunion) {
+    const spirit = mitamaSpiritFromBonusId(id)
+    if (spirit > 0) mitamaTotals[spirit - 1]!++
+  }
   const forceNonZero = demon.forceValues
     .map((v, i) => ({ i, v }))
     .filter((x) => x.v !== 0)
@@ -97,9 +116,9 @@ export function ArmoryDemonProfileView({
         <p className="mt-1 text-xs text-muted-foreground">
           Type {demon.type}
           {` · Fam ${demon.familiarity}`}
-          {` · Growth ${demon.growthType}`}
-          {demon.mitamaRank > 0
-            ? ` · Mitama rank ${demon.mitamaRank} (type ${demon.mitamaType})`
+          {` · Growth ${getGrowthTypeLabel(demon.growthType)}`}
+          {demon.mitamaRank > 0 || demon.mitamaType > 0
+            ? ` · Mitama rank ${demon.mitamaRank} (${getMitamaTypeName(demon.mitamaType)})`
             : ""}
           {demon.locked ? " · Locked" : ""}
           {demon.ownerCharacter
@@ -145,12 +164,17 @@ export function ArmoryDemonProfileView({
       </div>
 
       <section className="border-2 border-border bg-card/50 p-4">
-        <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
-          Reunion ranks
-        </h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Twelve growth-group ranks (capped at 8 each for the total above).
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
+              Reunion ranks
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Twelve growth-group ranks (capped at 8 each for the total above).
+            </p>
+          </div>
+          <MitamaBranchSetsSidebar />
+        </div>
         <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-12">
           {demon.reunion.map((rank, i) => (
             <div
@@ -160,7 +184,12 @@ export function ArmoryDemonProfileView({
                 rank > 0 ? "bg-muted/60" : "opacity-40"
               )}
             >
-              <div className="text-[10px] text-muted-foreground">G{i + 1}</div>
+              <div
+                className="truncate text-[10px] text-muted-foreground"
+                title={getReunionBranchName(i)}
+              >
+                {getReunionBranchName(i)}
+              </div>
               <div className="font-medium">{rank}</div>
             </div>
           ))}
@@ -169,23 +198,85 @@ export function ArmoryDemonProfileView({
 
       {hasMitamaBonus ? (
         <section className="border-2 border-border bg-card/50 p-4">
-          <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
-            Mitama reunion
-          </h2>
-          <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-12">
-            {mitamaGroups.map((sum, i) => (
+          <div>
+            <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
+              Mitama rebirth bar
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Colored blocks are mitama allocations (Ara / Nigi / Kusi / Saki).
+              Open slots equal that branch&apos;s reunion rank.
+            </p>
+          </div>
+          <div className="mt-3 space-y-2">
+            {mitamaBranches.map((branch, i) => (
               <div
                 key={i}
                 className={cn(
-                  "border border-border px-1 py-2 text-center",
-                  sum > 0 ? "bg-muted/60" : "opacity-40"
+                  "grid grid-cols-[5.5rem_1fr_auto] items-center gap-2",
+                  branch.filled > 0 || branch.available > 0
+                    ? ""
+                    : "opacity-40"
                 )}
               >
-                <div className="text-[10px] text-muted-foreground">M{i + 1}</div>
-                <div className="font-medium">{sum}</div>
+                <div
+                  className="truncate text-[10px] text-muted-foreground"
+                  title={getReunionBranchName(i)}
+                >
+                  {getReunionBranchName(i)}
+                </div>
+                <div className="flex gap-0.5">
+                  {branch.slots.map((id, s) => {
+                    const open = s < branch.available
+                    const spirit = open ? mitamaSpiritFromBonusId(id) : 0
+                    const opt = getMitamaSpiritOption(spirit)
+                    return (
+                      <span
+                        key={s}
+                        className={cn(
+                          "mitama-bevel-slot relative flex h-7 min-w-0 flex-1 items-center justify-center",
+                          !open && "opacity-35"
+                        )}
+                        title={
+                          !open
+                            ? `Locked — reunion rank ${branch.available}`
+                            : spirit > 0
+                              ? `${opt.name} (id ${id})`
+                              : "Empty"
+                        }
+                      >
+                        <span
+                          className="mitama-bevel-inner block h-[22px] w-[80%]"
+                          data-spirit={open ? String(spirit) : "locked"}
+                        />
+                      </span>
+                    )
+                  })}
+                </div>
+                <span className="text-[10px] tabular-nums text-muted-foreground">
+                  {branch.filled}/{branch.available}
+                </span>
               </div>
             ))}
           </div>
+          <p className="mt-3 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
+            {(
+              [
+                [1, "Ara"],
+                [2, "Nigi"],
+                [3, "Kusi"],
+                [4, "Saki"],
+              ] as const
+            ).map(([spirit, label]) => (
+              <span key={spirit} className="inline-flex items-center gap-1.5">
+                <span
+                  className="mitama-bevel-inner inline-block size-2.5"
+                  data-spirit={String(spirit)}
+                  aria-hidden
+                />
+                {label} {mitamaTotals[spirit - 1]}
+              </span>
+            ))}
+          </p>
         </section>
       ) : null}
 
@@ -209,31 +300,39 @@ export function ArmoryDemonProfileView({
         </section>
       )}
 
-      {demon.skills.length > 0 ? (
+      {demon.skills.filter((id) => id > 0).length > 0 ? (
         <section className="border-2 border-border bg-card/50 p-4">
           <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
             Learned skills
           </h2>
-          <p className="mt-2 text-xs text-foreground/90">
-            {demon.skills.map((id) => `#${id}`).join(", ")}
-          </p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {demon.skills
+              .filter((id) => id > 0)
+              .map((id) => (
+                <li key={id}>
+                  <ArmorySkillChip skillId={id} />
+                </li>
+              ))}
+          </ul>
         </section>
       ) : null}
 
-      {demon.inheritedSkills.length > 0 ? (
+      {demon.inheritedSkills.filter((s) => s.skillId > 0).length > 0 ? (
         <section className="border-2 border-border bg-card/50 p-4">
           <h2 className="font-heading text-sm font-semibold tracking-wide uppercase">
             Inherited skills
           </h2>
-          <ul className="mt-2 space-y-1 text-xs">
-            {demon.inheritedSkills.map((s) => (
-              <li key={`${s.skillId}-${s.progress}`}>
-                #{s.skillId}
-                <span className="ml-2 text-muted-foreground">
-                  progress {s.progress}
-                </span>
-              </li>
-            ))}
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {demon.inheritedSkills
+              .filter((s) => s.skillId > 0)
+              .map((s, i) => (
+                <li key={`${s.skillId}-${s.progress}-${i}`}>
+                  <ArmorySkillChip
+                    skillId={s.skillId}
+                    progress={s.progress}
+                  />
+                </li>
+              ))}
           </ul>
         </section>
       ) : null}

@@ -745,6 +745,176 @@
     }
   }
 
+  /* Mitama rebirth bar — silver beveled slot (game-like frame) */
+  .mitama-bevel-slot {
+    clip-path: polygon(
+      12% 0%,
+      88% 0%,
+      100% 22%,
+      100% 78%,
+      88% 100%,
+      12% 100%,
+      0% 78%,
+      0% 22%
+    );
+    background: linear-gradient(
+      180deg,
+      #f2f2f6 0%,
+      #c8c8d2 28%,
+      #8a8a98 52%,
+      #b8b8c4 78%,
+      #e4e4ec 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.55),
+      inset 0 -1px 0 rgb(0 0 0 / 0.35),
+      0 1px 2px rgb(0 0 0 / 0.35);
+  }
+
+  .mitama-bevel-slot:hover:not(:disabled) {
+    filter: brightness(1.06);
+  }
+
+  .mitama-bevel-slot:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--gold) 70%, white);
+    outline-offset: 2px;
+  }
+
+  .mitama-bevel-inner {
+    clip-path: polygon(
+      10% 0%,
+      90% 0%,
+      100% 20%,
+      100% 80%,
+      90% 100%,
+      10% 100%,
+      0% 80%,
+      0% 20%
+    );
+    box-shadow:
+      inset 0 1px 2px rgb(0 0 0 / 0.45),
+      inset 0 -1px 1px rgb(255 255 255 / 0.15);
+  }
+
+  /* Empty / locked fill — bluish metal recess */
+  .mitama-bevel-inner[data-spirit="0"] {
+    background: linear-gradient(
+      180deg,
+      #5a7298 0%,
+      #3a4e70 35%,
+      #243450 65%,
+      #1a283c 100%
+    );
+  }
+
+  .mitama-bevel-inner[data-spirit="locked"] {
+    background: linear-gradient(
+      180deg,
+      #3a4458 0%,
+      #2a3344 40%,
+      #1a2230 100%
+    );
+  }
+
+  /* Filled mitama gems — same vertical metal sheen as the silver frame */
+  .mitama-bevel-inner[data-spirit="1"] {
+    /* Ara (red) */
+    background: linear-gradient(
+      180deg,
+      #ff9a9a 0%,
+      #f07070 22%,
+      #c43c3c 48%,
+      #8e2222 72%,
+      #c85050 100%
+    );
+  }
+
+  .mitama-bevel-inner[data-spirit="2"] {
+    /* Nigi (blue) */
+    background: linear-gradient(
+      180deg,
+      #9ec0ff 0%,
+      #6fa0f5 22%,
+      #3d6fd4 48%,
+      #254a9a 72%,
+      #4a7ce0 100%
+    );
+  }
+
+  .mitama-bevel-inner[data-spirit="3"] {
+    /* Kusi (green) */
+    background: linear-gradient(
+      180deg,
+      #a8f0b8 0%,
+      #6fdc88 22%,
+      #3aaa55 48%,
+      #247838 72%,
+      #4ec86a 100%
+    );
+  }
+
+  .mitama-bevel-inner[data-spirit="4"] {
+    /* Saki (yellow) */
+    background: linear-gradient(
+      180deg,
+      #ffe9a0 0%,
+      #f0d060 22%,
+      #d4a820 48%,
+      #9a7810 72%,
+      #e0c040 100%
+    );
+  }
+
+  /* Dropdown rows reuse the same gem gradients */
+  .mitama-menu-swatch[data-spirit="0"] {
+    background: linear-gradient(
+      180deg,
+      #5a7298 0%,
+      #3a4e70 40%,
+      #243450 100%
+    );
+  }
+
+  .mitama-menu-swatch[data-spirit="1"] {
+    background: linear-gradient(
+      180deg,
+      #ff9a9a 0%,
+      #c43c3c 45%,
+      #8e2222 100%
+    );
+    color: #0b1020;
+  }
+
+  .mitama-menu-swatch[data-spirit="2"] {
+    background: linear-gradient(
+      180deg,
+      #9ec0ff 0%,
+      #3d6fd4 45%,
+      #254a9a 100%
+    );
+    color: #0b1020;
+  }
+
+  .mitama-menu-swatch[data-spirit="3"] {
+    background: linear-gradient(
+      180deg,
+      #a8f0b8 0%,
+      #3aaa55 45%,
+      #247838 100%
+    );
+    color: #0b1020;
+  }
+
+  .mitama-menu-swatch[data-spirit="4"] {
+    background: linear-gradient(
+      180deg,
+      #ffe9a0 0%,
+      #d4a820 45%,
+      #9a7810 100%
+    );
+    color: #0b1020;
+  }
+
   @keyframes blink-layer-rose {
     0% {
       background-color: rgba(244, 63, 94, 0.42);
