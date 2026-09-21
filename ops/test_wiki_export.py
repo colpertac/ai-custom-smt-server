@@ -81,11 +81,27 @@ class WikiExportTests(unittest.TestCase):
             correct[35] = "{ -100 }"  # RES_ICE
             correct[57] = "{ 1003 }"  # NRA_FIRE absorb 100%
             (tmp_path / "DevilData.tsv").write_text(
-                "ID\tname\tLNC\trace\tbaseLevel\tcorrect\n"
-                "105\tPhoenix\t-8300\tAVIAN\t36\t"
+                "ID\tname\tLNC\trace\tfamily\tgender\tbaseLevel\t"
+                "baseDemonID\tgrowthType\tforceStack\t"
+                "inheritanceType\tinheritanceRestrictions\t"
+                "mitamaFusionID\tfusionDifficulty\t"
+                "skills\ttraits\tenemyOnlySkills\tacquisitionSkills\tcorrect\n"
+                "105\tPhoenix\t-8300\tAVIAN\tBIRD\tMALE\t36\t"
+                "105\t72\t5\t"
+                "12\t3199\t"
+                "10105\t60\t"
+                "{ 15 }, { 62 }, { 0 }\t"
+                "{ 24004 }, { 21015 }, { 0 }\t"
+                "{ 0 }, { 99 }\t"
+                "{ ID: 201, level: 37 }, { ID: 0, level: 0 }\t"
                 + ", ".join(correct)
                 + "\n"
-                "1001\tShadow\t5000\tFOUL\t1\t"
+                "1001\tShadow\t5000\tFOUL\tFOUL\tNONE\t1\t"
+                "1001\t0\t0\t"
+                "0\t0\t"
+                "0\t0\t"
+                "{ 0 }\t{ 0 }\t{ 0 }\t"
+                "{ ID: 0, level: 0 }\t"
                 + ", ".join(["{ 0 }"] * 126)
                 + "\n",
                 encoding="utf-8",
@@ -94,6 +110,8 @@ class WikiExportTests(unittest.TestCase):
             self.assertEqual(payload["names"]["105"], "Phoenix")
             self.assertEqual(payload["races"]["105"], "AVIAN")
             self.assertEqual(payload["raceIds"]["105"], 5)
+            self.assertEqual(payload["families"]["105"], "BIRD")
+            self.assertEqual(payload["genders"]["105"], "MALE")
             self.assertEqual(payload["lncs"]["105"], -8300)
             self.assertEqual(payload["levels"]["105"], 36)
             self.assertEqual(payload["stats"]["105"]["hp"], 118)
@@ -102,10 +120,28 @@ class WikiExportTests(unittest.TestCase):
             self.assertEqual(payload["resists"]["105"]["fire"], "dr")
             self.assertEqual(payload["resists"]["105"]["ice"], "2")
             self.assertEqual(payload["resists"]["105"]["elec"], "")
+            self.assertEqual(payload["skills"]["105"], [15, 62])
+            self.assertEqual(payload["traits"]["105"], [24004, 21015])
+            self.assertEqual(
+                payload["acquisitionSkills"]["105"],
+                [{"id": 201, "level": 37}],
+            )
+            self.assertEqual(payload["enemyOnlySkills"]["105"], [99])
+            self.assertEqual(payload["inheritanceTypes"]["105"], 12)
+            self.assertEqual(payload["inheritanceRestrictions"]["105"], 3199)
+            self.assertEqual(payload["mitamaFusionIds"]["105"], 10105)
+            self.assertEqual(payload["fusionDifficulties"]["105"], 60)
+            self.assertEqual(payload["growthTypes"]["105"], 72)
+            self.assertEqual(payload["forceStacks"]["105"], 5)
             self.assertEqual(payload["raceIds"]["1001"], 101)
+            self.assertNotIn("1001", payload["mitamaFusionIds"])
             self.assertEqual(
                 payload["resistElems"][0:3], ["slash", "charge", "blunt"]
             )
+            self.assertIn("magicforce", payload["resistElems"])
+            self.assertIn("suicide", payload["resistElems"])
+            self.assertIn("almighty", payload["resists"]["105"])
+            self.assertIn("word", payload["resists"]["105"])
 
     def test_build_skills_payload_from_tsv(self):
         with tempfile.TemporaryDirectory() as raw:

@@ -220,8 +220,9 @@ DEVIL_RACE_IDS = {
 }
 
 
-# Affinity strip order mirrors megaten-fusion-tool SMTIM resistElems
-# (after their resists.slice(2) drop of two unused prefix chars).
+# Affinity strip order mirrors the classic Imagine defensive affinity table
+# (Physical | Magical bands, then mystic/ailment, then wide word/special/suicide).
+# CorrectTbl RES_* / NRA_* pairs from shared.xml MiCorrectTbl.
 DEVIL_RESIST_ELEMS = [
     ("slash", 28, 51),  # RES_SLASH / NRA_SLASH
     ("charge", 29, 52),  # thrust
@@ -232,9 +233,18 @@ DEVIL_RESIST_ELEMS = [
     ("fire", 34, 57),
     ("ice", 35, 58),
     ("elec", 36, 59),
-    ("force", 38, 61),  # RES_FORCE (37 is almighty)
+    ("force", 38, 61),  # RES_FORCE (37 is almighty; shown in band 3)
     ("expel", 39, 62),
     ("death", 40, 63),  # curse / mudo
+    ("magicforce", 43, 66),  # mystic / sorcery
+    ("nerve", 44, 67),
+    ("mind", 45, 68),
+    ("almighty", 37, 60),
+    ("heal", 41, 64),  # curative
+    ("support", 42, 65),
+    ("word", 46, 69),  # words of power
+    ("special", 47, 70),
+    ("suicide", 48, 71),
 ]
 
 # CorrectTbl indices for base stats shown on the wiki.
@@ -339,10 +349,19 @@ SKILL_CATEGORY: dict[int, str] = {
     2: "Switch",
 }
 
-# inheritanceRestriction bit index → display (8 is the common "Impossible").
+# SkillData.inheritanceRestriction → display (matches demon inheritance slots).
 SKILL_INHERITANCE: dict[int, str] = {
     0: "Possible",
+    1: "Breath",
+    2: "Wing",
+    3: "Charge",
+    4: "Bite",
+    5: "Claw",
+    6: "Needle",
+    7: "Weapon",
     8: "Impossible",
+    9: "Maiden",
+    11: "Eyes",
 }
 
 SKILL_AREA_TYPE: dict[str, str] = {
@@ -367,6 +386,36 @@ _STATUS_ENTRY_RX = re.compile(
 )
 _SKILL_ID_BRACE_RX = re.compile(r"\{\s*(\d+)\s*\}")
 _ACQ_ENTRY_RX = re.compile(r"ID:\s*(\d+)\s*,\s*level:\s*(\d+)")
+
+
+def _parse_u32_list(blob: str) -> list[int]:
+    """Parse ``{ 15 }, { 62 }, …`` brace lists; drop zeros."""
+    out: list[int] = []
+    for match in _SKILL_ID_BRACE_RX.finditer(blob or ""):
+        val = int(match.group(1))
+        if val > 0:
+            out.append(val)
+    return out
+
+
+def _parse_acquisition_skills(blob: str) -> list[dict[str, int]]:
+    """Parse ``{ ID: 201, level: 37 }, …``; drop zero id/level."""
+    out: list[dict[str, int]] = []
+    for match in _ACQ_ENTRY_RX.finditer(blob or ""):
+        sid = int(match.group(1))
+        level = int(match.group(2))
+        if sid <= 0 or level <= 0:
+            continue
+        out.append({"id": sid, "level": level})
+    return out
+
+
+def _parse_int_field(row: dict[str, str], key: str, default: int = 0) -> int:
+    raw = (row.get(key) or str(default)).strip() or str(default)
+    try:
+        return int(raw)
+    except ValueError:
+        return default
 
 
 def _affinity_fields(affinity_id: int) -> tuple[int, str | None, str | None]:
@@ -769,7 +818,7 @@ def build_devils_payload(
     cmodel_tsvs: list[Path] | None = None,
     icons_dir: Path | None = None,
 ) -> dict[str, Any]:
-    """ID, name, race, LNC, base stats, resists, and optional icons.
+    """ID, name, race, LNC, base stats, resists, skills, and optional icons.
 
     Icon lookup prefers DevilData.modelID → CModelData.model mesh name
     (``D2_04_007a_Base`` → ``icon_D2_04_007a``). Falling back to
@@ -779,12 +828,24 @@ def build_devils_payload(
     names: dict[str, str] = {}
     races: dict[str, str] = {}
     race_ids: dict[str, int] = {}
+    families: dict[str, str] = {}
+    genders: dict[str, str] = {}
     lncs: dict[str, int] = {}
     levels: dict[str, int] = {}
     stats: dict[str, dict[str, int]] = {}
     resists: dict[str, dict[str, str]] = {}
     base_ids: dict[str, int] = {}
     model_ids: dict[str, int] = {}
+    growth_types: dict[str, int] = {}
+    force_stacks: dict[str, int] = {}
+    innate_skills: dict[str, list[int]] = {}
+    acquisition_skills: dict[str, list[dict[str, int]]] = {}
+    traits: dict[str, list[int]] = {}
+    enemy_only_skills: dict[str, list[int]] = {}
+    inheritance_types: dict[str, int] = {}
+    inheritance_restrictions: dict[str, int] = {}
+    mitama_ids: dict[str, int] = {}
+    fusion_difficulties: dict[str, int] = {}
     icon_assets: dict[str, str] = {}
     icon_srcs: dict[str, str] = {}
     icon_by_key = _load_devil_icon_map(cicon_tsv)
@@ -821,33 +882,47 @@ def build_devils_payload(
             if not name:
                 continue
             race = (row.get("race") or "NONE").strip() or "NONE"
-            raw_lnc = (row.get("LNC") or "0").strip()
-            try:
-                lnc = int(raw_lnc)
-            except ValueError:
-                lnc = 0
-            try:
-                level = int((row.get("baseLevel") or "0").strip() or "0")
-            except ValueError:
-                level = 0
-            try:
-                base_demon_id = int(
-                    (row.get("baseDemonID") or "0").strip() or "0"
-                )
-            except ValueError:
-                base_demon_id = 0
-            try:
-                model_id = int((row.get("modelID") or "0").strip() or "0")
-            except ValueError:
-                model_id = 0
+            family = (row.get("family") or "NONE").strip() or "NONE"
+            gender = (row.get("gender") or "NONE").strip() or "NONE"
+            lnc = _parse_int_field(row, "LNC", 0)
+            level = _parse_int_field(row, "baseLevel", 0)
+            base_demon_id = _parse_int_field(row, "baseDemonID", 0)
+            model_id = _parse_int_field(row, "modelID", 0)
+            growth_type = _parse_int_field(row, "growthType", 0)
+            force_stack = _parse_int_field(row, "forceStack", 0)
+            inheritance_type = _parse_int_field(row, "inheritanceType", 0)
+            inheritance_restr = _parse_int_field(
+                row, "inheritanceRestrictions", 0
+            )
+            mitama_id = _parse_int_field(row, "mitamaFusionID", 0)
+            fusion_diff = _parse_int_field(row, "fusionDifficulty", 0)
             correct = _parse_correct_array(row.get("correct") or "")
+            skill_ids = _parse_u32_list(row.get("skills") or "")
+            trait_ids = _parse_u32_list(row.get("traits") or "")
+            enemy_ids = _parse_u32_list(row.get("enemyOnlySkills") or "")
+            acq = _parse_acquisition_skills(row.get("acquisitionSkills") or "")
+
             names[raw_id] = name
             races[raw_id] = race
             race_ids[raw_id] = DEVIL_RACE_IDS.get(race, 0)
+            families[raw_id] = family
+            genders[raw_id] = gender
             lncs[raw_id] = lnc
             levels[raw_id] = level
             base_ids[raw_id] = base_demon_id
             model_ids[raw_id] = model_id
+            growth_types[raw_id] = growth_type
+            force_stacks[raw_id] = force_stack
+            innate_skills[raw_id] = skill_ids
+            acquisition_skills[raw_id] = acq
+            traits[raw_id] = trait_ids
+            if enemy_ids:
+                enemy_only_skills[raw_id] = enemy_ids
+            inheritance_types[raw_id] = inheritance_type
+            inheritance_restrictions[raw_id] = inheritance_restr
+            if mitama_id > 0:
+                mitama_ids[raw_id] = mitama_id
+            fusion_difficulties[raw_id] = fusion_diff
             stats[raw_id] = {
                 key: int(correct[idx]) for key, idx in DEVIL_STAT_IDX.items()
             }
@@ -892,10 +967,22 @@ def build_devils_payload(
         "names": names,
         "races": races,
         "raceIds": race_ids,
+        "families": families,
+        "genders": genders,
         "lncs": lncs,
         "levels": levels,
         "baseDemonIds": base_ids,
         "modelIds": model_ids,
+        "growthTypes": growth_types,
+        "forceStacks": force_stacks,
+        "skills": innate_skills,
+        "acquisitionSkills": acquisition_skills,
+        "traits": traits,
+        "enemyOnlySkills": enemy_only_skills,
+        "inheritanceTypes": inheritance_types,
+        "inheritanceRestrictions": inheritance_restrictions,
+        "mitamaFusionIds": mitama_ids,
+        "fusionDifficulties": fusion_difficulties,
         "stats": stats,
         "resists": resists,
         "iconAssets": icon_assets,

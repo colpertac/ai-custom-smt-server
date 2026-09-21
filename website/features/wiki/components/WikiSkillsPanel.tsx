@@ -43,7 +43,6 @@ function uniqueSorted(
 function inheritanceBucket(skill: WikiSkill): string | null {
   const label = skill.inheritance?.trim()
   if (!label) return null
-  if (label === "Possible" || label === "Impossible") return label
   if (label.startsWith("Restricted")) return "Restricted"
   return label
 }
@@ -170,8 +169,26 @@ export function WikiSkillsPanel({ skills }: { skills: WikiSkill[] }) {
       if (b) set.add(b)
     }
     return [...set].sort((a, b) => {
-      const order = ["Possible", "Impossible", "Restricted"]
-      return order.indexOf(a) - order.indexOf(b) || a.localeCompare(b)
+      const order = [
+        "Possible",
+        "Breath",
+        "Wing",
+        "Charge",
+        "Bite",
+        "Claw",
+        "Needle",
+        "Weapon",
+        "Maiden",
+        "Eyes",
+        "Impossible",
+        "Restricted",
+      ]
+      const ia = order.indexOf(a)
+      const ib = order.indexOf(b)
+      if (ia !== -1 || ib !== -1) {
+        return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
+      }
+      return a.localeCompare(b)
     })
   }, [skills])
 

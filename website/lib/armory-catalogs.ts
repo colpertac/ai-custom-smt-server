@@ -29,13 +29,31 @@ export type DevilStats = {
   luck: number
 }
 
+export type DevilAcquisitionSkill = {
+  id: number
+  level: number
+}
+
 export type DevilsPayload = {
   names: Record<string, string>
   races?: Record<string, number | string>
   raceIds?: Record<string, number>
+  families?: Record<string, string>
+  genders?: Record<string, string>
   lncs?: Record<string, number>
   levels?: Record<string, number>
   baseDemonIds?: Record<string, number>
+  modelIds?: Record<string, number>
+  growthTypes?: Record<string, number>
+  forceStacks?: Record<string, number>
+  skills?: Record<string, number[]>
+  acquisitionSkills?: Record<string, DevilAcquisitionSkill[]>
+  traits?: Record<string, number[]>
+  enemyOnlySkills?: Record<string, number[]>
+  inheritanceTypes?: Record<string, number>
+  inheritanceRestrictions?: Record<string, number>
+  mitamaFusionIds?: Record<string, number>
+  fusionDifficulties?: Record<string, number>
   stats?: Record<string, DevilStats>
   /** Affinity cell text per elem (empty = normal); decimals or nu/rp/dr. */
   resists?: Record<string, Partial<Record<string, string>>>
@@ -57,7 +75,8 @@ const EMPTY_STATS: DevilStats = {
   luck: 0,
 }
 
-export const DEVIL_RESIST_ELEMS_DEFAULT = [
+/** Combat affinities shown as columns on the demons list (not mystic+ rows). */
+export const DEVIL_RESIST_ELEMS_LIST = [
   "slash",
   "charge",
   "blunt",
@@ -70,6 +89,20 @@ export const DEVIL_RESIST_ELEMS_DEFAULT = [
   "force",
   "expel",
   "death",
+] as const
+
+/** Full CorrectTbl affinity order (matches wiki_export DEVIL_RESIST_ELEMS). */
+export const DEVIL_RESIST_ELEMS_DEFAULT = [
+  ...DEVIL_RESIST_ELEMS_LIST,
+  "magicforce",
+  "nerve",
+  "mind",
+  "almighty",
+  "heal",
+  "support",
+  "word",
+  "special",
+  "suicide",
 ] as const
 
 /** Icon basename under /wiki/affinity/ (charge → thrust.jpeg). */
@@ -86,7 +119,6 @@ export const DEVIL_RESIST_ICON: Record<string, string> = {
   force: "wind",
   expel: "light",
   death: "dark",
-  // Skill-only affinities (wiki skills list/detail)
   weapon: "weapon",
   almighty: "almighty",
   heal: "heal",
@@ -103,8 +135,8 @@ export const DEVIL_RESIST_TITLE: Record<string, string> = {
   slash: "Slash",
   charge: "Thrust / Charge",
   blunt: "Blunt / Strike",
-  gun: "Gun",
-  pierce: "Pierce",
+  gun: "Projectile / Gun",
+  pierce: "Penetrate / Pierce",
   spread: "Spread",
   fire: "Fire",
   ice: "Ice",
@@ -114,12 +146,12 @@ export const DEVIL_RESIST_TITLE: Record<string, string> = {
   death: "Death / Dark",
   weapon: "Weapon",
   almighty: "Almighty",
-  heal: "Heal",
+  heal: "Curative / Heal",
   support: "Support",
-  magicforce: "Magic",
+  magicforce: "Mystic / Magic",
   nerve: "Nerve",
   mind: "Mind",
-  word: "Word",
+  word: "Words of Power",
   special: "Special",
   suicide: "Suicide",
 }
@@ -180,9 +212,22 @@ export function entriesFromDevilsPayload(
   payload: DevilsPayload
 ): DevilCatalogEntry[] {
   const raceIds = payload.raceIds ?? {}
+  const families = payload.families ?? {}
+  const genders = payload.genders ?? {}
   const lncs = payload.lncs ?? {}
   const levels = payload.levels ?? {}
   const baseDemonIds = payload.baseDemonIds ?? {}
+  const modelIds = payload.modelIds ?? {}
+  const growthTypes = payload.growthTypes ?? {}
+  const forceStacks = payload.forceStacks ?? {}
+  const skills = payload.skills ?? {}
+  const acquisitionSkills = payload.acquisitionSkills ?? {}
+  const traits = payload.traits ?? {}
+  const enemyOnlySkills = payload.enemyOnlySkills ?? {}
+  const inheritanceTypes = payload.inheritanceTypes ?? {}
+  const inheritanceRestrictions = payload.inheritanceRestrictions ?? {}
+  const mitamaFusionIds = payload.mitamaFusionIds ?? {}
+  const fusionDifficulties = payload.fusionDifficulties ?? {}
   const stats = payload.stats ?? {}
   const resists = payload.resists ?? {}
   const iconSrcs = payload.iconSrcs ?? {}
@@ -225,6 +270,8 @@ export function entriesFromDevilsPayload(
         name,
         raceId,
         race: getGuardianRaceName(raceId),
+        family: families[idStr] ?? "NONE",
+        gender: genders[idStr] ?? "NONE",
         lnc,
         alignment: devilAlignmentFromLnc(lnc),
         level: levels[idStr] ?? 0,
@@ -236,6 +283,17 @@ export function entriesFromDevilsPayload(
         baseDemonId: Number.isFinite(baseDemonId) ? baseDemonId : id,
         isStock,
         variantTag: devilVariantTag(name, baseName, isStock),
+        modelId: modelIds[idStr] ?? 0,
+        growthType: growthTypes[idStr] ?? 0,
+        forceStack: forceStacks[idStr] ?? 0,
+        skills: skills[idStr] ?? [],
+        acquisitionSkills: acquisitionSkills[idStr] ?? [],
+        traits: traits[idStr] ?? [],
+        enemyOnlySkills: enemyOnlySkills[idStr] ?? [],
+        inheritanceType: inheritanceTypes[idStr] ?? 0,
+        inheritanceRestrictions: inheritanceRestrictions[idStr] ?? 0,
+        mitamaFusionId: mitamaFusionIds[idStr] ?? 0,
+        fusionDifficulty: fusionDifficulties[idStr] ?? 0,
       }
     })
     .filter((e) => Number.isFinite(e.id))
@@ -298,6 +356,8 @@ export type DevilCatalogEntry = {
   name: string
   raceId: number
   race: string
+  family: string
+  gender: string
   lnc: number
   alignment: DevilAlignment
   level: number
@@ -313,6 +373,20 @@ export type DevilCatalogEntry = {
   isStock: boolean
   /** Name prefix tag (Nightmare, Deformed, …), Instance, Other, or null if stock. */
   variantTag: string | null
+  modelId: number
+  growthType: number
+  forceStack: number
+  /** Innate / default skill IDs. */
+  skills: number[]
+  /** Skills learned at level. */
+  acquisitionSkills: DevilAcquisitionSkill[]
+  /** Trait / feature skill IDs. */
+  traits: number[]
+  enemyOnlySkills: number[]
+  inheritanceType: number
+  inheritanceRestrictions: number
+  mitamaFusionId: number
+  fusionDifficulty: number
 }
 
 let devilListCache: DevilCatalogEntry[] | null = null

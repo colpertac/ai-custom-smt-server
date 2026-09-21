@@ -198,7 +198,7 @@ export function WikiSkillDetailView({ skill }: { skill: WikiSkill }) {
                         {group.learners.map((learner) => (
                           <li key={`${learner.demonId}-${learner.level ?? "innate"}`}>
                             <Link
-                              href={`/wiki/demons?q=${encodeURIComponent(learner.name)}`}
+                              href={`/wiki/demons/${learner.demonId}`}
                               className="text-sky-400 no-underline hover:text-sky-300"
                             >
                               {learner.name}

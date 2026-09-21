@@ -9,18 +9,41 @@ import { loadDevilsPayload } from "@/lib/wiki-catalog-load"
 
 let cached: { payload: DevilsPayload; entries: DevilCatalogEntry[] } | null =
   null
+let byIdCache: Map<number, DevilCatalogEntry> | null = null
 
 function livePayload(): DevilsPayload {
   return loadDevilsPayload().data
 }
 
-/** DevilData from `{runtime}/wiki/devils.json` when wiki export has run, else bundled. */
-export function listDevils(): DevilCatalogEntry[] {
+function entries(): DevilCatalogEntry[] {
   const payload = livePayload()
   if (cached?.payload === payload) return cached.entries
-  const entries = entriesFromDevilsPayload(payload)
-  cached = { payload, entries }
-  return entries
+  const list = entriesFromDevilsPayload(payload)
+  cached = { payload, entries: list }
+  byIdCache = null
+  return list
+}
+
+/** DevilData from `{runtime}/wiki/devils.json` when wiki export has run, else bundled. */
+export function listDevils(): DevilCatalogEntry[] {
+  return entries()
+}
+
+function byId(): Map<number, DevilCatalogEntry> {
+  if (byIdCache) return byIdCache
+  const map = new Map<number, DevilCatalogEntry>()
+  for (const d of entries()) map.set(d.id, d)
+  byIdCache = map
+  return map
+}
+
+export function getDevil(id: number): DevilCatalogEntry | undefined {
+  return byId().get(id)
+}
+
+/** All forms sharing the same stock baseDemonId (includes stock). */
+export function listDevilFamily(baseDemonId: number): DevilCatalogEntry[] {
+  return entries().filter((d) => d.baseDemonId === baseDemonId)
 }
 
 export function hasDevilType(type: number): boolean {

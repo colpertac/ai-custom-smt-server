@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 
@@ -10,6 +11,7 @@ import type {
   DevilResistKind,
 } from "@/lib/armory-catalogs"
 import {
+  DEVIL_RESIST_ELEMS_LIST,
   DEVIL_RESIST_ICON,
   DEVIL_RESIST_TITLE,
   DEVIL_VARIANT_TAGS,
@@ -42,13 +44,7 @@ const RESIST_KIND_CLASS: Record<DevilResistKind, string> = {
 
 type VariantScope = "stock" | "all" | "variants"
 
-type AffinityKindFilter =
-  | ""
-  | "weak"
-  | "resist"
-  | "null"
-  | "repel"
-  | "drain"
+type AffinityKindFilter = "" | "weak" | "resist" | "null" | "repel" | "drain"
 
 const AFFINITY_KIND_OPTIONS: { value: AffinityKindFilter; label: string }[] = [
   { value: "", label: "Any special" },
@@ -59,11 +55,7 @@ const AFFINITY_KIND_OPTIONS: { value: AffinityKindFilter; label: string }[] = [
   { value: "drain", label: "Drain" },
 ]
 
-const VARIANT_CHIP_TAGS = [
-  ...DEVIL_VARIANT_TAGS,
-  "Instance",
-  "Other",
-] as const
+const VARIANT_CHIP_TAGS = [...DEVIL_VARIANT_TAGS, "Instance", "Other"] as const
 
 function filterDevils(
   all: DevilCatalogEntry[],
@@ -127,7 +119,10 @@ function ResistCell({ value, elem }: { value: string; elem: string }) {
   const kind = devilResistKind(value)
   if (kind === "normal") {
     return (
-      <td className="px-0.5 py-1 text-center" title={DEVIL_RESIST_TITLE[elem]} />
+      <td
+        className="px-0.5 py-1 text-center"
+        title={DEVIL_RESIST_TITLE[elem]}
+      />
     )
   }
   return (
@@ -157,7 +152,10 @@ function FilterChip({
       type="button"
       size="xs"
       variant={active ? "default" : "outline"}
-      className={cn("uppercase tracking-wider", !active && "text-muted-foreground")}
+      className={cn(
+        "tracking-wider uppercase",
+        !active && "text-muted-foreground"
+      )}
       onClick={onClick}
     >
       {label}
@@ -165,11 +163,7 @@ function FilterChip({
   )
 }
 
-export function WikiDemonsPanel({
-  demons,
-}: {
-  demons: DevilCatalogEntry[]
-}) {
+export function WikiDemonsPanel({ demons }: { demons: DevilCatalogEntry[] }) {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get("q")?.trim() ?? ""
   const [query, setQuery] = useState(initialQuery)
@@ -181,6 +175,10 @@ export function WikiDemonsPanel({
   const [page, setPage] = useState(0)
 
   const resistElems = demons[0]?.resistElems ?? []
+  const listResistElems =
+    resistElems.length > 0
+      ? DEVIL_RESIST_ELEMS_LIST.filter((e) => resistElems.includes(e))
+      : [...DEVIL_RESIST_ELEMS_LIST]
 
   const races = useMemo(() => {
     const set = new Set<string>()
@@ -253,10 +251,10 @@ export function WikiDemonsPanel({
 
   const filtersActive = Boolean(
     query.trim() ||
-      scope !== "stock" ||
-      race ||
-      affinityElem ||
-      variantTags.size > 0
+    scope !== "stock" ||
+    race ||
+    affinityElem ||
+    variantTags.size > 0
   )
 
   return (
@@ -293,7 +291,7 @@ export function WikiDemonsPanel({
         />
       </div>
 
-      <div className="grid gap-4 border border-border bg-card/40 p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,11rem)_minmax(0,11rem)_minmax(0,10rem)_auto] sm:items-end">
+      <div className="grid gap-4 border border-border bg-card/40 p-4 sm:grid-cols-2 sm:items-end lg:grid-cols-[minmax(0,1.4fr)_minmax(0,11rem)_minmax(0,11rem)_minmax(0,10rem)_auto]">
         <Field>
           <FieldLabel htmlFor="wiki-filter-demons">Filter demons</FieldLabel>
           <Input
@@ -338,7 +336,9 @@ export function WikiDemonsPanel({
           </select>
         </Field>
         <Field>
-          <FieldLabel htmlFor="wiki-filter-affinity-kind">Affinity kind</FieldLabel>
+          <FieldLabel htmlFor="wiki-filter-affinity-kind">
+            Affinity kind
+          </FieldLabel>
           <select
             id="wiki-filter-affinity-kind"
             className="flex h-9 w-full rounded-none border border-border bg-background px-2 text-sm disabled:opacity-50"
@@ -383,11 +383,7 @@ export function WikiDemonsPanel({
         </div>
       ) : null}
 
-      <WikiPagination
-        page={safePage}
-        total={total}
-        onPageChange={setPage}
-      />
+      <WikiPagination page={safePage} total={total} onPageChange={setPage} />
 
       {slice.length === 0 ? (
         <div className="border border-dashed border-border bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground">
@@ -397,12 +393,12 @@ export function WikiDemonsPanel({
         <div className="overflow-x-auto border border-border">
           <table className="w-full min-w-[58rem] border-collapse text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <tr className="border-b border-border bg-muted/40 text-left text-xs tracking-wider text-muted-foreground uppercase">
                 <th className="px-2 py-2 font-medium" />
                 <th className="px-2 py-2 font-medium">ID</th>
-                <th className="px-2 py-2 font-medium">Race</th>
-                <th className="px-2 py-2 font-medium">Lv</th>
                 <th className="px-2 py-2 font-medium">Name</th>
+                <th className="px-2 py-2 font-medium">Lv</th>
+                <th className="px-2 py-2 font-medium">Race</th>
                 <th className="px-2 py-2 font-medium">HP</th>
                 <th className="px-2 py-2 font-medium">MP</th>
                 <th className="px-2 py-2 font-medium">St</th>
@@ -411,8 +407,11 @@ export function WikiDemonsPanel({
                 <th className="px-2 py-2 font-medium">In</th>
                 <th className="px-2 py-2 font-medium">Ag</th>
                 <th className="px-2 py-2 font-medium">Lu</th>
-                {resistElems.map((elem) => (
-                  <th key={elem} className="px-0.5 py-2 text-center font-medium">
+                {listResistElems.map((elem) => (
+                  <th
+                    key={elem}
+                    className="px-0.5 py-2 text-center font-medium"
+                  >
                     <AffinityHeader elem={elem} />
                   </th>
                 ))}
@@ -425,21 +424,39 @@ export function WikiDemonsPanel({
                   className="border-b border-border/80 transition-colors hover:bg-muted/30"
                 >
                   <td className="px-1.5 py-1">
-                    {d.iconSrc ? (
-                      <Image
-                        src={d.iconSrc}
-                        alt=""
-                        width={28}
-                        height={28}
-                        className="size-7 object-contain"
-                        unoptimized
-                      />
-                    ) : (
-                      <span className="block size-7 bg-muted/40" />
-                    )}
+                    <Link href={`/wiki/demons/${d.id}`} className="block">
+                      {d.iconSrc ? (
+                        <Image
+                          src={d.iconSrc}
+                          alt=""
+                          width={28}
+                          height={28}
+                          className="size-7 object-contain"
+                          unoptimized
+                        />
+                      ) : (
+                        <span className="block size-7 bg-muted/40" />
+                      )}
+                    </Link>
                   </td>
-                  <td className="px-2 py-1.5 font-mono tabular-nums text-foreground">
-                    {d.id}
+                  <td className="px-2 py-1.5 font-mono tabular-nums">
+                    <Link
+                      href={`/wiki/demons/${d.id}`}
+                      className="text-foreground hover:text-gold-hot"
+                    >
+                      {d.id}
+                    </Link>
+                  </td>
+                  <td className="px-2 py-1.5 whitespace-nowrap">
+                    <Link
+                      href={`/wiki/demons/${d.id}`}
+                      className="text-foreground hover:text-gold-hot"
+                    >
+                      {d.name}
+                    </Link>
+                  </td>
+                  <td className="px-2 py-1.5 font-mono tabular-nums">
+                    {d.level || "—"}
                   </td>
                   <td
                     className={cn(
@@ -449,12 +466,6 @@ export function WikiDemonsPanel({
                     title={`${d.alignment} (LNC ${d.lnc})`}
                   >
                     {d.race}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono tabular-nums">
-                    {d.level || "—"}
-                  </td>
-                  <td className="px-2 py-1.5 whitespace-nowrap text-foreground">
-                    {d.name}
                   </td>
                   <td className="px-2 py-1.5 font-mono tabular-nums">
                     {d.stats.hp || "—"}
@@ -480,7 +491,7 @@ export function WikiDemonsPanel({
                   <td className="px-2 py-1.5 font-mono tabular-nums">
                     {d.stats.luck}
                   </td>
-                  {resistElems.map((elem) => (
+                  {listResistElems.map((elem) => (
                     <ResistCell
                       key={elem}
                       elem={elem}
@@ -494,11 +505,7 @@ export function WikiDemonsPanel({
         </div>
       )}
 
-      <WikiPagination
-        page={safePage}
-        total={total}
-        onPageChange={setPage}
-      />
+      <WikiPagination page={safePage} total={total} onPageChange={setPage} />
     </div>
   )
 }
