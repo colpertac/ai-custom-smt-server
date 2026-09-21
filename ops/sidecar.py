@@ -1129,6 +1129,11 @@ def _maybe_wiki_after_ingest(
             job_id,
             f"wiki catalog written ({item_count} items, {enchant_count} enchants"
             + (
+                f", {(info or {}).get('demonCount')} demons"
+                if (info or {}).get("demonCount")
+                else ""
+            )
+            + (
                 "; baked catalog synced"
                 if (info or {}).get("bakedSynced")
                 else ""
@@ -1140,6 +1145,7 @@ def _maybe_wiki_after_ingest(
             "skipped": False,
             "itemCount": item_count,
             "enchantCount": enchant_count,
+            "demonCount": (info or {}).get("demonCount"),
             "detail": detail,
         }
     ingest_jobs.log(job_id, f"wiki regen failed ({code}): {detail}")

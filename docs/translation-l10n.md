@@ -17,8 +17,8 @@ Treat `smt-imagine-l10n` as the **source of truth for community string edits**.
 ## Operator sync (typical)
 
 ```bash
-# sibling clone
-cd /home/cat/repos/smt
+# sibling clone under your SMT workspace
+cd /path/to/smt
 git clone https://github.com/colpertac/smt-imagine-l10n.git
 
 # after merging PRs there: apply TSV → XML in translation/ or client-source/,

@@ -796,6 +796,7 @@ export type OpsIngestResult = {
     skipped?: boolean
     itemCount?: number
     enchantCount?: number
+    demonCount?: number
     detail?: string
   }
 }

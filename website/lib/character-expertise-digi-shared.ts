@@ -37,6 +37,7 @@ const RACE_NAMES: Record<number, string> = {
   61: "Nocturne",
   62: "Godly Beast",
   63: "Innocent",
+  64: "Human",
   101: "Foul",
   102: "Brute",
   103: "Haunt",

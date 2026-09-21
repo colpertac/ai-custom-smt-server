@@ -7,7 +7,7 @@
 #
 # Env overrides:
 #   Prefer deploy-studio/.env (see .env.example) via ./studio / orch.
-#   PORTRAIT_CLIENT_DIR   default /home/cat/software/smt/game/reimagine
+#   PORTRAIT_CLIENT_DIR   required — Imagine client install root
 #   PORTRAIT_CLIENT_EXE   default ImagineClient.exe
 #   PORTRAIT_WINE         default wine
 #   WINEPREFIX            optional separate prefix per mannequin
@@ -28,7 +28,11 @@ if [[ -f "$SCRIPT_DIR/.env" ]]; then
   set +a
 fi
 
-CLIENT_DIR="${PORTRAIT_CLIENT_DIR:-/home/cat/software/smt/game/reimagine}"
+if [[ -z "${PORTRAIT_CLIENT_DIR:-}" ]]; then
+  echo "PORTRAIT_CLIENT_DIR is required (set in deploy-studio/.env)." >&2
+  exit 1
+fi
+CLIENT_DIR="$PORTRAIT_CLIENT_DIR"
 CLIENT_EXE="${PORTRAIT_CLIENT_EXE:-ImagineClient.exe}"
 WINE_BIN="${PORTRAIT_WINE:-wine}"
 

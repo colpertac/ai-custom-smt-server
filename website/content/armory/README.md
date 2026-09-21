@@ -1,15 +1,23 @@
 # Armory catalogs
 
-`devils.json` — demon type ID → display name, extracted from client
-`BinaryData/Shield/DevilData.xml` (5302 entries).
+`devils.json` — demon type ID → display name, race, LNC, base level/stats, and
+resist letters. Live copies are written by wiki export from uploaded
+`BinaryData/Shield/DevilData.sbin` (`{runtime}/wiki/devils.json`). This file is
+the bundled fallback and is refreshed when that export can see
+`website/content/armory`.
 
-Regenerate:
+Resist cells use damage multipliers as decimals (`0.75`, `0.5`, `2`) or
+`nu`/`rp`/`dr` for null/repel/drain (from CorrectTbl RES_* / NRA_*). Affinity
+header icons live in `website/public/wiki/affinity/`. Demon portraits are
+generated locally from `DevilData.modelID` → `CModelData.model` mesh
+(`D2_04_007a_Base` → `icon_D2_04_007a.tga`) via
+`scripts/wiki-export-devil-icons.sh` / ops wiki export into
+`website/public/wiki/devil-icons/` (gitignored — proprietary client assets;
+never commit). Paths come from `OPS_RUNTIME` BinaryData (and optional
+`CLIENT_TGA` / `OPS_CMODEL_EXTRA`); missing models or TGAs leave the icon
+blank. Do not key icons off `17000 + demonId` in `CIconData_Devil`.
 
-```bash
-node --input-type=module <<'EOF'
-# see extract snippet used in Phase 16E armory work
-EOF
-```
+Stats are base CorrectTbl values at the demon’s `baseLevel` (before growth).
 
 Skill display names are not in Shield `SkillData` (no CDATA names); armory
 shows skill IDs until a message-table extract exists.

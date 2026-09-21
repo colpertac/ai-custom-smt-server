@@ -1,9 +1,9 @@
-"""Export live wiki item/enchant catalogs from uploaded BinaryData.
+"""Export live wiki item/enchant/demon catalogs from uploaded BinaryData.
 
-Writes {runtime}/wiki/{items,enchants}.json for the website to prefer over
-baked website/content/wiki/*.json. When the website tree is available, also
-mirrors those files into the baked catalog so the gear builder client stays
-in sync after admin wiki regen.
+Writes {runtime}/wiki/{items,enchants,devils}.json for the website to prefer
+over baked website content. When the website tree is available, also mirrors
+those files into the baked catalog so client fallbacks stay in sync after
+admin wiki regen.
 """
 
 from __future__ import annotations
@@ -107,15 +107,27 @@ def wiki_enchants_path(runtime: Path) -> Path:
     return wiki_dir(runtime) / "enchants.json"
 
 
+def wiki_devils_path(runtime: Path) -> Path:
+    return wiki_dir(runtime) / "devils.json"
+
+
 def _baked_wiki_dir() -> Path | None:
     """Repo website/content/wiki when present (local / mounted ops)."""
     candidate = Path(__file__).resolve().parent.parent / "website" / "content" / "wiki"
     return candidate if candidate.is_dir() else None
 
 
+def _baked_armory_dir() -> Path | None:
+    candidate = (
+        Path(__file__).resolve().parent.parent / "website" / "content" / "armory"
+    )
+    return candidate if candidate.is_dir() else None
+
+
 def _sync_baked_wiki_catalogs(
     items_payload: dict[str, Any],
     enchants_payload: dict[str, Any],
+    devils_payload: dict[str, Any] | None = None,
 ) -> bool:
     """Mirror runtime wiki JSON into the Next.js bundled catalog when possible.
 
@@ -128,6 +140,10 @@ def _sync_baked_wiki_catalogs(
         return False
     _atomic_write_json(baked / "items.json", items_payload)
     _atomic_write_json(baked / "enchants.json", enchants_payload)
+    if devils_payload is not None:
+        armory = _baked_armory_dir()
+        if armory is not None:
+            _atomic_write_json(armory / "devils.json", devils_payload)
     return True
 
 
@@ -147,6 +163,319 @@ def wiki_catalog_ready(runtime: Path) -> bool:
     except (OSError, json.JSONDecodeError):
         return False
     return isinstance(data.get("items"), list) and len(data["items"]) > 0
+
+
+# MiDCategoryData::race enum (devildata.xml). Flatten emits the name.
+DEVIL_RACE_IDS = {
+    "NONE": 0,
+    "SERAPHIM": 1,
+    "ENTITY": 2,
+    "DEMON_GOD": 3,
+    "VILE": 4,
+    "AVIAN": 5,
+    "GODDESS": 6,
+    "HEAVENLY_GOD": 7,
+    "RAPTOR": 8,
+    "DIVINE": 9,
+    "EVIL_DEMON": 10,
+    "WILD_BIRD": 11,
+    "YOMA": 12,
+    "EARTH_ELEMENT": 13,
+    "GOD_SPIRIT": 14,
+    "OTHER": 15,
+    "REAPER": 51,
+    "HOLY_BEAST": 52,
+    "BEAST": 53,
+    "FAIRY": 54,
+    "ELEMENTAL": 55,
+    "MAJIN": 56,
+    "MITAMA": 57,
+    "DEMIGOD": 58,
+    "WILDER": 59,
+    "DRAGON_KING": 60,
+    "NOCTURNE": 61,
+    "GODLY_BEAST": 62,
+    "INNOCENT": 63,
+    "HUMAN": 64,
+    "FOUL": 101,
+    "BRUTE": 102,
+    "HAUNT": 103,
+    "DRAGON": 104,
+    "FALLEN_ANGEL": 105,
+    "FEMME": 106,
+    "NATION_RULER": 107,
+    "EARTH_MOTHER": 108,
+    "EVIL_DRAGON": 109,
+    "GUARDIAN": 110,
+    "DESTROYER": 111,
+    "TYRANT": 112,
+    "GAIAN": 113,
+}
+
+
+# Affinity strip order mirrors megaten-fusion-tool SMTIM resistElems
+# (after their resists.slice(2) drop of two unused prefix chars).
+DEVIL_RESIST_ELEMS = [
+    ("slash", 28, 51),  # RES_SLASH / NRA_SLASH
+    ("charge", 29, 52),  # thrust
+    ("blunt", 30, 53),  # strike
+    ("gun", 31, 54),  # long-range / handgun
+    ("pierce", 32, 55),
+    ("spread", 33, 56),
+    ("fire", 34, 57),
+    ("ice", 35, 58),
+    ("elec", 36, 59),
+    ("force", 38, 61),  # RES_FORCE (37 is almighty)
+    ("expel", 39, 62),
+    ("death", 40, 63),  # curse / mudo
+]
+
+# CorrectTbl indices for base stats shown on the wiki.
+DEVIL_STAT_IDX = {
+    "str": 0,
+    "magic": 1,
+    "vit": 2,
+    "int": 3,
+    "speed": 4,
+    "luck": 5,
+    "hp": 6,
+    "mp": 7,
+}
+
+
+def _parse_correct_array(raw: str) -> list[int]:
+    """Parse flatten output like ``{ 5 }, { 13 }, …`` into 126 ints."""
+    vals = [int(x) for x in re.findall(r"\{\s*(-?\d+)\s*\}", raw or "")]
+    if len(vals) < 126:
+        vals.extend([0] * (126 - len(vals)))
+    return vals[:126]
+
+
+def _resist_display(res: int, nra: int) -> str:
+    """Affinity cell: empty, decimal multiplier, or nu/rp/dr.
+
+    Damage multiplier ≈ ``1 - RES/100`` (RES 50 → 0.5, RES -100 → 2.0).
+    NRA encodes ``chance * 10 + kind`` with kind 1=null, 2=repel, 3=drain.
+    """
+    if nra > 0:
+        kind = nra % 10
+        chance = nra // 10
+        if chance > 0:
+            if kind == 1:
+                return "nu"
+            if kind == 2:
+                return "rp"
+            if kind == 3:
+                return "dr"
+    if res == 0:
+        return ""
+    mult = 1.0 - (res / 100.0)
+    if mult <= 0:
+        return "nu"
+    # Trim trailing zeros: 0.50 → 0.5, 2.00 → 2
+    text = f"{mult:.2f}".rstrip("0").rstrip(".")
+    return text
+
+
+def _load_devil_icon_map(cicon_tsv: Path | None) -> dict[int, str]:
+    """CIconData_Devil: icon key → asset basename (e.g. icon_D1_05_005a)."""
+    if cicon_tsv is None or not cicon_tsv.is_file():
+        return {}
+    out: dict[int, str] = {}
+    with cicon_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or "").strip()
+            value = (row.get("value") or "").strip()
+            if not raw_id.isdigit() or not value:
+                continue
+            out[int(raw_id)] = value
+    return out
+
+
+def _icon_asset_from_model_name(model: str) -> str | None:
+    """CModelData.model ``D2_04_007a_Base`` → ``icon_D2_04_007a``."""
+    mesh = (model or "").strip()
+    if not mesh:
+        return None
+    if mesh.endswith("_Base"):
+        mesh = mesh[: -len("_Base")]
+    if not mesh:
+        return None
+    if mesh.startswith("icon_"):
+        return mesh
+    return f"icon_{mesh}"
+
+
+def _load_cmodel_icon_map(
+    cmodel_tsvs: list[Path] | None,
+) -> dict[int, tuple[str | None, int]]:
+    """modelID → (icon asset from mesh name, CIcon iconID).
+
+    Later TSV files only fill missing modelIDs (gap-fill), so a richer client
+    dump can supplement an incomplete runtime CModelData without overriding.
+    """
+    out: dict[int, tuple[str | None, int]] = {}
+    for path in cmodel_tsvs or []:
+        if not path.is_file():
+            continue
+        with path.open(encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter="\t")
+            for row in reader:
+                raw_id = (row.get("ID") or "").strip()
+                if not raw_id.isdigit():
+                    continue
+                mid = int(raw_id)
+                if mid in out:
+                    continue
+                asset = _icon_asset_from_model_name(row.get("model") or "")
+                try:
+                    icon_id = int((row.get("iconID") or "0").strip() or "0")
+                except ValueError:
+                    icon_id = 0
+                out[mid] = (asset, icon_id)
+    return out
+
+
+def build_devils_payload(
+    devil_tsv: Path,
+    *,
+    cicon_tsv: Path | None = None,
+    cmodel_tsvs: list[Path] | None = None,
+    icons_dir: Path | None = None,
+) -> dict[str, Any]:
+    """ID, name, race, LNC, base stats, resists, and optional icons.
+
+    Icon lookup prefers DevilData.modelID → CModelData.model mesh name
+    (``D2_04_007a_Base`` → ``icon_D2_04_007a``). Falling back to
+    ``17000 + demonId`` in CIconData_Devil is wrong for most demons after the
+    early ID ranges — CIcon keys track models, not DevilData IDs.
+    """
+    names: dict[str, str] = {}
+    races: dict[str, str] = {}
+    race_ids: dict[str, int] = {}
+    lncs: dict[str, int] = {}
+    levels: dict[str, int] = {}
+    stats: dict[str, dict[str, int]] = {}
+    resists: dict[str, dict[str, str]] = {}
+    base_ids: dict[str, int] = {}
+    model_ids: dict[str, int] = {}
+    icon_assets: dict[str, str] = {}
+    icon_srcs: dict[str, str] = {}
+    icon_by_key = _load_devil_icon_map(cicon_tsv)
+    model_by_id = _load_cmodel_icon_map(cmodel_tsvs)
+
+    def resolve_icon(demon_id: int, model_id: int) -> str | None:
+        if model_id > 0:
+            entry = model_by_id.get(model_id)
+            if entry:
+                asset, icon_id = entry
+                if asset:
+                    return asset
+                if icon_id > 0:
+                    via_cicon = icon_by_key.get(icon_id)
+                    if via_cicon:
+                        return via_cicon
+            # Own modelID declared but missing from CModelData — do not fall
+            # back to 17000+id or base inheritance (that mislabels costumes).
+            return None
+        # Legacy: 17000+demonId (early ranges / no modelID only).
+        if demon_id > 0:
+            return icon_by_key.get(17000 + demon_id)
+        return None
+
+    pending_base_icons: list[tuple[str, int]] = []
+
+    with devil_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or "").strip()
+            if not raw_id.isdigit():
+                continue
+            name = (row.get("name") or "").strip()
+            if not name:
+                continue
+            race = (row.get("race") or "NONE").strip() or "NONE"
+            raw_lnc = (row.get("LNC") or "0").strip()
+            try:
+                lnc = int(raw_lnc)
+            except ValueError:
+                lnc = 0
+            try:
+                level = int((row.get("baseLevel") or "0").strip() or "0")
+            except ValueError:
+                level = 0
+            try:
+                base_demon_id = int(
+                    (row.get("baseDemonID") or "0").strip() or "0"
+                )
+            except ValueError:
+                base_demon_id = 0
+            try:
+                model_id = int((row.get("modelID") or "0").strip() or "0")
+            except ValueError:
+                model_id = 0
+            correct = _parse_correct_array(row.get("correct") or "")
+            names[raw_id] = name
+            races[raw_id] = race
+            race_ids[raw_id] = DEVIL_RACE_IDS.get(race, 0)
+            lncs[raw_id] = lnc
+            levels[raw_id] = level
+            base_ids[raw_id] = base_demon_id
+            model_ids[raw_id] = model_id
+            stats[raw_id] = {
+                key: int(correct[idx]) for key, idx in DEVIL_STAT_IDX.items()
+            }
+            resists[raw_id] = {
+                elem: _resist_display(correct[res_i], correct[nra_i])
+                for elem, res_i, nra_i in DEVIL_RESIST_ELEMS
+            }
+            asset = resolve_icon(int(raw_id), model_id)
+            if asset:
+                icon_assets[raw_id] = asset
+                if icons_dir is not None and (icons_dir / f"{asset}.png").is_file():
+                    icon_srcs[raw_id] = f"/wiki/devil-icons/{asset}.png"
+            elif (
+                model_id <= 0
+                and base_demon_id > 0
+                and base_demon_id != int(raw_id)
+            ):
+                # Only inherit when this row has no model of its own.
+                pending_base_icons.append((raw_id, base_demon_id))
+
+    # Variants without their own model icon inherit the stock form's asset.
+    for raw_id, base_demon_id in pending_base_icons:
+        inherited = icon_assets.get(str(base_demon_id))
+        if inherited:
+            icon_assets[raw_id] = inherited
+            if icons_dir is not None and (
+                icons_dir / f"{inherited}.png"
+            ).is_file():
+                icon_srcs[raw_id] = f"/wiki/devil-icons/{inherited}.png"
+            continue
+        base_model = model_ids.get(str(base_demon_id), 0)
+        asset = resolve_icon(base_demon_id, base_model)
+        if asset:
+            icon_assets[raw_id] = asset
+            if icons_dir is not None and (icons_dir / f"{asset}.png").is_file():
+                icon_srcs[raw_id] = f"/wiki/devil-icons/{asset}.png"
+
+    return {
+        "source": "BinaryData/Shield/DevilData.sbin",
+        "generatedAt": _now_iso(),
+        "resistElems": [elem for elem, _, _ in DEVIL_RESIST_ELEMS],
+        "names": names,
+        "races": races,
+        "raceIds": race_ids,
+        "lncs": lncs,
+        "levels": levels,
+        "baseDemonIds": base_ids,
+        "modelIds": model_ids,
+        "stats": stats,
+        "resists": resists,
+        "iconAssets": icon_assets,
+        "iconSrcs": icon_srcs,
+    }
 
 
 def destinations_include_binarydata(
@@ -673,6 +1002,26 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
     client_bin = (
         runtime / "datastore" / "BinaryData" / "Client" / "CIconData_Item.bin"
     )
+    devil_icon_bin = (
+        runtime / "datastore" / "BinaryData" / "Client" / "CIconData_Devil.bin"
+    )
+    client_dir = runtime / "datastore" / "BinaryData" / "Client"
+    cmodel_bins = [
+        client_dir / "CModelData1.bin",
+        client_dir / "CModelData2.bin",
+        client_dir / "CModelData3.bin",
+    ]
+    # Optional extra CModel dirs (pathsep-separated) gap-fill missing modelIDs.
+    # No machine-local defaults — set OPS_CMODEL_EXTRA only when you intentionally
+    # merge another Client BinaryData tree.
+    extra_cmodel_dirs: list[Path] = []
+    for raw in (os.environ.get("OPS_CMODEL_EXTRA") or "").split(os.pathsep):
+        raw = raw.strip()
+        if not raw:
+            continue
+        candidate = Path(raw).expanduser()
+        if candidate.is_dir():
+            extra_cmodel_dirs.append(candidate)
     citem_xml_candidates = [
         shield / "CItemData.xml",
         runtime / "datastore" / "BinaryData" / "Shield" / "CItemData.xml",
@@ -792,14 +1141,124 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
 
         _atomic_write_json(wiki_enchants_path(runtime), enchants_payload)
 
+        devil_note = ""
+        devil_count = 0
+        devil_sbin = shield / "DevilData.sbin"
+        devils_payload: dict[str, Any] | None = None
+        if devil_sbin.is_file():
+            ok, detail = _run(
+                [
+                    str(decrypt),
+                    str(devil_sbin),
+                    str(work / "DevilData.plain.bin"),
+                ]
+            )
+            if ok:
+                ok, detail = _run(
+                    [
+                        str(bdpatch),
+                        "flatten",
+                        "devil",
+                        str(work / "DevilData.plain.bin"),
+                        str(work / "DevilData.tsv"),
+                    ]
+                )
+            if ok and devil_icon_bin.is_file():
+                _run(
+                    [
+                        str(bdpatch),
+                        "flatten",
+                        "cicon",
+                        str(devil_icon_bin),
+                        str(work / "CIconData_Devil.tsv"),
+                    ]
+                )
+            cmodel_tsvs: list[Path] = []
+            if ok:
+                flatten_idx = 0
+                for cmodel_bin in cmodel_bins:
+                    if not cmodel_bin.is_file():
+                        continue
+                    out_tsv = work / f"cmodel-{flatten_idx}-{cmodel_bin.name}.tsv"
+                    flatten_idx += 1
+                    flat_ok, _ = _run(
+                        [
+                            str(bdpatch),
+                            "flatten",
+                            "cmodel",
+                            str(cmodel_bin),
+                            str(out_tsv),
+                        ]
+                    )
+                    if flat_ok:
+                        cmodel_tsvs.append(out_tsv)
+                for extra_dir in extra_cmodel_dirs:
+                    for name in (
+                        "CModelData1.bin",
+                        "CModelData2.bin",
+                        "CModelData3.bin",
+                    ):
+                        cmodel_bin = extra_dir / name
+                        if not cmodel_bin.is_file():
+                            continue
+                        out_tsv = (
+                            work / f"cmodel-extra-{flatten_idx}-{name}.tsv"
+                        )
+                        flatten_idx += 1
+                        flat_ok, _ = _run(
+                            [
+                                str(bdpatch),
+                                "flatten",
+                                "cmodel",
+                                str(cmodel_bin),
+                                str(out_tsv),
+                            ]
+                        )
+                        if flat_ok:
+                            cmodel_tsvs.append(out_tsv)
+            if ok:
+                # Prefer website public icons when regenerating from a mounted tree;
+                # runtime wiki/devil-icons is the Docker/live path.
+                baked_icons = (
+                    Path(__file__).resolve().parent.parent
+                    / "website"
+                    / "public"
+                    / "wiki"
+                    / "devil-icons"
+                )
+                runtime_icons = out_dir / "devil-icons"
+                icons_dir = (
+                    baked_icons
+                    if baked_icons.is_dir()
+                    else runtime_icons
+                )
+                cicon_path = work / "CIconData_Devil.tsv"
+                devils_payload = build_devils_payload(
+                    work / "DevilData.tsv",
+                    cicon_tsv=cicon_path if cicon_path.is_file() else None,
+                    cmodel_tsvs=cmodel_tsvs or None,
+                    icons_dir=icons_dir if icons_dir.is_dir() else None,
+                )
+                devil_count = len(devils_payload["names"])
+                _atomic_write_json(wiki_devils_path(runtime), devils_payload)
+            else:
+                devil_note = (
+                    f"Devil export failed ({detail}); "
+                    "wiki items still available."
+                )
+        else:
+            devil_note = "DevilData.sbin not present; demon catalog unchanged."
+
         baked_synced = _sync_baked_wiki_catalogs(
-            items_payload, enchants_payload
+            items_payload, enchants_payload, devils_payload
         )
 
+        notes = [n for n in (enchant_note, devil_note) if n]
         info = {
-            "detail": enchant_note or "wiki catalogs written",
+            "detail": "; ".join(notes) or "wiki catalogs written",
             "itemCount": len(items_payload["items"]),
             "enchantCount": len(enchants_payload["enchants"]),
+            "demonCount": devil_count,
             "outDir": str(out_dir),
             "bakedSynced": baked_synced,
         }

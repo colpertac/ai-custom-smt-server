@@ -2,13 +2,13 @@ import { getWikiItem } from "@/content/wiki"
 import {
   computeChainExpertisePoints,
   formatSkillId,
-  getDevilName,
   getExpertiseIconSrc,
   getExpertiseMeta,
   getExpertiseName,
   listChainExpertiseIds,
   parseExpertiseProgress,
 } from "@/lib/armory-catalogs"
+import { getDevilName } from "@/lib/devil-catalog"
 import {
   EQUIP_SLOTS,
   type ArmoryEquipmentSlot,

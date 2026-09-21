@@ -70,9 +70,10 @@ async function findBdpatch(repoRoot: string): Promise<string | null> {
 }
 
 async function findClientBinDir(repoRoot: string): Promise<string | null> {
+  const fromEnv = (process.env.CLIENT_BIN_DIR || process.env.OPS_CLIENT_BD || "").trim()
   const candidates = [
+    ...(fromEnv ? [fromEnv] : []),
     path.join(repoRoot, "comp_hack/runtime/datastore/BinaryData/Client"),
-    "/home/cat/software/smt/game/reimagine/BinaryData/Client",
   ]
   for (const c of candidates) {
     if (await pathExists(c)) return c

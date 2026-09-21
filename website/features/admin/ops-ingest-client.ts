@@ -18,6 +18,7 @@ export type IngestJobView = {
       skipped?: boolean
       itemCount?: number
       enchantCount?: number
+      demonCount?: number
       detail?: string
     }
   }

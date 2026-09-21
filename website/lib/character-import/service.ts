@@ -1,7 +1,7 @@
 import "server-only"
 
 import { listAllCharacterNames } from "@/lib/admin-characters"
-import { hasDevilType } from "@/lib/armory-catalogs"
+import { hasDevilType } from "@/lib/devil-catalog"
 import { previewStripForCharacters } from "@/lib/character-import/character-graph"
 import {
   loadCharacterImportLobbyConfig,

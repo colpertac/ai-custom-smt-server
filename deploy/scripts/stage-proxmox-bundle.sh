@@ -9,7 +9,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 DEPLOY_DIR="${ROOT_DIR}/deploy"
 DEST="${PROXMOX_STAGE:-/mnt/axecat/smt}"
-DATA_SRC="${COMP_RUNTIME:-/home/cat/docker/smt/data}"
+# Host COMP/runtime data tree (must be set — no machine-local default).
+if [[ -z "${COMP_RUNTIME:-}" ]]; then
+  echo "COMP_RUNTIME is required (path to host docker/smt data or runtime)." >&2
+  exit 1
+fi
+DATA_SRC="$COMP_RUNTIME"
 
 need() { command -v "$1" >/dev/null 2>&1 || { echo "missing $1" >&2; exit 1; }; }
 need tar

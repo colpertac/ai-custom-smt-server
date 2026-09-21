@@ -23,8 +23,9 @@ inter-server traffic uses service DNS (`lobby`, `world`, `channel`, `mariadb`).
 Prereqs: Docker logged in (`docker login`), COMP built.
 
 ```bash
-# Build lobby/world/channel
-JOBS=16 /home/cat/repos/smt/comp_hack/scripts/build.sh
+# Build lobby/world/channel (from your smt / comp_hack checkout)
+JOBS=16 ./comp_hack/scripts/build.sh
+# or: JOBS=16 /path/to/smt/comp_hack/scripts/build.sh
 
 # Pack + push game image
 ./deploy/scripts/docker-push-hub.sh
@@ -76,7 +77,7 @@ cp ~/docker/smt/.env.example ~/docker/smt/.env
 ### 3. Seed `./data`
 
 ```bash
-rsync -a /home/cat/repos/smt/comp_hack/runtime/ ~/docker/smt/data/
+rsync -a /path/to/comp_hack/runtime/ ~/docker/smt/data/
 # or: rsync -a /path/to/runtime-backup/ ~/docker/smt/data/
 ```
 

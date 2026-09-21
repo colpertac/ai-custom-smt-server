@@ -16,6 +16,7 @@ After picking a candidate:
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import sys
 import time
@@ -34,7 +35,11 @@ if str(_HERE) not in sys.path:
 
 from portrait_common import ROOT, WORK_DIR  # noqa: E402
 
-DEFAULT_INBOX = Path("/home/cat/repos/smt/va_screenshots")
+# Prefer PORTRAIT_INBOX; else ~/va_screenshots (no machine-specific path).
+DEFAULT_INBOX = Path(
+    (os.environ.get("PORTRAIT_INBOX") or "").strip()
+    or (Path.home() / "va_screenshots")
+)
 DEFAULT_OUT = (
     ROOT / "work" / "portrait-crops"
     if (ROOT / "website").is_dir()

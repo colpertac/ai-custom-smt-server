@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 from wiki_export import (
+    build_devils_payload,
     build_enchants_payload,
     build_items_payload,
     destinations_include_binarydata,
@@ -66,6 +67,129 @@ class WikiExportTests(unittest.TestCase):
             self.assertEqual(item["iconSrc"], "/wiki/icons/I01_0001a.png")
             self.assertEqual(item["basicFeatures"][0]["id"], "STR")
             self.assertEqual(item["basicFeatures"][0]["value"], 5)
+
+    def test_build_devils_payload_from_tsv(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp_path = Path(raw)
+            correct = ["{ 0 }"] * 126
+            correct[0] = "{ 5 }"  # STR
+            correct[6] = "{ 118 }"  # HP
+            correct[7] = "{ 34 }"  # MP
+            correct[28] = "{ 45 }"  # RES_SLASH
+            correct[34] = "{ 90 }"  # RES_FIRE
+            correct[35] = "{ -100 }"  # RES_ICE
+            correct[57] = "{ 1003 }"  # NRA_FIRE absorb 100%
+            (tmp_path / "DevilData.tsv").write_text(
+                "ID\tname\tLNC\trace\tbaseLevel\tcorrect\n"
+                "105\tPhoenix\t-8300\tAVIAN\t36\t"
+                + ", ".join(correct)
+                + "\n"
+                "1001\tShadow\t5000\tFOUL\t1\t"
+                + ", ".join(["{ 0 }"] * 126)
+                + "\n",
+                encoding="utf-8",
+            )
+            payload = build_devils_payload(tmp_path / "DevilData.tsv")
+            self.assertEqual(payload["names"]["105"], "Phoenix")
+            self.assertEqual(payload["races"]["105"], "AVIAN")
+            self.assertEqual(payload["raceIds"]["105"], 5)
+            self.assertEqual(payload["lncs"]["105"], -8300)
+            self.assertEqual(payload["levels"]["105"], 36)
+            self.assertEqual(payload["stats"]["105"]["hp"], 118)
+            self.assertEqual(payload["stats"]["105"]["str"], 5)
+            self.assertEqual(payload["resists"]["105"]["slash"], "0.55")
+            self.assertEqual(payload["resists"]["105"]["fire"], "dr")
+            self.assertEqual(payload["resists"]["105"]["ice"], "2")
+            self.assertEqual(payload["resists"]["105"]["elec"], "")
+            self.assertEqual(payload["raceIds"]["1001"], 101)
+            self.assertEqual(
+                payload["resistElems"][0:3], ["slash", "charge", "blunt"]
+            )
+
+    def test_build_devils_payload_icons_from_cmodel_mesh(self):
+        """Icons come from CModelData.model, not 17000+demonId."""
+        with tempfile.TemporaryDirectory() as raw:
+            tmp_path = Path(raw)
+            correct = ", ".join(["{ 0 }"] * 126)
+            (tmp_path / "DevilData.tsv").write_text(
+                "ID\tname\tLNC\trace\tbaseLevel\tbaseDemonID\tmodelID\tcorrect\n"
+                f"567\tPyro Jack\t0\tFAIRY\t10\t567\t126\t{correct}\n"
+                f"207\tOgre\t0\tJAKI\t5\t207\t69\t{correct}\n"
+                f"9999\tNightmare Pyro Jack\t0\tFAIRY\t12\t567\t0\t{correct}\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CModelData.tsv").write_text(
+                "ID\ticonID\tmodel\n"
+                "126\t17565\tD2_04_007a_Base\n"
+                "69\t17208\tD1_10_007a_Base\n",
+                encoding="utf-8",
+            )
+            # Misleading naive CIcon entries (old 17000+id mapping).
+            (tmp_path / "CIconData_Devil.tsv").write_text(
+                "ID\tvalue\n"
+                "17567\ticon_D2_04_009a\n"
+                "17207\ticon_D1_11_002a\n",
+                encoding="utf-8",
+            )
+            icons = tmp_path / "icons"
+            icons.mkdir()
+            (icons / "icon_D2_04_007a.png").write_bytes(b"png")
+            (icons / "icon_D1_10_007a.png").write_bytes(b"png")
+
+            payload = build_devils_payload(
+                tmp_path / "DevilData.tsv",
+                cicon_tsv=tmp_path / "CIconData_Devil.tsv",
+                cmodel_tsvs=[tmp_path / "CModelData.tsv"],
+                icons_dir=icons,
+            )
+            self.assertEqual(payload["iconAssets"]["567"], "icon_D2_04_007a")
+            self.assertEqual(payload["iconAssets"]["207"], "icon_D1_10_007a")
+            self.assertEqual(
+                payload["iconSrcs"]["567"], "/wiki/devil-icons/icon_D2_04_007a.png"
+            )
+            # Variant inherits stock icon via baseDemonID when it has no modelID.
+            self.assertEqual(payload["iconAssets"]["9999"], "icon_D2_04_007a")
+            self.assertEqual(payload["modelIds"]["567"], 126)
+
+            # Own modelID that is missing from CModel must not inherit base icon.
+            (tmp_path / "DevilData2.tsv").write_text(
+                "ID\tname\tLNC\trace\tbaseLevel\tbaseDemonID\tmodelID\tcorrect\n"
+                f"5398\tMusic Festival High Pixie\t0\tFAIRY\t12\t568\t985\t{correct}\n"
+                f"568\tHigh Pixie\t0\tFAIRY\t10\t568\t127\t{correct}\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CModelData2.tsv").write_text(
+                "ID\ticonID\tmodel\n"
+                "127\t17566\tD2_04_008a_Base\n"
+                "985\t18291\tD2_04_014a_Base\n",
+                encoding="utf-8",
+            )
+            payload2 = build_devils_payload(
+                tmp_path / "DevilData2.tsv",
+                cmodel_tsvs=[tmp_path / "CModelData2.tsv"],
+            )
+            self.assertEqual(
+                payload2["iconAssets"]["5398"], "icon_D2_04_014a"
+            )
+            self.assertEqual(payload2["iconAssets"]["568"], "icon_D2_04_008a")
+
+            payload3 = build_devils_payload(
+                tmp_path / "DevilData2.tsv",
+                # High Pixie model only — Music Festival model 985 missing.
+                cmodel_tsvs=[tmp_path / "CModelData2.tsv"],
+            )
+            # Rewrite without 985 to assert no false base inheritance.
+            (tmp_path / "CModelData3.tsv").write_text(
+                "ID\ticonID\tmodel\n"
+                "127\t17566\tD2_04_008a_Base\n",
+                encoding="utf-8",
+            )
+            payload3 = build_devils_payload(
+                tmp_path / "DevilData2.tsv",
+                cmodel_tsvs=[tmp_path / "CModelData3.tsv"],
+            )
+            self.assertNotIn("5398", payload3["iconAssets"])
+            self.assertEqual(payload3["iconAssets"]["568"], "icon_D2_04_008a")
 
     def test_build_enchants_payload_from_tsv(self):
         with tempfile.TemporaryDirectory() as raw:

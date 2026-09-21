@@ -1,13 +1,225 @@
 /**
  * Static catalogs for armory display labels.
- * Devil names: extracted from client-source DevilData.xml → content/armory/devils.json
+ * Devil names/race/LNC: bundled content/armory/devils.json.
+ * Live lookup prefers {runtime}/wiki/devils.json via lib/devil-catalog.ts
+ * (written by ops wiki export from Shield/DevilData.sbin).
  * Expertise: caps/isChain from ExpertClassData.sbin; names/icons from reimagine-tools.
  * Skill names: Shield SkillData has no display strings — keep numeric IDs for now.
  */
 import devilsPayload from "@/content/armory/devils.json"
 import expertisesPayload from "@/content/armory/expertises.json"
+import { getGuardianRaceName } from "@/lib/character-expertise-digi-shared"
 
-const devilNames = (devilsPayload as { names: Record<string, string> }).names
+export type DevilResistKind =
+  | "normal"
+  | "weak"
+  | "resist"
+  | "null"
+  | "repel"
+  | "drain"
+
+export type DevilStats = {
+  hp: number
+  mp: number
+  str: number
+  magic: number
+  vit: number
+  int: number
+  speed: number
+  luck: number
+}
+
+export type DevilsPayload = {
+  names: Record<string, string>
+  races?: Record<string, number | string>
+  raceIds?: Record<string, number>
+  lncs?: Record<string, number>
+  levels?: Record<string, number>
+  baseDemonIds?: Record<string, number>
+  stats?: Record<string, DevilStats>
+  /** Affinity cell text per elem (empty = normal); decimals or nu/rp/dr. */
+  resists?: Record<string, Partial<Record<string, string>>>
+  resistElems?: string[]
+  iconAssets?: Record<string, string>
+  iconSrcs?: Record<string, string>
+}
+
+const devilCatalog = devilsPayload as DevilsPayload
+
+const EMPTY_STATS: DevilStats = {
+  hp: 0,
+  mp: 0,
+  str: 0,
+  magic: 0,
+  vit: 0,
+  int: 0,
+  speed: 0,
+  luck: 0,
+}
+
+export const DEVIL_RESIST_ELEMS_DEFAULT = [
+  "slash",
+  "charge",
+  "blunt",
+  "gun",
+  "pierce",
+  "spread",
+  "fire",
+  "ice",
+  "elec",
+  "force",
+  "expel",
+  "death",
+] as const
+
+/** Icon basename under /wiki/affinity/ (charge → thrust.jpeg). */
+export const DEVIL_RESIST_ICON: Record<string, string> = {
+  slash: "slash",
+  charge: "thrust",
+  blunt: "blunt",
+  gun: "handgun",
+  pierce: "penetrate",
+  spread: "spread",
+  fire: "fire",
+  ice: "ice",
+  elec: "electric",
+  force: "wind",
+  expel: "light",
+  death: "dark",
+}
+
+export const DEVIL_RESIST_TITLE: Record<string, string> = {
+  slash: "Slash",
+  charge: "Thrust / Charge",
+  blunt: "Blunt / Strike",
+  gun: "Gun",
+  pierce: "Pierce",
+  spread: "Spread",
+  fire: "Fire",
+  ice: "Ice",
+  elec: "Electric",
+  force: "Force / Wind",
+  expel: "Expel / Light",
+  death: "Death / Dark",
+}
+
+export function devilResistKind(display: string): DevilResistKind {
+  const v = display.trim()
+  if (!v || v === "-") return "normal"
+  if (v === "nu") return "null"
+  if (v === "rp") return "repel"
+  if (v === "dr") return "drain"
+  if (v === "¼" || v === "½" || v === "¾" || v === "1/4" || v === "1/2" || v === "3/4") {
+    return "resist"
+  }
+  // Legacy letter codes from earlier export
+  if (v === "s") return "resist"
+  if (v === "w") return "weak"
+  if (v === "n") return "null"
+  if (v === "r") return "repel"
+  if (v === "d") return "drain"
+  const num = Number.parseFloat(v)
+  if (Number.isFinite(num) && num > 1) return "weak"
+  if (Number.isFinite(num) && num > 0 && num < 1) return "resist"
+  return "normal"
+}
+
+/** Common name prefixes for named variants (filters / chips). */
+export const DEVIL_VARIANT_TAGS = [
+  "Inexperienced",
+  "Deformed",
+  "Nightmare",
+  "Accomplished",
+  "Nimble",
+  "Lucky",
+  "Heaven-Piercing",
+  "Blizzard",
+  "Manifestation",
+  "Stray",
+  "Innocent",
+  "Illusionary",
+] as const
+
+export function devilVariantTag(
+  name: string,
+  baseName: string | undefined,
+  isStock: boolean
+): string | null {
+  if (isStock) return null
+  if (!baseName) return "Other"
+  if (name === baseName) return "Instance"
+  if (name.endsWith(baseName)) {
+    const prefix = name.slice(0, -baseName.length).trim()
+    return prefix || "Instance"
+  }
+  return "Other"
+}
+
+export function entriesFromDevilsPayload(
+  payload: DevilsPayload
+): DevilCatalogEntry[] {
+  const raceIds = payload.raceIds ?? {}
+  const lncs = payload.lncs ?? {}
+  const levels = payload.levels ?? {}
+  const baseDemonIds = payload.baseDemonIds ?? {}
+  const stats = payload.stats ?? {}
+  const resists = payload.resists ?? {}
+  const iconSrcs = payload.iconSrcs ?? {}
+  const iconAssets = payload.iconAssets ?? {}
+  const names = payload.names ?? {}
+  const resistElems = payload.resistElems?.length
+    ? payload.resistElems
+    : [...DEVIL_RESIST_ELEMS_DEFAULT]
+  return Object.entries(names)
+    .map(([idStr, name]) => {
+      const id = Number(idStr)
+      const raceId = raceIds[idStr] ?? 0
+      const lnc = lncs[idStr] ?? 0
+      const rawRes = resists[idStr] ?? {}
+      const resistMap: Record<string, string> = {}
+      for (const elem of resistElems) {
+        const raw = rawRes[elem] ?? ""
+        // Migrate older export formats
+        if (raw === "-") resistMap[elem] = ""
+        else if (raw === "n") resistMap[elem] = "nu"
+        else if (raw === "r") resistMap[elem] = "rp"
+        else if (raw === "d") resistMap[elem] = "dr"
+        else if (raw === "w") resistMap[elem] = "2"
+        else if (raw === "s") resistMap[elem] = "0.5"
+        else if (raw === "¼") resistMap[elem] = "0.25"
+        else if (raw === "½") resistMap[elem] = "0.5"
+        else if (raw === "¾") resistMap[elem] = "0.75"
+        else if (raw === "2.0") resistMap[elem] = "2"
+        else if (raw === "1.5") resistMap[elem] = "1.5"
+        else if (raw === "1.25") resistMap[elem] = "1.25"
+        else resistMap[elem] = raw
+      }
+      const asset = iconAssets[idStr]
+      const iconSrc = iconSrcs[idStr] ?? null
+      const baseDemonId = Number(baseDemonIds[idStr] ?? id)
+      const isStock = !Number.isFinite(baseDemonId) || baseDemonId === id
+      const baseName = names[String(baseDemonId)]
+      return {
+        id,
+        name,
+        raceId,
+        race: getGuardianRaceName(raceId),
+        lnc,
+        alignment: devilAlignmentFromLnc(lnc),
+        level: levels[idStr] ?? 0,
+        stats: stats[idStr] ?? EMPTY_STATS,
+        resists: resistMap,
+        resistElems,
+        iconSrc,
+        iconAsset: asset ?? null,
+        baseDemonId: Number.isFinite(baseDemonId) ? baseDemonId : id,
+        isStock,
+        variantTag: devilVariantTag(name, baseName, isStock),
+      }
+    })
+    .filter((e) => Number.isFinite(e.id))
+    .sort((a, b) => a.id - b.id)
+}
 
 type ExpertiseMeta = {
   name?: string
@@ -51,30 +263,53 @@ export type ExpertiseProgress = {
   atMax: boolean
 }
 
+/** Same thresholds as ActiveEntityState::CalculateLNCType. */
+export type DevilAlignment = "law" | "neutral" | "chaos"
+
+export function devilAlignmentFromLnc(lnc: number): DevilAlignment {
+  if (lnc <= -5000) return "law"
+  if (lnc >= 5000) return "chaos"
+  return "neutral"
+}
+
 export type DevilCatalogEntry = {
   id: number
   name: string
+  raceId: number
+  race: string
+  lnc: number
+  alignment: DevilAlignment
+  level: number
+  stats: DevilStats
+  /** Affinity cell text; empty string = normal. */
+  resists: Record<string, string>
+  resistElems: string[]
+  iconSrc: string | null
+  iconAsset: string | null
+  /** Stock form ID this row belongs to (self when stock). */
+  baseDemonId: number
+  /** True when this row is the canonical stock demon. */
+  isStock: boolean
+  /** Name prefix tag (Nightmare, Deformed, …), Instance, Other, or null if stock. */
+  variantTag: string | null
 }
 
 let devilListCache: DevilCatalogEntry[] | null = null
 
-/** All DevilData IDs with display names, sorted by id (for wiki / @contract lookup). */
-export function listDevils(): DevilCatalogEntry[] {
+/** Bundled DevilData snapshot. Live wiki pages use `listDevils` from devil-catalog. */
+export function listBundledDevils(): DevilCatalogEntry[] {
   if (!devilListCache) {
-    devilListCache = Object.entries(devilNames)
-      .map(([id, name]) => ({ id: Number(id), name }))
-      .filter((e) => Number.isFinite(e.id))
-      .sort((a, b) => a.id - b.id)
+    devilListCache = entriesFromDevilsPayload(devilCatalog)
   }
   return devilListCache
 }
 
-export function hasDevilType(type: number): boolean {
-  return Object.prototype.hasOwnProperty.call(devilNames, String(type))
+export function hasBundledDevilType(type: number): boolean {
+  return Object.prototype.hasOwnProperty.call(devilCatalog.names, String(type))
 }
 
-export function getDevilName(type: number): string {
-  return devilNames[String(type)] ?? `Demon ${type}`
+export function getBundledDevilName(type: number): string {
+  return devilCatalog.names[String(type)] ?? `Demon ${type}`
 }
 
 export function getExpertiseMeta(id: number): ExpertiseMeta {

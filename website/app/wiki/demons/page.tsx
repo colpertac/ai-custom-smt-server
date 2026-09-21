@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { listDevils } from "@/lib/armory-catalogs"
+import { listDevils } from "@/lib/devil-catalog"
 import { WikiDemonsPanel } from "@/features/wiki/components/WikiDemonsPanel"
 
 export const metadata: Metadata = {

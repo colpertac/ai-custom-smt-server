@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 
-import { listDevils } from "@/lib/armory-catalogs"
+import { listDevils } from "@/lib/devil-catalog"
 import { countWikiItems, countWikiCatalog } from "@/lib/wiki-catalog"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WikiPageHeader } from "@/features/wiki/components/WikiShell"

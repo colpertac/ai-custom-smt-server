@@ -178,7 +178,9 @@ function OpsIngestPanel({
       let message = result.message
       if (wiki && !wiki.skipped) {
         if (wiki.ok) {
-          message = `${message} — wiki regenerated (${wiki.itemCount ?? "?"} items)`
+          message = `${message} — wiki regenerated (${wiki.itemCount ?? "?"} items${
+            wiki.demonCount ? `, ${wiki.demonCount} demons` : ""
+          })`
         } else if (wiki.detail) {
           message = `${message} — wiki regen failed: ${wiki.detail}`
         }

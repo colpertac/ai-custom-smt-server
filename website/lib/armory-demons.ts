@@ -1,5 +1,5 @@
 import { getWikiItem } from "@/content/wiki"
-import { getDevilName } from "@/lib/armory-catalogs"
+import { getDevilName } from "@/lib/devil-catalog"
 import {
   isValidCharacterName,
   uuidBytesToString,
