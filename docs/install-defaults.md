@@ -28,6 +28,10 @@ and is never overwritten by later image pulls.
 | **World loot eggs** | `LootEggDuration` **300**; `LootEggRestrictedDuration` **0** (immediately free-for-all) | `deploy/seed/config/world.xml` (`WorldSharedConfig`) |
 | **Casino / config / email / SQL / …** | Current code + empty runtime DBs | Website / ops images as published |
 | **Website feedback** | Empty `feedback` / `feedback_images` in new `web.sqlite` | Public `/feedback` form; Admin → Feedback |
+| **Discord notifications** | **No webhook**; services/feedback/reports off until configured; mannequin toggle defaults **on** once a webhook exists (legacy portrait behavior) | Admin → Notifications → `site_settings` / optional `SERVER_ALERT_DISCORD_WEBHOOK` |
+| **Armory expertise / digi editor** | **Off** (`enabled: false`); min GM level **0** when enabled | Admin → Website (expertise digi settings) |
+| **Recovery hub** | No snapshots; stock-knob reset uses `deploy/seed/config` templates | Admin → Recovery; snapshots under `data/releases/recovery/` |
+| **Backups / rclone** | Empty `deploy/backups/`; no schedule; no rclone.conf | Admin → Backups; never in image or release zip |
 
 Refresh shops / payouts / loot from a working tree:
 
@@ -65,6 +69,10 @@ writeFileSync("./content/events/event-schedule.json", JSON.stringify({
 | **Debug store overrides** (e.g. insta-kill CP) | Dev SQLite only |
 | **COMP shop 6015+ scratch shops** | Seed stops at 6014 |
 | **Dev news posts** beyond Hello world | Seed is `content/news.ts` only |
+| **Discord webhook URLs** / notification toggles | Live only in `website-data` `site_settings` or host `.env` — never bake into Hub images |
+| **rclone.conf** / cold backup archives | `deploy/backups/` gitignored + excluded from release zip |
+| **COMP_ANNOUNCE_*** real passwords | Install defaults are `admin` / `admin123`; live realms keep their own `.env` |
+| **Recovery snapshots** | Operator-created under `data/releases/recovery/` only |
 
 ## Where it lands
 
