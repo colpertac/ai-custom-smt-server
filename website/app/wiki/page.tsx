@@ -2,12 +2,14 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { listDevils } from "@/lib/devil-catalog"
+import { listSkills } from "@/lib/skill-catalog"
 import { countWikiItems, countWikiCatalog } from "@/lib/wiki-catalog"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WikiPageHeader } from "@/features/wiki/components/WikiShell"
 import {
   WIKI_CATEGORY_META,
   WIKI_DEMONS_META,
+  WIKI_SKILLS_META,
 } from "@/features/wiki/wiki-nav"
 
 export const metadata: Metadata = {
@@ -17,6 +19,7 @@ export const metadata: Metadata = {
 export default function WikiIndexPage() {
   const total = countWikiCatalog()
   const demonCount = listDevils().length
+  const skillCount = listSkills().length
 
   return (
     <div className="space-y-10">
@@ -52,6 +55,18 @@ export default function WikiIndexPage() {
               className="text-gold-dim hover:text-gold-hot"
             >
               Demons
+            </Link>
+            .
+          </li>
+          <li>
+            <span className="font-medium text-foreground">Skills</span> lists
+            CSkillData IDs for GM{" "}
+            <code className="text-foreground">@skill</code> — see{" "}
+            <Link
+              href="/wiki/skills"
+              className="text-gold-dim hover:text-gold-hot"
+            >
+              Skills
             </Link>
             .
           </li>
@@ -100,6 +115,14 @@ export default function WikiIndexPage() {
               title={WIKI_DEMONS_META.title}
               blurb={WIKI_DEMONS_META.blurb}
               count={demonCount}
+            />
+          </li>
+          <li>
+            <CategoryCard
+              href={WIKI_SKILLS_META.href}
+              title={WIKI_SKILLS_META.title}
+              blurb={WIKI_SKILLS_META.blurb}
+              count={skillCount}
             />
           </li>
         </ul>

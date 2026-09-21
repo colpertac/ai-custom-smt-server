@@ -1,9 +1,9 @@
-"""Export live wiki item/enchant/demon catalogs from uploaded BinaryData.
+"""Export live wiki item/enchant/demon/skill catalogs from uploaded BinaryData.
 
-Writes {runtime}/wiki/{items,enchants,devils}.json for the website to prefer
-over baked website content. When the website tree is available, also mirrors
-those files into the baked catalog so client fallbacks stay in sync after
-admin wiki regen.
+Writes {runtime}/wiki/{items,enchants,devils,skills}.json for the website to
+prefer over baked website content. When the website tree is available, also
+mirrors those files into the baked catalog so client fallbacks stay in sync
+after admin wiki regen.
 """
 
 from __future__ import annotations
@@ -111,6 +111,10 @@ def wiki_devils_path(runtime: Path) -> Path:
     return wiki_dir(runtime) / "devils.json"
 
 
+def wiki_skills_path(runtime: Path) -> Path:
+    return wiki_dir(runtime) / "skills.json"
+
+
 def _baked_wiki_dir() -> Path | None:
     """Repo website/content/wiki when present (local / mounted ops)."""
     candidate = Path(__file__).resolve().parent.parent / "website" / "content" / "wiki"
@@ -128,6 +132,7 @@ def _sync_baked_wiki_catalogs(
     items_payload: dict[str, Any],
     enchants_payload: dict[str, Any],
     devils_payload: dict[str, Any] | None = None,
+    skills_payload: dict[str, Any] | None = None,
 ) -> bool:
     """Mirror runtime wiki JSON into the Next.js bundled catalog when possible.
 
@@ -140,6 +145,8 @@ def _sync_baked_wiki_catalogs(
         return False
     _atomic_write_json(baked / "items.json", items_payload)
     _atomic_write_json(baked / "enchants.json", enchants_payload)
+    if skills_payload is not None:
+        _atomic_write_json(baked / "skills.json", skills_payload)
     if devils_payload is not None:
         armory = _baked_armory_dir()
         if armory is not None:
@@ -277,8 +284,8 @@ def _resist_display(res: int, nra: int) -> str:
     return text
 
 
-def _load_devil_icon_map(cicon_tsv: Path | None) -> dict[int, str]:
-    """CIconData_Devil: icon key → asset basename (e.g. icon_D1_05_005a)."""
+def _load_cicon_value_map(cicon_tsv: Path | None) -> dict[int, str]:
+    """CIconData_*: icon key → asset basename (e.g. icon_SD01_0002a)."""
     if cicon_tsv is None or not cicon_tsv.is_file():
         return {}
     out: dict[int, str] = {}
@@ -291,6 +298,424 @@ def _load_devil_icon_map(cicon_tsv: Path | None) -> dict[int, str]:
                 continue
             out[int(raw_id)] = value
     return out
+
+
+def _load_devil_icon_map(cicon_tsv: Path | None) -> dict[int, str]:
+    """CIconData_Devil: icon key → asset basename (e.g. icon_D1_05_005a)."""
+    return _load_cicon_value_map(cicon_tsv)
+
+
+# Skill affinity IDs match CorrectTbl RES_* offset from RES_DEFAULT (26).
+# See SkillManager.cpp RES_OFFSET and shared.xml MiCorrectTbl.
+SKILL_AFFINITY: dict[int, tuple[str, str]] = {
+    0: ("none", "—"),
+    1: ("weapon", "Weapon"),
+    2: ("slash", "Slash"),
+    3: ("charge", "Thrust"),
+    4: ("blunt", "Blunt"),
+    5: ("gun", "Gun"),
+    6: ("pierce", "Pierce"),
+    7: ("spread", "Spread"),
+    8: ("fire", "Fire"),
+    9: ("ice", "Ice"),
+    10: ("elec", "Electric"),
+    11: ("almighty", "Almighty"),
+    12: ("force", "Force"),
+    13: ("expel", "Expel"),
+    14: ("death", "Death"),
+    15: ("heal", "Heal"),
+    16: ("support", "Support"),
+    17: ("magicforce", "Magic"),
+    18: ("nerve", "Nerve"),
+    19: ("mind", "Mind"),
+    20: ("word", "Word"),
+    21: ("special", "Special"),
+    22: ("suicide", "Suicide"),
+}
+
+SKILL_CATEGORY: dict[int, str] = {
+    0: "Passive",
+    1: "Active",
+    2: "Switch",
+}
+
+# inheritanceRestriction bit index → display (8 is the common "Impossible").
+SKILL_INHERITANCE: dict[int, str] = {
+    0: "Possible",
+    8: "Impossible",
+}
+
+SKILL_AREA_TYPE: dict[str, str] = {
+    "NONE": "—",
+    "TARGET_RADIUS": "Target radius",
+    "STRAIGHT_LINE": "Straight line",
+    "SOURCE_RADIUS": "Surroundings",
+    "FRONT_1": "Front",
+    "FRONT_2": "Front",
+    "FRONT_3": "Front",
+    "SOURCE": "Self",
+    "SOURCE_RADIUS2": "Surroundings",
+}
+
+_COST_ENTRY_RX = re.compile(
+    r"type:\s*([A-Z_]+).*?cost:\s*(-?\d+)",
+    re.S,
+)
+_STATUS_ENTRY_RX = re.compile(
+    r"statusID:\s*(\d+).*?successRate:\s*(-?\d+)",
+    re.S,
+)
+_SKILL_ID_BRACE_RX = re.compile(r"\{\s*(\d+)\s*\}")
+_ACQ_ENTRY_RX = re.compile(r"ID:\s*(\d+)\s*,\s*level:\s*(\d+)")
+
+
+def _affinity_fields(affinity_id: int) -> tuple[int, str | None, str | None]:
+    key, label = SKILL_AFFINITY.get(affinity_id, (None, None))
+    if key is None or key == "none":
+        return affinity_id, None, None
+    return affinity_id, key, label
+
+
+def _title_enum(raw: str) -> str:
+    text = (raw or "").strip()
+    if not text or text == "NONE":
+        return "—"
+    return text.replace("_", " ").title()
+
+
+def _ms_to_seconds(raw: str) -> float | None:
+    try:
+        ms = int((raw or "0").strip() or "0")
+    except ValueError:
+        return None
+    if ms <= 0:
+        return 0.0
+    return round(ms / 1000.0, 3)
+
+
+def _format_seconds(sec: float | None) -> str | None:
+    if sec is None:
+        return None
+    if sec == 0:
+        return "0 seconds"
+    text = f"{sec:g}"
+    return f"{text} second" if sec == 1 else f"{text} seconds"
+
+
+def _parse_costs(blob: str) -> str | None:
+    parts: list[str] = []
+    for match in _COST_ENTRY_RX.finditer(blob or ""):
+        kind = match.group(1)
+        try:
+            amount = int(match.group(2))
+        except ValueError:
+            continue
+        if amount == 0 and kind == "NONE":
+            continue
+        if kind in {"MP", "HP", "CP"}:
+            parts.append(f"{amount} {kind}")
+        elif kind == "PERCENT_MP":
+            parts.append(f"{amount}% MP")
+        elif kind == "PERCENT_HP":
+            parts.append(f"{amount}% HP")
+        else:
+            parts.append(f"{amount} {kind.replace('_', ' ').title()}")
+    if not parts:
+        return None
+    return ", ".join(parts)
+
+
+def _load_status_names(cstatus_tsv: Path | None) -> dict[int, str]:
+    if cstatus_tsv is None or not cstatus_tsv.is_file():
+        return {}
+    out: dict[int, str] = {}
+    with cstatus_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or row.get("id") or "").strip()
+            name = (row.get("name") or "").strip()
+            if raw_id.isdigit() and name:
+                out[int(raw_id)] = name
+    return out
+
+
+def _parse_effects(
+    blob: str, status_names: dict[int, str]
+) -> list[dict[str, Any]]:
+    effects: list[dict[str, Any]] = []
+    for match in _STATUS_ENTRY_RX.finditer(blob or ""):
+        status_id = int(match.group(1))
+        rate = int(match.group(2))
+        if status_id <= 0:
+            continue
+        effects.append(
+            {
+                "statusId": status_id,
+                "name": status_names.get(status_id) or f"Status {status_id}",
+                "successRate": rate,
+            }
+        )
+    return effects
+
+
+def _format_effects(effects: list[dict[str, Any]]) -> str | None:
+    if not effects:
+        return None
+    return ", ".join(
+        f"{e['name']} ({e['successRate']}%)" for e in effects
+    )
+
+
+def _load_skill_detail_rows(skill_tsv: Path | None) -> dict[int, dict[str, str]]:
+    if skill_tsv is None or not skill_tsv.is_file():
+        return {}
+    out: dict[int, dict[str, str]] = {}
+    with skill_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("id") or row.get("ID") or "").strip()
+            if not raw_id.isdigit():
+                continue
+            out[int(raw_id)] = row
+    return out
+
+
+def _build_learned_by_index(
+    devil_tsv: Path | None,
+) -> dict[int, list[dict[str, Any]]]:
+    """skillId → [{demonId, name, level|null}] from DevilData innate + acquisition.
+
+    Costume clones (same name as stock baseDemonID) are dropped; named variants kept.
+    """
+    if devil_tsv is None or not devil_tsv.is_file():
+        return {}
+
+    # First pass: all names by id (for +10000 costume clone detection)
+    names_by_id: dict[int, str] = {}
+    rows: list[dict[str, str]] = []
+    with devil_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or "").strip()
+            name = (row.get("name") or "").strip()
+            if not raw_id.isdigit() or not name:
+                continue
+            demon_id = int(raw_id)
+            names_by_id[demon_id] = name
+            rows.append(row)
+
+    by_skill: dict[int, dict[tuple[str, int | None], dict[str, Any]]] = {}
+
+    def add_learner(
+        skill_id: int, demon_id: int, demon_name: str, level: int | None
+    ) -> None:
+        bucket = by_skill.setdefault(skill_id, {})
+        key = (demon_name.lower(), level)
+        existing = bucket.get(key)
+        if existing is None or demon_id < existing["demonId"]:
+            bucket[key] = {
+                "demonId": demon_id,
+                "name": demon_name,
+                "level": level,
+            }
+
+    for row in rows:
+        demon_id = int((row.get("ID") or "0").strip())
+        name = (row.get("name") or "").strip()
+        # Drop +10000 costume clones that mirror a lower-id form of the same name.
+        mirror_id = demon_id - 10000
+        if mirror_id > 0 and names_by_id.get(mirror_id) == name:
+            continue
+
+        for match in _SKILL_ID_BRACE_RX.finditer(row.get("skills") or ""):
+            sid = int(match.group(1))
+            if sid <= 0:
+                continue
+            add_learner(sid, demon_id, name, None)
+
+        for match in _ACQ_ENTRY_RX.finditer(row.get("acquisitionSkills") or ""):
+            sid = int(match.group(1))
+            level = int(match.group(2))
+            if sid <= 0 or level <= 0:
+                continue
+            add_learner(sid, demon_id, name, level)
+
+    out: dict[int, list[dict[str, Any]]] = {}
+    for sid, bucket in by_skill.items():
+        learners = list(bucket.values())
+        learners.sort(
+            key=lambda e: (
+                e["level"] is not None,
+                e["level"] or 0,
+                e["name"].lower(),
+                e["demonId"],
+            )
+        )
+        out[sid] = learners
+    return out
+
+
+def build_skills_payload(
+    cskill_tsv: Path,
+    *,
+    cicon_tsv: Path | None = None,
+    skill_tsv: Path | None = None,
+    cstatus_tsv: Path | None = None,
+    devil_tsv: Path | None = None,
+    icons_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Names/icons from CSkillData; combat detail from SkillData; learnedBy from DevilData."""
+    icon_by_id = _load_cicon_value_map(cicon_tsv)
+    detail_by_id = _load_skill_detail_rows(skill_tsv)
+    status_names = _load_status_names(cstatus_tsv)
+    learned_by = _build_learned_by_index(devil_tsv)
+    skills: list[dict[str, Any]] = []
+
+    with cskill_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or "").strip()
+            if not raw_id.isdigit():
+                continue
+            name = (row.get("name") or "").strip()
+            if not name:
+                continue
+            skill_id = int(raw_id)
+            try:
+                icon_id = int((row.get("iconID") or "0").strip() or "0")
+            except ValueError:
+                icon_id = 0
+            icon_asset = icon_by_id.get(icon_id) if icon_id > 0 else None
+            icon_src = (
+                f"/wiki/skill-icons/{icon_asset}.png" if icon_asset else None
+            )
+            if (
+                icon_asset
+                and icons_dir is not None
+                and not (icons_dir / f"{icon_asset}.png").is_file()
+            ):
+                icon_src = None
+
+            detail = detail_by_id.get(skill_id, {})
+            try:
+                affinity_id = int((detail.get("affinity") or "0").strip() or "0")
+            except ValueError:
+                affinity_id = 0
+            aff_id, aff_key, aff_label = _affinity_fields(affinity_id)
+
+            try:
+                main_cat = int(
+                    (detail.get("mainCategory") or "0").strip() or "0"
+                )
+            except ValueError:
+                main_cat = 0
+            category_label = SKILL_CATEGORY.get(main_cat, f"Category {main_cat}")
+
+            action_type = _title_enum(detail.get("actionType") or "")
+            dependency = _title_enum(detail.get("dependencyType") or "")
+            cost_label = _parse_costs(detail.get("costs") or "")
+
+            try:
+                inherit_id = int(
+                    (detail.get("inheritanceRestriction") or "0").strip() or "0"
+                )
+            except ValueError:
+                inherit_id = 0
+            inheritance = SKILL_INHERITANCE.get(
+                inherit_id, f"Restricted #{inherit_id}"
+            )
+
+            effects = _parse_effects(detail.get("addStatuses") or "", status_names)
+            effect_label = _format_effects(effects)
+
+            try:
+                modifier = int((detail.get("modifier1") or "0").strip() or "0")
+            except ValueError:
+                modifier = 0
+
+            area_raw = (detail.get("areaType") or "NONE").strip() or "NONE"
+            area_label = SKILL_AREA_TYPE.get(area_raw, _title_enum(area_raw))
+
+            try:
+                aoe_range = int((detail.get("aoeRange") or "0").strip() or "0")
+            except ValueError:
+                aoe_range = 0
+
+            charge_sec = _ms_to_seconds(detail.get("chargeTime") or "0")
+            cooldown_sec = _ms_to_seconds(detail.get("cooldownTime") or "0")
+
+            try:
+                use_count = int((detail.get("useCount") or "0").strip() or "0")
+            except ValueError:
+                use_count = 0
+            try:
+                knockback = int((detail.get("modifier") or "0").strip() or "0")
+            except ValueError:
+                knockback = 0
+            try:
+                knockback_dist = int(
+                    (detail.get("distance") or "0").strip() or "0"
+                )
+            except ValueError:
+                knockback_dist = 0
+
+            entry: dict[str, Any] = {
+                "id": skill_id,
+                "name": name,
+                "description": (row.get("desc") or "").strip(),
+                "affinity": aff_id,
+                "affinityKey": aff_key,
+                "affinityLabel": aff_label,
+                "icon": icon_id,
+                "iconAsset": icon_asset,
+                "iconSrc": icon_src,
+                "category": main_cat,
+                "categoryLabel": category_label,
+                "actionType": action_type if action_type != "—" else None,
+                "cost": cost_label,
+                "inheritance": inheritance,
+                "inheritanceRestriction": inherit_id,
+                "effects": effects,
+                "effectLabel": effect_label,
+                "modifier": modifier,
+                "stat": dependency if dependency != "—" else None,
+                "aoeType": area_label if area_label != "—" else None,
+                "aoeRange": aoe_range,
+                "incantationSec": charge_sec,
+                "incantation": _format_seconds(charge_sec),
+                "cooldownSec": cooldown_sec,
+                "cooldown": _format_seconds(cooldown_sec),
+                "stack": use_count,
+                "knockback": knockback,
+                "knockbackDistance": knockback_dist,
+                "learnedBy": learned_by.get(skill_id, []),
+            }
+            skills.append(entry)
+
+    skills.sort(key=lambda s: s["id"])
+    return {
+        "source": "BinaryData/Client/CSkillData.bin",
+        "namesSource": "BinaryData/Client/CSkillData.bin (flatten)",
+        "affinitySource": (
+            "BinaryData/Shield/SkillData.sbin (flatten)"
+            if skill_tsv is not None and skill_tsv.is_file()
+            else ""
+        ),
+        "statusSource": (
+            "BinaryData/Shield/CStatusData.sbin (flatten)"
+            if cstatus_tsv is not None and cstatus_tsv.is_file()
+            else ""
+        ),
+        "learnedBySource": (
+            "BinaryData/Shield/DevilData.sbin (flatten)"
+            if devil_tsv is not None and devil_tsv.is_file()
+            else ""
+        ),
+        "iconsSource": "BinaryData/Client/CIconData_Skill.bin (flatten)",
+        "generatedAt": _now_iso(),
+        "note": "Generated from uploaded BinaryData on this server.",
+        "skills": skills,
+    }
 
 
 def _icon_asset_from_model_name(model: str) -> str | None:
@@ -1005,6 +1430,14 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
     devil_icon_bin = (
         runtime / "datastore" / "BinaryData" / "Client" / "CIconData_Devil.bin"
     )
+    cskill_bin = (
+        runtime / "datastore" / "BinaryData" / "Client" / "CSkillData.bin"
+    )
+    skill_icon_bin = (
+        runtime / "datastore" / "BinaryData" / "Client" / "CIconData_Skill.bin"
+    )
+    skill_sbin = shield / "SkillData.sbin"
+    cstatus_sbin = shield / "CStatusData.sbin"
     client_dir = runtime / "datastore" / "BinaryData" / "Client"
     cmodel_bins = [
         client_dir / "CModelData1.bin",
@@ -1249,16 +1682,128 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
         else:
             devil_note = "DevilData.sbin not present; demon catalog unchanged."
 
+        skill_note = ""
+        skill_count = 0
+        skills_payload: dict[str, Any] | None = None
+        if cskill_bin.is_file():
+            ok, detail = _run(
+                [
+                    str(bdpatch),
+                    "flatten",
+                    "cskill",
+                    str(cskill_bin),
+                    str(work / "CSkillData.tsv"),
+                ]
+            )
+            if ok and skill_icon_bin.is_file():
+                _run(
+                    [
+                        str(bdpatch),
+                        "flatten",
+                        "cicon",
+                        str(skill_icon_bin),
+                        str(work / "CIconData_Skill.tsv"),
+                    ]
+                )
+            skill_tsv_path: Path | None = None
+            if ok and skill_sbin.is_file():
+                ok_skill, detail_skill = _run(
+                    [
+                        str(decrypt),
+                        str(skill_sbin),
+                        str(work / "SkillData.plain.bin"),
+                    ]
+                )
+                if ok_skill:
+                    ok_skill, detail_skill = _run(
+                        [
+                            str(bdpatch),
+                            "flatten",
+                            "skill",
+                            str(work / "SkillData.plain.bin"),
+                            str(work / "SkillData.tsv"),
+                        ]
+                    )
+                if ok_skill:
+                    skill_tsv_path = work / "SkillData.tsv"
+                else:
+                    skill_note = (
+                        f"SkillData detail export failed ({detail_skill}); "
+                        "names still available."
+                    )
+            cstatus_tsv_path: Path | None = None
+            if ok and cstatus_sbin.is_file():
+                ok_st, _ = _run(
+                    [
+                        str(decrypt),
+                        str(cstatus_sbin),
+                        str(work / "CStatusData.plain.bin"),
+                    ]
+                )
+                if ok_st:
+                    ok_st, _ = _run(
+                        [
+                            str(bdpatch),
+                            "flatten",
+                            "cstatus",
+                            str(work / "CStatusData.plain.bin"),
+                            str(work / "CStatusData.tsv"),
+                        ]
+                    )
+                if ok_st:
+                    cstatus_tsv_path = work / "CStatusData.tsv"
+            devil_tsv_for_skills: Path | None = work / "DevilData.tsv"
+            if devil_tsv_for_skills is not None and not devil_tsv_for_skills.is_file():
+                devil_tsv_for_skills = None
+            if ok:
+                baked_skill_icons = (
+                    Path(__file__).resolve().parent.parent
+                    / "website"
+                    / "public"
+                    / "wiki"
+                    / "skill-icons"
+                )
+                runtime_skill_icons = out_dir / "skill-icons"
+                skill_icons_dir = (
+                    baked_skill_icons
+                    if baked_skill_icons.is_dir()
+                    else runtime_skill_icons
+                )
+                cicon_skill = work / "CIconData_Skill.tsv"
+                skills_payload = build_skills_payload(
+                    work / "CSkillData.tsv",
+                    cicon_tsv=cicon_skill if cicon_skill.is_file() else None,
+                    skill_tsv=skill_tsv_path,
+                    cstatus_tsv=cstatus_tsv_path,
+                    devil_tsv=devil_tsv_for_skills,
+                    icons_dir=(
+                        skill_icons_dir if skill_icons_dir.is_dir() else None
+                    ),
+                )
+                skill_count = len(skills_payload["skills"])
+                _atomic_write_json(wiki_skills_path(runtime), skills_payload)
+            else:
+                skill_note = (
+                    f"Skill export failed ({detail}); "
+                    "wiki items still available."
+                )
+        else:
+            skill_note = "CSkillData.bin not present; skill catalog unchanged."
+
         baked_synced = _sync_baked_wiki_catalogs(
-            items_payload, enchants_payload, devils_payload
+            items_payload,
+            enchants_payload,
+            devils_payload,
+            skills_payload,
         )
 
-        notes = [n for n in (enchant_note, devil_note) if n]
+        notes = [n for n in (enchant_note, devil_note, skill_note) if n]
         info = {
             "detail": "; ".join(notes) or "wiki catalogs written",
             "itemCount": len(items_payload["items"]),
             "enchantCount": len(enchants_payload["enchants"]),
             "demonCount": devil_count,
+            "skillCount": skill_count,
             "outDir": str(out_dir),
             "bakedSynced": baked_synced,
         }

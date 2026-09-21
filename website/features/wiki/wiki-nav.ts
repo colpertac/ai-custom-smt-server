@@ -7,6 +7,7 @@ export const WIKI_NAV = [
   { href: "/wiki/armor", label: "Armor", prefix: "/wiki/armor" },
   { href: "/wiki/items", label: "Items", prefix: "/wiki/items" },
   { href: "/wiki/demons", label: "Demons", prefix: "/wiki/demons" },
+  { href: "/wiki/skills", label: "Skills", prefix: "/wiki/skills" },
 ] as const
 
 export const WIKI_DEMONS_META = {
@@ -14,6 +15,13 @@ export const WIKI_DEMONS_META = {
   title: "Demons",
   blurb:
     "DevilData IDs and names for GM @contract — look up Phoenix as 105, etc.",
+} as const
+
+export const WIKI_SKILLS_META = {
+  href: "/wiki/skills",
+  title: "Skills",
+  blurb:
+    "CSkillData IDs and names for GM @skill — look up Agi as 5001, etc.",
 } as const
 
 export const WIKI_CATEGORY_META: Record<

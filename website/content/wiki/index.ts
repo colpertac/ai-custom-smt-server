@@ -23,6 +23,10 @@ import type {
   WikiItemsPayload,
   WikiItemStat,
   WikiSearchOptions,
+  WikiSkill,
+  WikiSkillEffect,
+  WikiSkillLearner,
+  WikiSkillsPayload,
   WikiStatBucket,
 } from "@/content/wiki/types"
 
@@ -39,6 +43,10 @@ export type {
   WikiItemsPayload,
   WikiItemStat,
   WikiSearchOptions,
+  WikiSkill,
+  WikiSkillEffect,
+  WikiSkillLearner,
+  WikiSkillsPayload,
   WikiStatBucket,
 } from "@/content/wiki/types"
 

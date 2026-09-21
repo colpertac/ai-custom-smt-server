@@ -124,3 +124,63 @@ export type WikiSearchOptions = {
 }
 
 export type WikiCatalogSource = "runtime" | "bundled"
+
+export type WikiSkillEffect = {
+  statusId: number
+  name: string
+  successRate: number
+}
+
+export type WikiSkillLearner = {
+  demonId: number
+  name: string
+  /** null = innate / already known */
+  level: number | null
+}
+
+export type WikiSkill = {
+  id: number
+  name: string
+  description: string
+  /** SkillData.affinity (0 = none / unknown). */
+  affinity?: number
+  /** Stable key e.g. fire, elec, slash — null when none. */
+  affinityKey?: string | null
+  /** Display label e.g. Fire, Electric — null when none. */
+  affinityLabel?: string | null
+  icon: number
+  iconAsset?: string | null
+  iconSrc?: string | null
+  category?: number
+  categoryLabel?: string | null
+  actionType?: string | null
+  cost?: string | null
+  inheritance?: string | null
+  inheritanceRestriction?: number
+  effects?: WikiSkillEffect[]
+  effectLabel?: string | null
+  modifier?: number
+  stat?: string | null
+  aoeType?: string | null
+  aoeRange?: number
+  incantationSec?: number | null
+  incantation?: string | null
+  cooldownSec?: number | null
+  cooldown?: string | null
+  stack?: number
+  knockback?: number
+  knockbackDistance?: number
+  learnedBy?: WikiSkillLearner[]
+}
+
+export type WikiSkillsPayload = {
+  source: string
+  namesSource: string
+  affinitySource?: string
+  statusSource?: string
+  learnedBySource?: string
+  iconsSource?: string
+  generatedAt: string
+  note: string
+  skills: WikiSkill[]
+}

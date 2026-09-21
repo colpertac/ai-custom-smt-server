@@ -86,6 +86,17 @@ export const DEVIL_RESIST_ICON: Record<string, string> = {
   force: "wind",
   expel: "light",
   death: "dark",
+  // Skill-only affinities (wiki skills list/detail)
+  weapon: "weapon",
+  almighty: "almighty",
+  heal: "heal",
+  support: "support",
+  magicforce: "magic",
+  nerve: "nerve",
+  mind: "mind",
+  word: "word",
+  special: "special",
+  suicide: "suicide",
 }
 
 export const DEVIL_RESIST_TITLE: Record<string, string> = {
@@ -101,6 +112,16 @@ export const DEVIL_RESIST_TITLE: Record<string, string> = {
   force: "Force / Wind",
   expel: "Expel / Light",
   death: "Death / Dark",
+  weapon: "Weapon",
+  almighty: "Almighty",
+  heal: "Heal",
+  support: "Support",
+  magicforce: "Magic",
+  nerve: "Nerve",
+  mind: "Mind",
+  word: "Word",
+  special: "Special",
+  suicide: "Suicide",
 }
 
 export function devilResistKind(display: string): DevilResistKind {

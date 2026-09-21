@@ -11,6 +11,7 @@ from wiki_export import (
     build_devils_payload,
     build_enchants_payload,
     build_items_payload,
+    build_skills_payload,
     destinations_include_binarydata,
     wiki_catalog_ready,
     wiki_dir,
@@ -105,6 +106,107 @@ class WikiExportTests(unittest.TestCase):
             self.assertEqual(
                 payload["resistElems"][0:3], ["slash", "charge", "blunt"]
             )
+
+    def test_build_skills_payload_from_tsv(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp_path = Path(raw)
+            (tmp_path / "CSkillData.tsv").write_text(
+                "ID\tname\tdesc\ticonID\n"
+                "5473\tErosion Hex\tA curse that eats at enemies.\t15001\n"
+                "5001\tAgi\tFire damage.\t15002\n"
+                "2\tLife Bonus\tMAX HP +10%\t10002\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CIconData_Skill.tsv").write_text(
+                "ID\tvalue\n"
+                "15001\ticon_SD01_hex\n"
+                "15002\ticon_SD01_agi\n"
+                "10002\ticon_SD01_0002a\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "SkillData.tsv").write_text(
+                "id\tmainCategory\taffinity\tactionType\tcosts\t"
+                "inheritanceRestriction\taddStatuses\tmodifier1\t"
+                "dependencyType\tareaType\taoeRange\tchargeTime\t"
+                "cooldownTime\tuseCount\tmodifier\tdistance\n"
+                "5473\t1\t18\tSHOT\t"
+                "{ type: MP, numType: NUMERIC, cost: 10, item: 0 }\t"
+                "8\t"
+                "{ statusID: 19, maxStack: 14, minStack: 10, onKnockback: 0, "
+                "isReplace: false, successRate: 50 }, "
+                "{ statusID: 11, maxStack: 14, minStack: 10, onKnockback: 0, "
+                "isReplace: false, successRate: 45 }\t"
+                "50\tSUPPORT\tSOURCE_RADIUS\t120\t1400\t10000\t1\t0\t0\n"
+                "5001\t1\t8\tSHOT\t"
+                "{ type: MP, numType: NUMERIC, cost: 10, item: 0 }\t"
+                "8\t{}\t100\tSPELL\tNONE\t0\t0\t0\t1\t0\t0\n"
+                "2\t0\t21\tNONE\t{}\t8\t{}\t0\tNONE\tNONE\t0\t0\t0\t0\t0\t0\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "CStatusData.tsv").write_text(
+                "ID\tname\n"
+                "19\tPoison\n"
+                "11\tMuddle\n",
+                encoding="utf-8",
+            )
+            (tmp_path / "DevilData.tsv").write_text(
+                "ID\tname\tbaseDemonID\tskills\tacquisitionSkills\n"
+                "603\tMother Harlot\t603\t"
+                "{ 14 }, { 5473 }, { 254 }\t"
+                "{ ID: 0, level: 0 }\n"
+                "10603\tMother Harlot\t603\t"
+                "{ 14 }, { 5473 }, { 254 }\t"
+                "{ ID: 0, level: 0 }\n"
+                "1228\tLucifuge\t1228\t"
+                "{ 76 }, { 355 }\t"
+                "{ ID: 5473, level: 92 }, { ID: 0, level: 0 }\n"
+                "4673\tScarlet Illusion Mother Harlot\t603\t"
+                "{ 14 }, { 53 }\t"
+                "{ ID: 5473, level: 77 }, { ID: 0, level: 0 }\n",
+                encoding="utf-8",
+            )
+            icons = tmp_path / "skill-icons"
+            icons.mkdir()
+            (icons / "icon_SD01_hex.png").write_bytes(b"png")
+            (icons / "icon_SD01_agi.png").write_bytes(b"png")
+
+            payload = build_skills_payload(
+                tmp_path / "CSkillData.tsv",
+                cicon_tsv=tmp_path / "CIconData_Skill.tsv",
+                skill_tsv=tmp_path / "SkillData.tsv",
+                cstatus_tsv=tmp_path / "CStatusData.tsv",
+                devil_tsv=tmp_path / "DevilData.tsv",
+                icons_dir=icons,
+            )
+            by_id = {s["id"]: s for s in payload["skills"]}
+            hex_skill = by_id[5473]
+            self.assertEqual(hex_skill["name"], "Erosion Hex")
+            self.assertEqual(hex_skill["categoryLabel"], "Active")
+            self.assertEqual(hex_skill["affinityKey"], "nerve")
+            self.assertEqual(hex_skill["actionType"], "Shot")
+            self.assertEqual(hex_skill["cost"], "10 MP")
+            self.assertEqual(hex_skill["inheritance"], "Impossible")
+            self.assertEqual(hex_skill["effectLabel"], "Poison (50%), Muddle (45%)")
+            self.assertEqual(hex_skill["modifier"], 50)
+            self.assertEqual(hex_skill["stat"], "Support")
+            self.assertEqual(hex_skill["aoeType"], "Surroundings")
+            self.assertEqual(hex_skill["aoeRange"], 120)
+            self.assertEqual(hex_skill["incantation"], "1.4 seconds")
+            self.assertEqual(hex_skill["cooldown"], "10 seconds")
+            self.assertEqual(hex_skill["stack"], 1)
+            self.assertEqual(hex_skill["knockback"], 0)
+            learners = hex_skill["learnedBy"]
+            names = {(e["name"], e["level"]) for e in learners}
+            self.assertIn(("Mother Harlot", None), names)
+            self.assertIn(("Lucifuge", 92), names)
+            self.assertIn(("Scarlet Illusion Mother Harlot", 77), names)
+            # Costume clone of Mother Harlot dropped
+            self.assertEqual(
+                sum(1 for e in learners if e["name"] == "Mother Harlot"), 1
+            )
+            self.assertEqual(by_id[5001]["affinityKey"], "fire")
+            self.assertEqual(by_id[2]["categoryLabel"], "Passive")
+            self.assertIsNone(by_id[2]["iconSrc"])
 
     def test_build_devils_payload_icons_from_cmodel_mesh(self):
         """Icons come from CModelData.model, not 17000+demonId."""

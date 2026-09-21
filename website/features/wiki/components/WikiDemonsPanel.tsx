@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 
 import type {
   DevilAlignment,
@@ -169,7 +170,9 @@ export function WikiDemonsPanel({
 }: {
   demons: DevilCatalogEntry[]
 }) {
-  const [query, setQuery] = useState("")
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get("q")?.trim() ?? ""
+  const [query, setQuery] = useState(initialQuery)
   const [scope, setScope] = useState<VariantScope>("stock")
   const [race, setRace] = useState<string | null>(null)
   const [affinityElem, setAffinityElem] = useState<string | null>(null)

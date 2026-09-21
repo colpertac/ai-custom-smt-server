@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url"
 import bakedItems from "@/content/wiki/items.json"
 import bakedEnchants from "@/content/wiki/enchants.json"
 import bakedCompShops from "@/content/wiki/item-comp-shops.json"
+import bakedSkills from "@/content/wiki/skills.json"
 import bakedDevils from "@/content/armory/devils.json"
 import type { DevilsPayload } from "@/lib/armory-catalogs"
 import type {
@@ -12,6 +13,7 @@ import type {
   WikiCompShopSourcesPayload,
   WikiEnchantsPayload,
   WikiItemsPayload,
+  WikiSkillsPayload,
 } from "@/content/wiki/types"
 
 type CacheEntry<T> = {
@@ -23,6 +25,7 @@ type CacheEntry<T> = {
 
 let itemsCache: CacheEntry<WikiItemsPayload> | null = null
 let enchantsCache: CacheEntry<WikiEnchantsPayload> | null = null
+let skillsCache: CacheEntry<WikiSkillsPayload> | null = null
 let devilsCache: CacheEntry<DevilsPayload> | null = null
 
 const LIB_DIR = path.dirname(fileURLToPath(import.meta.url))
@@ -128,6 +131,20 @@ export function loadDevilsPayload(): {
   return { data: devilsCache.data, source: devilsCache.source }
 }
 
+/** Prefer `{runtime}/wiki/skills.json` from BinaryData export; else baked catalog. */
+export function loadSkillsPayload(): {
+  data: WikiSkillsPayload
+  source: WikiCatalogSource
+} {
+  const filePath = path.join(resolveWikiRuntimeRoot(), "wiki", "skills.json")
+  skillsCache = loadCached(
+    skillsCache,
+    filePath,
+    bakedSkills as WikiSkillsPayload
+  )
+  return { data: skillsCache.data, source: skillsCache.source }
+}
+
 export function loadWikiCompShopSources(): WikiCompShopSourcesPayload {
   return bakedCompShops as WikiCompShopSourcesPayload
 }
@@ -136,5 +153,6 @@ export function loadWikiCompShopSources(): WikiCompShopSourcesPayload {
 export function clearWikiCatalogCache(): void {
   itemsCache = null
   enchantsCache = null
+  skillsCache = null
   devilsCache = null
 }

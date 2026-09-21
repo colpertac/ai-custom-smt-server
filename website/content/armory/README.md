@@ -19,8 +19,12 @@ blank. Do not key icons off `17000 + demonId` in `CIconData_Devil`.
 
 Stats are base CorrectTbl values at the demon’s `baseLevel` (before growth).
 
-Skill display names are not in Shield `SkillData` (no CDATA names); armory
-shows skill IDs until a message-table extract exists.
+Skill display names come from Client `CSkillData.bin` via wiki export
+(`website/content/wiki/skills.json`, `{runtime}/wiki/skills.json`). Skill UI
+icons are generated locally from `CSkillData.iconID` → `CIconData_Skill.value`
+→ `Interface/tga/{value}.tga` via `scripts/wiki-export-skill-icons.sh` into
+`website/public/wiki/skill-icons/` (gitignored — proprietary client assets;
+never commit). Missing TGAs leave the icon blank.
 
 Expertise labels live in `website/lib/armory-catalogs.ts` (Constants.h.in).
 
