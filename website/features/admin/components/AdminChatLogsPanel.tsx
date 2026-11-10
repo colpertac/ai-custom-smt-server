@@ -33,6 +33,24 @@ const CHAT_TYPE_LABEL: Record<number, string> = {
 
 const MAX_HOURS = 8760
 
+type RangePreset = "1h" | "24h" | "7d" | "30d" | "all" | "custom"
+
+const RANGE_PRESETS: {
+  id: RangePreset
+  label: string
+  hours: number | null
+}[] = [
+  { id: "1h", label: "Last hour", hours: 1 },
+  { id: "24h", label: "Last 24 hours", hours: 24 },
+  { id: "7d", label: "Last 7 days", hours: 168 },
+  { id: "30d", label: "Last 30 days", hours: 720 },
+  { id: "all", label: "All time", hours: null },
+  { id: "custom", label: "Custom hours…", hours: null },
+]
+
+const SELECT_CLASS =
+  "flex h-(--density-control-h) w-full min-w-0 rounded-none border border-border bg-background/70 px-(--density-control-px) py-1 text-sm outline-none focus-visible:border-gold-dim focus-visible:ring-2 focus-visible:ring-ring/30"
+
 function formatTs(ts: number): string {
   if (!ts) return "—"
   return new Date(ts * 1000).toLocaleString()
@@ -42,9 +60,18 @@ function chatTypeLabel(t: number): string {
   return CHAT_TYPE_LABEL[t] ?? String(t)
 }
 
+function parseCustomHours(text: string): number | null {
+  const trimmed = text.trim()
+  if (!trimmed) return null
+  const n = Number(trimmed)
+  if (!Number.isFinite(n) || !Number.isInteger(n) || n < 1) return null
+  return Math.min(MAX_HOURS, n)
+}
+
 export function AdminChatLogsPanel() {
   const [characterName, setCharacterName] = useState("")
-  const [hours, setHours] = useState(24)
+  const [rangePreset, setRangePreset] = useState<RangePreset>("24h")
+  const [customHoursText, setCustomHoursText] = useState("24")
   const [logs, setLogs] = useState<ChatLog[]>([])
   const [nameOptions, setNameOptions] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -73,25 +100,50 @@ export function AdminChatLogsPanel() {
     }
   }, [])
 
-  const windowBounds = useCallback(() => {
+  const resolveWindow = useCallback(():
+    | { ok: true; since?: number; until: number }
+    | { ok: false; message: string } => {
     const until = Math.floor(Date.now() / 1000)
-    const clampedHours = Math.min(MAX_HOURS, Math.max(1, hours))
-    const since = until - clampedHours * 3600
-    return { since, until }
-  }, [hours])
+    if (rangePreset === "all") {
+      return { ok: true, until }
+    }
+
+    let hours: number | null = null
+    if (rangePreset === "custom") {
+      hours = parseCustomHours(customHoursText)
+      if (hours == null) {
+        return {
+          ok: false,
+          message: `Enter a whole number of hours (1–${MAX_HOURS}).`,
+        }
+      }
+    } else {
+      hours = RANGE_PRESETS.find((p) => p.id === rangePreset)?.hours ?? 24
+    }
+
+    return {
+      ok: true,
+      since: until - hours * 3600,
+      until,
+    }
+  }, [customHoursText, rangePreset])
 
   const search = useCallback(async () => {
+    const bounds = resolveWindow()
+    if (!bounds.ok) {
+      setError(bounds.message)
+      return
+    }
     setLoading(true)
     setError(null)
     try {
-      const { since, until } = windowBounds()
       const response = await api.post("admin/chat-logs", {
         json: {
           ...(characterName.trim()
             ? { characterName: characterName.trim() }
             : {}),
-          since,
-          until,
+          ...(bounds.since != null ? { since: bounds.since } : {}),
+          until: bounds.until,
           limit: 200,
         },
       })
@@ -111,20 +163,18 @@ export function AdminChatLogsPanel() {
     } finally {
       setLoading(false)
     }
-  }, [characterName, windowBounds])
+  }, [characterName, resolveWindow])
 
   const exportZip = useCallback(async () => {
     setExporting(true)
     setError(null)
     try {
-      const { since, until } = windowBounds()
+      // Export is always everyone + full retained history.
+      // Name + time range are browse-only for Search.
       const response = await api.post("admin/chat-logs/export", {
         json: {
-          ...(characterName.trim()
-            ? { characterName: characterName.trim() }
-            : {}),
-          since,
-          until,
+          since: 0,
+          until: Math.floor(Date.now() / 1000),
         },
       })
       if (!response.ok) {
@@ -150,7 +200,7 @@ export function AdminChatLogsPanel() {
     } finally {
       setExporting(false)
     }
-  }, [characterName, windowBounds])
+  }, [])
 
   useEffect(() => {
     void search()
@@ -171,17 +221,56 @@ export function AdminChatLogsPanel() {
             onEnter={() => void search()}
           />
         </Field>
-        <Field className="w-28">
-          <FieldLabel htmlFor="chat-log-hours">Hours</FieldLabel>
-          <Input
-            id="chat-log-hours"
-            type="number"
-            min={1}
-            max={MAX_HOURS}
-            value={hours}
-            onChange={(e) => setHours(Number(e.target.value) || 24)}
-          />
+        <Field className="w-44">
+          <FieldLabel htmlFor="chat-log-range">Time range</FieldLabel>
+          <select
+            id="chat-log-range"
+            className={SELECT_CLASS}
+            value={rangePreset}
+            onChange={(e) => {
+              const next = e.target.value as RangePreset
+              setRangePreset(next)
+              if (next === "custom" && !customHoursText.trim()) {
+                setCustomHoursText("24")
+              }
+            }}
+          >
+            {RANGE_PRESETS.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.label}
+              </option>
+            ))}
+          </select>
         </Field>
+        {rangePreset === "custom" ? (
+          <Field className="w-28">
+            <FieldLabel htmlFor="chat-log-hours">Hours</FieldLabel>
+            <Input
+              id="chat-log-hours"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="e.g. 168"
+              value={customHoursText}
+              onChange={(e) => {
+                const next = e.target.value
+                if (next === "" || /^\d+$/.test(next)) {
+                  setCustomHoursText(next)
+                }
+              }}
+              onBlur={() => {
+                const parsed = parseCustomHours(customHoursText)
+                if (parsed != null) setCustomHoursText(String(parsed))
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  void search()
+                }
+              }}
+            />
+          </Field>
+        ) : null}
         <Button
           type="button"
           size="sm"
@@ -204,11 +293,11 @@ export function AdminChatLogsPanel() {
       {error ? <FormAlert variant="error">{error}</FormAlert> : null}
 
       <p className="text-[0.65rem] text-muted-foreground">
-        Search shows up to 200 rows. Export zip pages past that (CSV + meta,
-        capped at 50k rows). Retention is{" "}
+        Name and time range only affect Search (up to 200 rows on screen).
+        Export zip always downloads everyone&apos;s full retained history as
+        CSV + meta (paged, capped at 50k rows). Retention is{" "}
         <code className="text-[0.65rem]">WorldSharedConfig.ChatLogRetentionDays</code>{" "}
-        (0 = keep forever). Leave the name blank to list all characters in the
-        window. Name suggestions: {nameOptions.length} characters.
+        (0 = keep forever). Name suggestions: {nameOptions.length} characters.
       </p>
 
       <div className="max-h-[32rem] overflow-auto border border-border">
