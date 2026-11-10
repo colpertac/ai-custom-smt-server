@@ -8,8 +8,9 @@ import { getWebsiteBranding } from "@/lib/site-settings-store"
 import { splitSiteName } from "@/lib/website-branding"
 
 /**
- * Styles for Qt5 WebEngine (Chromium ~69). Prefer flex/box model over gap;
- * no external fonts or JS frameworks.
+ * Styles/JS for Qt5 WebEngine (Chromium ~69). Prefer flex/box model over gap;
+ * no external fonts or JS frameworks. Keep page scripts ES2018-safe
+ * (no optional chaining / nullish coalescing).
  */
 const UPDATER_STYLES = `
 * { box-sizing: border-box; }
@@ -93,7 +94,27 @@ hr {
 .topbar {
   background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
   border-bottom: 1px solid #2a2a2a;
-  padding: 12px 18px;
+  padding: 10px 18px;
+}
+.topbar-inner {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.topbar-brand {
+  min-width: 0;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding-right: 12px;
 }
 .brand {
   font-family: Georgia, "Times New Roman", serif;
@@ -112,6 +133,56 @@ hr {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #8b93a7;
+}
+.presence {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  font-size: 8pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b93a7;
+  white-space: nowrap;
+}
+.presence-item {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-left: 14px;
+}
+.presence-item:first-child {
+  margin-left: 0;
+}
+.presence-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #5a6170;
+  vertical-align: middle;
+}
+.presence-dot.online {
+  background: #34d399;
+  box-shadow: 0 0 6px 1px rgba(52, 211, 153, 0.55);
+}
+.presence-label {
+  margin-right: 5px;
+}
+.presence-count {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12pt;
+  letter-spacing: 0.04em;
+  color: #e8ecf4;
+  font-variant-numeric: tabular-nums;
 }
 .gold-rule {
   height: 2px;
@@ -210,6 +281,47 @@ function brandLabel(): { lead: string; accent: string } {
   return splitSiteName(getWebsiteBranding().siteName)
 }
 
+const PRESENCE_POLL_MS = 30_000
+
+/** Vanilla poller for Qt WebEngine — same cadence as the React home page. */
+const UPDATER_PRESENCE_SCRIPT = `
+(function () {
+  var onlineEl = document.getElementById("presence-online");
+  var offlineEl = document.getElementById("presence-offline");
+  if (!onlineEl || !offlineEl) return;
+
+  function formatCount(n) {
+    if (n == null || typeof n !== "number" || !isFinite(n)) return "—";
+    return String(n);
+  }
+
+  function apply(players) {
+    var online = players && players.online != null ? players.online : null;
+    var offline = players && players.offline != null ? players.offline : null;
+    onlineEl.textContent = formatCount(online);
+    offlineEl.textContent = formatCount(offline);
+  }
+
+  function refresh() {
+    fetch("/api/status", { credentials: "same-origin", cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (body) {
+        if (!body || body.success !== true || !body.data) return;
+        apply(body.data.players || null);
+      })
+      .catch(function () {
+        /* keep last known counts */
+      });
+  }
+
+  refresh();
+  setInterval(refresh, ${PRESENCE_POLL_MS});
+})();
+`.trim()
+
 function pageShell(title: string, body: string): string {
   const brand = brandLabel()
   const brandHtml =
@@ -227,12 +339,29 @@ function pageShell(title: string, body: string): string {
 </head>
 <body>
   <div class="topbar">
-    <p class="brand">${brandHtml}</p>
-    <p class="brand-sub">Server news</p>
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <p class="brand">${brandHtml}</p>
+        <p class="brand-sub">Server news</p>
+      </div>
+      <div class="presence" aria-live="polite">
+        <span class="presence-item">
+          <span class="presence-dot online" aria-hidden="true"></span>
+          <span class="presence-label">Online</span>
+          <span class="presence-count" id="presence-online">—</span>
+        </span>
+        <span class="presence-item">
+          <span class="presence-dot" aria-hidden="true"></span>
+          <span class="presence-label">Offline</span>
+          <span class="presence-count" id="presence-offline">—</span>
+        </span>
+      </div>
+    </div>
   </div>
   <div class="wrap">
 ${body}
   </div>
+  <script type="text/javascript">${UPDATER_PRESENCE_SCRIPT}</script>
 </body>
 </html>
 `
