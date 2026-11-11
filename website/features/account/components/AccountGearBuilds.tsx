@@ -10,6 +10,8 @@ type BuildSummary = {
   id: string
   name: string
   shareToken: string | null
+  isPublished?: boolean
+  publishedAt?: number | null
   updatedAt: number
   createdAt: number
 }
@@ -48,7 +50,7 @@ export function AccountGearBuilds() {
     void refresh()
   }, [refresh])
 
-  const share = async (id: string) => {
+  const copyLink = async (id: string) => {
     setBusyId(id)
     setError(null)
     try {
@@ -60,7 +62,7 @@ export function AccountGearBuilds() {
         message?: string
       }
       if (!res.ok || !json.data) {
-        setError(json.message ?? "Share failed")
+        setError(json.message ?? "Copy link failed")
         return
       }
       const url = `${window.location.origin}${json.data.path}`
@@ -69,11 +71,46 @@ export function AccountGearBuilds() {
         setCopiedId(id)
         window.setTimeout(() => setCopiedId(null), 2500)
       } catch {
-        setError(`Share URL: ${url}`)
+        setError(`Link: ${url}`)
       }
       await refresh()
     } catch {
-      setError("Share failed")
+      setError("Copy link failed")
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const togglePublish = async (id: string, published: boolean) => {
+    setBusyId(id)
+    setError(null)
+    try {
+      const res = await fetch(`/api/builder/builds/${id}/publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: !published }),
+      })
+      const json = (await res.json()) as {
+        data?: { path?: string | null; isPublished?: boolean }
+        message?: string
+      }
+      if (!res.ok) {
+        setError(json.message ?? "Publish failed")
+        return
+      }
+      if (json.data?.isPublished && json.data.path) {
+        const url = `${window.location.origin}${json.data.path}`
+        try {
+          await navigator.clipboard.writeText(url)
+          setCopiedId(id)
+          window.setTimeout(() => setCopiedId(null), 2500)
+        } catch {
+          /* ignore */
+        }
+      }
+      await refresh()
+    } catch {
+      setError("Publish failed")
     } finally {
       setBusyId(null)
     }
@@ -96,22 +133,40 @@ export function AccountGearBuilds() {
         <h2 className="font-heading text-sm tracking-[0.15em] text-gold uppercase">
           Gear builds
         </h2>
-        <Link
-          href="/builder"
-          className={cn(
-            buttonVariants({ variant: "outline", size: "xs" }),
-            "no-underline uppercase tracking-wider"
-          )}
-        >
-          Open builder
-        </Link>
+        <div className="flex flex-wrap gap-1">
+          <Link
+            href="/builder/community"
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "xs" }),
+              "no-underline uppercase tracking-wider"
+            )}
+          >
+            Community
+          </Link>
+          <Link
+            href="/builder"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "xs" }),
+              "no-underline uppercase tracking-wider"
+            )}
+          >
+            Open builder
+          </Link>
+        </div>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
         Saved loadouts from the{" "}
         <Link href="/builder" className="text-gold-dim hover:text-gold-hot">
           gear builder
         </Link>
-        .
+        . Publish lists a build in the{" "}
+        <Link
+          href="/builder/community"
+          className="text-gold-dim hover:text-gold-hot"
+        >
+          community gallery
+        </Link>
+        . Copy link makes an unlisted URL without listing it.
       </p>
 
       {loading ? (
@@ -130,10 +185,16 @@ export function AccountGearBuilds() {
               className="flex flex-wrap items-center gap-2 px-3 py-2.5 text-sm"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-[#c9a0ff]">{b.name}</p>
+                <p className="truncate font-medium text-[#c9a0ff]">
+                  {b.name}
+                  {b.isPublished ? (
+                    <span className="ml-2 text-[10px] font-normal tracking-wide text-emerald-300/90 uppercase">
+                      Published
+                    </span>
+                  ) : null}
+                </p>
                 <p className="text-[11px] text-muted-foreground">
                   Updated {new Date(b.updatedAt).toLocaleString()}
-                  {b.shareToken ? " · shareable" : ""}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-1">
@@ -149,11 +210,20 @@ export function AccountGearBuilds() {
                 <Button
                   type="button"
                   size="xs"
+                  variant={b.isPublished ? "ghost" : "outline"}
+                  disabled={busyId === b.id}
+                  onClick={() => void togglePublish(b.id, Boolean(b.isPublished))}
+                >
+                  {b.isPublished ? "Unpublish" : "Publish"}
+                </Button>
+                <Button
+                  type="button"
+                  size="xs"
                   variant="ghost"
                   disabled={busyId === b.id}
-                  onClick={() => void share(b.id)}
+                  onClick={() => void copyLink(b.id)}
                 >
-                  {copiedId === b.id ? "Copied" : "Share"}
+                  {copiedId === b.id ? "Copied" : "Copy link"}
                 </Button>
                 <Button
                   type="button"

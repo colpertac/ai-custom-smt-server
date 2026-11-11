@@ -6,6 +6,7 @@ import { ArmoryHero } from "@/features/armory/components/ArmoryHero"
 import { ArmoryLncGauge } from "@/features/armory/components/ArmoryLncGauge"
 import { CombatBonusesStrip } from "@/features/armory/components/CombatBonusesStrip"
 import { DemonBoostIndicator } from "@/features/armory/components/DemonBoostIndicator"
+import { buttonVariants } from "@/components/ui/button"
 import type {
   ArmoryEquipmentSlot,
   ArmoryExpertise,
@@ -204,20 +205,31 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
   return (
     <div className="w-full space-y-4">
       <header className="border-2 border-border bg-muted/20 px-4 py-3">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <h1 className="font-heading text-3xl font-semibold tracking-[0.1em] text-[#e8ecf4] uppercase">
-            {profile.name}
-          </h1>
-          <GenderIcon gender={profile.appearance.gender} />
-          {level != null ? (
-            <span className="text-sm text-gold-dim">Lv {level}</span>
-          ) : null}
-          {profile.clan ? (
-            <span className="text-sm text-muted-foreground">
-              &lt;{profile.clan.name}&gt;
-              {profile.clan.level > 0 ? ` · Clan Lv ${profile.clan.level}` : ""}
-            </span>
-          ) : null}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <h1 className="font-heading text-3xl font-semibold tracking-[0.1em] text-[#e8ecf4] uppercase">
+              {profile.name}
+            </h1>
+            <GenderIcon gender={profile.appearance.gender} />
+            {level != null ? (
+              <span className="text-sm text-gold-dim">Lv {level}</span>
+            ) : null}
+            {profile.clan ? (
+              <span className="text-sm text-muted-foreground">
+                &lt;{profile.clan.name}&gt;
+                {profile.clan.level > 0 ? ` · Clan Lv ${profile.clan.level}` : ""}
+              </span>
+            ) : null}
+          </div>
+          <Link
+            href={`/builder?armory=${encodeURIComponent(profile.name)}`}
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "no-underline uppercase tracking-wider"
+            )}
+          >
+            Open in gear builder
+          </Link>
         </div>
         {profile.title > 0 ? (
           <p className="mt-1 text-xs text-muted-foreground">

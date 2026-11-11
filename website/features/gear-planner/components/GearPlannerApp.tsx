@@ -1,15 +1,21 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
 } from "react"
 
 import type { WikiItem } from "@/content/wiki/types"
+import { useSessionUser } from "@/features/auth/hooks"
+import { BuildLikeButton } from "@/features/gear-planner/components/BuildLikeButton"
 import { GearBuildsPanel } from "@/features/gear-planner/components/GearBuildsPanel"
 import { GearBuilderBuyPanel } from "@/features/gear-planner/components/GearBuilderBuyPanel"
 import { GearCombatMatrix } from "@/features/gear-planner/components/GearCombatMatrix"
@@ -24,7 +30,7 @@ import {
   GearSlotSidebar,
   type SidebarFlashTarget,
 } from "@/features/gear-planner/components/GearSlotSidebar"
-import { CircleHelp, Redo2, Undo2, WandSparkles } from "lucide-react"
+import { CircleHelp, Loader2, Redo2, Undo2, WandSparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -165,32 +171,73 @@ const ATTR_FIELDS: Array<{ key: keyof PlannerAttrs; label: string }> = [
   { key: "level", label: "Lv" },
 ]
 
+function PlannerLoading() {
+  return (
+    <div className="flex h-full items-center justify-center p-6 text-sm text-muted-foreground">
+      Loading planner…
+    </div>
+  )
+}
+
 export function GearPlannerApp({
   initialSharePayload,
+  shareToken,
+  shareName,
+  shareBuildId,
+  shareLikeCount,
+  shareLikedByMe,
 }: {
   /** Shared build loaded from `/builder/s/[token]`. */
   initialSharePayload?: unknown
+  /** Share token for Clone on shared pages. */
+  shareToken?: string
+  shareName?: string
+  shareBuildId?: string
+  shareLikeCount?: number
+  shareLikedByMe?: boolean
 } = {}) {
   const isClient = useIsClient()
-  if (!isClient) {
-    return (
-      <div className="flex h-full items-center justify-center p-6 text-sm text-muted-foreground">
-        Loading planner…
-      </div>
-    )
-  }
-  return <GearPlannerAppClient initialSharePayload={initialSharePayload} />
+  if (!isClient) return <PlannerLoading />
+  return (
+    <Suspense fallback={<PlannerLoading />}>
+      <GearPlannerAppClient
+        initialSharePayload={initialSharePayload}
+        shareToken={shareToken}
+        shareName={shareName}
+        shareBuildId={shareBuildId}
+        shareLikeCount={shareLikeCount}
+        shareLikedByMe={shareLikedByMe}
+      />
+    </Suspense>
+  )
 }
 
 function GearPlannerAppClient({
   initialSharePayload,
+  shareToken,
+  shareName,
+  shareBuildId,
+  shareLikeCount = 0,
+  shareLikedByMe = false,
 }: {
   initialSharePayload?: unknown
+  shareToken?: string
+  shareName?: string
+  shareBuildId?: string
+  shareLikeCount?: number
+  shareLikedByMe?: boolean
 }) {
-  const accountBuildId = useMemo(() => {
-    if (typeof window === "undefined") return null
-    return new URLSearchParams(window.location.search).get("build")
-  }, [])
+  const { data: session } = useSessionUser()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const accountBuildId =
+    initialSharePayload != null ? null : searchParams.get("build")
+  const armoryImportName = useMemo(() => {
+    if (initialSharePayload != null) return null
+    if (searchParams.get("build")) return null
+    const name = searchParams.get("armory")?.trim()
+    return name || null
+  }, [initialSharePayload, searchParams])
 
   const stored = useMemo(() => {
     if (initialSharePayload != null) {
@@ -214,10 +261,13 @@ function GearPlannerAppClient({
     useState<RecommendStatFilter>("cooldown")
   const [recommendSlot, setRecommendSlot] = useState<EquipSlotKey | "">("")
   const [dropError, setDropError] = useState<string | null>(null)
-  const [importName, setImportName] = useState("")
+  const [importName, setImportName] = useState(armoryImportName ?? "")
   const [importBusy, setImportBusy] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
   const [shareBanner] = useState(initialSharePayload != null)
+  const [cloneBusy, setCloneBusy] = useState(false)
+  const [cloneError, setCloneError] = useState<string | null>(null)
+  const armoryAutoImportedFor = useRef<string | null>(null)
   const [accountBuildMeta, setAccountBuildMeta] = useState<{
     id: string
     name: string
@@ -343,7 +393,7 @@ function GearPlannerAppClient({
         }
         applyStored(json.data.payload)
         setAccountBuildMeta({ id: json.data.id, name: json.data.name })
-        window.history.replaceState({}, "", "/builder")
+        router.replace("/builder")
       })
       .catch(() => {
         if (!cancelled) setAccountBuildError("Could not load that build")
@@ -351,7 +401,7 @@ function GearPlannerAppClient({
     return () => {
       cancelled = true
     }
-  }, [accountBuildId, initialSharePayload, applyStored])
+  }, [accountBuildId, initialSharePayload, applyStored, router])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -392,73 +442,112 @@ function GearPlannerAppClient({
     setDropError(null)
   }, [commitLoadout])
 
-  const importFromArmory = useCallback(async () => {
-    const name = importName.trim()
-    if (!name) return
-    setImportBusy(true)
-    setImportError(null)
-    try {
-      const res = await fetch(`/api/armory/${encodeURIComponent(name)}`)
-      if (!res.ok) {
-        setImportError(
-          res.status === 404 ? "Character not found" : "Import failed"
-        )
-        return
-      }
-      const json = (await res.json()) as {
-        success?: boolean
-        data?: {
-          equipment: Array<{
-            slot: EquipSlotKey
-            itemType: number | null
-            basicEffect: number
-            specialEffect: number
-            tarot?: number
-            soul?: number
-          }>
-          appearance?: { gender?: number }
-          stats?: {
-            level?: number
-            str?: number
-            magic?: number
-            vit?: number
-            intel?: number
-            speed?: number
-            luck?: number
+  const importFromArmory = useCallback(
+    async (overrideName?: string): Promise<boolean> => {
+      const name = (overrideName ?? importName).trim()
+      if (!name) return false
+      setImportBusy(true)
+      setImportError(null)
+      try {
+        const res = await fetch(`/api/armory/${encodeURIComponent(name)}`)
+        if (!res.ok) {
+          setImportError(
+            res.status === 404 ? "Character not found" : "Import failed"
+          )
+          return false
+        }
+        const json = (await res.json()) as {
+          success?: boolean
+          data?: {
+            equipment: Array<{
+              slot: EquipSlotKey
+              itemType: number | null
+              basicEffect: number
+              specialEffect: number
+              tarot?: number
+              soul?: number
+            }>
+            appearance?: { gender?: number }
+            stats?: {
+              level?: number
+              str?: number
+              magic?: number
+              vit?: number
+              intel?: number
+              speed?: number
+              luck?: number
+            }
           }
         }
-      }
-      const profile = json.data
-      if (!profile?.equipment) {
+        const profile = json.data
+        if (!profile?.equipment) {
+          setImportError("Import failed")
+          return false
+        }
+        commitLoadout(
+          emptyPlannerLoadout().map((slot) => {
+            const src = profile.equipment.find((e) => e.slot === slot.slot)
+            if (!src) return slot
+            return applyArmoryEquipmentToSlot(slot, src)
+          })
+        )
+        const g = profile.appearance?.gender
+        if (g === 0 || g === 1) setGender(g)
+        if (profile.stats) {
+          setAttrs((a) => ({
+            str: profile.stats?.str ?? a.str,
+            magic: profile.stats?.magic ?? a.magic,
+            vit: profile.stats?.vit ?? a.vit,
+            intel: profile.stats?.intel ?? a.intel,
+            speed: profile.stats?.speed ?? a.speed,
+            luck: profile.stats?.luck ?? a.luck,
+            level: profile.stats?.level ?? a.level,
+          }))
+        }
+        return true
+      } catch {
         setImportError("Import failed")
-        return
+        return false
+      } finally {
+        setImportBusy(false)
       }
-      commitLoadout(
-        emptyPlannerLoadout().map((slot) => {
-          const src = profile.equipment.find((e) => e.slot === slot.slot)
-          if (!src) return slot
-          return applyArmoryEquipmentToSlot(slot, src)
-        })
-      )
-      const g = profile.appearance?.gender
-      if (g === 0 || g === 1) setGender(g)
-      if (profile.stats) {
-        setAttrs((a) => ({
-          str: profile.stats?.str ?? a.str,
-          magic: profile.stats?.magic ?? a.magic,
-          vit: profile.stats?.vit ?? a.vit,
-          intel: profile.stats?.intel ?? a.intel,
-          speed: profile.stats?.speed ?? a.speed,
-          luck: profile.stats?.luck ?? a.luck,
-          level: profile.stats?.level ?? a.level,
-        }))
+    },
+    [importName, commitLoadout]
+  )
+
+  useEffect(() => {
+    if (!armoryImportName) return
+    if (accountBuildId || initialSharePayload != null) return
+    if (armoryAutoImportedFor.current === armoryImportName) return
+
+    let cancelled = false
+    armoryAutoImportedFor.current = armoryImportName
+    setImportName(armoryImportName)
+
+    void (async () => {
+      const ok = await importFromArmory(armoryImportName)
+      if (cancelled) return
+      if (ok) {
+        router.replace("/builder")
+      } else {
+        // Allow a retry if the request failed while still on ?armory=
+        armoryAutoImportedFor.current = null
       }
-    } catch {
-      setImportError("Import failed")
-    } finally {
-      setImportBusy(false)
+    })()
+
+    return () => {
+      cancelled = true
+      // Dev Strict Mode remounts before the fetch settles. Keep ?armory= in the
+      // URL and clear the guard so the remount can import for real.
+      armoryAutoImportedFor.current = null
     }
-  }, [importName, commitLoadout])
+  }, [
+    armoryImportName,
+    accountBuildId,
+    initialSharePayload,
+    importFromArmory,
+    router,
+  ])
 
   const handleDropLayer = useCallback(
     (donor: WikiItem, layer: GearLayer) => {
@@ -513,27 +602,146 @@ function GearPlannerAppClient({
     [loadout, attrs, gender, lnc, notes]
   )
 
+  const copyShareToDraft = useCallback(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(currentPayload))
+    window.location.href = "/builder"
+  }, [currentPayload])
+
+  const cloneSharedBuild = useCallback(async () => {
+    if (!shareToken) return
+    if (!session) {
+      window.location.href = "/login"
+      return
+    }
+    setCloneBusy(true)
+    setCloneError(null)
+    try {
+      const res = await fetch("/api/builder/builds/clone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: shareToken }),
+      })
+      const json = (await res.json()) as {
+        data?: { id: string }
+        message?: string
+      }
+      if (!res.ok || !json.data?.id) {
+        setCloneError(json.message ?? "Clone failed")
+        return
+      }
+      window.location.href = `/builder?build=${encodeURIComponent(json.data.id)}`
+    } catch {
+      setCloneError("Clone failed")
+    } finally {
+      setCloneBusy(false)
+    }
+  }, [shareToken, session])
+
   return (
     <div className="flex min-h-0 w-full items-start">
       <div className="min-w-0 flex-1 p-3 sm:p-4">
         <div className="space-y-4">
+          <Dialog
+            open={importBusy}
+            onOpenChange={(next) => {
+              // Controlled by importBusy — ignore dismiss while loading.
+              if (!next && importBusy) return
+            }}
+          >
+            <DialogContent showCloseButton={false} className="sm:max-w-sm">
+              <div className="flex flex-col items-center gap-3 py-2 text-center">
+                <Loader2
+                  className="size-8 animate-spin text-gold"
+                  aria-hidden
+                />
+                <DialogHeader className="items-center text-center sm:text-center">
+                  <DialogTitle className="font-heading tracking-[0.08em] text-gold-dim uppercase">
+                    Importing loadout
+                  </DialogTitle>
+                  <DialogDescription>
+                    Pulling gear
+                    {importName.trim() ? (
+                      <>
+                        {" "}
+                        from{" "}
+                        <span className="font-medium text-foreground">
+                          {importName.trim()}
+                        </span>
+                      </>
+                    ) : null}
+                    … This can take a second or two.
+                  </DialogDescription>
+                </DialogHeader>
+              </div>
+            </DialogContent>
+          </Dialog>
+          {importError ? (
+            <div className="border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              Could not import
+              {importName.trim() ? ` ${importName.trim()}` : ""}: {importError}
+            </div>
+          ) : null}
           {shareBanner ? (
-            <div className="flex flex-wrap items-center justify-between gap-2 border border-violet-500/40 bg-violet-500/10 px-3 py-2 text-xs">
-              <p>Viewing a shared build (not auto-saved to this browser).</p>
-              <Button
-                type="button"
-                size="xs"
-                variant="outline"
-                onClick={() => {
-                  localStorage.setItem(
-                    STORAGE_KEY,
-                    JSON.stringify(currentPayload)
-                  )
-                  window.location.href = "/builder"
-                }}
-              >
-                Copy to my draft
-              </Button>
+            <div className="space-y-2 border border-violet-500/40 bg-violet-500/10 px-3 py-2 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p>
+                  Viewing shared build
+                  {shareName ? (
+                    <>
+                      {" "}
+                      <span className="font-medium text-[#c9a0ff]">
+                        {shareName}
+                      </span>
+                    </>
+                  ) : null}{" "}
+                  (not auto-saved to this browser).
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {shareBuildId ? (
+                    <BuildLikeButton
+                      buildId={shareBuildId}
+                      likeCount={shareLikeCount}
+                      likedByMe={shareLikedByMe}
+                      size="xs"
+                    />
+                  ) : null}
+                  {session ? (
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="outline"
+                      disabled={cloneBusy || !shareToken}
+                      onClick={() => void cloneSharedBuild()}
+                    >
+                      {cloneBusy ? "Cloning…" : "Clone"}
+                    </Button>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="inline-flex h-6 items-center rounded-xs border border-border bg-background px-2 text-[11px] text-foreground no-underline hover:bg-muted"
+                    >
+                      Log in to clone
+                    </Link>
+                  )}
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="ghost"
+                    onClick={copyShareToDraft}
+                  >
+                    Copy to my draft
+                  </Button>
+                  <Link
+                    href="/builder/community"
+                    className="inline-flex h-6 items-center px-2 text-[11px] text-gold-dim no-underline hover:text-gold-hot"
+                  >
+                    Community
+                  </Link>
+                </div>
+              </div>
+              {cloneError ? (
+                <p className="text-destructive">{cloneError}</p>
+              ) : null}
             </div>
           ) : null}
 
@@ -543,6 +751,12 @@ function GearPlannerAppClient({
                 <h1 className="font-heading text-2xl font-semibold tracking-[0.1em] uppercase sm:text-3xl">
                   Gear builder
                 </h1>
+                <Link
+                  href="/builder/community"
+                  className="inline-flex items-center rounded-xs border border-border/80 bg-card/60 px-2.5 py-1 text-xs font-medium text-gold-dim no-underline transition-all hover:border-gold-dim hover:bg-gold/10 hover:text-gold-hot"
+                >
+                  Community builds
+                </Link>
                 <Dialog open={guideOpen} onOpenChange={setGuideOpen}>
                   <DialogTrigger
                     type="button"

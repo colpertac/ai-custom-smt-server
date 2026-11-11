@@ -21,6 +21,8 @@ export async function GET() {
       id: b.id,
       name: b.name,
       shareToken: b.shareToken,
+      isPublished: b.isPublished,
+      publishedAt: b.publishedAt,
       updatedAt: b.updatedAt,
       createdAt: b.createdAt,
     }))
@@ -58,6 +60,8 @@ export async function POST(request: Request) {
       id: build.id,
       name: build.name,
       shareToken: build.shareToken,
+      isPublished: build.isPublished,
+      publishedAt: build.publishedAt,
       updatedAt: build.updatedAt,
       createdAt: build.createdAt,
     })

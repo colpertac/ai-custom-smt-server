@@ -1977,3 +1977,55 @@ export function setHeaderBackground(color: string, alpha = SET_HEADER_TINT_ALPHA
   const b = Number.parseInt(hex.slice(4, 6), 16)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+/** Compact combat-bonus chip for gallery cards (PLANNER_STATS only). */
+export type PlannerCombatBonusChip = {
+  key: PlannerStatKey
+  abbr: string
+  label: string
+  raw: number
+  display: string
+  atCap: boolean
+}
+
+export type PlannerCombatSummary = {
+  gender: 0 | 1
+  level: number
+  lnc: PlannerLnc
+  bonuses: PlannerCombatBonusChip[]
+}
+
+function formatCombatChipDisplay(def: PlannerStatDef, raw: number, gearTotal: number): string {
+  if (def.kind === "reduction") return `${raw - 100}%`
+  if (def.kind === "lbCap") return raw.toLocaleString()
+  if (def.kind === "percent") return `${gearTotal}%`
+  return String(gearTotal)
+}
+
+/** Player combat bonuses only — not spell/support/defenses/attrs. */
+export function summarizePlannerCombat(rawPayload: unknown): PlannerCombatSummary {
+  const parsed = parsePlannerState(rawPayload)
+  const combat = computeGearPlannerCombat(parsed.loadout, parsed.attrs, parsed.lnc, {
+    fullStats: false,
+  })
+  const bonuses: PlannerCombatBonusChip[] = PLANNER_STATS.map((def) => {
+    const key = def.key as PlannerStatKey
+    const bd = combat.byStat[key]
+    const raw = bd?.raw ?? (def.kind === "reduction" ? 100 : def.kind === "lbCap" ? (def.baseTotal ?? 30000) : 0)
+    const gearTotal = bd?.gearTotal ?? 0
+    return {
+      key,
+      abbr: def.abbr,
+      label: def.label,
+      raw,
+      display: formatCombatChipDisplay(def, raw, gearTotal),
+      atCap: Boolean(bd?.atCap),
+    }
+  })
+  return {
+    gender: parsed.gender,
+    level: parsed.attrs.level,
+    lnc: parsed.lnc,
+    bonuses,
+  }
+}

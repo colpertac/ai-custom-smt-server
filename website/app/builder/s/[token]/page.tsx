@@ -2,7 +2,11 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { GearPlannerApp } from "@/features/gear-planner/components/GearPlannerApp"
-import { getGearBuildByShareToken } from "@/lib/gear-builds-store"
+import {
+  getGearBuildByShareToken,
+  userLikesBuild,
+} from "@/lib/gear-builds-store"
+import { requireWebSession } from "@/lib/web-session"
 
 export const metadata: Metadata = {
   title: "Shared gear build",
@@ -15,5 +19,19 @@ export default async function SharedBuilderPage({ params }: Props) {
   const build = getGearBuildByShareToken(token)
   if (!build) notFound()
 
-  return <GearPlannerApp initialSharePayload={build.payload} />
+  const session = await requireWebSession()
+  const likedByMe = session
+    ? userLikesBuild(build.id, session.username)
+    : false
+
+  return (
+    <GearPlannerApp
+      initialSharePayload={build.payload}
+      shareToken={token}
+      shareName={build.name}
+      shareBuildId={build.id}
+      shareLikeCount={build.likeCount}
+      shareLikedByMe={likedByMe}
+    />
+  )
 }

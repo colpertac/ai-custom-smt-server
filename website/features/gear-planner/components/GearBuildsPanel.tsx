@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { useSessionUser } from "@/features/auth/hooks"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,8 @@ type BuildSummary = {
   id: string
   name: string
   shareToken: string | null
+  isPublished?: boolean
+  publishedAt?: number | null
   updatedAt: number
   createdAt: number
 }
@@ -70,6 +72,11 @@ export function GearBuildsPanel({
     void refresh()
   }, [refresh])
 
+  const activePublished = useMemo(() => {
+    if (!activeId) return false
+    return Boolean(builds.find((b) => b.id === activeId)?.isPublished)
+  }, [activeId, builds])
+
   if (sessionLoading) return null
 
   if (!session) {
@@ -78,8 +85,15 @@ export function GearBuildsPanel({
         <Link href="/login" className="text-gold-dim hover:text-gold-hot">
           Log in
         </Link>{" "}
-        to save builds, create share links, and buy this loadout with CP
-        (mailbox delivery). Drafts still autosave in this browser.
+        to save builds, publish to the community gallery, and buy this loadout
+        with CP (mailbox delivery). Drafts still autosave in this browser.{" "}
+        <Link
+          href="/builder/community"
+          className="text-gold-dim hover:text-gold-hot"
+        >
+          Browse community builds
+        </Link>
+        .
       </div>
     )
   }
@@ -181,9 +195,9 @@ export function GearBuildsPanel({
     }
   }
 
-  const shareBuild = async () => {
+  const copyLink = async () => {
     if (!activeId) {
-      setError("Save the build first, then share")
+      setError("Save the build first, then copy a link")
       return
     }
     setBusy(true)
@@ -197,7 +211,7 @@ export function GearBuildsPanel({
         message?: string
       }
       if (!res.ok || !json.data) {
-        setError(json.message ?? "Share failed")
+        setError(json.message ?? "Copy link failed")
         return
       }
       const url = `${window.location.origin}${json.data.path}`
@@ -209,7 +223,45 @@ export function GearBuildsPanel({
       }
       await refresh()
     } catch {
-      setError("Share failed")
+      setError("Copy link failed")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const togglePublish = async () => {
+    if (!activeId) {
+      setError("Save the build first, then publish")
+      return
+    }
+    setBusy(true)
+    setError(null)
+    try {
+      const res = await fetch(`/api/builder/builds/${activeId}/publish`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: !activePublished }),
+      })
+      const json = (await res.json()) as {
+        data?: { path?: string | null; isPublished?: boolean }
+        message?: string
+      }
+      if (!res.ok) {
+        setError(json.message ?? "Publish failed")
+        return
+      }
+      if (json.data?.isPublished && json.data.path) {
+        const url = `${window.location.origin}${json.data.path}`
+        setShareUrl(url)
+        try {
+          await navigator.clipboard.writeText(url)
+        } catch {
+          /* ignore */
+        }
+      }
+      await refresh()
+    } catch {
+      setError("Publish failed")
     } finally {
       setBusy(false)
     }
@@ -221,19 +273,27 @@ export function GearBuildsPanel({
         <h3 className="font-heading text-xs tracking-[0.14em] text-gold-dim uppercase">
           My builds
         </h3>
-        <Button
-          type="button"
-          size="xs"
-          variant="ghost"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? "Hide" : "Show"}
-        </Button>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/builder/community"
+            className="px-1 text-[11px] text-gold-dim no-underline hover:text-gold-hot"
+          >
+            Community
+          </Link>
+          <Button
+            type="button"
+            size="xs"
+            variant="ghost"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? "Hide" : "Show"}
+          </Button>
+        </div>
       </div>
       {!open ? (
         <p className="mt-1 text-[11px] text-muted-foreground">
           Signed in as {session.dispName ?? session.username}. Expand to
-          save / load / share.
+          save / load / publish.
         </p>
       ) : (
         <div className="mt-2 space-y-2">
@@ -245,7 +305,7 @@ export function GearBuildsPanel({
                 className="h-8 text-xs"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Build name"
+                placeholder="e.g. 60K DMG Male Mage"
               />
             </Field>
             <Button
@@ -271,13 +331,39 @@ export function GearBuildsPanel({
             <Button
               type="button"
               size="sm"
-              variant="outline"
+              variant={activePublished ? "outline" : "default"}
               disabled={busy || !activeId}
-              onClick={() => void shareBuild()}
+              onClick={() => void togglePublish()}
             >
-              Share link
+              {activePublished ? "Unpublish" : "Publish"}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              disabled={busy || !activeId}
+              onClick={() => void copyLink()}
+            >
+              Copy link
             </Button>
           </div>
+          {activePublished ? (
+            <p className="text-[11px] text-emerald-300/90">
+              Listed in the{" "}
+              <Link
+                href="/builder/community"
+                className="underline hover:text-gold-hot"
+              >
+                community gallery
+              </Link>
+              . Copy link still works if you unpublish later.
+            </p>
+          ) : (
+            <p className="text-[11px] text-muted-foreground">
+              Publish to list this build for everyone. Copy link makes an
+              unlisted URL without listing it.
+            </p>
+          )}
           {shareUrl ? (
             <p className="break-all text-[11px] text-violet-300">
               Copied: {shareUrl}
@@ -302,6 +388,7 @@ export function GearBuildsPanel({
                   >
                     {b.name}
                     {activeId === b.id ? " · current" : ""}
+                    {b.isPublished ? " · published" : ""}
                   </button>
                   <span className="shrink-0 text-[10px] text-muted-foreground">
                     {new Date(b.updatedAt).toLocaleDateString()}

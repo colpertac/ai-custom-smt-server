@@ -27,6 +27,8 @@ export async function GET(_request: Request, ctx: Ctx) {
     name: build.name,
     payload: build.payload,
     shareToken: build.shareToken,
+    isPublished: build.isPublished,
+    publishedAt: build.publishedAt,
     updatedAt: build.updatedAt,
     createdAt: build.createdAt,
   })
@@ -59,6 +61,8 @@ export async function PATCH(request: Request, ctx: Ctx) {
       id: build.id,
       name: build.name,
       shareToken: build.shareToken,
+      isPublished: build.isPublished,
+      publishedAt: build.publishedAt,
       updatedAt: build.updatedAt,
       createdAt: build.createdAt,
     })
