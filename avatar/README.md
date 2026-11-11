@@ -27,8 +27,9 @@ Python 3 standard library only.
 ```bash
 cd avatar/tools
 python3 tables.py                  # decode CEquip*/CEquipModel/Item/CItem tables + exe palette → build/tables
-python3 resolve.py cat catm        # world DB character → Avatar parts + hair/eye colours
-python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   # software PoC render
+python3 resolve.py cat catm        # world DB character → skeleton, idle pose, Avatar parts, hair/eye colours
+python3 render_char.py catm        # resolve + PoC software render → build/renders/catm.png
+python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   # render explicit parts
 ```
 
 | File | Purpose |
@@ -38,7 +39,8 @@ python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   
 | `kfmparse.py` | KFM animation maps |
 | `render.py` | Stdlib software rasterizer used to prove assembly; not the production renderer |
 | `tables.py` | Client tables and the 139-colour hair/eye palette (switch at `0x461b40` in the exe) |
-| `resolve.py` | Prototype of the character → parts rule the website will implement |
+| `resolve.py` | Character → parts rule as the client applies it (merge order, skips, VA rules, variants); prototype for the website resolver |
+| `render_char.py` | End-to-end PoC: resolve a character and render it with the client's attach rules |
 | `survey.py`, `tree.py` | Format survey and node-tree dump |
 | `nsb.py`, `d3dasm.py`, `nifcolor.py` | Gamebryo NSB shader library parser, D3D9 bytecode disassembler, NIF colour extra-data dump |
 | `../shaders/coeMaterials.js` | Draft three.js materials for COE_HairColor and COE_Skinning |

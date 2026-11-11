@@ -2,6 +2,7 @@
 """Decode the client tables the avatar resolver needs into build/tables/*.json.
 
   hair.json / face.json / eye.json   appearance id -> nif filename (CEquip*Data.bin, plaintext)
+  models.json                        CModelData1 id -> model name + root scale (SkinType -> skeleton)
   cequipmodel.json                   model id -> [[folder, type, value], ...] (type 1 mesh, 2 hide, 3 variant)
   items.json                         item id -> name, modelID, equipType, gender, sub-category, ...
   palette.json                       hair/eye colour id 1..139 -> RGBA (hard-coded switch in the exe)
@@ -26,6 +27,26 @@ def appearance_table(name):
         off = 4 + i * 40
         id_ = struct.unpack_from('<I', data, off)[0]
         out[id_] = data[off + 4:off + 40].split(b'\0', 1)[0].decode('ascii')
+    return out
+
+
+def model_table():
+    """CModelData1.bin (plaintext): u16 count, u16 1, u16 motionCount[count], then per record a
+    104-byte base {u32 id, u32, f32 scale, f32, u8, u8, u16, char name[36], ...}, a 52-byte view
+    block and motionCount 32-byte motion-map entries. Player SkinType values (100-102, 200-202) are
+    ids here: name = Avatar/Bone skeleton, scale = root uniform scale."""
+    data = open(os.path.join(BINARYDATA_DIR, 'Client', 'CModelData1.bin'), 'rb').read()
+    count = struct.unpack_from('<H', data)[0]
+    motions = struct.unpack_from(f'<{count}H', data, 4)
+    off, out = 4 + 2 * count, {}
+    for i in range(count):
+        id_, _, scale = struct.unpack_from('<IIf', data, off)
+        name = data[off + 20:off + 56].split(b'\0', 1)[0].decode('cp932', 'replace')
+        if name:
+            out[id_] = {'name': name, 'scale': round(scale, 6)}
+        off += 104 + 52 + 32 * motions[i]
+    if off != len(data):
+        raise SystemExit(f'CModelData1.bin: parsed {off} of {len(data)} bytes')
     return out
 
 
@@ -141,6 +162,7 @@ def main():
     dump('hair.json', appearance_table('CEquipHairData.bin'))
     dump('face.json', appearance_table('CEquipFaceData.bin'))
     dump('eye.json', appearance_table('CEquipEyeData.bin'))
+    dump('models.json', model_table())
     dump('cequipmodel.json', cequipmodel(unpack_sbin('CEquipModelData.sbin', 'cequipmodel', work)))
     dump('items.json', items(unpack_sbin('ItemData.sbin', 'item', work),
                              unpack_sbin('CItemData.sbin', 'citem', work)))
