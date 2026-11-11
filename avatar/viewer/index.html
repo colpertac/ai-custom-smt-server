@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avatar Viewer</title>
+<style>
+  :root { --bg: #2a2c38; --panel: rgba(18, 19, 26, 0.82); --fg: #e6e6ea; --muted: #9a9cab; --accent: #6aa8ff; --warn: #ffb454; --err: #ff6b6b; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.4 system-ui, sans-serif; overflow: hidden; }
+  #wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; }
+  body:not(.fixed) canvas { width: 100%; height: 100%; }
+  #ui { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; pointer-events: none; }
+  #ui > * { pointer-events: auto; }
+  button, label.toggle { background: var(--panel); color: var(--fg); border: 1px solid #3a3d4d; border-radius: 6px; padding: 6px 10px; font: inherit; cursor: pointer; }
+  button:hover, label.toggle:hover { border-color: var(--accent); }
+  button.on { border-color: var(--accent); color: var(--accent); }
+  label.toggle input { margin: 0 6px 0 0; vertical-align: -2px; }
+  #name { font-weight: 600; padding: 6px 4px; text-shadow: 0 1px 2px #000; }
+  #log { position: absolute; left: 12px; bottom: 12px; right: 12px; max-height: 30vh; overflow: auto; background: var(--panel); border-radius: 6px; padding: 8px 10px; font: 12px/1.4 ui-monospace, monospace; white-space: pre-wrap; display: none; }
+  #log .w { color: var(--warn); } #log .e { color: var(--err); }
+  body.noui #ui, body.noui #log { display: none !important; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div id="ui">
+  <span id="name">loading…</span>
+  <button data-preset="full">Full</button>
+  <button data-preset="bust">Bust</button>
+  <button data-preset="face">Face</button>
+  <label class="toggle"><input type="checkbox" id="raw">Raw base texture</label>
+  <button id="save">Save PNG</button>
+</div>
+<div id="log"></div>
+<script type="module">
+// Query parameters:
+//   recipe=<url>   recipe JSON (default ../build/recipes/cat.json); resolve.py --json output also accepted
+//   assets=<url>   asset base (default ../build/assets/)
+//   w=576&h=768    fixed canvas size in pixels (DPR 1); otherwise fills the window
+//   preset=full|bust|face   aa=0|1   raw=1 (unlit base) | 2 (lighting only)   ui=0 (hide controls, for screenshots)
+// Sets window.renderDone = true after all assets are loaded and the first frame is drawn,
+// or window.renderError = message on failure.
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { buildScene, createRenderer } from './buildScene.js';
+
+const q = new URLSearchParams(location.search);
+const recipeUrl = q.get('recipe') || '../build/recipes/cat.json';
+const assetBase = q.get('assets') || '../build/assets/';
+const fixedW = +q.get('w') || 0, fixedH = +q.get('h') || 0;
+const logEl = document.getElementById('log');
+function log(msg, cls = '') {
+  logEl.style.display = 'block';
+  const d = document.createElement('div'); d.className = cls; d.textContent = msg; logEl.appendChild(d);
+}
+if (q.get('ui') === '0') document.body.classList.add('noui');
+window.renderDone = false;
+
+async function main() {
+  const r = await fetch(recipeUrl);
+  if (!r.ok) throw new Error(`${recipeUrl}: HTTP ${r.status}`);
+  let recipe = await r.json();
+  if (!recipe.skeleton) {   // resolve.py --json shape: {NAME: recipe}
+    const [k, v] = Object.entries(recipe)[0] || [];
+    recipe = { name: k, ...v };
+  }
+  const name = recipe.name || recipeUrl.split('/').pop().replace(/\.json$/, '');
+  document.getElementById('name').textContent = name;
+  document.title = `${name} · Avatar Viewer`;
+
+  const canvas = document.getElementById('c');
+  const fixed = fixedW > 0 && fixedH > 0;
+  if (fixed) document.body.classList.add('fixed');
+  const size = () => fixed ? [fixedW, fixedH] : [canvas.clientWidth || innerWidth, canvas.clientHeight || innerHeight];
+  const renderer = createRenderer({ canvas, antialias: q.get('aa') !== '0',
+    pixelRatio: fixed ? 1 : Math.min(devicePixelRatio, 2) });
+  const [w0, h0] = size();
+  renderer.setSize(w0, h0, fixed);
+
+  const built = await buildScene(recipe, { assetBase, aspect: w0 / h0, preset: q.get('preset') || 'portrait',
+    onWarning: m => { console.warn(m); log(m, 'w'); } });
+  const { scene, camera } = built;
+  window.avatar = built;   // for debugging from the console
+
+  const controls = new OrbitControls(camera, canvas);
+  controls.target.copy(built.target);
+  controls.update();
+  const draw = () => { built.update(); renderer.render(scene, camera); };
+  controls.addEventListener('change', draw);
+
+  const resize = () => {
+    if (fixed) return;
+    const [w, h] = size();
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix(); draw();
+  };
+  addEventListener('resize', resize);
+
+  const buttons = document.querySelectorAll('[data-preset]');
+  const setPreset = p => {
+    controls.target.copy(built.setPreset(p));
+    camera.aspect = size()[0] / size()[1]; camera.updateProjectionMatrix();
+    controls.update();
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.preset === p || (p === 'portrait' && b.dataset.preset === 'full')));
+    draw();
+  };
+  buttons.forEach(b => b.addEventListener('click', () => setPreset(b.dataset.preset)));
+  const raw = document.getElementById('raw');
+  raw.checked = q.get('raw') === '1';
+  raw.addEventListener('change', () => { built.setRawBase(raw.checked); draw(); });
+  built.setRawBase(+(q.get('raw') || 0));   // raw=2: lighting only
+  document.getElementById('save').addEventListener('click', () => {
+    draw();
+    const a = document.createElement('a');
+    a.download = `${name}-three.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+
+  setPreset(q.get('preset') || 'full');
+  await renderer.compileAsync(scene, camera);
+  draw();
+  requestAnimationFrame(() => { window.renderDone = true; });
+}
+
+main().catch(e => {
+  console.error(e);
+  log(String(e && e.stack || e), 'e');
+  window.renderError = String(e && e.message || e);
+});
+</script>
+</body>
+</html>

@@ -9,45 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from nifparse import NifFile
 from skel import compose, mat_vec, world_transforms
 from pose import sample_first, posed_world
-
-
-def dxt_decode(fmt, w, h, data):
-    out = bytearray(w * h * 4)
-    bw, bh = max(1, (w + 3) // 4), max(1, (h + 3) // 4)
-    bsz = 8 if fmt == 4 else 16
-    p = 0
-    for by in range(bh):
-        for bx in range(bw):
-            blk = data[p:p + bsz]; p += bsz
-            alpha = [255] * 16
-            if fmt == 5:  # DXT3 explicit alpha
-                a = int.from_bytes(blk[:8], 'little')
-                alpha = [((a >> (4 * i)) & 15) * 17 for i in range(16)]
-                blk = blk[8:]
-            elif fmt == 6:  # DXT5 interpolated alpha
-                a0, a1 = blk[0], blk[1]
-                bits = int.from_bytes(blk[2:8], 'little')
-                if a0 > a1:
-                    pal = [a0, a1] + [((7 - i) * a0 + i * a1) // 7 for i in range(1, 7)]
-                else:
-                    pal = [a0, a1] + [((5 - i) * a0 + i * a1) // 5 for i in range(1, 5)] + [0, 255]
-                alpha = [pal[(bits >> (3 * i)) & 7] for i in range(16)]
-                blk = blk[8:]
-            c0, c1, idx = struct.unpack('<HHI', blk[:8])
-            def rgb(c):
-                return ((c >> 11) * 255 // 31, ((c >> 5) & 63) * 255 // 63, (c & 31) * 255 // 31)
-            r0, r1 = rgb(c0), rgb(c1)
-            if c0 > c1 or fmt != 4:
-                pal = [r0 + (255,), r1 + (255,), tuple((2 * a + b) // 3 for a, b in zip(r0, r1)) + (255,), tuple((a + 2 * b) // 3 for a, b in zip(r0, r1)) + (255,)]
-            else:
-                pal = [r0 + (255,), r1 + (255,), tuple((a + b) // 2 for a, b in zip(r0, r1)) + (255,), (0, 0, 0, 0)]
-            for i in range(16):
-                x, y = bx * 4 + (i & 3), by * 4 + (i >> 2)
-                if x < w and y < h:
-                    c = pal[(idx >> (2 * i)) & 3]
-                    o = (y * w + x) * 4
-                    out[o:o + 4] = bytes((c[0], c[1], c[2], alpha[i] if fmt != 4 else c[3]))
-    return out
+from dxt import dxt_decode
 
 
 def texture_of(n, geom):

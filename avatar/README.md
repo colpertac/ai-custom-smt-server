@@ -30,7 +30,15 @@ python3 tables.py                  # decode CEquip*/CEquipModel/Item/CItem table
 python3 resolve.py cat catm        # world DB character → skeleton, idle pose, Avatar parts, hair/eye colours
 python3 render_char.py catm        # resolve + PoC software render → build/renders/catm.png
 python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   # render explicit parts
+python3 convert.py all             # NIF → GLB: 6 skeletons, 48 poses, rig.json, 6,114 parts → build/assets (~10 s, ~420 MB)
+python3 convert.py parts Hair/W_01_Hair_Lg_006.nif   # rebuild named parts (also skeletons | poses | rig | manifest)
+python3 check_glb.py cat catm cat3 # rebuild avatars from build/assets and diff every vertex against render.py
 ```
+
+`convert.py all` uses every core and is incremental: outputs newer than their inputs (and than
+the converter's own source) are skipped, so a re-run takes well under a second; `--force`
+rebuilds everything, `-j N` limits workers. Per-file failures and warnings land in
+`build/assets/manifest.json`. The output contract is [docs/FORMAT.md](docs/FORMAT.md).
 
 | File | Purpose |
 | --- | --- |
@@ -38,12 +46,17 @@ python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   
 | `skel.py`, `pose.py` | Skeleton transforms; frame-0 sampling of KF poses (incl. B-spline channels) |
 | `kfmparse.py` | KFM animation maps |
 | `render.py` | Stdlib software rasterizer used to prove assembly; not the production renderer |
+| `convert.py` | NIF → GLB converter: skeletons, frame-0 poses, parts, `rig.json` (charamake_018 camera/lights), manifest |
+| `check_glb.py` | Verifies converted GLBs: rebinds skins by bone name on the posed skeleton GLB and compares every vertex and base texture with `render.py` |
+| `glb.py`, `png.py`, `dxt.py` | GLB writer/reader and transform helpers; PNG encoder/decoder; DXT1/3/5, NiPixelData and `.dds` decoding |
 | `tables.py` | Client tables and the 139-colour hair/eye palette (switch at `0x461b40` in the exe) |
 | `resolve.py` | Character → parts rule as the client applies it (merge order, skips, VA rules, variants); prototype for the website resolver |
 | `render_char.py` | End-to-end PoC: resolve a character and render it with the client's attach rules |
 | `survey.py`, `tree.py` | Format survey and node-tree dump |
 | `nsb.py`, `d3dasm.py`, `nifcolor.py` | Gamebryo NSB shader library parser, D3D9 bytecode disassembler, NIF colour extra-data dump |
-| `../shaders/coeMaterials.js` | Draft three.js materials for COE_HairColor and COE_Skinning |
+| `recipe.py` | Write `build/recipes/<name>.json` (resolve output) for the viewer |
+| `../viewer/` | three.js `buildScene(recipe)` + test page (`viewer/README.md`): `python3 -m http.server 8765 --directory avatar`, then `/viewer/?recipe=../build/recipes/cat.json` |
+| `../shaders/coeMaterials.js` | three.js ShaderMaterial for the COE shaders (HairColor, Skinning, SkinningDX, Blender, Effecter) with the game's per-vertex lighting |
 | `../ghidra/` | `Dump.java` headless decompile/xref/string helper and `run-dump.sh` |
 
 ## Ghidra

@@ -37,8 +37,10 @@ def qm(w, x, y, z):
     return transpose(m) if QUAT_TRANSPOSE else m
 
 
-def sample_first(kf):
-    """returns {node_name: (rot|None, trans|None, scale|None)} at sequence start"""
+def sample_first(kf, quat=None):
+    """returns {node_name: (rot|None, trans|None, scale|None)} at sequence start.
+    quat(w, x, y, z) builds rotations from quaternion channels (default: 3x3 matrix via qm)."""
+    rq = quat or qm
     B = kf.blocks
     seq = [b for t, b in B if t == 'NiControllerSequence'][0]
     out = {}
@@ -54,7 +56,7 @@ def sample_first(kf):
             tr = ib['Transform']  # (tx,ty,tz,qw,qx,qy,qz,s) flat tuple
             tx, ty, tz, qw, qx, qy, qz, sc = tr[:8]
             if abs(tx) < FLT_MAX: T = (tx, ty, tz)
-            if abs(qw) < FLT_MAX: R = qm(qw, qx, qy, qz)
+            if abs(qw) < FLT_MAX: R = rq(qw, qx, qy, qz)
             if abs(sc) < FLT_MAX: S = sc
             if ib['Data'] >= 0:
                 d = B[ib['Data']][1]
@@ -65,7 +67,7 @@ def sample_first(kf):
                         R = euler_to_mat(*ang)
                     else:
                         q = d['Quaternion Keys'][0]['Value']
-                        R = qm(*q)
+                        R = rq(*q)
                 if d['Translations']['Num Keys']:
                     T = tuple(d['Translations']['Keys'][0]['Value'])
                 if d['Scales']['Num Keys']:
@@ -88,9 +90,9 @@ def sample_first(kf):
             if ib['Rotation Handle'] != 0xFFFF:
                 q = ctrl(ib['Rotation Handle'], 4, ib['Rotation Offset'], ib['Rotation Half Range'])
                 L = math.sqrt(sum(v * v for v in q)) or 1
-                R = qm(*[v / L for v in q])
+                R = rq(*[v / L for v in q])
             elif abs(qw) < FLT_MAX:
-                R = qm(qw, qx, qy, qz)
+                R = rq(qw, qx, qy, qz)
             if ib['Scale Handle'] != 0xFFFF:
                 S = ctrl(ib['Scale Handle'], 1, ib['Scale Offset'], ib['Scale Half Range'])[0]
             elif abs(sc) < FLT_MAX:
