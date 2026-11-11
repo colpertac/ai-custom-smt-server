@@ -14,12 +14,15 @@ import { WikiGenderBadge } from "@/features/wiki/components/WikiGenderBadge"
 import { WikiEquipmentSetsBox } from "@/features/wiki/components/WikiEquipmentSetsBox"
 import { WikiFeatureBox } from "@/features/wiki/components/WikiFeatureBox"
 import { WikiCompShopSources } from "@/features/wiki/components/WikiCompShopSources"
+import { WikiItemAcquisitionSources } from "@/features/wiki/components/WikiItemAcquisitionSources"
 import { WikiFusionBox } from "@/features/wiki/components/WikiFusionBox"
 import { WikiItemIcon } from "@/features/wiki/components/WikiItemIcon"
 import { WikiBreadcrumb } from "@/features/wiki/components/WikiShell"
 import { WIKI_CATEGORY_META } from "@/features/wiki/wiki-nav"
 import { WikiStoreBuyPanel } from "@/features/store/components/WikiStoreBuyPanel"
 import { equipmentSetMembership } from "@/lib/gear-planner-combat"
+import { getItemSourceEntry } from "@/lib/item-sources-load"
+import { listItemQuestSources } from "@/lib/wiki-quest-guide"
 
 export function WikiItemDetailView({ item }: { item: WikiItem }) {
   const category = getWikiItemCategory(item)
@@ -29,6 +32,8 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
   const tarotFusion = wikiItemTarotFusion(item)
   const soulFusion = wikiItemSoulFusion(item)
   const compShops = wikiItemCompShops(item.id)
+  const itemSources = getItemSourceEntry(item.id)
+  const questSources = listItemQuestSources(item.id)
   const equipmentSets = equipmentSetMembership(item.id)
 
   return (
@@ -45,7 +50,7 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
         <header className="flex items-start gap-3 border-b border-border px-3 py-2.5 sm:px-4">
           <WikiItemIcon item={item} size={56} className="shrink-0" />
           <div className="min-w-0 flex-1">
-            <h1 className="font-heading text-xl tracking-wide uppercase leading-tight">
+            <h1 className="font-heading text-xl leading-tight tracking-wide uppercase">
               {item.name}
             </h1>
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted-foreground">
@@ -80,7 +85,7 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
         <div className="grid gap-3 p-3 sm:p-4 xl:grid-cols-[minmax(0,1fr)_18rem] xl:gap-4">
           <div className="min-w-0 space-y-3">
             <section>
-              <h2 className="font-heading text-xs font-semibold tracking-[0.12em] uppercase text-gold-dim">
+              <h2 className="font-heading text-xs font-semibold tracking-[0.12em] text-gold-dim uppercase">
                 Description
               </h2>
               <p className="mt-1.5 text-sm leading-snug text-foreground/90">
@@ -116,8 +121,12 @@ export function WikiItemDetailView({ item }: { item: WikiItem }) {
                   empty=""
                 />
               ) : null}
-              <div className="lg:col-span-2">
+              <div className="space-y-3 lg:col-span-2">
                 <WikiCompShopSources listings={compShops} />
+                <WikiItemAcquisitionSources
+                  entry={itemSources}
+                  questSources={questSources}
+                />
               </div>
             </div>
           </div>
@@ -199,7 +208,7 @@ function MetaPanel({
 }) {
   return (
     <div className="border border-border bg-muted/30 px-2.5 py-2">
-      <h3 className="font-heading text-[0.65rem] font-semibold tracking-[0.14em] uppercase text-muted-foreground">
+      <h3 className="font-heading text-[0.65rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
         {title}
       </h3>
       <dl className="mt-2 space-y-1.5 text-sm">{children}</dl>

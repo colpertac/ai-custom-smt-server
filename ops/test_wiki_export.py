@@ -12,6 +12,7 @@ from wiki_export import (
     build_enchants_payload,
     build_items_payload,
     build_skills_payload,
+    build_valuables_payload,
     destinations_include_binarydata,
     wiki_catalog_ready,
     wiki_dir,
@@ -438,6 +439,27 @@ class WikiExportTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self.assertTrue(wiki_catalog_ready(tmp_path))
+
+    def test_build_valuables_payload_from_tsv(self):
+        with tempfile.TemporaryDirectory() as raw:
+            tmp_path = Path(raw)
+            (tmp_path / "CValuablesData.tsv").write_text(
+                "ID\tsortOrder\tname\tdesc\thidden\n"
+                "15\t1\tClass C DB License\tProof you are licensed.\t0\n"
+                "222\t260\tWILDCAT\tOpens deep Makai.\t1\n",
+                encoding="utf-8",
+            )
+            payload = build_valuables_payload(tmp_path / "CValuablesData.tsv")
+            self.assertEqual(payload["source"], "BinaryData/Shield/CValuablesData.sbin")
+            self.assertEqual(len(payload["valuables"]), 2)
+            first = payload["valuables"][0]
+            self.assertEqual(first["id"], 15)
+            self.assertEqual(first["name"], "Class C DB License")
+            self.assertEqual(first["sortOrder"], 1)
+            self.assertFalse(first["hidden"])
+            second = payload["valuables"][1]
+            self.assertEqual(second["id"], 222)
+            self.assertTrue(second["hidden"])
 
 
 if __name__ == "__main__":

@@ -3,13 +3,17 @@ import Link from "next/link"
 
 import { listDevils } from "@/lib/devil-catalog"
 import { listSkills } from "@/lib/skill-catalog"
+import { listValuables } from "@/lib/valuable-catalog"
+import { loadQuestsPayload } from "@/lib/quest-catalog-load"
 import { countWikiItems, countWikiCatalog } from "@/lib/wiki-catalog"
 import { WikiSearch } from "@/features/wiki/components/WikiSearch"
 import { WikiPageHeader } from "@/features/wiki/components/WikiShell"
 import {
   WIKI_CATEGORY_META,
   WIKI_DEMONS_META,
+  WIKI_QUESTS_META,
   WIKI_SKILLS_META,
+  WIKI_VALUABLES_META,
 } from "@/features/wiki/wiki-nav"
 
 export const metadata: Metadata = {
@@ -20,6 +24,8 @@ export default function WikiIndexPage() {
   const total = countWikiCatalog()
   const demonCount = listDevils().length
   const skillCount = listSkills().length
+  const valuableCount = listValuables().length
+  const questCount = loadQuestsPayload().quests.length
 
   return (
     <div className="space-y-10">
@@ -67,6 +73,29 @@ export default function WikiIndexPage() {
               className="text-gold-dim hover:text-gold-hot"
             >
               Skills
+            </Link>
+            .
+          </li>
+          <li>
+            <span className="font-medium text-foreground">Valuables</span> lists
+            CValuablesData IDs for GM{" "}
+            <code className="text-foreground">@valuable</code> — see{" "}
+            <Link
+              href="/wiki/valuables"
+              className="text-gold-dim hover:text-gold-hot"
+            >
+              Valuables
+            </Link>
+            .
+          </li>
+          <li>
+            <span className="font-medium text-foreground">Quests</span> shows
+            journal steps, phase requirements, and NPC event links — see{" "}
+            <Link
+              href="/wiki/quests"
+              className="text-gold-dim hover:text-gold-hot"
+            >
+              Quests
             </Link>
             .
           </li>
@@ -123,6 +152,22 @@ export default function WikiIndexPage() {
               title={WIKI_SKILLS_META.title}
               blurb={WIKI_SKILLS_META.blurb}
               count={skillCount}
+            />
+          </li>
+          <li>
+            <CategoryCard
+              href={WIKI_VALUABLES_META.href}
+              title={WIKI_VALUABLES_META.title}
+              blurb={WIKI_VALUABLES_META.blurb}
+              count={valuableCount}
+            />
+          </li>
+          <li>
+            <CategoryCard
+              href={WIKI_QUESTS_META.href}
+              title={WIKI_QUESTS_META.title}
+              blurb={WIKI_QUESTS_META.blurb}
+              count={questCount}
             />
           </li>
         </ul>

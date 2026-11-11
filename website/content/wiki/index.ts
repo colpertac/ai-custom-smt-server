@@ -28,6 +28,8 @@ import type {
   WikiSkillLearner,
   WikiSkillsPayload,
   WikiStatBucket,
+  WikiValuable,
+  WikiValuablesPayload,
 } from "@/content/wiki/types"
 
 export type {
@@ -48,6 +50,8 @@ export type {
   WikiSkillLearner,
   WikiSkillsPayload,
   WikiStatBucket,
+  WikiValuable,
+  WikiValuablesPayload,
 } from "@/content/wiki/types"
 
 export {

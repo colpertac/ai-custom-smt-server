@@ -184,3 +184,20 @@ export type WikiSkillsPayload = {
   note: string
   skills: WikiSkill[]
 }
+
+export type WikiValuable = {
+  id: number
+  sortOrder: number
+  name: string
+  description: string
+  /** Invisible / flag-style valuable in client UI. */
+  hidden: boolean
+}
+
+export type WikiValuablesPayload = {
+  source: string
+  namesSource: string
+  generatedAt: string
+  note: string
+  valuables: WikiValuable[]
+}

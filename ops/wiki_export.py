@@ -1,9 +1,9 @@
-"""Export live wiki item/enchant/demon/skill catalogs from uploaded BinaryData.
+"""Export live wiki item/enchant/demon/skill/valuable catalogs from BinaryData.
 
-Writes {runtime}/wiki/{items,enchants,devils,skills}.json for the website to
-prefer over baked website content. When the website tree is available, also
-mirrors those files into the baked catalog so client fallbacks stay in sync
-after admin wiki regen.
+Writes {runtime}/wiki/{items,enchants,devils,skills,valuables}.json for the
+website to prefer over baked website content. When the website tree is
+available, also mirrors those files into the baked catalog so client
+fallbacks stay in sync after admin wiki regen.
 """
 
 from __future__ import annotations
@@ -115,6 +115,10 @@ def wiki_skills_path(runtime: Path) -> Path:
     return wiki_dir(runtime) / "skills.json"
 
 
+def wiki_valuables_path(runtime: Path) -> Path:
+    return wiki_dir(runtime) / "valuables.json"
+
+
 def _baked_wiki_dir() -> Path | None:
     """Repo website/content/wiki when present (local / mounted ops)."""
     candidate = Path(__file__).resolve().parent.parent / "website" / "content" / "wiki"
@@ -133,6 +137,7 @@ def _sync_baked_wiki_catalogs(
     enchants_payload: dict[str, Any],
     devils_payload: dict[str, Any] | None = None,
     skills_payload: dict[str, Any] | None = None,
+    valuables_payload: dict[str, Any] | None = None,
 ) -> bool:
     """Mirror runtime wiki JSON into the Next.js bundled catalog when possible.
 
@@ -147,6 +152,8 @@ def _sync_baked_wiki_catalogs(
     _atomic_write_json(baked / "enchants.json", enchants_payload)
     if skills_payload is not None:
         _atomic_write_json(baked / "skills.json", skills_payload)
+    if valuables_payload is not None:
+        _atomic_write_json(baked / "valuables.json", valuables_payload)
     if devils_payload is not None:
         armory = _baked_armory_dir()
         if armory is not None:
@@ -764,6 +771,43 @@ def build_skills_payload(
         "generatedAt": _now_iso(),
         "note": "Generated from uploaded BinaryData on this server.",
         "skills": skills,
+    }
+
+
+def build_valuables_payload(cvaluables_tsv: Path) -> dict[str, Any]:
+    """Key items / flags from CValuablesData flatten TSV."""
+    valuables: list[dict[str, Any]] = []
+    with cvaluables_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            raw_id = (row.get("ID") or "").strip()
+            if not raw_id.isdigit():
+                continue
+            try:
+                sort_order = int((row.get("sortOrder") or "0").strip() or "0")
+            except ValueError:
+                sort_order = 0
+            hidden_raw = (row.get("hidden") or "0").strip() or "0"
+            try:
+                hidden = int(hidden_raw) != 0
+            except ValueError:
+                hidden = hidden_raw.lower() in ("1", "true", "yes")
+            valuables.append(
+                {
+                    "id": int(raw_id),
+                    "sortOrder": sort_order,
+                    "name": (row.get("name") or "").strip(),
+                    "description": (row.get("desc") or "").strip(),
+                    "hidden": hidden,
+                }
+            )
+    valuables.sort(key=lambda v: v["id"])
+    return {
+        "source": "BinaryData/Shield/CValuablesData.sbin",
+        "namesSource": "BinaryData/Shield/CValuablesData.sbin (flatten)",
+        "generatedAt": _now_iso(),
+        "note": "Generated from uploaded BinaryData on this server.",
+        "valuables": valuables,
     }
 
 
@@ -1525,6 +1569,7 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
     )
     skill_sbin = shield / "SkillData.sbin"
     cstatus_sbin = shield / "CStatusData.sbin"
+    cvaluables_sbin = shield / "CValuablesData.sbin"
     client_dir = runtime / "datastore" / "BinaryData" / "Client"
     cmodel_bins = [
         client_dir / "CModelData1.bin",
@@ -1877,20 +1922,65 @@ def export_wiki_catalogs(runtime: Path) -> tuple[bool, str, dict[str, Any]]:
         else:
             skill_note = "CSkillData.bin not present; skill catalog unchanged."
 
+        valuable_note = ""
+        valuable_count = 0
+        valuables_payload: dict[str, Any] | None = None
+        if cvaluables_sbin.is_file():
+            ok, detail = _run(
+                [
+                    str(decrypt),
+                    str(cvaluables_sbin),
+                    str(work / "CValuablesData.plain.bin"),
+                ]
+            )
+            if ok:
+                ok, detail = _run(
+                    [
+                        str(bdpatch),
+                        "flatten",
+                        "cvaluables",
+                        str(work / "CValuablesData.plain.bin"),
+                        str(work / "CValuablesData.tsv"),
+                    ]
+                )
+            if ok:
+                valuables_payload = build_valuables_payload(
+                    work / "CValuablesData.tsv"
+                )
+                valuable_count = len(valuables_payload["valuables"])
+                _atomic_write_json(
+                    wiki_valuables_path(runtime), valuables_payload
+                )
+            else:
+                valuable_note = (
+                    f"Valuables export failed ({detail}); "
+                    "wiki items still available."
+                )
+        else:
+            valuable_note = (
+                "CValuablesData.sbin not present; valuables catalog unchanged."
+            )
+
         baked_synced = _sync_baked_wiki_catalogs(
             items_payload,
             enchants_payload,
             devils_payload,
             skills_payload,
+            valuables_payload,
         )
 
-        notes = [n for n in (enchant_note, devil_note, skill_note) if n]
+        notes = [
+            n
+            for n in (enchant_note, devil_note, skill_note, valuable_note)
+            if n
+        ]
         info = {
             "detail": "; ".join(notes) or "wiki catalogs written",
             "itemCount": len(items_payload["items"]),
             "enchantCount": len(enchants_payload["enchants"]),
             "demonCount": devil_count,
             "skillCount": skill_count,
+            "valuableCount": valuable_count,
             "outDir": str(out_dir),
             "bakedSynced": baked_synced,
         }

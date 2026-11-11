@@ -6,7 +6,9 @@ import {
   getSpawnsByEnemyType,
   loadItemSourcesPayload,
   type ItemDropSource,
+  type ItemQuestRequireSource,
   type ItemSourceEntry,
+  type ItemWorldShopSource,
 } from "@/lib/item-sources-load"
 import {
   getQuestById,
@@ -17,8 +19,17 @@ import {
   type QuestNpcRow,
   type QuestRecord,
 } from "@/lib/quest-catalog-load"
-import { loadWikiItemsPayload } from "@/lib/wiki-catalog-load"
+import {
+  loadDevilsPayload,
+  loadWikiItemsPayload,
+} from "@/lib/wiki-catalog-load"
 import { zoneLabel, ZONE_NAMES } from "@/lib/zone-names"
+
+/** Devil display name without importing server-only `devil-catalog`. */
+function enemyDisplayName(enemyType: number): string {
+  const names = loadDevilsPayload().data.names
+  return names[String(enemyType)] ?? `Demon ${enemyType}`
+}
 
 export type AskCitation = {
   kind:
@@ -306,7 +317,8 @@ function formatDropBullet(drop: ItemDropSource): string {
     drop.rate != null && Number.isFinite(drop.rate) ? `${drop.rate}%` : "?"
   let line = `**${zone}** — ${dropKindLabel(drop.kind)}`
   if (drop.enemyType != null) {
-    line += ` (enemy type ${drop.enemyType})`
+    const name = enemyDisplayName(drop.enemyType)
+    line += ` (**${name}**, type ${drop.enemyType})`
   }
   line += ` · ${rate}`
   if (drop.minStack != null || drop.maxStack != null) {
@@ -316,6 +328,33 @@ function formatDropBullet(drop: ItemDropSource): string {
     else line += ` · stack ${min}–${max}`
   }
   return `- ${line}`
+}
+
+function formatWorldShopBullet(row: ItemWorldShopSource): string {
+  const shop = row.shopName || `Shop #${row.shopId}`
+  let line = `**${shop}** (#${row.shopId})`
+  if (row.tabName) line += ` — ${row.tabName}`
+  if (row.basePrice != null) {
+    line += ` · ${row.basePrice.toLocaleString()} ${row.currency || "Macca"}`
+  }
+  return `- ${line}`
+}
+
+function formatQuestRequireBullet(row: ItemQuestRequireSource): string {
+  const title = row.title || row.questTitle || `Quest ${row.questId}`
+  let line = `**${title}** (quest ${row.questId})`
+  if (row.phaseNumber != null) line += ` · phase ${row.phaseNumber}`
+  if (row.objectCount != null) line += ` · ×${row.objectCount}`
+  return `- ${line}`
+}
+
+function entryHasAnySource(entry: ItemSourceEntry | undefined): boolean {
+  if (!entry) return false
+  return Boolean(
+    (entry.drops?.length ?? 0) ||
+      (entry.worldShops?.length ?? 0) ||
+      (entry.questRequires?.length ?? 0)
+  )
 }
 
 function questItemRequirements(quest: QuestRecord): ItemRequirement[] {
@@ -359,7 +398,7 @@ function buildItemSourceSection(
 ): { lines: string[]; citations: AskCitation[] } {
   const lines: string[] = []
   const citations: AskCitation[] = []
-  if (!entry || !(entry.drops?.length ?? 0)) {
+  if (!entryHasAnySource(entry)) {
     return { lines, citations }
   }
 
@@ -367,16 +406,45 @@ function buildItemSourceSection(
     options?.heading ??
     `### ${itemName}${options?.countNote ? ` ×${options.countNote}` : ""}`
   lines.push(heading)
-  for (const drop of pickTopDrops(entry.drops)) {
-    lines.push(formatDropBullet(drop))
-    if (drop.enemyType != null && getSpawnsByEnemyType(drop.enemyType)) {
-      citations.push({
-        kind: "spawns",
-        label: `Enemy type ${drop.enemyType} spawns`,
-        ref: `website/content/wiki/spawns.json#enemy-${drop.enemyType}`,
-      })
+
+  const drops = entry!.drops ?? []
+  const shops = entry!.worldShops ?? []
+  const quests = entry!.questRequires ?? []
+
+  if (drops.length) {
+    lines.push("**Drops / plasma**")
+    for (const drop of pickTopDrops(drops)) {
+      lines.push(formatDropBullet(drop))
+      if (drop.enemyType != null && getSpawnsByEnemyType(drop.enemyType)) {
+        citations.push({
+          kind: "spawns",
+          label: `${enemyDisplayName(drop.enemyType)} spawns`,
+          ref: `website/content/wiki/spawns.json#enemy-${drop.enemyType}`,
+        })
+      }
     }
   }
+
+  if (shops.length) {
+    lines.push("**World NPC shops**")
+    for (const shop of shops.slice(0, 8)) {
+      lines.push(formatWorldShopBullet(shop))
+    }
+    if (shops.length > 8) {
+      lines.push(`- …and ${shops.length - 8} more shop listings`)
+    }
+  }
+
+  if (quests.length) {
+    lines.push("**Required by quests**")
+    for (const quest of quests.slice(0, 8)) {
+      lines.push(formatQuestRequireBullet(quest))
+    }
+    if (quests.length > 8) {
+      lines.push(`- …and ${quests.length - 8} more quest requirements`)
+    }
+  }
+
   lines.push("")
 
   citations.push({
@@ -430,7 +498,7 @@ function synthesizeItemAcquisitionAnswer(
   lines.push("")
   lines.push(`Item ID **${itemId}**.`)
   lines.push("")
-  lines.push("## Drop / plasma sources")
+  lines.push("## Acquisition sources")
   lines.push("")
   lines.push(...section.lines)
 
@@ -452,7 +520,7 @@ export function searchQuests(query: string, limit = 5): AskMatch[] {
   const scored = quests
     .map((quest) => ({
       id: quest.id,
-      title: quest.title,
+      title: quest.title ?? `Quest ${quest.id}`,
       score: scoreQuest(query, quest),
     }))
     .filter((row) => row.score > 0)
@@ -522,7 +590,8 @@ function synthesizeQuestAnswer(quest: QuestRecord): {
   const questNpcsPayload = loadQuestNpcsPayload()
 
   const lines: string[] = []
-  lines.push(`# ${quest.title}`)
+  const questTitle = quest.title ?? `Quest ${quest.id}`
+  lines.push(`# ${questTitle}`)
   lines.push("")
   lines.push(`Quest ID **${quest.id}** · type \`${quest.type}\``)
 
@@ -614,7 +683,7 @@ function synthesizeQuestAnswer(quest: QuestRecord): {
   const citations: AskCitation[] = [
     {
       kind: "quests",
-      label: `Quest ${quest.id}: ${quest.title}`,
+      label: `Quest ${quest.id}: ${questTitle}`,
       ref: `website/content/wiki/quests.json#${quest.id}`,
     },
     {
@@ -713,15 +782,16 @@ export function retrieveAskAnswer(query: string): AskRetrievalResult {
 
   const knowledge = findKnowledgeNote(quest.id)
   if (knowledge) {
+    const questTitle = quest.title ?? `Quest ${quest.id}`
     const citations: AskCitation[] = [
       {
         kind: "knowledge",
-        label: `Reviewed note: ${quest.title}`,
+        label: `Reviewed note: ${questTitle}`,
         ref: knowledge.path,
       },
       {
         kind: "quests",
-        label: `Quest ${quest.id}: ${quest.title}`,
+        label: `Quest ${quest.id}: ${questTitle}`,
         ref: `website/content/wiki/quests.json#${quest.id}`,
       },
       {

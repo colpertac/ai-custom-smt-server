@@ -66,6 +66,21 @@ describe("ask-retrieval", () => {
     ).toBe(true)
   })
 
+  it("includes demon names, world shops, and quest requires for Ointment", () => {
+    const result = retrieveAskAnswer("how do I get Ointment?")
+    expect(result.ok).toBe(true)
+    expect(result.answer).toMatch(/Ointment/i)
+    expect(result.answer).toMatch(/World NPC shops/i)
+    expect(result.answer).toMatch(/Clinic Aya/i)
+    expect(result.answer).toMatch(/Required by quests/i)
+    expect(result.answer).toMatch(/Class Preparation/i)
+    // Demon display name joined from DevilData (not raw "enemy type N" only).
+    expect(result.answer).toMatch(/\*\*[^*]+\*\*, type \d+/)
+    expect(result.citations.some((c) => c.ref.includes("item-sources.json#1"))).toBe(
+      true
+    )
+  })
+
   it("answers what enemies drop Tarunda Stone", () => {
     const result = retrieveAskAnswer("What enemies drop Tarunda Stone?")
     expect(result.ok).toBe(true)

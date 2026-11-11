@@ -30,9 +30,12 @@ export type ItemWorldShopSource = {
 
 export type ItemQuestRequireSource = {
   questId: number
+  /** Extract JSON uses `title`; older callers may use `questTitle`. */
+  title?: string
   questTitle?: string
   phaseNumber?: number
   objectCount?: number
+  requirementType?: string
 }
 
 export type ItemSourceEntry = {

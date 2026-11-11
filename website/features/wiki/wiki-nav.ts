@@ -8,6 +8,8 @@ export const WIKI_NAV = [
   { href: "/wiki/items", label: "Items", prefix: "/wiki/items" },
   { href: "/wiki/demons", label: "Demons", prefix: "/wiki/demons" },
   { href: "/wiki/skills", label: "Skills", prefix: "/wiki/skills" },
+  { href: "/wiki/valuables", label: "Valuables", prefix: "/wiki/valuables" },
+  { href: "/wiki/quests", label: "Quests", prefix: "/wiki/quests" },
 ] as const
 
 export const WIKI_DEMONS_META = {
@@ -22,6 +24,20 @@ export const WIKI_SKILLS_META = {
   title: "Skills",
   blurb:
     "CSkillData IDs and names for GM @skill — look up Agi as 5001, etc.",
+} as const
+
+export const WIKI_VALUABLES_META = {
+  href: "/wiki/valuables",
+  title: "Valuables",
+  blurb:
+    "CValuablesData IDs for GM @valuable — Class C DB License is 15, WILDCAT is 222, etc.",
+} as const
+
+export const WIKI_QUESTS_META = {
+  href: "/wiki/quests",
+  title: "Quests",
+  blurb:
+    "QuestData journal steps, phase requirements, and NPC event links — structured catalog, not full walkthroughs.",
 } as const
 
 export const WIKI_CATEGORY_META: Record<
