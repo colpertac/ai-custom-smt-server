@@ -1,29 +1,14 @@
-﻿<objects>
+<objects>
     <object name="Event">
+        <!-- Home II Haruaki. Branch order matters (first match wins).
+             Stock put "336 not active/complete → empty next" first, which
+             softlocked Eternal Rest (846) phase 5: Side.a (336) has not
+             started yet, so the Q846 instance-entry talk never ran.
+             Keep the empty deny for random visitors, but only after the
+             846/336 quest branches. -->
         <member name="ID">Z90107_603</member>
         <member name="next">Z90107_603_00</member>
         <member name="branches">
-            <element>
-                <object>
-                    <member name="next"/>
-                    <member name="conditions">
-                        <element>
-                            <object name="EventCondition">
-                                <member name="type">QUEST_ACTIVE</member>
-                                <member name="value1">336</member>
-                                <member name="value2">0</member>
-                            </object>
-                        </element>
-                        <element>
-                            <object name="EventCondition">
-                                <member name="type">QUEST_COMPLETE</member>
-                                <member name="value1">336</member>
-                                <member name="value2">0</member>
-                            </object>
-                        </element>
-                    </member>
-                </object>
-            </element>
             <element>
                 <object>
                     <member name="next">Z90107_603_Q336</member>
@@ -88,6 +73,27 @@
                             <object name="EventCondition">
                                 <member name="type">INSTANCE_ACCESS</member>
                                 <member name="value1">11001</member>
+                            </object>
+                        </element>
+                    </member>
+                </object>
+            </element>
+            <element>
+                <object>
+                    <member name="next"/>
+                    <member name="conditions">
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_ACTIVE</member>
+                                <member name="value1">336</member>
+                                <member name="value2">0</member>
+                            </object>
+                        </element>
+                        <element>
+                            <object name="EventCondition">
+                                <member name="type">QUEST_COMPLETE</member>
+                                <member name="value1">336</member>
+                                <member name="value2">0</member>
                             </object>
                         </element>
                     </member>
