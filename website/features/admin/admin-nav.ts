@@ -22,6 +22,7 @@ import {
   Store,
   ShoppingCart,
   Ticket,
+  UserRound,
   Users,
   HardDrive,
 } from "lucide-react"
@@ -57,6 +58,12 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         match: "prefix",
       },
       { href: "/admin/accounts", label: "Accounts", icon: Users, match: "prefix" },
+      {
+        href: "/admin/players",
+        label: "Players",
+        icon: UserRound,
+        match: "prefix",
+      },
       { href: "/admin/reports", label: "Reports", icon: Flag, match: "prefix" },
       { href: "/admin/feedback", label: "Feedback", icon: Inbox, match: "prefix" },
       {
@@ -151,6 +158,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/website")) return "Website"
   if (pathname.startsWith("/admin/notifications")) return "Notifications"
   if (pathname.startsWith("/admin/accounts")) return "Accounts"
+  if (pathname.startsWith("/admin/players")) return "Players"
   if (pathname.startsWith("/admin/reports")) return "Reports"
   if (pathname.startsWith("/admin/feedback")) return "Feedback"
   if (pathname.startsWith("/admin/chat-logs")) return "Chat logs"

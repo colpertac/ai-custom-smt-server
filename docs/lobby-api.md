@@ -83,6 +83,7 @@ Require `user_level >= 1000` (plus per-route level constants).
 | `/api/admin/update_account` | Fields: `password`, `disp_name`, `email`, `cp`, `ticket_count`, `user_level`, `enabled`, `ban_reason`, `ban_initiator` |
 | `/api/admin/delete_account` | Delete by `username` |
 | `/api/admin/online` | Aggregate online counts (`total`, per-world `character_count`); optional `targets` for account/character lookup |
+| `/api/admin/list_online` | Admin presence roster: `{ total, players: [{ account, character, world_id, channel_id, zone_id, status, x?, y? }] }` sorted by character name. `status` is `online` when zoned, else `world`. Zone/position stay current via channel→world→lobby presence sync (zone enter + ~5s refresh). Website: Admin → Players. Phase 18 will add a privacy-filtered friends presence endpoint reusing this record shape. |
 | `/api/admin/message_world` | World-wide ticker (`type: "ticker"`, `mode` 0–4 like `@announce`) or console chat (`type: "console"`). Requires `world_id` + `message`. Wired in website Admin overview → Announce. |
 | `/api/admin/list_chat_logs` | World DB chat log (`character_name`, `since`/`until`, `limit`≤200). Channel persists say/shout/tell/party/clan/team/versus (not SELF); prune via `WorldSharedConfig.ChatLogRetentionDays` (0 = keep forever). Wired in Admin → Chat logs (search + zip export). |
 | `/api/admin/list_reports` | Unresolved/resolved `ReportedPlayer` rows (`resolved`, optional `player_name`). Wired in Admin → Reports (detail pulls chat for 30m before `report_time`). |

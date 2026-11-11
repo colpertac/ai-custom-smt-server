@@ -58,9 +58,9 @@ export const GM_COMMANDS: readonly GmCommand[] = [
   },
   {
     name: "online",
-    usage: "@online [NAME]",
+    usage: "@online [PAGE]",
     description:
-      "Print how many players are online, or check if the character with a specific NAME is online.",
+      "Print how many players are online and a paginated list of character names (25 per page). PAGE defaults to 1.",
     level: 1,
     category: "Explorer",
   },

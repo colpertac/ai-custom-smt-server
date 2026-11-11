@@ -285,6 +285,58 @@ export async function adminGetOnline(
   }
 }
 
+export type AdminOnlinePresencePlayer = {
+  account: string
+  character: string
+  worldId: number
+  channelId: number
+  zoneId: number
+  status: "online" | "world"
+  x?: number
+  y?: number
+}
+
+export type AdminOnlinePresenceRoster = {
+  total: number
+  players: AdminOnlinePresencePlayer[]
+}
+
+/** Lobby `/admin/list_online` → sorted presence roster (admin). */
+export async function adminListOnline(
+  auth: CompAuthState
+): Promise<AdminOnlinePresenceRoster> {
+  const data = await authenticatedRequest(auth, "/admin/list_online", {}, {
+    timeoutMs: 4_000,
+  })
+  if (data.error && data.error !== "Success") {
+    throw new CompApiError(String(data.error), 502, data)
+  }
+  const raw = Array.isArray(data.players) ? data.players : []
+  const players: AdminOnlinePresencePlayer[] = []
+  for (const row of raw) {
+    if (!row || typeof row !== "object") continue
+    const o = row as JsonObject
+    const statusRaw = String(o.status ?? "online").toLowerCase()
+    const status: "online" | "world" =
+      statusRaw === "world" ? "world" : "online"
+    const player: AdminOnlinePresencePlayer = {
+      account: String(o.account ?? ""),
+      character: String(o.character ?? ""),
+      worldId: Number(o.world_id ?? 0),
+      channelId: Number(o.channel_id ?? 0),
+      zoneId: Number(o.zone_id ?? 0),
+      status,
+    }
+    if (typeof o.x === "number" && Number.isFinite(o.x)) player.x = o.x
+    if (typeof o.y === "number" && Number.isFinite(o.y)) player.y = o.y
+    players.push(player)
+  }
+  return {
+    total: Number(data.total ?? players.length),
+    players,
+  }
+}
+
 /**
  * Lobby `/admin/message_world` — world-wide ticker or console chat.
  * Ticker `mode` matches in-game `@announce` color (0–4).
