@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  Activity,
   Bell,
   BookOpenText,
   Database,
@@ -51,6 +52,12 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     label: "Monitor",
     items: [
       { href: "/admin", label: "Overview", icon: LayoutDashboard, match: "exact" },
+      {
+        href: "/admin/metrics",
+        label: "Metrics",
+        icon: Activity,
+        match: "prefix",
+      },
       {
         href: "/admin/recovery",
         label: "Recovery",

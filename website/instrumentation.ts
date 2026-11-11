@@ -100,5 +100,32 @@ export async function register() {
         gReports.__reportNotifyInterval.unref()
       }
     }
+
+    // Concurrent player samples for admin charts (COMP_ANNOUNCE_* poll)
+    const gPlayers = globalThis as unknown as {
+      __playerCountSampleInterval?: NodeJS.Timeout
+    }
+    if (!gPlayers.__playerCountSampleInterval) {
+      const {
+        PLAYER_COUNT_SAMPLE_INTERVAL_MS,
+        runPlayerCountSample,
+      } = await import("@/lib/player-count-sampler")
+
+      setTimeout(() => {
+        void runPlayerCountSample().catch((err) => {
+          console.error("[PlayerCountSampler]", err)
+        })
+      }, 20_000)
+
+      gPlayers.__playerCountSampleInterval = setInterval(() => {
+        void runPlayerCountSample().catch((err) => {
+          console.error("[PlayerCountSampler]", err)
+        })
+      }, PLAYER_COUNT_SAMPLE_INTERVAL_MS)
+
+      if (typeof gPlayers.__playerCountSampleInterval.unref === "function") {
+        gPlayers.__playerCountSampleInterval.unref()
+      }
+    }
   }
 }
