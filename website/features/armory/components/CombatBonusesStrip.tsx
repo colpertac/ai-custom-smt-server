@@ -184,10 +184,11 @@ function buildRows(bonuses: ArmoryCombatBonuses | null): BonusRow[] {
 
 export function CombatBonusesStrip({
   bonuses,
-  live,
+  source,
 }: {
   bonuses: ArmoryCombatBonuses | null
-  live: boolean
+  /** "live" = channel snapshot; "estimate" = offline calc from saved data. */
+  source: "live" | "estimate"
 }) {
   const rows = buildRows(bonuses)
 
@@ -209,10 +210,11 @@ export function CombatBonusesStrip({
             <DialogHeader>
               <DialogTitle>Combat bonus caps</DialogTitle>
               <DialogDescription>
-                Live totals combine gear, crystals, sets, and passive bonuses
-                the same way the game does. Highlighted values on your profile
-                have hit a practical cap — stacking further on that stat does
-                not help.
+                Totals combine gear, crystals, sets, and passive bonuses the
+                same way the game does — live while the character is online,
+                otherwise estimated from saved data. Highlighted values on your
+                profile have hit a practical cap — stacking further on that
+                stat does not help.
               </DialogDescription>
             </DialogHeader>
             <div className="max-h-[min(60vh,24rem)] overflow-auto border border-border/80">
@@ -247,9 +249,11 @@ export function CombatBonusesStrip({
           </DialogContent>
         </Dialog>
       </div>
-      {!live ? (
+      {source === "estimate" ? (
         <p className="text-[10px] leading-relaxed text-muted-foreground">
-          Log in as this character for live combat bonuses from gear and skills.
+          {bonuses
+            ? "Estimated from saved gear, skills, and tokusei. Party, partner, buff, and time-of-day bonuses may differ until they log in again."
+            : "Log in as this character for live combat bonuses from gear and skills."}
         </p>
       ) : null}
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-xs tracking-wide uppercase">

@@ -145,6 +145,12 @@ export function mergeLiveArmoryProfile(
     statsDigitalized: Boolean(live.digitalized),
     demonSummoned,
     activeDemon: demonSummoned ? activeDemon : null,
-    combatBonuses: live.combatBonuses ?? null,
+    // Older channel builds omit combatBonuses: keep the offline estimate.
+    combatBonuses: live.combatBonuses ?? profile.combatBonuses ?? null,
+    combatBonusesSource: live.combatBonuses
+      ? "live"
+      : profile.combatBonuses
+        ? "estimate"
+        : undefined,
   }
 }

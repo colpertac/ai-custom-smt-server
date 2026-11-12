@@ -282,7 +282,11 @@ export function ArmoryProfileView({ profile }: { profile: ArmoryProfile }) {
             />
             <CombatBonusesStrip
               bonuses={profile.combatBonuses ?? null}
-              live={profile.statsSource === "live"}
+              source={
+                (profile.combatBonusesSource ?? profile.statsSource) === "live"
+                  ? "live"
+                  : "estimate"
+              }
             />
           </div>
         ) : null}

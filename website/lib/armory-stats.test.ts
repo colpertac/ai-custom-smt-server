@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  chantTimeFromStats,
+  computeArmoryEstimate,
   computeArmoryTotalStats,
   computeDisabledExpertiseSkills,
+  cooldownTimeFromStats,
   decodeLearnedSkillIds,
+  LB_CAP_BASE,
 } from "@/lib/armory-stats"
 import type { ArmoryEquipmentSlot, ArmoryStats } from "@/lib/armory"
 
@@ -113,5 +117,98 @@ describe("computeArmoryTotalStats", () => {
     })
     expect(result.total.magic).toBeGreaterThan(emptyBase.magic)
     expect(result.bonus.magic).toBeGreaterThan(0)
+  })
+})
+
+describe("incant / cooldown dependent stats (CalculateDependentStats 0x04)", () => {
+  it("subtracts floor(2.5·floor(INT/10) + 1.5·floor(SPD/10)) from CHANT_TIME", () => {
+    expect(chantTimeFromStats(100, 117, 23)).toBe(70)
+    // 2.5·1 + 1.5·0 = 2.5 → floor 2
+    expect(chantTimeFromStats(100, 15, 9)).toBe(98)
+    expect(chantTimeFromStats(100, 0, 0)).toBe(100)
+  })
+
+  it("uses VIT instead of INT for COOLDOWN_TIME", () => {
+    expect(cooldownTimeFromStats(100, 104, 23)).toBe(72)
+    expect(cooldownTimeFromStats(100, 40, 35)).toBe(86)
+  })
+
+  it("floors incant at 0 and cooldown at 5", () => {
+    expect(chantTimeFromStats(100, 999, 999)).toBe(0)
+    expect(cooldownTimeFromStats(100, 999, 999)).toBe(5)
+    expect(cooldownTimeFromStats(10, 0, 0)).toBe(10)
+  })
+})
+
+describe("computeArmoryEstimate combat bonuses", () => {
+  const input = {
+    base: emptyBase,
+    equipment: [] as ArmoryEquipmentSlot[],
+    expertisePoints: new Map<number, number>(),
+    fuseBySlot: new Map<string, number[]>(),
+  }
+
+  it("starts from GetCharacterBaseStats defaults and INT/VIT/SPD", () => {
+    const { combatBonuses } = computeArmoryEstimate({ ...input, learnedSkills: [] })
+    expect(combatBonuses).toEqual({
+      critical: 0,
+      finalCritChance: 0,
+      lbChance: 0,
+      lbDamage: 100,
+      lbCap: LB_CAP_BASE,
+      techAttackRate: 0,
+      techAttackPower: 0,
+      pursuitRate: 0,
+      pursuitPower: 0,
+      // INT 30 / SPD 35: 100 − floor(7.5 + 4.5)
+      incant: 88,
+      // VIT 40 / SPD 35: 100 − floor(10 + 4.5)
+      cooldown: 86,
+    })
+  })
+
+  it("adds passive correctTbl rows and charastic tokusei aspects", () => {
+    // 47: LB_CHANCE/LB_DAMAGE/CRITICAL +10; 632 → 870020 (TECH 5/5);
+    // 723 + 724 → 880049 twice (PURSUIT_POWER 20 each); 1105 → 870034 (TAP 10).
+    const { combatBonuses } = computeArmoryEstimate({
+      ...input,
+      learnedSkills: [47, 632, 723, 724, 1105],
+    })
+    expect(combatBonuses.critical).toBe(10)
+    expect(combatBonuses.lbChance).toBe(10)
+    expect(combatBonuses.lbDamage).toBe(100 + 10 + 20)
+    expect(combatBonuses.techAttackRate).toBe(5)
+    expect(combatBonuses.techAttackPower).toBe(15)
+    expect(combatBonuses.pursuitPower).toBe(40)
+  })
+
+  it("applies layer-2 percentages after numeric sums (20181: CRITICAL −40%)", () => {
+    // 5: CRITICAL +150; 20181 → 130103 (SUMMONER target = self): CRITICAL +40,
+    // 130104: LB_DAMAGE +20; then layer 2 −40% on both.
+    const { combatBonuses } = computeArmoryEstimate({
+      ...input,
+      learnedSkills: [5, 20181],
+    })
+    expect(combatBonuses.critical).toBe(190 + Math.trunc(190 * -0.4))
+    expect(combatBonuses.lbDamage).toBe(120 + Math.trunc(120 * -0.4))
+  })
+
+  it("does not assume SKILL_ADD-granted switch skills are toggled on", () => {
+    // 300290 → switch 45021 (PDEF/MDEF +999), 300291 → switch 45022
+    // (INT/LUCK +999): ApplySkillCorrectTbls only counts active toggles.
+    const plain = computeArmoryEstimate({ ...input, learnedSkills: [] })
+    const granted = computeArmoryEstimate({
+      ...input,
+      learnedSkills: [],
+      extraTokuseiIds: [300290, 300291],
+    })
+    expect(granted.computedStats.total).toEqual(plain.computedStats.total)
+  })
+
+  it("keeps computeArmoryTotalStats in sync with the estimate", () => {
+    const args = { ...input, learnedSkills: [5801] }
+    expect(computeArmoryTotalStats(args)).toEqual(
+      computeArmoryEstimate(args).computedStats
+    )
   })
 })

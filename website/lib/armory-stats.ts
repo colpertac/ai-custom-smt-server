@@ -7,7 +7,6 @@ import equipmentSetsPayload from "@/content/armory/equipment-sets.json"
 import passiveSkillsPayload from "@/content/armory/passive-skills.json"
 import expertiseRankSkillsPayload from "@/content/armory/expertise-rank-skills.json"
 import sitemTokuseiPayload from "@/content/armory/sitem-tokusei.json"
-import tokuseiCorrectionsPayload from "@/content/armory/tokusei-corrections.json"
 import {
   getWikiEnchant,
   getWikiItem,
@@ -22,9 +21,21 @@ import {
 } from "@/lib/enchant-conditions"
 import { EXPERTISE_POINTS_PER_RANK } from "@/lib/armory-catalogs"
 import type { ArmoryEquipmentSlot } from "@/lib/armory-equipment"
-import type { ArmoryStats } from "@/lib/armory"
+import type { ArmoryCombatBonuses, ArmoryStats } from "@/lib/armory"
+import {
+  calculateAttributeValue,
+  getTokuseiEffect,
+  isEffectiveOnCharacter,
+  sumTokuseiAspect,
+  tokuseiSkillAdds,
+  type TokuseiAttributes,
+  type TokuseiCharacterContext,
+} from "@/lib/armory-tokusei"
 
 export type StatAdjustment = { id: string; type: number; value: number }
+
+/** A CorrectTbl row plus TokuseiCorrectTbl attributes (type ≥ 100). */
+type Adjustment = StatAdjustment & { attr?: TokuseiAttributes }
 
 export type { EnchantCondition }
 
@@ -42,6 +53,8 @@ type StatMap = Map<string, number>
 type SkillRow = {
   mainCategory: number
   correctTbl: StatAdjustment[]
+  /** Charastic tokusei held while the passive/switch skill is learned. */
+  tokuseiIds?: number[]
 }
 
 const passiveSkills = (
@@ -56,26 +69,43 @@ const expertiseRankSkills = (
   }
 ).expertises
 
-const tokuseiCorrectionsRaw = (
-  tokuseiCorrectionsPayload as {
-    tokusei: Record<
-      string,
-      StatAdjustment[] | { target?: string; rows?: StatAdjustment[] }
-    >
+/**
+ * CorrectTbl rows of the tokusei that are effective on the character
+ * (TokuseiManager::Recalculate → ActiveEntityState::GetAdditionalCorrectTbls).
+ * Target, skill conditions and tokusei conditions are evaluated in
+ * lib/armory-tokusei.ts; one copy per source like the server's counts.
+ */
+function tokuseiAdjustments(effectiveTokusei: readonly number[]): Adjustment[] {
+  const out: Adjustment[] = []
+  for (const tokuseiId of effectiveTokusei) {
+    const effect = getTokuseiEffect(tokuseiId)
+    if (!effect) continue
+    for (const row of effect.correct ?? []) {
+      out.push({ id: row.id, type: row.type, value: row.value })
+    }
+    for (const row of effect.tokuseiCorrect ?? []) {
+      out.push({ id: row.id, type: row.type, value: row.value, attr: row.attr })
+    }
   }
-).tokusei
+  return out
+}
 
-/** Player-side only (SELF/PARTY). Partner tokusei are ignored for armory sheet. */
-function addTokuseiAdjustments(out: StatAdjustment[], tokuseiId: number): void {
-  const raw = tokuseiCorrectionsRaw[String(tokuseiId)]
-  if (!raw) return
-  if (Array.isArray(raw)) {
-    for (const row of raw) out.push(row)
-    return
+function filterEffectiveTokusei(
+  tokuseiIds: readonly number[],
+  ctx: TokuseiCharacterContext
+): number[] {
+  const evaluated = new Map<number, boolean>()
+  const out: number[] = []
+  for (const tokuseiId of tokuseiIds) {
+    let add = evaluated.get(tokuseiId)
+    if (add == null) {
+      const effect = getTokuseiEffect(tokuseiId)
+      add = effect != null && isEffectiveOnCharacter(effect, ctx)
+      evaluated.set(tokuseiId, add)
+    }
+    if (add) out.push(tokuseiId)
   }
-  const target = String(raw.target ?? "SELF").toUpperCase()
-  if (target === "PARTNER") return
-  for (const row of raw.rows ?? []) out.push(row)
+  return out
 }
 
 const sitemTokusei = (
@@ -140,31 +170,25 @@ const BASE_STAT_IDS = new Set([
   "LUCK",
 ])
 
+/** ActiveEntityState.cpp FORCE_NUMERIC: type 1 (%) rows applied as numeric. */
 const FORCE_NUMERIC = new Set([
-  "RES_DEFAULT",
-  "RES_WEAPON",
-  "RES_SLASH",
-  "RES_THRUST",
-  "RES_STRIKE",
-  "RES_LNGR",
-  "RES_PIERCE",
-  "RES_SPREAD",
-  "RES_FIRE",
-  "RES_ICE",
-  "RES_ELEC",
-  "RES_ALMIGHTY",
-  "RES_FORCE",
-  "RES_EXPEL",
-  "RES_CURSE",
-  "RES_HEAL",
-  "RES_SUPPORT",
-  "RES_MAGICFORCE",
-  "RES_NERVE",
-  "RES_MIND",
-  "RES_WORD",
-  "RES_SPECIAL",
-  "RES_SUICIDE",
+  "RES_DEFAULT", "RES_WEAPON", "RES_SLASH", "RES_THRUST", "RES_STRIKE",
+  "RES_LNGR", "RES_PIERCE", "RES_SPREAD", "RES_FIRE", "RES_ICE", "RES_ELEC",
+  "RES_ALMIGHTY", "RES_FORCE", "RES_EXPEL", "RES_CURSE", "RES_HEAL",
+  "RES_SUPPORT", "RES_MAGICFORCE", "RES_NERVE", "RES_MIND", "RES_WORD",
+  "RES_SPECIAL", "RES_SUICIDE",
   "COOLDOWN_TIME",
+  "RATE_XP", "RATE_MAG", "RATE_MACCA", "RATE_EXPERTISE", "RATE_CLSR",
+  "RATE_LNGR", "RATE_SPELL", "RATE_SUPPORT", "RATE_HEAL", "RATE_CLSR_TAKEN",
+  "RATE_LNGR_TAKEN", "RATE_SPELL_TAKEN", "RATE_SUPPORT_TAKEN",
+  "RATE_HEAL_TAKEN",
+  "BOOST_DEFAULT", "BOOST_WEAPON", "BOOST_SLASH", "BOOST_THRUST",
+  "BOOST_STRIKE", "BOOST_LNGR", "BOOST_PIERCE", "BOOST_SPREAD", "BOOST_FIRE",
+  "BOOST_ICE", "BOOST_ELEC", "BOOST_ALMIGHTY", "BOOST_FORCE", "BOOST_EXPEL",
+  "BOOST_CURSE", "BOOST_HEAL", "BOOST_SUPPORT", "BOOST_MAGICFORCE",
+  "BOOST_NERVE", "BOOST_MIND", "BOOST_WORD", "BOOST_SPECIAL", "BOOST_SUICIDE",
+  "LB_CHANCE",
+  "RATE_PC", "RATE_DEMON", "RATE_PC_TAKEN", "RATE_DEMON_TAKEN",
   "CHANT_TIME",
 ])
 
@@ -184,6 +208,57 @@ const DISPLAY_STAT_IDS = [
   "HP_MAX",
   "MP_MAX",
 ] as const
+
+/** CorrectTbl values behind the armory "Combat bonuses" strip. */
+const COMBAT_STAT_IDS = [
+  "CRITICAL",
+  "FINAL_CRIT_CHANCE",
+  "LB_CHANCE",
+  "LB_DAMAGE",
+  "CHANT_TIME",
+  "COOLDOWN_TIME",
+] as const
+
+/** Stats tracked through AdjustStats (CorrectTbl order irrelevant: no cross-reads). */
+const TRACKED_STAT_IDS: readonly string[] = [
+  ...DISPLAY_STAT_IDS,
+  ...COMBAT_STAT_IDS,
+]
+
+/** CharacterManager::AdjustStatBounds minimums (tracked ids only). */
+const STAT_MIN: Record<string, number> = {
+  HP_MAX: 1,
+  MP_MAX: 1,
+  CLSR: 0,
+  LNGR: 0,
+  SPELL: 0,
+  SUPPORT: 0,
+  PDEF: 0,
+  MDEF: 0,
+  COOLDOWN_TIME: 5,
+  CHANT_TIME: 0,
+  STR: 0,
+  MAGIC: 0,
+  VIT: 0,
+  INT: 0,
+  SPEED: 0,
+  LUCK: 0,
+}
+
+/** MAX_PLAYER_HP_MP (Constants.h.in) and the 999 core stat cap (players). */
+const STAT_MAX: Record<string, number> = {
+  HP_MAX: 30000,
+  MP_MAX: 30000,
+  STR: 999,
+  MAGIC: 999,
+  VIT: 999,
+  INT: 999,
+  SPEED: 999,
+  LUCK: 999,
+}
+
+/** StudioHandler: lbCap = 30000 + floor(LIMIT_BREAK_MAX aspect sum). */
+export const LB_CAP_BASE = 30000
 
 const GROWTH_TABLE_SIZE = 16
 const WEAPON_GROWTH: [number, number][] = [
@@ -212,6 +287,13 @@ function statMapFromBase(base: ArmoryStats): StatMap {
   map.set("MP_MAX", 10)
   map.set("HP_REGEN", 1)
   map.set("MP_REGEN", 1)
+  // CharacterManager::GetCharacterBaseStats
+  map.set("CRITICAL", 0)
+  map.set("FINAL_CRIT_CHANCE", 0)
+  map.set("LB_CHANCE", 0)
+  map.set("LB_DAMAGE", 100)
+  map.set("CHANT_TIME", 100)
+  map.set("COOLDOWN_TIME", 100)
   return map
 }
 
@@ -297,7 +379,7 @@ export function computeDisabledExpertiseSkills(
 }
 
 function addConditionTokusei(
-  out: StatAdjustment[],
+  out: number[],
   deferred: EnchantCondition[],
   conditions: EnchantCondition[] | undefined,
   ctx: {
@@ -313,7 +395,7 @@ function addConditionTokusei(
     }
     if (!evaluateEnchantCondition(condition, ctx)) continue
     for (const tokId of condition.tokuseiIds) {
-      addTokuseiAdjustments(out, tokId)
+      if (tokId > 0) out.push(tokId)
     }
   }
 }
@@ -474,8 +556,17 @@ function collectAdjustments(input: {
   lnc: number
   expertisePoints: ReadonlyMap<number, number>
   extraTokuseiIds?: readonly number[]
-}): { adjustments: StatAdjustment[]; deferred: EnchantCondition[] } {
-  const out: StatAdjustment[] = []
+}): {
+  /** Item + skill CorrectTbl rows (always applied). */
+  rows: Adjustment[]
+  /** Direct tokusei (one entry per source), before target/condition checks. */
+  tokuseiIds: number[]
+  /** Passive/switch skills whose correctTbl already counted. */
+  skillIds: Set<number>
+  deferred: EnchantCondition[]
+} {
+  const rows: Adjustment[] = []
+  const tokuseiIds: number[] = []
   const deferred: EnchantCondition[] = []
   const ctx = {
     level: input.level,
@@ -483,13 +574,8 @@ function collectAdjustments(input: {
     expertisePoints: input.expertisePoints,
   }
 
-  for (const tokId of input.extraTokuseiIds ?? []) {
-    addTokuseiAdjustments(out, tokId)
-  }
-
-  for (const tokId of collectModSlotTokusei(input.equipment)) {
-    addTokuseiAdjustments(out, tokId)
-  }
+  tokuseiIds.push(...(input.extraTokuseiIds ?? []))
+  tokuseiIds.push(...collectModSlotTokusei(input.equipment))
 
   for (const slot of input.equipment) {
     if (slot.itemType == null) continue
@@ -505,131 +591,208 @@ function collectAdjustments(input: {
     const basicItem = getWikiItem(basicId)
     if (basicItem) {
       for (const row of wikiBasicFeatures(basicItem)) {
-        out.push({ id: row.id, type: row.type, value: row.value })
+        rows.push({ id: row.id, type: row.type, value: row.value })
       }
       for (const row of wikiCharacteristics(basicItem)) {
-        out.push({ id: row.id, type: row.type, value: row.value })
+        rows.push({ id: row.id, type: row.type, value: row.value })
       }
     }
 
-    for (const tokId of sitemTokusei[String(specialId)] ?? []) {
-      addTokuseiAdjustments(out, tokId)
-    }
+    tokuseiIds.push(...(sitemTokusei[String(specialId)] ?? []))
 
     if (slot.tarot > 0) {
       const enchant = getWikiEnchant(slot.tarot)
-      for (const tokId of enchant?.tarot.tokuseiIds ?? []) {
-        addTokuseiAdjustments(out, tokId)
-      }
-      addConditionTokusei(out, deferred, enchant?.tarot.conditions, ctx)
+      tokuseiIds.push(...(enchant?.tarot.tokuseiIds ?? []))
+      addConditionTokusei(tokuseiIds, deferred, enchant?.tarot.conditions, ctx)
     }
     if (slot.soul > 0) {
       const enchant = getWikiEnchant(slot.soul)
-      for (const tokId of enchant?.soul.tokuseiIds ?? []) {
-        addTokuseiAdjustments(out, tokId)
-      }
-      addConditionTokusei(out, deferred, enchant?.soul.conditions, ctx)
+      tokuseiIds.push(...(enchant?.soul.tokuseiIds ?? []))
+      addConditionTokusei(tokuseiIds, deferred, enchant?.soul.conditions, ctx)
     }
   }
 
-  for (const tokId of collectEquipmentSetTokusei(input.equipment)) {
-    addTokuseiAdjustments(out, tokId)
-  }
+  tokuseiIds.push(...collectEquipmentSetTokusei(input.equipment))
 
   const effectIds = collectEnchantEffectIds(input.equipment)
   const enchantSetBonuses = collectEnchantSetBonuses(effectIds)
-  for (const tokId of enchantSetBonuses.tokuseiIds) {
-    addTokuseiAdjustments(out, tokId)
-  }
-  addConditionTokusei(out, deferred, enchantSetBonuses.conditions, ctx)
+  tokuseiIds.push(...enchantSetBonuses.tokuseiIds)
+  addConditionTokusei(tokuseiIds, deferred, enchantSetBonuses.conditions, ctx)
 
+  // Learned passive/switch skills: correctTbl + charastic tokusei.
+  const skillIds = new Set<number>()
+  const skillTokusei: number[] = []
   for (const skillId of input.learnedSkills) {
+    if (skillIds.has(skillId)) continue
     if (input.disabledSkills.has(skillId)) continue
     const skill = passiveSkills[String(skillId)]
     if (!skill) continue
     // Passive (0) always applies; switch (2) applies when learned (active toggles are session-only).
     if (skill.mainCategory !== 0 && skill.mainCategory !== 2) continue
+    skillIds.add(skillId)
     for (const row of skill.correctTbl) {
-      out.push(row)
+      rows.push(row)
     }
+    skillTokusei.push(...(skill.tokuseiIds ?? []))
   }
+  // Skills granted by SKILL_ADD aspects of the direct tokusei add their
+  // charastic tokusei (TokuseiManager.cpp:1104-1130) but only when passive
+  // or an *active* switch skill — granted switch toggles are assumed off
+  // offline. Their correctTbl is added later from effective tokusei only.
+  for (const skillId of tokuseiSkillAdds(tokuseiIds)) {
+    if (skillIds.has(skillId)) continue
+    const skill = passiveSkills[String(skillId)]
+    if (!skill || skill.mainCategory !== 0) continue
+    skillIds.add(skillId)
+    skillTokusei.push(...(skill.tokuseiIds ?? []))
+  }
+  tokuseiIds.push(...skillTokusei)
 
-  return { adjustments: out, deferred }
+  return { rows, tokuseiIds, skillIds, deferred }
 }
 
-function deferredToAdjustments(
+function deferredToTokusei(
   deferred: EnchantCondition[],
   stats: StatMap
-): StatAdjustment[] {
-  const out: StatAdjustment[] = []
+): number[] {
+  const out: number[] = []
   for (const condition of deferred) {
     const statId = statIdForConditionType(condition.type)
     if (!statId) continue
     const stat = stats.get(statId) ?? 0
     if (stat < 0 || stat < (condition.params[0] ?? 0)) continue
     for (const tokId of condition.tokuseiIds) {
-      addTokuseiAdjustments(out, tokId)
+      if (tokId > 0) out.push(tokId)
     }
   }
   return out
 }
 
-function normalizeAdjustment(row: StatAdjustment): StatAdjustment {
-  let type = row.type
-  if (type >= 100) type = type - 100
-  if (type === 1 && FORCE_NUMERIC.has(row.id)) type = 0
-  return { id: row.id, type, value: row.value }
+type AdjustContext = {
+  /** Unadjusted core stats (EntityStats) for BASE_AND_LEVEL multipliers. */
+  base: ArmoryStats
+  tokusei: TokuseiCharacterContext
 }
 
+const CORE_STAT_BASE: Record<string, keyof ArmoryStats> = {
+  STR: "str",
+  MAGIC: "magic",
+  VIT: "vit",
+  INT: "intel",
+  SPEED: "speed",
+  LUCK: "luck",
+}
+
+/**
+ * Effective type/value for a row (ActiveEntityState::AdjustStats): type ≥ 100
+ * is a TokuseiCorrectTbl whose value goes through CalculateAttributeValue and
+ * whose 0% rows never zero the stat.
+ */
+function resolveAdjustment(
+  row: Adjustment,
+  stats: StatMap,
+  ctx: AdjustContext
+): { type: number; value: number; calc: boolean } {
+  let type = row.type
+  let value = row.value
+  let calc = false
+  if (type >= 100) {
+    type = type - 100
+    if (row.attr) {
+      let base = 0
+      if (row.attr.mult === "BASE_AND_LEVEL") {
+        const key = CORE_STAT_BASE[row.id]
+        base = key ? Number(ctx.base[key]) : 0
+      }
+      value = Math.trunc(
+        calculateAttributeValue(value, base, row.attr, ctx.tokusei, (id) =>
+          stats.get(id) ?? 0
+        )
+      )
+    }
+    calc = true
+  }
+  if (type === 1 && FORCE_NUMERIC.has(row.id)) type = 0
+  return { type, value, calc }
+}
+
+function adjustStatBounds(stats: StatMap): void {
+  for (const id of TRACKED_STAT_IDS) {
+    let value = stats.get(id)
+    if (value == null) continue
+    if (value > 32767 && id !== "HP_MAX" && id !== "MP_MAX") value = 32767
+    else if (value < -32768) value = -32768
+    const min = STAT_MIN[id]
+    if (min != null && value < min) value = min
+    const max = STAT_MAX[id]
+    if (max != null && value > max) value = max
+    stats.set(id, value)
+  }
+}
+
+/** ActiveEntityState::AdjustStats (+ CharacterManager::AdjustStatBounds). */
 function adjustStats(
   stats: StatMap,
-  adjustments: StatAdjustment[],
-  baseMode: boolean
+  adjustments: Adjustment[],
+  baseMode: boolean,
+  ctx: AdjustContext
 ): void {
   const numericSums: StatMap = new Map()
   const percentSums: [StatMap, StatMap] = [new Map(), new Map()]
 
-  for (const raw of adjustments) {
-    const row = normalizeAdjustment(raw)
-    const isBase = BASE_STAT_IDS.has(row.id)
-    if (baseMode !== isBase) continue
+  const resolved: { id: string; type: number; value: number; calc: boolean }[] =
+    []
+  for (const row of adjustments) {
+    if (baseMode !== BASE_STAT_IDS.has(row.id)) continue
+    resolved.push({ id: row.id, ...resolveAdjustment(row, stats, ctx) })
+  }
 
-    if (row.type === 0) {
-      numericSums.set(row.id, (numericSums.get(row.id) ?? 0) + row.value)
-    } else if (row.type === 1 || row.type === 2) {
-      if (row.value === 0) {
-        stats.set(row.id, 0)
-        numericSums.delete(row.id)
-        percentSums[0].delete(row.id)
-        percentSums[1].delete(row.id)
-      } else {
-        const idx = row.type - 1
-        const layer = percentSums[idx]!
-        layer.set(row.id, (layer.get(row.id) ?? 0) + row.value)
-      }
+  // Adjustments are sorted with "set to 0%" rows first; once removed, a stat
+  // ignores every other row.
+  const removed = new Set<string>()
+  for (const row of resolved) {
+    if ((row.type === 1 || row.type === 2) && row.value === 0 && !row.calc) {
+      removed.add(row.id)
+      stats.set(row.id, 0)
     }
   }
 
-  for (const id of DISPLAY_STAT_IDS) {
+  for (const row of resolved) {
+    if (removed.has(row.id)) continue
+    if (row.type === 0) {
+      numericSums.set(row.id, (numericSums.get(row.id) ?? 0) + row.value)
+    } else if ((row.type === 1 || row.type === 2) && row.value !== 0) {
+      const layer = percentSums[row.type - 1]!
+      layer.set(row.id, (layer.get(row.id) ?? 0) + row.value)
+    }
+  }
+
+  for (const id of TRACKED_STAT_IDS) {
+    if (baseMode !== BASE_STAT_IDS.has(id)) continue
+    // 1) % layer 1, 2) numeric, 3) % layer 2
     for (let layer = 0; layer < 3; layer++) {
       if (layer === 1) {
         const add = numericSums.get(id)
         if (add != null) stats.set(id, (stats.get(id) ?? 0) + add)
       } else {
-        const idx = layer === 0 ? 0 : 1
-        const pct = percentSums[idx].get(id)
+        const pct = percentSums[layer === 0 ? 0 : 1].get(id)
         if (pct != null) {
           const current = stats.get(id) ?? 0
-          const sum = pct
           const adjusted =
-            sum <= -100 ? 0 : Math.trunc(current + current * (sum * 0.01))
+            pct <= -100 ? 0 : Math.trunc(current + Math.trunc(current * (pct * 0.01)))
           stats.set(id, adjusted)
         }
       }
     }
   }
+
+  adjustStatBounds(stats)
 }
 
+/**
+ * CharacterManager::CalculateDependentStats(mode 0x07) for a character:
+ * HP/MP max, CLSR..MDEF, then incant/cooldown from INT/VIT/SPEED.
+ */
 function calculateDependentStats(stats: StatMap, level: number): void {
   const str = stats.get("STR") ?? 0
   const magic = stats.get("MAGIC") ?? 0
@@ -682,6 +845,47 @@ function calculateDependentStats(stats: StatMap, level: number): void {
     "MDEF",
     Math.trunc((stats.get("MDEF") ?? 0) + Math.floor(intel * 0.1 + level * 0.1))
   )
+
+  const chant = chantTimeFromStats(stats.get("CHANT_TIME") ?? 100, intel, speed)
+  const cooldown = cooldownTimeFromStats(
+    stats.get("COOLDOWN_TIME") ?? 100,
+    vit,
+    speed
+  )
+  stats.set("CHANT_TIME", chant)
+  stats.set("COOLDOWN_TIME", cooldown)
+}
+
+/**
+ * CalculateDependentStats mode 0x04: CHANT_TIME − floor(2.5·floor(INT/10) +
+ * 1.5·floor(SPEED/10)), floored at 0.
+ */
+export function chantTimeFromStats(
+  chantTime: number,
+  intel: number,
+  speed: number
+): number {
+  const adjust = Math.trunc(
+    chantTime -
+      Math.floor(2.5 * Math.floor(intel * 0.1) + 1.5 * Math.floor(speed * 0.1))
+  )
+  return adjust < 0 ? 0 : adjust
+}
+
+/**
+ * CalculateDependentStats mode 0x04: COOLDOWN_TIME − floor(2.5·floor(VIT/10) +
+ * 1.5·floor(SPEED/10)), floored at 5.
+ */
+export function cooldownTimeFromStats(
+  cooldownTime: number,
+  vit: number,
+  speed: number
+): number {
+  const adjust = Math.trunc(
+    cooldownTime -
+      Math.floor(2.5 * Math.floor(vit * 0.1) + 1.5 * Math.floor(speed * 0.1))
+  )
+  return adjust < 5 ? 5 : adjust
 }
 
 function applyFuseBonuses(
@@ -746,19 +950,48 @@ function diffStats(total: ArmoryStats, base: ArmoryStats): Partial<ArmoryStats> 
   return bonus
 }
 
-export function computeArmoryTotalStats(input: {
+export type ArmoryEstimateInput = {
   base: ArmoryStats
   equipment: ArmoryEquipmentSlot[]
   learnedSkills: readonly number[]
   expertisePoints: ReadonlyMap<number, number>
   fuseBySlot: ReadonlyMap<string, number[]>
   lnc?: number
+  /** Character.Gender (GENDER tokusei conditions). */
+  gender?: number
   /** Partner demon stats for offline digitalize estimate (not session-accurate). */
   digitalizeDemonStats?: ArmoryStats | null
   digitalizeStatRate?: number
   devilBook?: Uint8Array | Buffer | null
   valuables?: Uint8Array | Buffer | null
-}): ArmoryComputedStats {
+  /** PARTY-target tokusei need a party; offline estimate assumes solo. */
+  inParty?: boolean
+  /** Additional direct tokusei (one entry per source), e.g. quest bonuses. */
+  extraTokuseiIds?: readonly number[]
+}
+
+export type ArmoryEstimate = {
+  computedStats: ArmoryComputedStats
+  combatBonuses: ArmoryCombatBonuses
+}
+
+function hpPercent(current: number, max: number): number {
+  if (max <= 0) return 100
+  return Math.floor((Math.fround(current) / Math.fround(max)) * 100)
+}
+
+function weaponSubcategory(equipment: ArmoryEquipmentSlot[]): number | null {
+  const weapon = equipment.find((slot) => slot.slot === "weapon")
+  if (weapon?.itemType == null) return null
+  return itemSubcategories[String(weapon.itemType)] ?? null
+}
+
+/**
+ * Offline port of CharacterState::RecalculateStats plus the StudioHandler
+ * /armory/stats combat bonuses (CorrectTbl CRITICAL…COOLDOWN_TIME and the
+ * TECH/PURSUIT/LIMIT_BREAK_MAX tokusei aspect sums).
+ */
+export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimate {
   const disabledSkills = computeDisabledExpertiseSkills(
     input.learnedSkills,
     input.expertisePoints
@@ -772,13 +1005,45 @@ export function computeArmoryTotalStats(input: {
     lnc: input.lnc ?? 0,
     expertisePoints: input.expertisePoints,
   }
-  const { adjustments, deferred } = collectAdjustments({
+  const tokuseiCtx: TokuseiCharacterContext = {
+    ...ctx,
+    gender: input.gender ?? 2,
+    weaponSubcategory: weaponSubcategory(input.equipment),
+    digitalized: input.digitalizeDemonStats != null,
+    hpPercent: hpPercent(input.base.hp, input.base.maxHp),
+    mpPercent: hpPercent(input.base.mp, input.base.maxMp),
+    inParty: input.inParty ?? false,
+    compendiumCount: countCompendiumEntries(input.devilBook ?? null),
+  }
+  const adjustCtx: AdjustContext = { base: input.base, tokusei: tokuseiCtx }
+
+  const { rows, tokuseiIds, deferred } = collectAdjustments({
     equipment: input.equipment,
     learnedSkills: input.learnedSkills,
     disabledSkills,
-    extraTokuseiIds: compendiumTokusei,
+    extraTokuseiIds: [...compendiumTokusei, ...(input.extraTokuseiIds ?? [])],
     ...ctx,
   })
+
+  const effectiveTokusei = filterEffectiveTokusei(tokuseiIds, tokuseiCtx)
+  // Tokusei-granted skills (GetAllSkills(includeTokusei)) add their correctTbl.
+  const skillRows: Adjustment[] = []
+  // ApplySkillCorrectTbls (ActiveEntityState.cpp:2719-2740): switch skills
+  // only while toggled on, so tokusei-granted toggles are skipped offline.
+  const learned = new Set(input.learnedSkills)
+  const grantedWithRows = new Set<number>()
+  for (const skillId of tokuseiSkillAdds(effectiveTokusei)) {
+    if (learned.has(skillId) || grantedWithRows.has(skillId)) continue
+    const skill = passiveSkills[String(skillId)]
+    if (!skill || skill.mainCategory !== 0) continue
+    grantedWithRows.add(skillId)
+    skillRows.push(...skill.correctTbl)
+  }
+  const adjustments: Adjustment[] = [
+    ...rows,
+    ...skillRows,
+    ...tokuseiAdjustments(effectiveTokusei),
+  ]
 
   const working = statMapFromBase(input.base)
   if (input.digitalizeDemonStats) {
@@ -788,16 +1053,20 @@ export function computeArmoryTotalStats(input: {
       input.digitalizeStatRate ?? DEFAULT_DIGITALIZE_STAT_RATE
     )
   }
-  adjustStats(working, adjustments, true)
+  adjustStats(working, adjustments, true, adjustCtx)
 
-  const statConditionalPass = deferredToAdjustments(deferred, working)
+  const statConditional = filterEffectiveTokusei(
+    deferredToTokusei(deferred, working),
+    tokuseiCtx
+  )
+  const statConditionalPass = tokuseiAdjustments(statConditional)
   if (statConditionalPass.length > 0) {
-    adjustStats(working, statConditionalPass, true)
+    adjustStats(working, statConditionalPass, true, adjustCtx)
   }
 
   applyFuseBonuses(working, input.equipment, input.fuseBySlot)
   calculateDependentStats(working, input.base.level)
-  adjustStats(working, [...adjustments, ...statConditionalPass], false)
+  adjustStats(working, [...adjustments, ...statConditionalPass], false, adjustCtx)
 
   const total = statMapToArmoryStats(working, {
     level: input.base.level,
@@ -806,9 +1075,35 @@ export function computeArmoryTotalStats(input: {
     mp: input.base.mp,
   })
 
+  const allEffective = [...effectiveTokusei, ...statConditional]
+  const stat = (id: string) => working.get(id) ?? 0
+  const aspect = (type: string) =>
+    Math.floor(sumTokuseiAspect(allEffective, type, tokuseiCtx, stat))
+
   return {
-    base: input.base,
-    total,
-    bonus: diffStats(total, input.base),
+    computedStats: {
+      base: input.base,
+      total,
+      bonus: diffStats(total, input.base),
+    },
+    combatBonuses: {
+      critical: stat("CRITICAL"),
+      finalCritChance: stat("FINAL_CRIT_CHANCE"),
+      lbChance: stat("LB_CHANCE"),
+      lbDamage: stat("LB_DAMAGE"),
+      lbCap: LB_CAP_BASE + aspect("LIMIT_BREAK_MAX"),
+      techAttackRate: aspect("TECH_ATTACK_RATE"),
+      techAttackPower: aspect("TECH_ATTACK_POWER"),
+      pursuitRate: aspect("PURSUIT_RATE"),
+      pursuitPower: aspect("PURSUIT_POWER"),
+      incant: stat("CHANT_TIME"),
+      cooldown: stat("COOLDOWN_TIME"),
+    },
   }
+}
+
+export function computeArmoryTotalStats(
+  input: ArmoryEstimateInput
+): ArmoryComputedStats {
+  return computeArmoryEstimate(input).computedStats
 }

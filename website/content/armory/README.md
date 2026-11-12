@@ -53,6 +53,15 @@ directory. Regenerate catalogs after content changes:
 - Learned passive + switch skills (switch skills assumed **on**)
 - Expertise rank gates (skills above current rank treated as disabled)
 
+- Passive/switch skill charastic tokusei (`passive-skills.json` `tokuseiIds`)
+- Tokusei target/conditions/attributes from `tokusei-effects.json`
+  (`lib/armory-tokusei.ts`): PARTNER and skill-conditioned tokusei are skipped,
+  PARTY tokusei need a party (offline = solo), partner/party/status/time
+  conditions evaluate as false offline
+- Combat bonuses strip (CRITICAL, FINAL_CRIT_CHANCE, LB_CHANCE, LB_DAMAGE,
+  CHANT_TIME/COOLDOWN_TIME with INT/VIT/SPD, and TECH/PURSUIT/LIMIT_BREAK_MAX
+  aspect sums) via `computeArmoryEstimate()`
+
 Green `(base +bonus)` on `/armory/[name]` shows DB base vs the offline estimate.
 
 ### Still missing (common reasons armory &lt; in-game)

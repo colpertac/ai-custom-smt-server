@@ -22,7 +22,7 @@ import {
   resolveArmoryProfilePortrait,
 } from "@/lib/armory-portrait-render"
 import {
-  computeArmoryTotalStats,
+  computeArmoryEstimate,
   decodeLearnedSkillIds,
   type ArmoryComputedStats,
 } from "@/lib/armory-stats"
@@ -131,7 +131,11 @@ export type ArmoryActiveDemon = {
   level: number | null
 }
 
-/** Live channel: stacked combat bonuses from gear/tokusei (not crit-rate formulas). */
+/**
+ * Stacked combat bonuses from gear/tokusei (not crit-rate formulas). Live
+ * channel values when online; otherwise the offline estimate
+ * (lib/armory-stats.ts computeArmoryEstimate).
+ */
 export type ArmoryCombatBonuses = {
   critical: number
   finalCritChance: number
@@ -173,8 +177,10 @@ export type ArmoryProfile = {
   statsDigitalized?: boolean
   /** Live channel only: partner demon is out (stats include summon sync). */
   demonSummoned?: boolean
-  /** Live channel only: gear/tokusei combat bonus totals. */
+  /** Gear/tokusei combat bonus totals (live when online, else estimate). */
   combatBonuses?: ArmoryCombatBonuses | null
+  /** Where combatBonuses came from (defaults to statsSource). */
+  combatBonusesSource?: "live" | "estimate"
 }
 
 const NULL_UUID = "00000000-0000-0000-0000-000000000000"
@@ -636,20 +642,22 @@ export async function loadArmoryProfile(
     devilBook = bookRow?.DevilBook ?? null
   }
 
-  const computedStats =
+  const estimate =
     baseStats != null
-      ? computeArmoryTotalStats({
+      ? computeArmoryEstimate({
           base: baseStats,
           equipment,
           learnedSkills,
           expertisePoints,
           fuseBySlot,
           lnc: row.LNC,
+          gender: row.Gender,
           digitalizeDemonStats,
           devilBook,
           valuables: progressRow?.Valuables ?? null,
         })
       : null
+  const computedStats = estimate?.computedStats ?? null
 
   function toArmoryExpertise(
     id: number,
@@ -760,6 +768,8 @@ export async function loadArmoryProfile(
     portraitFingerprint: portrait.fingerprint,
     portraitStatus,
     statsSource: "estimate",
+    combatBonuses: estimate?.combatBonuses ?? null,
+    combatBonusesSource: "estimate",
   }
 }
 
