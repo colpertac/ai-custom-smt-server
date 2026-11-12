@@ -15,16 +15,17 @@ import {
 } from "@/lib/armory-equipment"
 import {
   decodeEquippedVA,
-  resolveArmoryPortrait,
   type PortraitFingerprintInput,
 } from "@/lib/armory-portrait"
+import {
+  planArmoryPortrait,
+  resolveArmoryProfilePortrait,
+} from "@/lib/armory-portrait-render"
 import {
   computeArmoryTotalStats,
   decodeLearnedSkillIds,
   type ArmoryComputedStats,
 } from "@/lib/armory-stats"
-import { enqueuePortraitJob } from "@/lib/portrait-queue"
-import { isPortraitCaptureAvailable } from "@/lib/studio-api"
 import { getWorldDb, WorldDbMissingError } from "@/lib/world-db"
 
 export { WorldDbMissingError }
@@ -741,25 +742,11 @@ export async function loadArmoryProfile(
     equipment,
     demonType: activeDemon?.type ?? 0,
   })
-  const portrait = resolveArmoryPortrait(portraitInput, row.Name)
-  let portraitStatus: ArmoryProfile["portraitStatus"] = portrait.status
-  if (portraitStatus === "missing" && opts?.enqueuePortrait !== false) {
-    const canCapture = await isPortraitCaptureAvailable({
+  const { portrait, status: portraitStatus } =
+    await resolveArmoryProfilePortrait(portraitInput, row.Name, {
+      enqueue: opts?.enqueuePortrait !== false,
       gender: row.Gender,
     })
-    if (canCapture) {
-      try {
-        enqueuePortraitJob(row.Name, portraitInput)
-        portraitStatus = "queued"
-      } catch (err) {
-        console.error(
-          `[armory] enqueue portrait failed for ${row.Name}:`,
-          err instanceof Error ? err.message : err
-        )
-        portraitStatus = "missing"
-      }
-    }
-  }
 
   return {
     name: row.Name,
@@ -900,7 +887,7 @@ export function getArmoryPortraitEnqueueTarget(rawName: string): {
     equipment,
     demonType,
   })
-  const portrait = resolveArmoryPortrait(input, row.Name)
+  const portrait = planArmoryPortrait(input, row.Name).portrait
   return {
     name: row.Name,
     input,

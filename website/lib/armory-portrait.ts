@@ -152,6 +152,17 @@ function findPortraitFile(basename: string): string | null {
 }
 
 /**
+ * Hash-named file only (`{fingerprint}.png|.webp`), no name-keyed fallback. Three mode: v3
+ * fingerprints drop the character name, so a name-keyed stub would mask the render.
+ */
+export function resolveHashedPortrait(fingerprint: string): ArmoryPortrait {
+  const url = findPortraitFile(fingerprint)
+  return url
+    ? { fingerprint, url, status: "ready" }
+    : { fingerprint, url: null, status: "missing" }
+}
+
+/**
  * Prefer `{fingerprint}.png|.webp`. Name-keyed files (`cat2.png`) are a PoC
  * fallback until the worker writes hash-named captures.
  */

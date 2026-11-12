@@ -285,7 +285,45 @@ services:
       updater:
         condition: service_healthy
 
+  # Armory portrait render worker (three.js + headless Chrome; replaces the Wine studio).
+  # Off by default. Enable with COMPOSE_PROFILES=renderer (or --profile renderer) and set
+  # PORTRAIT_RENDERER=three on the website. Image is built here from the repo checkout:
+  #   docker compose --profile renderer build avatar-worker
+  # First start converts the read-only game client into the avatar-assets volume (~420 MB).
+  # See avatar/docs/WORKER.md and the "Portrait render worker" section of deploy/README.md.
+  avatar-worker:
+    profiles: ["renderer"]
+    build:
+      context: ..
+      dockerfile: avatar/worker/Dockerfile
+    image: ${AVATAR_WORKER_IMAGE:-smt-avatar-worker:local}
+    container_name: smt-avatar-worker
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+    shm_size: 256m
+    networks: [smt]
+    environment:
+      PORTRAIT_QUEUE_URL: ${PORTRAIT_QUEUE_URL:-http://website:3000}
+      # Same value as the website's worker token (Admin → Studio, or website env).
+      PORTRAIT_WORKER_TOKEN: ${PORTRAIT_WORKER_TOKEN:-}
+      PORTRAIT_WORKER_ID: ${PORTRAIT_WORKER_ID:-three-docker}
+      PORTRAIT_POLL_MS: ${PORTRAIT_POLL_MS:-2000}
+      PORTRAIT_SSAA: ${PORTRAIT_SSAA:-3}
+      # Limit convert.py's worker processes on first start (default: every core).
+      AVATAR_CONVERT_JOBS: ${AVATAR_CONVERT_JOBS:-}
+    volumes:
+      # Imagine client install (needs Avatar/, BinaryData/, ImagineClient.exe), read only.
+      - ${IMAGINE_CLIENT_DIR:-./client}:/client:ro
+      # Directory holding nif.xml (ships with NifSkope); only read when assets need converting.
+      - ${AVATAR_NIF_DIR:-./avatar-worker}:/opt/nif:ro
+      - avatar-assets:/data
+    depends_on:
+      website:
+        condition: service_started
+
 volumes:
   ops-audit:
   caddy-data:
   caddy-config:
+  avatar-assets:

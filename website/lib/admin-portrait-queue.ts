@@ -7,14 +7,23 @@ import {
   isArmoryHiddenCharacter,
   listAllArmoryCharacterNames,
 } from "@/lib/armory"
+import { enqueueArmoryPortrait } from "@/lib/armory-portrait-render"
 import {
   clearPortraitForCharacter,
-  enqueuePortraitJob,
   getPortraitJob,
+  isPortraitWorkerHeartbeatUsable,
   listPortraitJobs,
+  listPortraitWorkerHeartbeats,
   type PortraitJob,
   type PortraitJobStatus,
+  type PortraitWorkerHeartbeat,
 } from "@/lib/portrait-queue"
+import {
+  getPortraitRendererMode,
+  RENDER_WORKER_FRESH_MS,
+  RENDERER_VERSION,
+  type PortraitRendererMode,
+} from "@/lib/portrait-render-mode"
 
 export type AdminEnqueueAction =
   | "enqueued"
@@ -81,7 +90,7 @@ export function adminEnqueuePortraitCharacter(
     if (!target) {
       return { name, action: "not_found", reason: "character missing after clear" }
     }
-    const enq = enqueuePortraitJob(target.name, target.input)
+    const enq = enqueueArmoryPortrait(target.name, target.input)
     return {
       name: target.name,
       action: "forced",
@@ -113,7 +122,7 @@ export function adminEnqueuePortraitCharacter(
     }
   }
 
-  const enq = enqueuePortraitJob(target.name, target.input)
+  const enq = enqueueArmoryPortrait(target.name, target.input)
   return {
     name: target.name,
     action: "enqueued",
@@ -168,5 +177,30 @@ export function adminBulkEnqueuePortraits(
     hidden,
     notFound,
     results,
+  }
+}
+
+export type RenderWorkerStatus = {
+  mode: PortraitRendererMode
+  rendererVersion: number
+  /** A usable heartbeat (three kind, this RENDERER_VERSION) in the last 60 s. */
+  online: boolean
+  workers: (PortraitWorkerHeartbeat & { fresh: boolean; usable: boolean })[]
+  counts: ReturnType<typeof summarizePortraitQueue>["counts"]
+}
+
+/** Render worker card (Admin Studio, three mode): heartbeats + queue counts. */
+export function getRenderWorkerStatus(now = Date.now()): RenderWorkerStatus {
+  const workers = listPortraitWorkerHeartbeats().map((hb) => ({
+    ...hb,
+    fresh: now - hb.lastSeen <= RENDER_WORKER_FRESH_MS,
+    usable: isPortraitWorkerHeartbeatUsable(hb, now),
+  }))
+  return {
+    mode: getPortraitRendererMode(),
+    rendererVersion: RENDERER_VERSION,
+    online: workers.some((w) => w.usable),
+    workers,
+    counts: summarizePortraitQueue().counts,
   }
 }

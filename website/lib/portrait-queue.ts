@@ -9,6 +9,18 @@ import {
   portraitsDir,
   type PortraitFingerprintInput,
 } from "./armory-portrait.ts"
+import type { AvatarRecipe } from "./avatar-recipe.ts"
+import {
+  portraitFingerprintV3,
+  portraitFingerprintV3Canonical,
+} from "./portrait-fingerprint-v3.ts"
+import {
+  RENDER_WORKER_FRESH_MS,
+  RENDERER_VERSION,
+  THREE_PORTRAIT_HEIGHT,
+  THREE_PORTRAIT_PRESET,
+  THREE_PORTRAIT_WIDTH,
+} from "./portrait-render-mode.ts"
 
 export const PORTRAIT_CLAIM_TIMEOUT_MS = 15 * 60 * 1000
 /** After a failed capture, ignore armory re-enqueue until this elapses. */
@@ -16,11 +28,36 @@ export const PORTRAIT_FAIL_RETRY_MS = 60 * 1000
 
 export type PortraitJobStatus = "pending" | "claimed" | "ready" | "failed"
 
-export type PortraitJobPayload = PortraitFingerprintInput & {
+/** Wine studio job (v2 fingerprint): the character's look as world-DB fields. */
+export type PortraitJobPayloadWine = PortraitFingerprintInput & {
   fingerprint: string
   characterName: string
   canonical: string
 }
+
+/** three.js render worker job (v3 fingerprint): the resolved avatar recipe. */
+export type PortraitJobPayloadThree = {
+  fingerprint: string
+  characterName: string
+  canonical: string
+  recipe: AvatarRecipe
+  catalogVersion: number
+  rendererVersion: number
+  preset: typeof THREE_PORTRAIT_PRESET
+  width: number
+  height: number
+}
+
+export type PortraitJobPayload = PortraitJobPayloadWine | PortraitJobPayloadThree
+
+export function isThreePortraitPayload(
+  payload: PortraitJobPayload
+): payload is PortraitJobPayloadThree {
+  return "recipe" in payload && payload.recipe != null
+}
+
+/** Which jobs a claim may take: Wine studio jobs (no recipe) or render-worker jobs. */
+export type PortraitClaimKind = "wine" | "three"
 
 export type PortraitJob = {
   fingerprint: string
@@ -57,6 +94,16 @@ function openPortraitDb(): DatabaseSync {
     );
     CREATE INDEX IF NOT EXISTS idx_portrait_jobs_status_created
       ON portrait_jobs(status, created_at);
+    CREATE TABLE IF NOT EXISTS portrait_workers (
+      worker_id TEXT PRIMARY KEY,
+      kind TEXT NOT NULL,
+      renderer_version INTEGER,
+      assets_version TEXT,
+      chrome TEXT,
+      busy INTEGER NOT NULL DEFAULT 0,
+      first_seen INTEGER NOT NULL,
+      last_seen INTEGER NOT NULL
+    );
   `)
   return database
 }
@@ -127,7 +174,7 @@ function rowToJob(row: JobRow): PortraitJob {
 export function buildPortraitJobPayload(
   characterName: string,
   input: PortraitFingerprintInput
-): PortraitJobPayload {
+): PortraitJobPayloadWine {
   const withName: PortraitFingerprintInput = {
     ...input,
     characterName: input.characterName?.trim() || characterName,
@@ -151,7 +198,45 @@ export function enqueuePortraitJob(
   input: PortraitFingerprintInput,
   now = Date.now()
 ): { fingerprint: string; status: PortraitJobStatus } {
-  const payload = buildPortraitJobPayload(characterName, input)
+  return upsertPortraitJob(buildPortraitJobPayload(characterName, input), now)
+}
+
+export function buildPortraitRecipeJobPayload(
+  characterName: string,
+  recipe: AvatarRecipe,
+  catalogVersion: number
+): PortraitJobPayloadThree {
+  return {
+    fingerprint: portraitFingerprintV3(recipe, catalogVersion),
+    characterName,
+    canonical: portraitFingerprintV3Canonical(recipe, catalogVersion),
+    recipe,
+    catalogVersion,
+    rendererVersion: RENDERER_VERSION,
+    preset: THREE_PORTRAIT_PRESET,
+    width: THREE_PORTRAIT_WIDTH,
+    height: THREE_PORTRAIT_HEIGHT,
+  }
+}
+
+/** Render-worker job (three mode): v3 fingerprint, payload carries the recipe. */
+export function enqueuePortraitRecipeJob(
+  characterName: string,
+  recipe: AvatarRecipe,
+  catalogVersion: number,
+  now = Date.now()
+): { fingerprint: string; status: PortraitJobStatus } {
+  return upsertPortraitJob(
+    buildPortraitRecipeJobPayload(characterName, recipe, catalogVersion),
+    now
+  )
+}
+
+function upsertPortraitJob(
+  payload: PortraitJobPayload,
+  now: number
+): { fingerprint: string; status: PortraitJobStatus } {
+  const characterName = payload.characterName
   const json = JSON.stringify(payload)
   return withPortraitDbWrite((database) => {
     database
@@ -198,8 +283,26 @@ export function enqueuePortraitJob(
   })
 }
 
-/** One job at a time. Returns the in-flight claim, or the oldest pending. */
-export function claimPortraitJob(now = Date.now()): PortraitJob | null {
+/** SQL filter on payload_json for one claim kind (schema unchanged; payload is JSON). */
+function claimKindSql(kind: PortraitClaimKind): string {
+  return kind === "three"
+    ? `json_extract(payload_json, '$.recipe') IS NOT NULL
+       AND json_extract(payload_json, '$.rendererVersion') = ${RENDERER_VERSION}`
+    : `json_extract(payload_json, '$.recipe') IS NULL`
+}
+
+/**
+ * One job at a time (per kind). Returns the in-flight claim, or the oldest pending.
+ * `wine` (the default, used by body-less claims) only sees jobs without a recipe, so the Wine
+ * worker never picks up a render-worker job; `three` only sees recipe jobs of the current
+ * RENDERER_VERSION (older recipe jobs are failed as stale — their fingerprint is no longer used).
+ */
+export function claimPortraitJob(
+  now = Date.now(),
+  opts?: { kind?: PortraitClaimKind }
+): PortraitJob | null {
+  const kind = opts?.kind ?? "wine"
+  const filter = claimKindSql(kind)
   return withPortraitDbWrite((database) => {
     const staleBefore = now - PORTRAIT_CLAIM_TIMEOUT_MS
 
@@ -213,10 +316,24 @@ export function claimPortraitJob(now = Date.now()): PortraitJob | null {
         )
         .run(now, staleBefore)
 
+      if (kind === "three") {
+        database
+          .prepare(
+            `UPDATE portrait_jobs
+             SET status = 'failed', claimed_at = NULL, updated_at = ?,
+                 error = 'stale rendererVersion (site is ${RENDERER_VERSION})'
+             WHERE status = 'pending'
+               AND json_extract(payload_json, '$.recipe') IS NOT NULL
+               AND coalesce(json_extract(payload_json, '$.rendererVersion'), -1)
+                   != ${RENDERER_VERSION}`
+          )
+          .run(now)
+      }
+
       const inflight = database
         .prepare(
           `SELECT * FROM portrait_jobs
-           WHERE status = 'claimed'
+           WHERE status = 'claimed' AND ${filter}
            ORDER BY claimed_at ASC
            LIMIT 1`
         )
@@ -229,7 +346,7 @@ export function claimPortraitJob(now = Date.now()): PortraitJob | null {
       const next = database
         .prepare(
           `SELECT * FROM portrait_jobs
-           WHERE status = 'pending'
+           WHERE status = 'pending' AND ${filter}
            ORDER BY created_at ASC
            LIMIT 1`
         )
@@ -262,6 +379,136 @@ export function claimPortraitJob(now = Date.now()): PortraitJob | null {
       throw error
     }
   })
+}
+
+export type PortraitWorkerHeartbeat = {
+  workerId: string
+  kind: string
+  rendererVersion: number | null
+  assetsVersion: string | null
+  chrome: string | null
+  busy: boolean
+  firstSeen: number
+  lastSeen: number
+}
+
+type WorkerRow = {
+  worker_id: string
+  kind: string
+  renderer_version: number | null
+  assets_version: string | null
+  chrome: string | null
+  busy: number
+  first_seen: number
+  last_seen: number
+}
+
+/** Heartbeats older than this are pruned on the next heartbeat. */
+const WORKER_HEARTBEAT_KEEP_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
+ * Upsert a render worker's heartbeat (portraits.db, so it survives restarts and is shared by
+ * every Next worker process).
+ */
+export function recordPortraitWorkerHeartbeat(
+  input: {
+    workerId: string
+    kind: string
+    rendererVersion: number | null
+    assetsVersion: string | null
+    chrome: string | null
+    busy: boolean
+  },
+  now = Date.now()
+): PortraitWorkerHeartbeat {
+  return withPortraitDbWrite((database) => {
+    database
+      .prepare(
+        `INSERT INTO portrait_workers (
+           worker_id, kind, renderer_version, assets_version, chrome, busy,
+           first_seen, last_seen
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(worker_id) DO UPDATE SET
+           kind = excluded.kind,
+           renderer_version = excluded.renderer_version,
+           assets_version = excluded.assets_version,
+           chrome = excluded.chrome,
+           busy = excluded.busy,
+           last_seen = excluded.last_seen`
+      )
+      .run(
+        input.workerId,
+        input.kind,
+        input.rendererVersion,
+        input.assetsVersion,
+        input.chrome,
+        input.busy ? 1 : 0,
+        now,
+        now
+      )
+    database
+      .prepare(`DELETE FROM portrait_workers WHERE last_seen < ?`)
+      .run(now - WORKER_HEARTBEAT_KEEP_MS)
+    const row = database
+      .prepare(`SELECT * FROM portrait_workers WHERE worker_id = ?`)
+      .get(input.workerId) as WorkerRow
+    return workerRowToHeartbeat(row)
+  })
+}
+
+function workerRowToHeartbeat(row: WorkerRow): PortraitWorkerHeartbeat {
+  return {
+    workerId: row.worker_id,
+    kind: row.kind,
+    rendererVersion: row.renderer_version,
+    assetsVersion: row.assets_version,
+    chrome: row.chrome,
+    busy: Boolean(row.busy),
+    firstSeen: row.first_seen,
+    lastSeen: row.last_seen,
+  }
+}
+
+/** Latest heartbeats first (admin Studio). */
+export function listPortraitWorkerHeartbeats(limit = 20): PortraitWorkerHeartbeat[] {
+  const rows = getDb()
+    .prepare(`SELECT * FROM portrait_workers ORDER BY last_seen DESC LIMIT ?`)
+    .all(limit) as WorkerRow[]
+  return rows.map(workerRowToHeartbeat)
+}
+
+export function getPortraitWorkerHeartbeat(
+  workerId: string
+): PortraitWorkerHeartbeat | null {
+  const row = getDb()
+    .prepare(`SELECT * FROM portrait_workers WHERE worker_id = ?`)
+    .get(workerId) as WorkerRow | undefined
+  return row ? workerRowToHeartbeat(row) : null
+}
+
+/** True when the heartbeat is recent and from a three worker on this site's RENDERER_VERSION. */
+export function isPortraitWorkerHeartbeatUsable(
+  hb: PortraitWorkerHeartbeat,
+  now = Date.now()
+): boolean {
+  return (
+    hb.kind === "three" &&
+    hb.rendererVersion === RENDERER_VERSION &&
+    now - hb.lastSeen <= RENDER_WORKER_FRESH_MS
+  )
+}
+
+/** Three-mode capture availability: a matching render worker sent a heartbeat in the last 60 s. */
+export function isRenderWorkerAvailable(now = Date.now()): boolean {
+  return listPortraitWorkerHeartbeats().some((hb) =>
+    isPortraitWorkerHeartbeatUsable(hb, now)
+  )
+}
+
+/** Test helper — empty the worker heartbeat table (reopens at the current data dir). */
+export function resetPortraitWorkersForTests(): void {
+  reopenPortraitDb()
+  getDb().exec("DELETE FROM portrait_workers")
 }
 
 function hashedPortraitExists(fingerprint: string): boolean {
@@ -524,4 +771,48 @@ export function clearPortraitForCharacter(
     removedJobs,
     fingerprints: [...fingerprints],
   }
+}
+
+export type RenderWorkerClaimResult =
+  | { versionMismatch: false; job: PortraitJob | null }
+  | {
+      versionMismatch: true
+      job: null
+      siteRendererVersion: number
+      workerRendererVersion: number | null
+      note: string
+    }
+
+/**
+ * `POST /api/portrait/queue/claim` with `{kind: "three"}`. The worker's renderer version comes
+ * from the body (`rendererVersion`), else its last heartbeat (`workerId`), else the newest
+ * three heartbeat. A worker on another version (or unknown) gets no job.
+ */
+export function claimRenderWorkerJob(
+  body: { rendererVersion?: unknown; workerId?: unknown },
+  now = Date.now()
+): RenderWorkerClaimResult {
+  let workerVersion: number | null = null
+  if (typeof body.rendererVersion === "number" && Number.isFinite(body.rendererVersion)) {
+    workerVersion = body.rendererVersion
+  } else {
+    const workerId = typeof body.workerId === "string" ? body.workerId.trim() : ""
+    const hb = workerId
+      ? getPortraitWorkerHeartbeat(workerId)
+      : (listPortraitWorkerHeartbeats().find((h) => h.kind === "three") ?? null)
+    workerVersion = hb?.rendererVersion ?? null
+  }
+  if (workerVersion !== RENDERER_VERSION) {
+    return {
+      versionMismatch: true,
+      job: null,
+      siteRendererVersion: RENDERER_VERSION,
+      workerRendererVersion: workerVersion,
+      note:
+        workerVersion == null
+          ? `rendererVersion unknown: send it in the claim body or heartbeat first (site is ${RENDERER_VERSION})`
+          : `worker rendererVersion ${workerVersion} != site ${RENDERER_VERSION}; not claiming`,
+    }
+  }
+  return { versionMismatch: false, job: claimPortraitJob(now, { kind: "three" }) }
 }

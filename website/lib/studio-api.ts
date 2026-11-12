@@ -3,6 +3,8 @@
  * Never expose StudioToken to the browser.
  */
 
+import { isRenderWorkerAvailable } from "@/lib/portrait-queue"
+import { getPortraitRendererMode } from "@/lib/portrait-render-mode"
 import { fetchQueueProcessing } from "@/lib/studio-agent-remote"
 import {
   getEffectivePortraitPreviewUrl,
@@ -136,6 +138,9 @@ function availableFromProbe(
  * gender-matching mannequin online (vam1/vaf1), and Admin Process queue On.
  * Armory uses this so a paused/offline studio shows a placeholder instead of
  * "Capturing portrait…".
+ *
+ * PORTRAIT_RENDERER=three: a render worker on this RENDERER_VERSION sent a
+ * heartbeat in the last 60 s (no studio / mannequin checks).
  */
 export async function isPortraitCaptureAvailable(opts?: {
   gender?: number | null
@@ -143,6 +148,14 @@ export async function isPortraitCaptureAvailable(opts?: {
 }): Promise<boolean> {
   const now = opts?.now ?? Date.now()
   const gender = opts?.gender
+
+  if (getPortraitRendererMode() === "three") {
+    try {
+      return isRenderWorkerAvailable(now)
+    } catch {
+      return false
+    }
+  }
 
   if (!studioToken()) {
     captureAvailabilityCache = {

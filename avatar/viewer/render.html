@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Avatar Render Worker</title>
 <style>html,body{margin:0;background:#000}</style>
-<!-- Served by render.mjs: /vendor/three/ is the local three@0.170.0 package (no CDN). -->
+<!-- Served by renderCore.mjs (render.mjs, avatar/worker): /vendor/three/ is the local three@0.170.0 package (no CDN). -->
 <script type="importmap">
 { "imports": {
   "three": "/vendor/three/build/three.module.js",
@@ -13,9 +13,10 @@
 </script>
 </head>
 <body>
-<canvas id="c" width="1" height="1"></canvas>
 <script type="module">
-// Headless render entry for render.mjs: window.renderAvatar(params) → {width, height, rgba (base64), timings, warnings}.
+// Headless render entry for renderCore.mjs: window.renderAvatar(params) → {width, height, rgba (base64), timings, warnings}.
+// The page is reused for many images (render worker): every call gets a fresh canvas + WebGL context, and the
+// context, render targets, textures (ImageBitmaps) and geometry are released before returning.
 import { buildScene, createRenderer, renderPixels, PRESETS } from './buildScene.js';
 
 const b64 = bytes => {
@@ -24,23 +25,48 @@ const b64 = bytes => {
   return btoa(s);
 };
 
-window.renderAvatar = async ({ recipeUrl, assetBase, preset, pose, width, height, ssaa, glow, background }) => {
+/** Free everything the built scene holds (after readback; does not affect the pixels). */
+function disposeScene(built) {
+  const textures = new Set();
+  built.scene.traverse(o => {
+    o.geometry?.dispose();
+    for (const m of [o.material].flat().filter(Boolean)) {
+      for (const u of Object.values(m.uniforms || {})) if (u?.value?.isTexture) textures.add(u.value);
+      for (const v of Object.values(m)) if (v?.isTexture) textures.add(v);
+      m.dispose();
+    }
+  });
+  for (const t of textures) {
+    if (typeof ImageBitmap !== 'undefined' && t.image instanceof ImageBitmap) t.image.close();
+    t.dispose();
+  }
+  built._sceneRT?.dispose();
+}
+
+window.renderAvatar = async ({ recipe: recipeIn, recipeUrl, assetBase, preset, pose, width, height, ssaa, glow, background }) => {
   const t0 = performance.now();
-  let recipe = await (await fetch(recipeUrl)).json();
+  let recipe = recipeIn ?? await (await fetch(recipeUrl)).json();
   if (!recipe.skeleton) { const [k, v] = Object.entries(recipe)[0] || []; recipe = { name: k, ...v }; }
   const warnings = [];
   const built = await buildScene(recipe, { assetBase, preset, pose, background, aspect: width / height,
     onWarning: m => warnings.push(m) });
   const t1 = performance.now();
-  const renderer = createRenderer({ canvas: document.getElementById('c'), width: 1, height: 1, antialias: false,
-    preserveDrawingBuffer: true });
-  const gl = renderer.getContext(), dbg = gl.getExtension('WEBGL_debug_renderer_info');
-  const glName = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-  const max = renderer.capabilities.maxTextureSize;
-  if (width * ssaa > max || height * ssaa > max) throw new Error(`${width * ssaa}×${height * ssaa} exceeds max texture size ${max}`);
-  const r = await renderPixels(renderer, built, { width, height, ssaa, glow });
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 1;
+  const renderer = createRenderer({ canvas, width: 1, height: 1, antialias: false, preserveDrawingBuffer: true });
+  let r, glName;
+  try {
+    const gl = renderer.getContext(), dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    glName = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    const max = renderer.capabilities.maxTextureSize;
+    if (width * ssaa > max || height * ssaa > max) throw new Error(`${width * ssaa}×${height * ssaa} exceeds max texture size ${max}`);
+    r = await renderPixels(renderer, built, { width, height, ssaa, glow });
+  } finally {
+    disposeScene(built);
+    renderer.dispose();
+    renderer.forceContextLoss();   // release the context now instead of at GC (Chrome caps live contexts)
+  }
   const t2 = performance.now();
-  renderer.dispose();
   return {
     width: r.width, height: r.height, rgba: b64(new Uint8Array(r.data.buffer)), warnings,
     gl: glName, preset: built.preset, pose: built.pose, glow: glow ?? PRESETS[built.preset].glow,

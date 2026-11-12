@@ -9,7 +9,8 @@ avatars (milestones M2–M4).
 | `glow.js` | `CoeGlow`: the client's COE_Glow half-resolution post pass; `glowKernel()` |
 | `../shaders/coeMaterials.js` | COE_* shaders as `ShaderMaterial`s (per-vertex lighting, NSB stage chains, render states) |
 | `render.mjs` | CLI: recipe → PNG through `render.html` in chrome-headless-shell (SwiftShader) |
-| `render.html` | Worker page used by `render.mjs` (imports three from `/vendor/three/`, served locally) |
+| `renderCore.mjs` | `AvatarRenderer` (persistent server + browser + page, relaunch on crash), dependency lookup, PNG encoder; used by `render.mjs` and `../worker/` |
+| `render.html` | Headless page used by `renderCore.mjs` (imports three from `/vendor/three/`, served locally); fresh canvas + WebGL context per image, resources released afterwards |
 | `index.html` | Interactive viewer / screenshot page |
 | `shadertest.html` | Compiles and draws every material variant on spheres (no assets needed) |
 

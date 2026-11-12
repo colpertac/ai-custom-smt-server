@@ -62,9 +62,52 @@ rebuilds everything, `-j N` limits workers. Per-file failures and warnings land 
 | `survey.py`, `tree.py` | Format survey and node-tree dump |
 | `nsb.py`, `d3dasm.py`, `nifcolor.py` | Gamebryo NSB shader library parser, D3D9 bytecode disassembler, NIF colour extra-data dump |
 | `recipe.py` | Write `build/recipes/<name>.json` (resolve output) for the viewer |
+| `../worker/` | Portrait render worker (see below) |
 | `../viewer/` | three.js `buildScene(recipe)` + test page (`viewer/README.md`): `python3 -m http.server 8765 --directory avatar`, then `/viewer/?recipe=../build/recipes/cat.json` |
 | `../shaders/coeMaterials.js` | three.js ShaderMaterial for the COE shaders (HairColor, Skinning, SkinningDX, Blender, Effecter) with the game's per-vertex lighting |
 | `../ghidra/` | `Dump.java` headless decompile/xref/string helper and `run-dump.sh` |
+
+## Render worker (`worker/`)
+
+Headless portrait renderer for the website's queue (milestone M5; contract
+[docs/WORKER.md](docs/WORKER.md)). It replaces the Wine mannequin studio: one persistent
+chrome-headless-shell page (`viewer/renderCore.mjs`, shared with `viewer/render.mjs`) renders
+each claimed recipe with `buildScene()` at front 768×925, select stance, glow off, ssaa 3, and
+uploads the PNG. Each image gets a fresh WebGL context, so it is byte-identical to the CLI
+(catm → `d098b2d0abea865e…`).
+
+```bash
+# no network: render a recipe the way a job would (repeat N times for timings)
+node avatar/worker/worker.mjs --dry-run avatar/build/recipes/catm.json /tmp/catm.png --times 10
+# one cycle against a site: heartbeat, claim at most one job, render, ingest (exit 1 on failure)
+PORTRAIT_QUEUE_URL=http://127.0.0.1:3500 PORTRAIT_WORKER_TOKEN=… node avatar/worker/worker.mjs --once
+# service: heartbeat every 15 s, claim {kind: "three"}, render, ingest / fail; SIGTERM finishes the job
+PORTRAIT_QUEUE_URL=… PORTRAIT_WORKER_TOKEN=… node avatar/worker/worker.mjs
+node avatar/worker/golden.mjs            # golden hashes (exit 1 on mismatch); --update to rewrite
+```
+
+| Env | Default | What |
+| --- | --- | --- |
+| `PORTRAIT_QUEUE_URL` | — | Website base URL |
+| `PORTRAIT_WORKER_TOKEN` | — | `X-Portrait-Worker-Token` |
+| `AVATAR_ASSETS_DIR` | `avatar/build/assets` | Converted assets |
+| `PORTRAIT_WORKER_ID` | `three-<hostname>` | Heartbeat / claim id |
+| `PORTRAIT_POLL_MS` | `2000` | Claim interval while the queue is empty (errors back off to 30 s) |
+| `PORTRAIT_SSAA` | `3` | Supersampling factor |
+| `PORTRAIT_RENDER_TIMEOUT_MS` | `60000` | Per-image limit; the browser is relaunched after a timeout or crash |
+| `CHROME`, `PLAYWRIGHT_CORE`, `THREE_DIR` | found locally | As for `viewer/render.mjs` |
+
+| File | What |
+| --- | --- |
+| `worker.mjs` | The service; logs one JSON object per line (`browser started`, `job done` with sha256/timings, `job failed`, mode / version changes) |
+| `portrait.mjs` | `RENDERER_VERSION` (must equal `website/lib/portrait-render-mode.ts`), contract settings, recipe validation, `renderPortrait()` (a 404 for any asset fails the job), `assetsVersion()` |
+| `golden.mjs`, `golden.json` | cat, catm, cat3 in canonical form (skeleton, existing parts, colours) + their PNG SHA-256 and the Chrome build they were made with; renders each, then the first again in the same page. `--update` re-imports the recipes from `build/recipes` (`python3 tools/recipe.py cat catm cat3`) and rewrites the hashes |
+| `Dockerfile`, `Dockerfile.dockerignore`, `entrypoint.sh` | Image (build from the repo root): node 24, python3, playwright-core 1.58.2, three 0.170.0, Chrome for Testing headless shell 148.0.7778.96 (`chromium_headless_shell-1223`, sha256-checked). The entrypoint updates the assets volume from the mounted client, then starts the worker. Compose service `avatar-worker`, profile `renderer` (`deploy/README.md`) |
+
+Rendering errors, missing assets, a recipe without skeleton and a job for another
+`rendererVersion` are reported with `/queue/fail`. Golden hashes are per Chrome build: when Chrome
+or the renderer changes, run `golden.mjs --update`; if the hashes moved on the same Chrome build,
+bump `RENDERER_VERSION` in `portrait.mjs` and on the website (it is part of the v3 fingerprint).
 
 ## Ghidra
 

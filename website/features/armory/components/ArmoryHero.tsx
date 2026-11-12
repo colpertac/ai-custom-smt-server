@@ -103,8 +103,7 @@ export function ArmoryHero({
         </p>
         {capturing ? (
           <p className="max-w-[16rem] text-[11px] leading-snug text-muted-foreground">
-            Studio is dressing a mannequin and snapping your look. This page
-            updates automatically.
+            Your look is being rendered. This page updates automatically.
           </p>
         ) : null}
       </div>

@@ -79,3 +79,40 @@ on startup. Restart lobby once after the first save.
 
 Legacy `.env` vars (`RESEND_*`, `COMP_RESET_SECRET`) still work and are imported
 into the admin store on first load.
+
+## Portrait render worker (optional, profile `renderer`)
+
+`avatar-worker` renders armory portraits with three.js in headless Chrome
+(replaces the Wine studio; contract: [avatar/docs/WORKER.md](../avatar/docs/WORKER.md)).
+It is off unless the `renderer` profile is enabled, so existing installs are unchanged.
+The image is built from a repo checkout (`context: ..` needs `avatar/` and the gitignored
+`ops/comp-tools/comp_decrypt` + `comp_bdpatch`); the release zip alone cannot build it.
+
+```bash
+# .env
+COMPOSE_PROFILES=renderer            # add to an existing list: https,renderer
+PORTRAIT_WORKER_TOKEN=…              # same token the website expects (Admin → Studio)
+IMAGINE_CLIENT_DIR=/path/to/reimagine   # host path, mounted read-only at /client
+AVATAR_NIF_DIR=/path/to/dir-with-nif.xml  # NifSkope's nif.xml; read only when converting
+
+docker compose --profile renderer build avatar-worker
+docker compose up -d avatar-worker
+docker compose logs -f avatar-worker   # one JSON object per line
+```
+
+| Variable | Default | What |
+| --- | --- | --- |
+| `PORTRAIT_QUEUE_URL` | `http://website:3000` | Website base URL (queue + heartbeat), on the compose network |
+| `PORTRAIT_WORKER_TOKEN` | — | `X-Portrait-Worker-Token`; the worker exits if empty |
+| `IMAGINE_CLIENT_DIR` | `./client` | Host path of the game client (needs `Avatar/`, `BinaryData/`, `ImagineClient.exe`) |
+| `AVATAR_NIF_DIR` | `./avatar-worker` | Host dir containing `nif.xml` |
+| `PORTRAIT_WORKER_ID` | `three-docker` | Name shown in Admin → Studio |
+| `PORTRAIT_POLL_MS` / `PORTRAIT_SSAA` | `2000` / `3` | Claim interval when idle; supersampling (changing it changes the PNGs) |
+| `AVATAR_CONVERT_JOBS` | all cores | `convert.py -j` on start |
+| `AVATAR_WORKER_IMAGE` | `smt-avatar-worker:local` | Image tag |
+
+On start the container brings the `avatar-assets` volume up to date from the client
+(`tables.py`, incremental `convert.py all`, `catalog.py`: about 10 s and 420 MB the first
+time, under a second afterwards), then runs the worker. The website must run with
+`PORTRAIT_RENDERER=three` for jobs to reach it. Golden check inside the container:
+`docker compose run --rm --entrypoint node avatar-worker avatar/worker/golden.mjs`.
