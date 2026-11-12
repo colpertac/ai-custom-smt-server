@@ -105,7 +105,9 @@ export function AdminChatLogsPanel() {
     | { ok: false; message: string } => {
     const until = Math.floor(Date.now() / 1000)
     if (rangePreset === "all") {
-      return { ok: true, until }
+      // Lobby clamps blank-name + missing/0 since to the last hour. Send 1 so
+      // "All time" returns the newest retained rows (works on current images).
+      return { ok: true, since: 1, until }
     }
 
     let hours: number | null = null
@@ -142,7 +144,7 @@ export function AdminChatLogsPanel() {
           ...(characterName.trim()
             ? { characterName: characterName.trim() }
             : {}),
-          ...(bounds.since != null ? { since: bounds.since } : {}),
+          since: bounds.since ?? 0,
           until: bounds.until,
           limit: 200,
         },
@@ -171,9 +173,10 @@ export function AdminChatLogsPanel() {
     try {
       // Export is always everyone + full retained history.
       // Name + time range are browse-only for Search.
+      // since:1 avoids the lobby's blank-name last-hour default (since 0/omitted).
       const response = await api.post("admin/chat-logs/export", {
         json: {
-          since: 0,
+          since: 1,
           until: Math.floor(Date.now() / 1000),
         },
       })

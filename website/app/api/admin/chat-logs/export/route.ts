@@ -110,7 +110,9 @@ export async function POST(request: Request) {
         const page = await adminListChatLogs(session, {
           worldId,
           characterName,
-          since: since || undefined,
+          // Pass 0 through — lobby treats omitted since as "last hour" for
+          // no-name queries; explicit 0 means full retained history.
+          since,
           until,
           limit: PAGE_LIMIT,
         })
