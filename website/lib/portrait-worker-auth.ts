@@ -7,7 +7,8 @@ import { getEffectivePortraitWorkerToken } from "@/lib/studio-settings-store"
  * Shared secret for the portrait render worker (avatar/worker).
  * Header: `X-Portrait-Worker-Token: …`
  *
- * Prefer dedicated worker token. Falls back to studio token.
+ * PORTRAIT_WORKER_TOKEN (deploy/install.sh generates it; compose passes it to the website and
+ * avatar-worker). See studio-settings-store.ts for the legacy saved-value fallback.
  */
 export function portraitWorkerToken(): string {
   return getEffectivePortraitWorkerToken()
@@ -27,7 +28,7 @@ export function requirePortraitWorker(
   const expected = portraitWorkerToken()
   if (!expected) {
     return apiFail(
-      "Portrait worker token is not set (Admin → Portraits, or website .env)",
+      "Portrait worker token is not set (PORTRAIT_WORKER_TOKEN; deploy/install.sh writes it)",
       503,
       "CONFIG"
     )

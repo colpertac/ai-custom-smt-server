@@ -1,145 +1,59 @@
 /**
- * Admin → Portraits connection settings (admin UI + env fallback):
- * - channel studio HTTP API URL + token (StudioHttpPort / StudioToken; live armory stats,
- *   mannequin presence), see armory-live.ts / studio-api.ts;
- * - render worker token (portrait queue auth), see portrait-worker-auth.ts.
- * Secrets stay server-side; admin GET only returns configured flags.
+ * Portrait / live-stats connection settings. Zero-config: deploy/install.sh generates the
+ * secrets into deploy/.env and docker-compose passes them to the website:
+ * - PORTRAIT_STUDIO_URL / PORTRAIT_STUDIO_TOKEN: channel studio HTTP API (StudioHttpPort /
+ *   StudioToken; live armory stats, mannequin presence), see armory-live.ts / studio-api.ts;
+ * - PORTRAIT_WORKER_TOKEN: render worker auth (portrait queue), see portrait-worker-auth.ts.
+ *
+ * Env is the source of truth. Values an admin saved in site_settings before this became
+ * zero-config are still read as a fallback, so installs that have not re-run install keep
+ * working. Nothing writes these keys any more.
  */
 
-import {
-  deleteSiteSetting,
-  getSiteSetting,
-  setSiteSetting,
-} from "@/lib/site-settings-store"
+import { getSiteSetting } from "@/lib/site-settings-store"
 
 const KEY_STUDIO_URL = "portrait_studio_url"
 const KEY_STUDIO_TOKEN = "portrait_studio_token"
 const KEY_WORKER_TOKEN = "portrait_worker_token"
 
-export type StudioConnectionSettings = {
-  studioUrl: string
+function env(name: string): string {
+  return process.env[name]?.trim() || ""
 }
 
-export type StudioConnectionAdminView = StudioConnectionSettings & {
-  studioTokenConfigured: boolean
-  workerTokenConfigured: boolean
-  /** True when effective token comes only from env (not site_settings). */
-  studioTokenFromEnv: boolean
-  workerTokenFromEnv: boolean
-}
-
-export type StudioConnectionInput = {
-  studioUrl?: string
-  /** Non-empty replaces; empty string leaves unchanged. */
-  studioToken?: string
-  workerToken?: string
-  clearStudioToken?: boolean
-  clearWorkerToken?: boolean
-}
-
-let envSeeded = false
-
-function seedFromEnvOnce(): void {
-  if (envSeeded) return
-  envSeeded = true
-
-  const envUrl = process.env.PORTRAIT_STUDIO_URL?.trim()
-  const envToken =
-    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
-    process.env.COMP_STUDIO_TOKEN?.trim()
-  const envWorker = process.env.PORTRAIT_WORKER_TOKEN?.trim()
-
-  if (envUrl && !getSiteSetting(KEY_STUDIO_URL)) {
-    setSiteSetting(KEY_STUDIO_URL, envUrl.replace(/\/$/, ""))
-  }
-  if (envToken && !getSiteSetting(KEY_STUDIO_TOKEN)) {
-    setSiteSetting(KEY_STUDIO_TOKEN, envToken)
-  }
-  if (envWorker && !getSiteSetting(KEY_WORKER_TOKEN)) {
-    setSiteSetting(KEY_WORKER_TOKEN, envWorker)
+function saved(key: string): string {
+  try {
+    return getSiteSetting(key)?.trim() || ""
+  } catch {
+    return ""
   }
 }
 
-function envStudioToken(): string {
-  return (
-    process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
-    process.env.COMP_STUDIO_TOKEN?.trim() ||
-    ""
-  )
+function stripSlash(url: string): string {
+  return url.replace(/\/+$/, "")
 }
 
-function envWorkerToken(): string {
-  return process.env.PORTRAIT_WORKER_TOKEN?.trim() || ""
-}
-
-/** Channel studio HTTP base (no trailing slash). */
+/** Channel studio HTTP base (no trailing slash); "" when not configured. */
 export function getEffectiveStudioUrl(): string {
-  seedFromEnvOnce()
-  const fromStore = getSiteSetting(KEY_STUDIO_URL)?.trim()
-  if (fromStore) return fromStore.replace(/\/$/, "")
-  const fromEnv = process.env.PORTRAIT_STUDIO_URL?.trim()
-  if (fromEnv) return fromEnv.replace(/\/$/, "")
-  return "http://127.0.0.1:14700"
+  return stripSlash(env("PORTRAIT_STUDIO_URL") || saved(KEY_STUDIO_URL))
 }
 
-/** Shared secret for website → channel studio API. */
+/** Shared secret for website → channel studio API; "" when not configured. */
 export function getEffectiveStudioToken(): string {
-  seedFromEnvOnce()
-  return getSiteSetting(KEY_STUDIO_TOKEN)?.trim() || envStudioToken()
+  return (
+    env("PORTRAIT_STUDIO_TOKEN") ||
+    env("COMP_STUDIO_TOKEN") ||
+    saved(KEY_STUDIO_TOKEN)
+  )
 }
 
 /**
- * Render worker auth (portrait queue).
- * Prefer dedicated worker token; fall back to studio token.
+ * Render worker auth (portrait queue); "" when not configured.
+ * Legacy: the old admin form reused the saved studio token when no worker token was saved.
  */
 export function getEffectivePortraitWorkerToken(): string {
-  seedFromEnvOnce()
   return (
-    getSiteSetting(KEY_WORKER_TOKEN)?.trim() ||
-    envWorkerToken() ||
-    getEffectiveStudioToken()
+    env("PORTRAIT_WORKER_TOKEN") ||
+    saved(KEY_WORKER_TOKEN) ||
+    saved(KEY_STUDIO_TOKEN)
   )
-}
-
-export function getStudioConnectionSettings(): StudioConnectionSettings {
-  return {
-    studioUrl: getEffectiveStudioUrl(),
-  }
-}
-
-export function getStudioConnectionForAdmin(): StudioConnectionAdminView {
-  seedFromEnvOnce()
-  const storeToken = Boolean(getSiteSetting(KEY_STUDIO_TOKEN)?.trim())
-  const storeWorker = Boolean(getSiteSetting(KEY_WORKER_TOKEN)?.trim())
-  const studioTokenConfigured = Boolean(getEffectiveStudioToken())
-  const workerDedicated = Boolean(
-    getSiteSetting(KEY_WORKER_TOKEN)?.trim() || envWorkerToken()
-  )
-  return {
-    ...getStudioConnectionSettings(),
-    studioTokenConfigured,
-    workerTokenConfigured: workerDedicated || studioTokenConfigured,
-    studioTokenFromEnv: !storeToken && Boolean(envStudioToken()),
-    workerTokenFromEnv: !storeWorker && Boolean(envWorkerToken()),
-  }
-}
-
-export function setStudioConnectionSettings(
-  input: StudioConnectionInput
-): StudioConnectionAdminView {
-  if (input.studioUrl !== undefined) {
-    const url = input.studioUrl.trim().replace(/\/$/, "")
-    setSiteSetting(KEY_STUDIO_URL, url)
-  }
-  if (input.clearStudioToken) {
-    deleteSiteSetting(KEY_STUDIO_TOKEN)
-  } else if (input.studioToken !== undefined && input.studioToken.trim()) {
-    setSiteSetting(KEY_STUDIO_TOKEN, input.studioToken.trim())
-  }
-  if (input.clearWorkerToken) {
-    deleteSiteSetting(KEY_WORKER_TOKEN)
-  } else if (input.workerToken !== undefined && input.workerToken.trim()) {
-    setSiteSetting(KEY_WORKER_TOKEN, input.workerToken.trim())
-  }
-  return getStudioConnectionForAdmin()
 }

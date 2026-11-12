@@ -357,6 +357,42 @@ else
   COMPOSE_PROFILES_VAL=""
 fi
 
+# Existing installs (before STUDIO_TOKEN / PORTRAIT_WORKER_TOKEN lived in .env): adopt the
+# token the channel already uses, then values saved in Admin → Portraits, so host-side tools
+# and external render workers keep working. Prints nothing when not found.
+existing_channel_studio_token() {
+  local f="$DATA_DIR/config/channel.xml"
+  [[ -f "$f" ]] || return 0
+  sed -n 's|.*<member[^>]*name="StudioToken"[^>]*>\([^<]*\)</member>.*|\1|p' "$f" | head -1 | tr -d ' \t\r'
+}
+
+existing_site_setting() {
+  local db="$WEBSITE_DATA/web.sqlite"
+  [[ -f "$db" ]] || return 0
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$db" "$1" <<'PY' 2>/dev/null || true
+import sqlite3, sys
+try:
+    con = sqlite3.connect("file:" + sys.argv[1] + "?mode=ro", uri=True)
+    row = con.execute("SELECT value FROM site_settings WHERE key = ?", (sys.argv[2],)).fetchone()
+    if row and row[0]:
+        print(row[0].strip())
+except Exception:
+    pass
+PY
+  elif command -v sqlite3 >/dev/null 2>&1; then
+    sqlite3 -readonly "$db" "SELECT value FROM site_settings WHERE key = '$1';" 2>/dev/null | head -1 || true
+  fi
+}
+
+# Tokens must stay XML/shell safe (entrypoint.sh writes STUDIO_TOKEN into channel.xml).
+safe_token() {
+  [[ -n "$1" && "$1" != replace-with* && "$1" =~ ^[A-Za-z0-9._~+/=-]+$ ]]
+}
+
+STUDIO_TOKEN=""
+PORTRAIT_WORKER_TOKEN=""
+
 if [[ -f "$ENV_FILE" ]]; then
   echo "Keeping secrets from existing $ENV_FILE when present."
   SESSION_SECRET="$(grep -E '^SESSION_SECRET=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
@@ -368,6 +404,8 @@ if [[ -f "$ENV_FILE" ]]; then
   RESEND_FROM_EMAIL="$(grep -E '^RESEND_FROM_EMAIL=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   RESEND_FROM_NAME="$(grep -E '^RESEND_FROM_NAME=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   RESEND_SUPPORT_EMAIL="$(grep -E '^RESEND_SUPPORT_EMAIL=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
+  STUDIO_TOKEN="$(grep -E '^STUDIO_TOKEN=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
+  PORTRAIT_WORKER_TOKEN="$(grep -E '^PORTRAIT_WORKER_TOKEN=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
   if [[ -z "$SESSION_SECRET" || "$SESSION_SECRET" == replace-with* ]]; then
     SESSION_SECRET="$(rand_b64)"
   fi
@@ -381,6 +419,26 @@ else
   SESSION_SECRET="$(rand_b64)"
   OPS_TOKEN="$(rand_hex)"
   COMP_RESET_SECRET="$(rand_hex)"
+fi
+
+# Channel studio API (live armory stats) + portrait render worker. Zero-config: compose passes
+# these to channel / website / avatar-worker; entrypoint.sh writes StudioToken into channel.xml.
+if ! safe_token "$STUDIO_TOKEN"; then
+  STUDIO_TOKEN="$(existing_channel_studio_token)"
+  safe_token "$STUDIO_TOKEN" || STUDIO_TOKEN="$(existing_site_setting portrait_studio_token)"
+  if safe_token "$STUDIO_TOKEN"; then
+    echo "Adopted existing channel studio token into .env (STUDIO_TOKEN)."
+  else
+    STUDIO_TOKEN="$(rand_hex)"
+  fi
+fi
+if ! safe_token "$PORTRAIT_WORKER_TOKEN"; then
+  PORTRAIT_WORKER_TOKEN="$(existing_site_setting portrait_worker_token)"
+  if safe_token "$PORTRAIT_WORKER_TOKEN"; then
+    echo "Adopted existing render worker token into .env (PORTRAIT_WORKER_TOKEN)."
+  else
+    PORTRAIT_WORKER_TOKEN="$(rand_hex)"
+  fi
 fi
 
 # Service account for public status / announces — keep existing or default.
@@ -425,6 +483,8 @@ fi
   echo "SESSION_SECRET=$SESSION_SECRET"
   echo "OPS_TOKEN=$OPS_TOKEN"
   echo "COMP_RESET_SECRET=$COMP_RESET_SECRET"
+  echo "STUDIO_TOKEN=$STUDIO_TOKEN"
+  echo "PORTRAIT_WORKER_TOKEN=$PORTRAIT_WORKER_TOKEN"
   echo "UPDATER_ROOT=$UPDATER_ROOT"
   echo "COMP_RUNTIME=$DATA_DIR"
   echo "COMP_ENTRYPOINT=$DEPLOY_DIR/entrypoint.sh"
@@ -464,7 +524,7 @@ echo "Wrote $ENV_FILE"
 echo "  EXTERNAL_IP=$EXTERNAL_IP"
 echo "  SITE_URL=$SITE_URL"
 echo "  PUBLIC_UPDATER_URL=$PUBLIC_UPDATER_URL"
-echo "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET stored in .env — keep private)"
+echo "  (SESSION_SECRET, OPS_TOKEN, COMP_RESET_SECRET, STUDIO_TOKEN, PORTRAIT_WORKER_TOKEN stored in .env — keep private)"
 
 cd "$DEPLOY_DIR"
 echo "Pulling Hub images and starting stack…"

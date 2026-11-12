@@ -24,7 +24,7 @@ x-comp: &comp
   stop_grace_period: 30s
   working_dir: /comp
   networks: [smt]
-  environment:
+  environment: &comp-env
     EXTERNAL_IP: ${EXTERNAL_IP:-127.0.0.1}
     LOBBY_HOST: ${LOBBY_HOST:-lobby}
     WORLD_HOST: ${WORLD_HOST:-world}
@@ -110,9 +110,15 @@ services:
     <<: *comp
     container_name: smt-channel
     command: ["comp_channel", "/comp/config/channel.xml"]
+    environment:
+      <<: *comp-env
+      # Channel studio HTTP API (live armory stats). entrypoint.sh writes StudioToken (and
+      # StudioHttpPort 14700 when unset/0) into the runtime channel.xml. install.sh generates it.
+      STUDIO_TOKEN: ${STUDIO_TOKEN:-}
     ports:
       - "${CHANNEL_PORT:-14666}:14666"
-      # Channel studio HTTP API (live armory stats; Admin → Portraits). Same token as StudioToken.
+      # Studio API on the host is optional — the website uses http://channel:14700 on the
+      # bridge. Kept for host-side tools (e.g. a Wine portrait studio on the same box).
       - "${STUDIO_HTTP_PORT:-14700}:14700"
     healthcheck: *hc-channel
     depends_on:
@@ -210,6 +216,11 @@ services:
       # Lobby admin used for store checkout grants + in-game announces (level ≥1000).
       COMP_ANNOUNCE_USER: ${COMP_ANNOUNCE_USER:-admin}
       COMP_ANNOUNCE_PASSWORD: ${COMP_ANNOUNCE_PASSWORD:-admin123}
+      # Live armory stats via the channel studio API (bridge network; StudioToken = STUDIO_TOKEN)
+      # and portrait render worker auth. install.sh generates both secrets in .env.
+      PORTRAIT_STUDIO_URL: ${PORTRAIT_STUDIO_URL:-http://channel:14700}
+      PORTRAIT_STUDIO_TOKEN: ${STUDIO_TOKEN:-}
+      PORTRAIT_WORKER_TOKEN: ${PORTRAIT_WORKER_TOKEN:-}
       # Read updater overlay + write overlay/comp_client.xml (Game files).
       # Must be read-write — :ro makes mkdir /updater/overlay fail as uid 1001.
       OPS_UPDATER_ROOT: /updater
@@ -305,7 +316,7 @@ services:
     networks: [smt]
     environment:
       PORTRAIT_QUEUE_URL: ${PORTRAIT_QUEUE_URL:-http://website:3000}
-      # Same value as the website's worker token (Admin → Portraits, or website env).
+      # Same value the website gets (install.sh generates it in .env).
       PORTRAIT_WORKER_TOKEN: ${PORTRAIT_WORKER_TOKEN:-}
       PORTRAIT_WORKER_ID: ${PORTRAIT_WORKER_ID:-three-docker}
       PORTRAIT_POLL_MS: ${PORTRAIT_POLL_MS:-2000}

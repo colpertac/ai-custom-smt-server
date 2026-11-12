@@ -32,6 +32,7 @@ and is never overwritten by later image pulls.
 | **Armory expertise / digi editor** | **Off** (`enabled: false`); min GM level **0** when enabled | Admin → Website (expertise digi settings) |
 | **Recovery hub** | No snapshots; stock-knob reset uses `deploy/seed/config` templates | Admin → Recovery; snapshots under `data/releases/recovery/` |
 | **Backups / rclone** | Empty `deploy/backups/`; no schedule; no rclone.conf | Admin → Backups; never in image or release zip |
+| **Live armory stats / portrait worker auth** | Zero-config: random `STUDIO_TOKEN` + `PORTRAIT_WORKER_TOKEN` in `.env` (kept on re-run); channel studio API on `channel:14700`; Admin → Portraits shows status only | `install.sh` / `install.ps1` → compose → `entrypoint.sh` patches runtime `channel.xml` `StudioToken` / `StudioHttpPort` |
 
 Refresh shops / payouts / loot from a working tree:
 
@@ -71,6 +72,7 @@ writeFileSync("./content/events/event-schedule.json", JSON.stringify({
 | **Dev news posts** beyond Hello world | Seed is `content/news.ts` only |
 | **Discord webhook URLs** / notification toggles | Live only in `website-data` `site_settings` or host `.env` — never bake into Hub images |
 | **rclone.conf** / cold backup archives | `deploy/backups/` gitignored + excluded from release zip |
+| **STUDIO_TOKEN / PORTRAIT_WORKER_TOKEN** values | Generated per install into `deploy/.env`; never in images, seeds or `deploy/seed/config/channel.xml` |
 | **COMP_ANNOUNCE_*** real passwords | Install defaults are `admin` / `admin123`; live realms keep their own `.env` |
 | **Recovery snapshots** | Operator-created under `data/releases/recovery/` only |
 

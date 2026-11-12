@@ -89,7 +89,7 @@ node avatar/worker/golden.mjs            # golden hashes (exit 1 on mismatch); -
 | Env | Default | What |
 | --- | --- | --- |
 | `PORTRAIT_QUEUE_URL` | — | Website base URL |
-| `PORTRAIT_WORKER_TOKEN` | — | `X-Portrait-Worker-Token` |
+| `PORTRAIT_WORKER_TOKEN` | — | `X-Portrait-Worker-Token`; must equal the website's. Docker installs generate it in `deploy/.env` and pass it to the website and `avatar-worker`; copy it from there for a worker elsewhere (`pnpm avatar-worker` reads `website/.env.local`) |
 | `AVATAR_ASSETS_DIR` | `avatar/build/assets` | Converted assets |
 | `PORTRAIT_WORKER_ID` | `three-<hostname>` | Heartbeat / claim id |
 | `PORTRAIT_POLL_MS` | `2000` | Claim interval while the queue is empty (errors back off to 30 s) |

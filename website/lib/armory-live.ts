@@ -44,10 +44,11 @@ export async function fetchLiveArmoryStats(
   name: string
 ): Promise<LiveArmoryStatsResponse | null> {
   const token = studioToken()
-  if (!token) return null
+  const base = studioBaseUrl()
+  if (!token || !base) return null
 
   const params = new URLSearchParams({ name: name.trim() })
-  const url = `${studioBaseUrl()}/armory/stats?${params.toString()}`
+  const url = `${base}/armory/stats?${params.toString()}`
 
   let res: Response
   try {
