@@ -4,11 +4,14 @@ website resolver (website/lib/avatar-recipe.ts) runs without the client install.
 
   version     CATALOG_VERSION (bump when the shape changes)
   hair, face, eye   appearance id -> nif filename (CEquip{Hair,Face,Eye}Data)
-  skeletons   SkinType (CModelData1 id 100-102, 200-202) -> {name, scale}
+  skeletons   SkinType (CModelData1 id 100-102, 200-202) -> {name, scale, stances}; stances = motion id ->
+              KF file in that skeleton's KFM, for the character-select stance ids (tables.stances)
   palette     colour id -> [r, g, b, a]
   items       item id -> [modelID, subCategory, equipSlot, name]  (itemFields), equippable items only:
               equipType EQUIP_TYPE_* (equipSlot = Character.EquippedItems index), or a CEquipModelData
               row for modelID, plus the Hidden VA items 45011-45022. Other items resolve as unknown.
+  motions     item id -> CItemData motionData [idle, combatIdle, walk, run], items with any set (every
+              item, equippable or not: the 0x466c50 stance override reads it from the drawn items)
   models      CEquipModelData id -> [[folder, type, value], ...] for every modelID in items
   files       Avatar folder -> sorted names of the entries in <client>/Avatar/<folder> (for `exists`)
 
@@ -19,10 +22,9 @@ Usage: python3 catalog.py [--out PATH]      (default build/assets/catalog.json)
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import AVATAR_DIR, BUILD_DIR
-from resolve import EQUIP_TYPES, FOLDERS, load_tables
+from resolve import EQUIP_TYPES, FOLDERS, PLAYER_SKIN_TYPES, load_tables
 
-CATALOG_VERSION = 1
-SKIN_TYPES = (100, 101, 102, 200, 201, 202)
+CATALOG_VERSION = 2
 HIDDEN_VA = range(45011, 45023)
 ITEM_FIELDS = ['modelID', 'subCategory', 'equipSlot', 'name']
 
@@ -47,9 +49,12 @@ def build(t):
         'hair': {int(k): v for k, v in t['hair'].items()},
         'face': {int(k): v for k, v in t['face'].items()},
         'eye': {int(k): v for k, v in t['eye'].items()},
-        'skeletons': {s: t['models'][str(s)] for s in SKIN_TYPES if str(s) in t['models']},
+        'skeletons': {s: dict(t['models'][str(s)], stances=t['stances'].get(t['models'][str(s)]['name'], {}))
+                      for s in PLAYER_SKIN_TYPES if str(s) in t['models']},
         'palette': dict(sorted(t['palette'].items())),
         'items': dict(sorted(items.items())),
+        'motions': {int(k): v['motion'] for k, v in sorted(t['items'].items(), key=lambda kv: int(kv[0]))
+                    if v.get('motion')},
         'models': models,
         'files': files,
     }
@@ -61,7 +66,7 @@ def dumps(cat):
         return json.dumps(x, ensure_ascii=False, separators=(',', ':'))
     lines = []
     for k, v in cat.items():
-        if isinstance(v, dict) and k in ('items', 'models', 'palette', 'files'):
+        if isinstance(v, dict) and k in ('items', 'motions', 'models', 'palette', 'files', 'skeletons'):
             body = ',\n'.join(f'{c(str(kk))}:{c(vv)}' for kk, vv in v.items())
             lines.append(f'{c(k)}:{{\n{body}\n}}')
         else:

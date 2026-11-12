@@ -32,9 +32,13 @@
 <div id="wrap"><canvas id="c"></canvas></div>
 <div id="ui">
   <span id="name">loading…</span>
-  <button data-preset="full">Full</button>
+  <button data-preset="front">Front</button>
+  <button data-preset="select">Select</button>
   <button data-preset="bust">Bust</button>
   <button data-preset="face">Face</button>
+  <button data-pose="stance">Stance</button>
+  <button data-pose="idle">Idle</button>
+  <label class="toggle"><input type="checkbox" id="glow">Glow</label>
   <label class="toggle"><input type="checkbox" id="raw">Raw base texture</label>
   <button id="save">Save PNG</button>
 </div>
@@ -43,13 +47,15 @@
 // Query parameters:
 //   recipe=<url>   recipe JSON (default ../build/recipes/cat.json); resolve.py --json output also accepted
 //   assets=<url>   asset base (default ../build/assets/)
-//   w=576&h=768    fixed canvas size in pixels (DPR 1); otherwise fills the window
-//   preset=full|bust|face   aa=0|1   raw=1 (unlit base) | 2 (lighting only)   ui=0 (hide controls, for screenshots)
+//   w=768&h=925    fixed canvas size in pixels (DPR 1); otherwise fills the window
+//   preset=front|select|bust|face (default front)   pose=stance|idle (default stance when the recipe has one)
+//   glow=0|1 (default: on for select/bust/face)   bg=27202e (background, hex)
+//   aa=0|1   raw=1 (unlit base) | 2 (lighting only)   ui=0 (hide controls, for screenshots)
 // Sets window.renderDone = true after all assets are loaded and the first frame is drawn,
 // or window.renderError = message on failure.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { buildScene, createRenderer } from './buildScene.js';
+import { buildScene, createRenderer, renderFrame, PRESETS, presetName } from './buildScene.js';
 
 const q = new URLSearchParams(location.search);
 const recipeUrl = q.get('recipe') || '../build/recipes/cat.json';
@@ -84,49 +90,65 @@ async function main() {
   const [w0, h0] = size();
   renderer.setSize(w0, h0, fixed);
 
-  const built = await buildScene(recipe, { assetBase, aspect: w0 / h0, preset: q.get('preset') || 'portrait',
-    onWarning: m => { console.warn(m); log(m, 'w'); } });
-  const { scene, camera } = built;
-  window.avatar = built;   // for debugging from the console
+  let preset = presetName(q.get('preset') || 'front');
+  let pose = q.get('pose') || undefined;
+  let glow = q.has('glow') ? q.get('glow') === '1' : null;   // null: preset default
+  const bg = q.get('bg') ? '#' + q.get('bg').replace(/^#/, '') : undefined;
+  let built = null, controls = null;
+  const glowBox = document.getElementById('glow');
+  const draw = () => {
+    if (!built) return;
+    renderFrame(renderer, built, { glow: glow ?? PRESETS[built.preset].glow, ssaa: 1 });
+  };
+  const raw = document.getElementById('raw');
+  raw.checked = q.get('raw') === '1';
 
-  const controls = new OrbitControls(camera, canvas);
-  controls.target.copy(built.target);
-  controls.update();
-  const draw = () => { built.update(); renderer.render(scene, camera); };
-  controls.addEventListener('change', draw);
+  async function load() {
+    const next = await buildScene(recipe, { assetBase, aspect: size()[0] / size()[1], preset, pose, background: bg,
+      onWarning: m => { console.warn(m); log(m, 'w'); } });
+    built = next;
+    window.avatar = built;   // for debugging from the console
+    controls?.dispose();
+    controls = new OrbitControls(built.camera, canvas);
+    controls.addEventListener('change', draw);
+    built.setRawBase(raw.checked ? 1 : +(q.get('raw') || 0));
+    document.querySelectorAll('[data-pose]').forEach(b => b.classList.toggle('on', b.dataset.pose === built.pose.name));
+    setPreset(preset);
+    await renderer.compileAsync(built.scene, built.camera);
+    draw();
+  }
 
   const resize = () => {
-    if (fixed) return;
+    if (fixed || !built) return;
     const [w, h] = size();
     renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix(); draw();
+    built.camera.aspect = w / h; built.camera.updateProjectionMatrix(); draw();
   };
   addEventListener('resize', resize);
 
   const buttons = document.querySelectorAll('[data-preset]');
-  const setPreset = p => {
-    controls.target.copy(built.setPreset(p));
-    camera.aspect = size()[0] / size()[1]; camera.updateProjectionMatrix();
+  function setPreset(p) {
+    preset = presetName(p);
+    controls.target.copy(built.setPreset(preset));
+    built.camera.aspect = size()[0] / size()[1]; built.camera.updateProjectionMatrix();
     controls.update();
-    buttons.forEach(b => b.classList.toggle('on', b.dataset.preset === p || (p === 'portrait' && b.dataset.preset === 'full')));
+    buttons.forEach(b => b.classList.toggle('on', b.dataset.preset === preset));
+    glowBox.checked = glow ?? PRESETS[preset].glow;
     draw();
-  };
+  }
   buttons.forEach(b => b.addEventListener('click', () => setPreset(b.dataset.preset)));
-  const raw = document.getElementById('raw');
-  raw.checked = q.get('raw') === '1';
+  document.querySelectorAll('[data-pose]').forEach(b => b.addEventListener('click', () => { pose = b.dataset.pose; load(); }));
+  glowBox.addEventListener('change', () => { glow = glowBox.checked; draw(); });
   raw.addEventListener('change', () => { built.setRawBase(raw.checked); draw(); });
-  built.setRawBase(+(q.get('raw') || 0));   // raw=2: lighting only
   document.getElementById('save').addEventListener('click', () => {
     draw();
     const a = document.createElement('a');
-    a.download = `${name}-three.png`;
+    a.download = `${name}-${preset}.png`;
     a.href = canvas.toDataURL('image/png');
     a.click();
   });
 
-  setPreset(q.get('preset') || 'full');
-  await renderer.compileAsync(scene, camera);
-  draw();
+  await load();
   requestAnimationFrame(() => { window.renderDone = true; });
 }
 

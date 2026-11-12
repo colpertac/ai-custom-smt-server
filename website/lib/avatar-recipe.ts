@@ -8,7 +8,7 @@
  * Pure: everything client-derived comes from the catalog (avatar/tools/catalog.py).
  */
 
-export const AVATAR_CATALOG_VERSION = 1
+export const AVATAR_CATALOG_VERSION = 2
 
 /** [modelID, subCategory, equipSlot (EquippedItems index, null = not EQUIP_TYPE_*), name] */
 export type AvatarCatalogItem = [
@@ -26,9 +26,15 @@ export type AvatarCatalog = {
   hair: Record<string, string>
   face: Record<string, string>
   eye: Record<string, string>
-  skeletons: Record<string, { name: string; scale: number }>
+  /** SkinType → skeleton; stances = KFM sequence id → KF file (character-select stance ids only). */
+  skeletons: Record<
+    string,
+    { name: string; scale: number; stances: Record<string, string> }
+  >
   palette: Record<string, number[]>
   items: Record<string, AvatarCatalogItem>
+  /** Item id → CItemData motionData [idle, combatIdle, walk, run] (only items with any set). */
+  motions: Record<string, number[]>
   models: Record<string, AvatarModelProc[]>
   /** Avatar folder → names of the entries in the client's Avatar/<folder>. */
   files: Record<string, string[]>
@@ -59,7 +65,14 @@ export type AvatarRecipePart = {
 export type AvatarRecipe = {
   gender: "M" | "W"
   skinType: number
-  skeleton: { nif: string; scale: number; idle: string } | null
+  skeleton: {
+    nif: string
+    scale: number
+    /** Character creation pose (510 Common_SampleStay). */
+    idle: string
+    /** Character select stance KF (weapon class / item override); null if the KFM lacks it. */
+    stance: string | null
+  } | null
   parts: Record<string, AvatarRecipePart>
   colors: { hair: number[]; eyeRight: number[]; eyeLeft: number[] }
   notes: string[]
@@ -170,6 +183,51 @@ const PLAYER_SKIN_TYPES = new Set([100, 101, 102, 200, 201, 202])
 const NO_ITEM = new Set([-1, 0xffffffff])
 const R_FOLDER = 24
 const L_FOLDER = 25
+// Character-select stance (0x833e30). 0x466a90: weapon subCategory (ItemData byte +5) → weapon
+// class, default 2; 0x466bb0: class → stay sequence id, default 73 OneSword_DefaultStay.
+const WEAPON_CLASS = new Map([
+  [0x18, 3],
+  [0x35, 3],
+  [0x19, 4],
+  [0x36, 4],
+  [0x1a, 5],
+  [0x37, 5],
+  [0x1b, 6],
+  [0x38, 6],
+  [0x1c, 7],
+  [0x39, 7],
+  [0x1d, 8],
+  [0x3a, 8],
+  [0x1e, 9],
+  [0x3b, 9],
+  [0x1f, 10],
+  [0x20, 11],
+  [0x21, 12],
+  [0x22, 13],
+  [0x23, 14],
+  [0x24, 15],
+  [0x25, 16],
+  [0x26, 17],
+])
+const CLASS_STAY = new Map([
+  [2, 53],
+  [5, 113],
+  [8, 113],
+  [7, 153],
+  [11, 231],
+  [12, 291],
+  [15, 291],
+  [13, 271],
+])
+const DEFAULT_STAY = 73
+const UNARMED_STAY = 53
+// 0x466c50 → 0x491d20: a top (slot 3) from this list decides alone (0x491b60); otherwise the first
+// item in OVERRIDE_ORDER (0x87f6120) with any CItemData motionData value set wins; its idle
+// (0 = keep the weapon stance) is used.
+const OVERRIDE_TOPS = new Set([
+  23436, 23437, 23438, 23439, 23444, 23445, 23636, 23637, 23769, 23770,
+])
+const OVERRIDE_ORDER = [7, 13, 10, 8, 12, 9, 11, 2, 4, 0, 1, 6, 3, 5, 14]
 
 const fileSets = new WeakMap<AvatarCatalog, Map<string, Set<string>>>()
 
@@ -205,20 +263,75 @@ function numericEntries(rec: Record<number, number>): [number, number][] {
 }
 
 /**
+ * 0x833e30: the character-select stay sequence id, and the item that overrode it (or null).
+ * Uses the merged (drawn) equipment, so a VA weapon decides the class; nothing in slot 13 → 53.
+ */
+function stanceMotion(
+  drawn: Map<number, number>,
+  catalog: AvatarCatalog
+): [number, number | null] {
+  const weapon = drawn.get(WEAPON_SLOT)
+  if (weapon === undefined) return [UNARMED_STAY, null]
+  let seq = UNARMED_STAY
+  // 0x103 GameInfo vtable+0x4c: ItemData record, byte +5 = subCategory.
+  const info = catalog.items[String(weapon)]
+  if (info) {
+    const cls = WEAPON_CLASS.get(info[1]) ?? 2
+    seq = CLASS_STAY.get(cls) ?? DEFAULT_STAY
+  }
+  // 0x491a90: CItemData motionData; "found" when any of the four is set.
+  const motion = (i: number) => catalog.motions[String(i)]
+  let m: number[] | undefined
+  let src: number | null = null
+  const top = drawn.get(3)
+  if (top !== undefined && OVERRIDE_TOPS.has(top)) {
+    m = motion(top)
+    src = top
+  } else {
+    for (const s of OVERRIDE_ORDER) {
+      const i = drawn.get(s)
+      if (i === undefined || i >>> 0 >= 0x7fffffff) continue
+      if (motion(i)) {
+        m = motion(i)
+        src = i
+        break
+      }
+    }
+  }
+  if (m && m[0]) return [m[0], src]
+  return [seq, null]
+}
+
+/**
  * SkinType is a CModelData1 id: 100-102 male, 200-202 female, last digit = body type A/B/C.
  * The skeleton is loaded by the CModelData name; each body type has its own KF set
- * ({M,W}_0{1,2,3}_*), and character creation plays 510 Common_SampleStay.
+ * ({M,W}_0{1,2,3}_*), and character creation plays 510 Common_SampleStay. `stance` is the KF the
+ * character select screen plays (stanceMotion via the skeleton's KFM; null if the KFM lacks it).
  */
-function skeleton(ch: AvatarCharacter, catalog: AvatarCatalog) {
+function skeleton(
+  ch: AvatarCharacter,
+  catalog: AvatarCatalog,
+  drawn: Map<number, number>
+): [AvatarRecipe["skeleton"], string | null] {
   const skin = ch.skinType
   const rec = catalog.skeletons[String(skin)]
-  if (!rec || pyMod(skin, 100) > 2) return null
+  if (!rec || pyMod(skin, 100) > 2) return [null, null]
   const prefix = `${skin >= 200 ? "W" : "M"}_0${pyMod(skin, 100) + 1}`
-  return {
-    nif: `Bone/${rec.name}.nif`,
-    scale: rec.scale,
-    idle: `Bone/${prefix}_510_Common_SampleStay_01.kf`,
-  }
+  const [seq, src] = stanceMotion(drawn, catalog)
+  const kf = rec.stances[String(seq)]
+  let note: string | null = null
+  if (kf === undefined) note = `stance ${seq} not in ${rec.name}.kfm`
+  else if (src !== null)
+    note = `stance ${seq} from item ${src} (CItemData idle)`
+  return [
+    {
+      nif: `Bone/${rec.name}.nif`,
+      scale: rec.scale,
+      idle: `Bone/${prefix}_510_Common_SampleStay_01.kf`,
+      stance: kf ? `Bone/${kf}` : null,
+    },
+    note,
+  ]
 }
 
 /** 0x45cbd0/0x45f420: replace '_A' in '_A.' with suffix, else insert suffix before the first '.'. */
@@ -453,6 +566,8 @@ export function resolveAvatarRecipe(
     }
   }
 
+  const [skel, stanceNote] = skeleton(ch, catalog, drawn)
+  if (stanceNote) notes.push(stanceNote)
   const pal = catalog.palette
   const color = (id: number) => pal[String(id)] ?? [0, 0, 0, 1]
   const right = ch.rightEyeColor
@@ -460,7 +575,7 @@ export function resolveAvatarRecipe(
   return {
     gender: g,
     skinType: ch.skinType,
-    skeleton: skeleton(ch, catalog),
+    skeleton: skel,
     parts,
     colors: {
       hair: color(ch.hairColor),

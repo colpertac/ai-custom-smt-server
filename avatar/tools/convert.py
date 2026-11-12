@@ -548,7 +548,10 @@ def convert_skeleton(model_id, name, scale, force=False):
 
 
 def pose_files():
-    """(prefix, code) → Bone/<kf> for the 6 KF prefixes × POSE_CODES; None when absent."""
+    """(prefix, code) → Bone/<kf> for the 6 KF prefixes × POSE_CODES; None when absent.
+
+    Also every stance a skeleton's KFM lists in build/tables/stances.json (costume and motion-item
+    overrides such as 054 and the 7xx ExStays, chosen by 0x466c50), when that KF exists."""
     bone = os.listdir(os.path.join(AVATAR_DIR, 'Bone'))
     out = {}
     for pre in POSE_PREFIXES:
@@ -556,6 +559,14 @@ def pose_files():
             # exact names vary (M_0x_153_Speard_DefaultStay_01), so match prefix, code and *Stay_01
             hits = sorted(f for f in bone if f.startswith('%s_%s_' % (pre, code)) and f.endswith('Stay_01.kf'))
             out[(pre, code)] = hits[0] if hits else None
+    stances_path = os.path.join(TABLES_DIR, 'stances.json')
+    if os.path.exists(stances_path):
+        present = set(bone)
+        for stances in json.load(open(stances_path)).values():
+            for code, kf in stances.items():
+                key = (kf[:4], '%03d' % int(code))
+                if kf in present and out.get(key) is None:
+                    out[key] = kf
     return out
 
 

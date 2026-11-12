@@ -20,7 +20,13 @@ build/assets/
 A recipe (the JSON `resolve.py --json` prints per character) maps to files like this:
 
 - `skeleton.nif` `Bone/X.nif` → `skeletons/X.glb`; `skeleton.scale` → uniform scale on the avatar root.
-- `skeleton.idle` `Bone/Y.kf` → `poses/Y.json`.
+- `skeleton.idle` `Bone/Y.kf` → `poses/Y.json` (character creation pose, 510 Common_SampleStay).
+- `skeleton.stance` `Bone/S.kf` → `poses/S.json`: the character select pose. 053 Boxing_DefaultStay
+  unarmed; with a drawn weapon (VA merge applied) its subCategory picks a weapon stay (073 OneSword,
+  113 BluntWeapon, 153 Spear/Speard, 231 HandGun, 271 ShotGun, 291 Rifle); an equipped item with
+  CItemData motion data can replace it with its idle sequence (e.g. 7xx Common_ExStay_NN). The file
+  comes from the skeleton's KFM, so its stem is not always `<prefix>_<NNN>_<Name>_01`. `null` when
+  that KFM has no such sequence (some female-only item idles on male skeletons): fall back to `idle`.
 - `parts[Folder].file` `Z.nif` (when `file` is set and `exists`) → `parts/<Folder>/Z.glb`.
 - `colors.hair`, `colors.eyeRight`, `colors.eyeLeft` → RGBA in 0..1 for the `Color1` slot below.
 

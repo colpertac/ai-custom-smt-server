@@ -28,6 +28,20 @@ FOLDER_OWNER = [None, None, None, 2, 3, 4, 4, 5, 6, 0, 1, 9, 9, 2, 7, 7, 8, 8, 1
 SET_SKIPS = {7: 5, 8: 6, 9: 0}
 HIDE_SKIPS = {4: 3, 7: 5, 8: 6, 9: 0}
 NO_R_FOLDER = {1586, 1594, 1595, 2303, 2346, 2347, 2348, 2349, 2350, 2351, 2383, 2805}  # 0x45cb30
+PLAYER_SKIN_TYPES = (100, 101, 102, 200, 201, 202)
+# Character-select stance (0x833e30). 0x466a90: weapon subCategory (ItemData common.category byte +5)
+# -> weapon class, default 2; 0x466bb0: class -> stay sequence id, default 73 OneSword_DefaultStay.
+WEAPON_CLASS = {0x18: 3, 0x35: 3, 0x19: 4, 0x36: 4, 0x1a: 5, 0x37: 5, 0x1b: 6, 0x38: 6, 0x1c: 7, 0x39: 7,
+                0x1d: 8, 0x3a: 8, 0x1e: 9, 0x3b: 9, 0x1f: 10, 0x20: 11, 0x21: 12, 0x22: 13, 0x23: 14,
+                0x24: 15, 0x25: 16, 0x26: 17}
+CLASS_STAY = {2: 53, 5: 113, 8: 113, 7: 153, 11: 231, 12: 291, 15: 291, 13: 271}
+DEFAULT_STAY = 73
+UNARMED_STAY = 53
+STANCE_IDS = sorted(set(CLASS_STAY.values()) | {DEFAULT_STAY})
+# 0x466c50 -> 0x491d20: a top (slot 3) from this list decides alone (0x491b60); otherwise the first item
+# in OVERRIDE_ORDER (0x87f6120) with any CItemData motionData value set wins; its idle (0 = keep) is used.
+OVERRIDE_TOPS = {23436, 23437, 23438, 23439, 23444, 23445, 23636, 23637, 23769, 23770}
+OVERRIDE_ORDER = [7, 13, 10, 8, 12, 9, 11, 2, 4, 0, 1, 6, 3, 5, 14]
 
 
 def load_tables():
@@ -37,6 +51,7 @@ def load_tables():
         'hair': load('hair.json'), 'face': load('face.json'), 'eye': load('eye.json'),
         'model': load('cequipmodel.json'), 'items': load('items.json'), 'models': load('models.json'),
         'palette': {p['id']: p['rgba'] for p in load('palette.json')},
+        'stances': load('stances.json'),
     }
 
 
@@ -66,17 +81,58 @@ def load_character(db, name):
     return ch
 
 
-def skeleton(ch, t):
+def stance_motion(drawn, t):
+    """0x833e30: the character-select stay sequence id, and the item that overrode it (or None).
+    Uses the merged (drawn) equipment, so a VA weapon decides the class; nothing in slot 13 → 53."""
+    items = t['items']
+    if WEAPON_SLOT not in drawn:
+        return UNARMED_STAY, None
+    w = items.get(str(drawn[WEAPON_SLOT]), {})
+    seq = UNARMED_STAY
+    if 'cat' in w:  # 0x103 GameInfo vtable+0x4c: ItemData record, byte +5 = subCategory
+        cls = WEAPON_CLASS.get(w['cat'][1], 2)
+        seq = CLASS_STAY.get(cls, DEFAULT_STAY)
+
+    def motion(i):  # 0x491a90: CItemData motionData; "found" when any of the four is set
+        return items.get(str(i), {}).get('motion')
+
+    top = drawn.get(3)
+    if top in OVERRIDE_TOPS:
+        m, src = motion(top), top
+    else:
+        m = src = None
+        for s in OVERRIDE_ORDER:
+            i = drawn.get(s)
+            if i is None or i & 0xffffffff >= 0x7fffffff:
+                continue
+            if motion(i):
+                m, src = motion(i), i
+                break
+    if m and m[0]:
+        return m[0], src
+    return seq, None
+
+
+def skeleton(ch, t, drawn=None):
     """SkinType is a CModelData1 id: 100-102 male, 200-202 female, last digit = body type A/B/C.
     The skeleton is loaded by the CModelData name; each body type has its own KF set
-    ({M,W}_0{1,2,3}_*), and character creation plays 510 Common_SampleStay."""
+    ({M,W}_0{1,2,3}_*), and character creation plays 510 Common_SampleStay. `stance` is the KF the
+    character select screen plays (stance_motion via the skeleton's KFM; None if the KFM lacks it)."""
     skin = ch['SkinType']
     rec = t['models'].get(str(skin))
     if rec is None or skin % 100 > 2:
-        return None
+        return None, None
     prefix = f"{'W' if skin >= 200 else 'M'}_0{skin % 100 + 1}"
+    seq, src = stance_motion(drawn or {}, t)
+    kf = t['stances'].get(rec['name'], {}).get(str(seq))
+    note = None
+    if kf is None:
+        note = f'stance {seq} not in {rec["name"]}.kfm'
+    elif src is not None:
+        note = f'stance {seq} from item {src} (CItemData idle)'
     return {'nif': f"Bone/{rec['name']}.nif", 'scale': rec['scale'],
-            'idle': f'Bone/{prefix}_510_Common_SampleStay_01.kf'}
+            'idle': f'Bone/{prefix}_510_Common_SampleStay_01.kf',
+            'stance': f'Bone/{kf}' if kf else None}, note
 
 
 def variant(filename, suffix):
@@ -145,7 +201,7 @@ def merge_va(ch, t):
 def resolve(ch, t):
     g = 'W' if ch['Gender'] == 1 else 'M'
     rec = {}  # folder -> [mode, file, why]; mode 1 base, 2 set, 3 hidden, 4 variant pending
-    if ch['SkinType'] in (100, 101, 102, 200, 201, 202):  # 0x460360
+    if ch['SkinType'] in PLAYER_SKIN_TYPES:  # 0x460360
         for f, p in [(4, 'Body'), (7, 'Legs'), (6, 'GloveL'), (5, 'GloveR'), (8, 'Feet')]:
             rec[f] = [1, f'{g}_01_{p}_Skin_001.nif', 'exe default skin']
         rec[15] = [1, f'{g}_01_HandL_H_010.nif', 'exe default HandL']
@@ -205,13 +261,16 @@ def resolve(ch, t):
     # 0x460590: modes 1/2 load the file (nothing if it does not exist), anything else draws nothing.
     parts = {f: (r[1] if r[0] in (1, 2) else None, r[2] or 'variant with no base') for f, r in rec.items()}
 
+    skel, note = skeleton(ch, t, drawn)
+    if note:
+        notes.append(note)
     pal = t['palette']
     right = ch['RightEyeColor']
     left = ch['LeftEyeColor'] or right
     return {
         'gender': g,
         'skinType': ch['SkinType'],
-        'skeleton': skeleton(ch, t),
+        'skeleton': skel,
         'parts': {FOLDERS[i]: {'file': f, 'why': why,
                                'exists': bool(f) and os.path.exists(os.path.join(AVATAR_DIR, FOLDERS[i], f))}
                   for i, (f, why) in sorted(parts.items())},

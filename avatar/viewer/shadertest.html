@@ -17,34 +17,40 @@
 // Compiles every COE material variant on a skinned and a rigid mesh and draws them in a grid.
 // Sanity check for the GLSL without converted assets: window.renderDone / window.renderError.
 import * as THREE from 'three';
-import { createCoeUniforms, setCoeLights, makeCoeMaterial } from '../shaders/coeMaterials.js';
+import { createCoeUniforms, setCoeLights, makeCoeMaterial, selectPointLights } from '../shaders/coeMaterials.js';
 import { DEFAULT_RIG, createRenderer } from './buildScene.js';
 try {
-  const renderer = createRenderer({ canvas: document.getElementById('c'), width: 576, height: 384 });
+  const renderer = createRenderer({ canvas: document.getElementById('c'), width: 768, height: 384 });
   const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-150, 150, 100, -100, -1000, 1000);
+  const camera = new THREE.OrthographicCamera(-200, 200, 100, -100, -1000, 1000);
   camera.position.set(0, 0, 500);
   const u = createCoeUniforms();
-  setCoeLights(u, { ...DEFAULT_RIG, lights: DEFAULT_RIG.lights.map(l => l.type === 'point' ? { ...l, position: [l.position[0], l.position[1] - 90, l.position[2]] } : l) }, new THREE.Vector3());
+  const rig = { ...DEFAULT_RIG, lights: DEFAULT_RIG.lights.map(l => l.type === 'point' ? { ...l, position: [l.position[0], l.position[1] - 90, l.position[2]] } : l) };
+  setCoeLights(u, rig);
+  const lights = selectPointLights(rig, new THREE.Vector3(), 30);
   const data = new Uint8Array(16 * 16 * 4);
-  for (let i = 0; i < 256; i++) { const c = ((i >> 4) ^ i) & 1 ? 230 : 120; data.set([c, c * 0.8, c * 0.6, 255], i * 4); }
+  for (let i = 0; i < 256; i++) { const c = ((i >> 4) ^ i) & 1 ? 230 : 120; data.set([c, c * 0.8, c * 0.6, (i & 3) ? 255 : 160], i * 4); }
   const tex = new THREE.DataTexture(data, 16, 16); tex.needsUpdate = true;
   const variants = [
     { shader: 'COE_HairColor', colorSlot: 'hair' }, { shader: 'COE_Skinning' },
     { shader: 'COE_SkinningDX', technique: 0 }, { shader: 'COE_SkinningDX', technique: 3 },
     { shader: 'COE_Blender', technique: 0 }, { shader: 'COE_Blender', technique: 13 },
-    { shader: 'COE_BlenderS', technique: 4 }, { shader: 'COE_Effecter', technique: 1 }, {},
+    { shader: 'COE_BlenderS', technique: 4 }, { shader: 'COE_Effecter', technique: 1 },
+    { shader: 'COE_Blender', technique: 39 }, { shader: 'COE_Blender', technique: 40, specularEnabled: true },
+    { shader: 'COE_Effecter', technique: 39 },
+    { shader: 'COE_Blender', technique: 0, textureTransforms: { base: { translation: [0, 0], scale: [2, 2], rotation: 0.5, method: 1, center: [0.5, 0.5] } } },
+    { vertexColorMode: 2, alphaTest: true, alphaTestFunc: 4, alphaTestRef: 128 }, {},
   ];
   let i = 0;
   for (const skinned of [false, true]) {
     for (const ex of variants) {
-      const g = new THREE.SphereGeometry(12, 24, 16);
+      const g = new THREE.SphereGeometry(11, 24, 16);
       g.setAttribute('coeUvA', g.getAttribute('uv'));
       g.setAttribute('coeUvB', g.getAttribute('uv'));
       g.setAttribute('coeUvC', g.getAttribute('uv'));
-      const x = -128 + (i % 9) * 32, y = skinned ? -40 : 40;
+      const x = -182 + (i % 14) * 28, y = skinned ? -40 : 40;
       const m = makeCoeMaterial({ extras: { diffuse: [1, 1, 1], ambient: [1, 1, 1], specular: [0.3, 0.3, 0.3], glossiness: 20, ...ex },
-        maps: { A: tex, B: tex, C: tex }, shared: u, color1: [0.4, 0.1, 0.05, 1] });
+        maps: { A: tex, B: tex, C: tex }, shared: u, color1: [0.4, 0.1, 0.05, 1], lights });
       let mesh;
       if (skinned) {
         const n = g.getAttribute('position').count;

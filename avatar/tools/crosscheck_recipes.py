@@ -18,11 +18,15 @@ import json, os, random, sqlite3, subprocess, sys, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import REPO_ROOT, WORLD_DB
 from catalog import build, dumps
-from resolve import EQUIP_SLOTS, load_character, load_tables, resolve
+from resolve import EQUIP_SLOTS, OVERRIDE_TOPS, load_character, load_tables, resolve
 
 WEBSITE = os.path.join(REPO_ROOT, 'website')
 TS_SCRIPT = 'scripts/avatar-recipe-crosscheck.ts'
 SPECIAL_ITEMS = [1586, 1594, 2303, 2805, 23207, 23209, 33011, 33012] + list(range(45011, 45023))
+# Stance overrides (0x466c50): OVERRIDE_TOPS plus items with CItemData motion data, including ones whose
+# idle sequence only the female KFMs have (720/723/735/740 → stance None on male skeletons).
+SPECIAL_ITEMS += sorted(OVERRIDE_TOPS) + [1538, 1669, 2123, 2324, 4052, 4053, 4068, 5450, 5451, 6621, 23081,
+                                          23587, 25536, 3376]
 
 
 def arg(name, default):
@@ -99,7 +103,7 @@ def write_golden(t, path, names):
     full = build(t)
     db = sqlite3.connect(f'file:{WORLD_DB}?mode=ro', uri=True)
     sub = {'version': full['version'], 'itemFields': full['itemFields'], 'hair': {}, 'face': {}, 'eye': {},
-           'skeletons': {}, 'palette': {}, 'items': {}, 'models': {}, 'files': {}}
+           'skeletons': {}, 'palette': {}, 'items': {}, 'motions': {}, 'models': {}, 'files': {}}
     chars = {}
     for n in names:
         ch = load_character(db, n)
@@ -121,10 +125,12 @@ def write_golden(t, path, names):
                 m = full['items'][i][0]
                 if m in full['models']:
                     sub['models'][m] = full['models'][m]
+            if i in full['motions']:
+                sub['motions'][i] = full['motions'][i]
         for folder, p in r['parts'].items():
             if p['exists']:
                 sub['files'].setdefault(folder, []).append(p['file'])
-    for k in ('hair', 'face', 'eye', 'skeletons', 'palette', 'items', 'models'):
+    for k in ('hair', 'face', 'eye', 'skeletons', 'palette', 'items', 'motions', 'models'):
         sub[k] = dict(sorted(sub[k].items()))
     sub['files'] = {f: sorted(set(v)) for f, v in sorted(sub['files'].items())}
     with open(path, 'w', encoding='utf-8') as f:

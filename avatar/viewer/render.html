@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Avatar Render Worker</title>
+<style>html,body{margin:0;background:#000}</style>
+<!-- Served by render.mjs: /vendor/three/ is the local three@0.170.0 package (no CDN). -->
+<script type="importmap">
+{ "imports": {
+  "three": "/vendor/three/build/three.module.js",
+  "three/addons/": "/vendor/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="c" width="1" height="1"></canvas>
+<script type="module">
+// Headless render entry for render.mjs: window.renderAvatar(params) → {width, height, rgba (base64), timings, warnings}.
+import { buildScene, createRenderer, renderPixels, PRESETS } from './buildScene.js';
+
+const b64 = bytes => {
+  let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+
+window.renderAvatar = async ({ recipeUrl, assetBase, preset, pose, width, height, ssaa, glow, background }) => {
+  const t0 = performance.now();
+  let recipe = await (await fetch(recipeUrl)).json();
+  if (!recipe.skeleton) { const [k, v] = Object.entries(recipe)[0] || []; recipe = { name: k, ...v }; }
+  const warnings = [];
+  const built = await buildScene(recipe, { assetBase, preset, pose, background, aspect: width / height,
+    onWarning: m => warnings.push(m) });
+  const t1 = performance.now();
+  const renderer = createRenderer({ canvas: document.getElementById('c'), width: 1, height: 1, antialias: false,
+    preserveDrawingBuffer: true });
+  const gl = renderer.getContext(), dbg = gl.getExtension('WEBGL_debug_renderer_info');
+  const glName = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  const max = renderer.capabilities.maxTextureSize;
+  if (width * ssaa > max || height * ssaa > max) throw new Error(`${width * ssaa}×${height * ssaa} exceeds max texture size ${max}`);
+  const r = await renderPixels(renderer, built, { width, height, ssaa, glow });
+  const t2 = performance.now();
+  renderer.dispose();
+  return {
+    width: r.width, height: r.height, rgba: b64(new Uint8Array(r.data.buffer)), warnings,
+    gl: glName, preset: built.preset, pose: built.pose, glow: glow ?? PRESETS[built.preset].glow,
+    lights: built.parts.map(p => [p.stem, p.lights]),
+    timings: { loadMs: t1 - t0, ...r.timings, totalMs: t2 - t0 },
+  };
+};
+window.workerReady = true;
+</script>
+</body>
+</html>

@@ -4,7 +4,10 @@
   hair.json / face.json / eye.json   appearance id -> nif filename (CEquip*Data.bin, plaintext)
   models.json                        CModelData1 id -> model name + root scale (SkinType -> skeleton)
   cequipmodel.json                   model id -> [[folder, type, value], ...] (type 1 mesh, 2 hide, 3 variant)
-  items.json                         item id -> name, modelID, equipType, gender, sub-category, ...
+  items.json                         item id -> name, modelID, equipType, gender, sub-category,
+                                     motion (CItemData motionData [idle, combatIdle, walk, run]), ...
+  stances.json                       player skeleton name -> {motion id: KF file} from its KFM, for
+                                     the character-select stance ids (resolve.STANCE_IDS + item idles)
   palette.json                       hair/eye colour id 1..139 -> RGBA (hard-coded switch in the exe)
 
 The .sbin tables are decrypted with comp_decrypt and unpacked with comp_bdpatch
@@ -14,7 +17,7 @@ Usage: python3 tables.py [--keep-xml]
 """
 import json, os, struct, subprocess, sys, xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from config import BINARYDATA_DIR, CLIENT_EXE, COMP_TOOLS_DIR, TABLES_DIR
+from config import AVATAR_DIR, BINARYDATA_DIR, CLIENT_EXE, COMP_TOOLS_DIR, TABLES_DIR
 from pe import PE
 
 
@@ -99,6 +102,12 @@ def items(item_xml, citem_xml):
                 icon=int(member(b, "member[@name='icon']")),
                 color=[int(e.text) for e in sp.findall("member[@name='effectColor']/element")] if sp is not None else None,
             )
+            # MiCItemMotionData at record +0x258 (read by 0x491a90 for the 0x466c50 stance override).
+            m = el.find("member[@name='motionData']/object")
+            motion = [int(member(m, f"member[@name='{k}']") or 0) for k in ('idle', 'combatIdle', 'walk', 'run')] \
+                if m is not None else [0, 0, 0, 0]
+            if any(motion):
+                res[i]['motion'] = motion
             el.clear()
     for _, el in ET.iterparse(item_xml):
         if el.tag == 'object' and el.get('name') == 'MiItemData':
@@ -115,6 +124,21 @@ def items(item_xml, citem_xml):
             )
             el.clear()
     return res
+
+
+def stances(models, items_):
+    """Player skeleton KFMs (Avatar/Bone/<CModelData name>.kfm): sequence id -> KF file, restricted to
+    the ids character select can pick (0x466bb0 weapon stays + CItemData idle overrides)."""
+    from kfmparse import parse_kfm
+    from resolve import PLAYER_SKIN_TYPES, STANCE_IDS
+    want = set(STANCE_IDS) | {v['motion'][0] for v in items_.values() if v.get('motion')}
+    out = {}
+    for skin in PLAYER_SKIN_TYPES:
+        name = models[skin]['name']
+        kfm = parse_kfm(os.path.join(AVATAR_DIR, 'Bone', name + '.kfm'))
+        out[name] = {a['event']: a['kf'] for a in sorted(kfm['anims'], key=lambda a: a['event'])
+                     if a['event'] in want}
+    return out
 
 
 # Colour-id switch in ImagineClient.exe (ColorId, called through thunk 0x40cac2).
@@ -162,10 +186,12 @@ def main():
     dump('hair.json', appearance_table('CEquipHairData.bin'))
     dump('face.json', appearance_table('CEquipFaceData.bin'))
     dump('eye.json', appearance_table('CEquipEyeData.bin'))
-    dump('models.json', model_table())
+    models = model_table()
+    dump('models.json', models)
     dump('cequipmodel.json', cequipmodel(unpack_sbin('CEquipModelData.sbin', 'cequipmodel', work)))
-    dump('items.json', items(unpack_sbin('ItemData.sbin', 'item', work),
-                             unpack_sbin('CItemData.sbin', 'citem', work)))
+    it = items(unpack_sbin('ItemData.sbin', 'item', work), unpack_sbin('CItemData.sbin', 'citem', work))
+    dump('items.json', it)
+    dump('stances.json', stances(models, it))
     dump('palette.json', palette())
 
     if '--keep-xml' not in sys.argv:

@@ -70,6 +70,26 @@ type ItemSpec = {
   slot?: number | null
   sub?: number
   name?: string
+  /** CItemData motionData [idle, combatIdle, walk, run]. */
+  motion?: number[]
+}
+
+// KFM sequence id → KF stem (prefix added per skeleton); the female KFMs also have 720.
+const STANCE_STEMS: Record<number, string> = {
+  53: "053_Boxing_DefaultStay_01",
+  73: "073_OneSword_DefaultStay_01",
+  113: "113_BluntWeapon_DefaultStay_01",
+  153: "153_Speard_DefaultStay_01",
+  231: "231_HandGun_DefaultStay_01",
+  271: "271_ShotGun_DefaultStay_01",
+  291: "291_Rifle_DefaultStay_01",
+  707: "707_Common_ExStay_05",
+}
+function stances(prefix: string, extra: Record<number, string> = {}) {
+  const out: Record<string, string> = {}
+  for (const [id, stem] of Object.entries({ ...STANCE_STEMS, ...extra }))
+    out[id] = `${prefix}_${stem}.kf`
+  return out
 }
 
 function catalog(items: Record<number, ItemSpec>, files: string[] = []) {
@@ -80,11 +100,23 @@ function catalog(items: Record<number, ItemSpec>, files: string[] = []) {
     face: { "1": "M_01_Face_Skin_001.nif" },
     eye: { "1": "M_01_Eyes_Skin_001.nif" },
     skeletons: {
-      "101": { name: "M_01_Bone_Btype_01_EM", scale: 1 },
-      "201": { name: "W_01_Bone_Btype_01_OK", scale: 0.94 },
+      "101": {
+        name: "M_01_Bone_Btype_01_EM",
+        scale: 1,
+        stances: stances("M_02"),
+      },
+      "201": {
+        name: "W_01_Bone_Btype_01_OK",
+        scale: 0.94,
+        stances: stances("W_02", {
+          153: "153_Spear_DefaultStay_01",
+          720: "720_Common_ExStay_13",
+        }),
+      },
     },
     palette: { "1": [1, 0, 0, 1], "2": [0, 1, 0, 1] },
     items: {},
+    motions: {},
     models: {},
     files: {},
   }
@@ -96,6 +128,7 @@ function catalog(items: Record<number, ItemSpec>, files: string[] = []) {
       spec.name ?? `I${id}`,
     ]
     if (spec.procs) cat.models[id] = spec.procs
+    if (spec.motion) cat.motions[id] = spec.motion
   }
   for (const path of files) {
     const [folder, file] = path.split("/")
@@ -147,6 +180,7 @@ describe("resolveAvatarRecipe rules", () => {
       nif: "Bone/M_01_Bone_Btype_01_EM.nif",
       scale: 1,
       idle: "Bone/M_02_510_Common_SampleStay_01.kf",
+      stance: "Bone/M_02_053_Boxing_DefaultStay_01.kf",
     })
     expect(Object.keys(r.parts)).toEqual([
       "Hair",
@@ -181,6 +215,7 @@ describe("resolveAvatarRecipe rules", () => {
       nif: "Bone/W_01_Bone_Btype_01_OK.nif",
       scale: 0.94,
       idle: "Bone/W_02_510_Common_SampleStay_01.kf",
+      stance: "Bone/W_02_053_Boxing_DefaultStay_01.kf",
     })
     expect(female.parts.Body.file).toBe("W_01_Body_Skin_001.nif")
   })
@@ -502,5 +537,150 @@ describe("resolveAvatarRecipe rules", () => {
     const unknown = resolveAvatarRecipe(character({ hairColor: 99 }), cat)
     expect(unknown.colors.hair).toEqual([0, 0, 0, 1])
     expect(unknown.colors.eyeLeft).toEqual([0, 1, 0, 1])
+  })
+})
+
+describe("character-select stance (0x833e30)", () => {
+  const stance = (
+    equip: Record<number, number>,
+    cat: AvatarCatalog,
+    over: Partial<AvatarCharacter> = {}
+  ) => resolveAvatarRecipe(character({ equip, ...over }), cat)
+
+  it("unarmed → 053 Boxing_DefaultStay", () => {
+    const r = stance({}, catalog({}))
+    expect(r.skeleton?.stance).toBe("Bone/M_02_053_Boxing_DefaultStay_01.kf")
+    expect(r.skeleton?.idle).toBe("Bone/M_02_510_Common_SampleStay_01.kf")
+    expect(r.notes).toEqual([])
+  })
+
+  it("each weapon subCategory maps through 0x466a90 → 0x466bb0", () => {
+    // subCategory → stay id (0x17 gloves and 0x35-0x3b alias 0x18-0x1e; unknown → class 2).
+    const cases: [number, number][] = [
+      [0x17, 53],
+      [0x18, 73],
+      [0x19, 73],
+      [0x1a, 113],
+      [0x1b, 73],
+      [0x1c, 153],
+      [0x1d, 113],
+      [0x1e, 73],
+      [0x1f, 73],
+      [0x20, 231],
+      [0x21, 291],
+      [0x22, 271],
+      [0x23, 73],
+      [0x24, 291],
+      [0x25, 73],
+      [0x26, 73],
+      [0x35, 73],
+      [0x37, 113],
+      [0x39, 153],
+      [0x3a, 113],
+      [0x3b, 73],
+      [0x00, 53],
+      [0x34, 53],
+    ]
+    for (const [sub, seq] of cases) {
+      const cat = catalog({ 500: { slot: S.weapon, sub } })
+      const r = stance({ [S.weapon]: 500 }, cat)
+      expect(r.skeleton?.stance, `sub ${sub}`).toBe(
+        `Bone/M_02_${STANCE_STEMS[seq]}.kf`
+      )
+    }
+  })
+
+  it("female spear uses the W_ spelling; an item missing from ItemData keeps 053", () => {
+    const cat = catalog({ 500: { slot: S.weapon, sub: 0x1c } })
+    const w = stance({ [S.weapon]: 500 }, cat, { gender: 1, skinType: 201 })
+    expect(w.skeleton?.stance).toBe("Bone/W_02_153_Spear_DefaultStay_01.kf")
+    const m = stance({ [S.weapon]: 500 }, cat)
+    expect(m.skeleton?.stance).toBe("Bone/M_02_153_Speard_DefaultStay_01.kf")
+    const missing = stance({ [S.weapon]: 999 }, cat)
+    expect(missing.skeleton?.stance).toBe(
+      "Bone/M_02_053_Boxing_DefaultStay_01.kf"
+    )
+  })
+
+  it("uses the drawn weapon: a VA weapon of the same subCategory, or VA slot 15 when unarmed", () => {
+    const cat = catalog({
+      2621: { slot: S.weapon, sub: 0x20 },
+      2004: { slot: S.weapon, sub: 0x20 },
+      2101: { slot: S.weapon, sub: 0x21 },
+    })
+    const va = stance({ [S.weapon]: 2621 }, cat, { va: { 24: 2004 } })
+    expect(va.parts).toEqual(stance({ [S.weapon]: 2621 }, cat).parts)
+    expect(va.skeleton?.stance).toBe("Bone/M_02_231_HandGun_DefaultStay_01.kf")
+    // A VA rifle is discarded under a real handgun, so the handgun decides.
+    const mismatch = stance({ [S.weapon]: 2621 }, cat, { va: { 25: 2101 } })
+    expect(mismatch.skeleton?.stance).toBe(
+      "Bone/M_02_231_HandGun_DefaultStay_01.kf"
+    )
+    // No real weapon: only a VA in slot 15 with subCategory 0x17 is drawn.
+    const gloves = catalog({ 1901: { slot: S.weapon, sub: 0x17 } })
+    const unarmedVa = stance({}, gloves, { va: { 15: 1901 } })
+    expect(unarmedVa.skeleton?.stance).toBe(
+      "Bone/M_02_053_Boxing_DefaultStay_01.kf"
+    )
+  })
+
+  it("0x466c50: an item with CItemData motion data overrides, first in 0x87f6120 order", () => {
+    const cat = catalog({
+      500: { slot: S.weapon, sub: 0x20 },
+      4068: { slot: 11, motion: [707, 0, 0, 708] },
+      6621: { slot: S.face, motion: [53, 0, 0, 0] },
+      1538: { slot: S.weapon, sub: 0x1a, motion: [0, 134, 705, 705] },
+    })
+    const back = stance({ [S.weapon]: 500, 11: 4068 }, cat)
+    expect(back.skeleton?.stance).toBe("Bone/M_02_707_Common_ExStay_05.kf")
+    expect(back.notes).toContain("stance 707 from item 4068 (CItemData idle)")
+    // back (11) comes before face (1) in 0x87f6120.
+    const both = stance({ [S.weapon]: 500, 11: 4068, [S.face]: 6621 }, cat)
+    expect(both.skeleton?.stance).toBe("Bone/M_02_707_Common_ExStay_05.kf")
+    // The first item with motion data wins even when its idle is 0 (keeps the weapon stance).
+    const zeroIdle = stance({ [S.weapon]: 1538, 11: 4068 }, cat)
+    expect(zeroIdle.skeleton?.stance).toBe(
+      "Bone/M_02_113_BluntWeapon_DefaultStay_01.kf"
+    )
+    // A VA item overrides too (the merged map is searched).
+    const va = stance({ [S.weapon]: 500 }, cat, { va: { 11: 4068 } })
+    expect(va.skeleton?.stance).toBe("Bone/M_02_707_Common_ExStay_05.kf")
+  })
+
+  it("0x466c50 is only consulted with a weapon in slot 13", () => {
+    const cat = catalog({ 4068: { slot: 11, motion: [707, 0, 0, 708] } })
+    const r = stance({ 11: 4068 }, cat)
+    expect(r.skeleton?.stance).toBe("Bone/M_02_053_Boxing_DefaultStay_01.kf")
+  })
+
+  it("a listed costume top decides alone (0x491b60), even without motion data", () => {
+    const cat = catalog({
+      500: { slot: S.weapon, sub: 0x20 },
+      23437: { slot: S.top, motion: [707, 0, 0, 708] },
+      23436: { slot: S.top },
+      4068: { slot: 11, motion: [707, 0, 0, 708] },
+    })
+    const listed = stance({ [S.weapon]: 500, [S.top]: 23437 }, cat)
+    expect(listed.skeleton?.stance).toBe("Bone/M_02_707_Common_ExStay_05.kf")
+    // Listed top without motion data: no override, the back item is not searched.
+    const blocked = stance({ [S.weapon]: 500, [S.top]: 23436, 11: 4068 }, cat)
+    expect(blocked.skeleton?.stance).toBe(
+      "Bone/M_02_231_HandGun_DefaultStay_01.kf"
+    )
+  })
+
+  it("a sequence the skeleton's KFM lacks → stance null with a note", () => {
+    const cat = catalog({
+      500: { slot: S.weapon, sub: 0x20 },
+      4052: { slot: 11, motion: [720, 0, 0, 721] },
+    })
+    const m = stance({ [S.weapon]: 500, 11: 4052 }, cat)
+    expect(m.skeleton?.stance).toBeNull()
+    expect(m.notes).toContain("stance 720 not in M_01_Bone_Btype_01_EM.kfm")
+    const w = stance({ [S.weapon]: 500, 11: 4052 }, cat, {
+      gender: 1,
+      skinType: 201,
+    })
+    expect(w.skeleton?.stance).toBe("Bone/W_02_720_Common_ExStay_13.kf")
   })
 })
