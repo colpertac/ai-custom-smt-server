@@ -1,5 +1,5 @@
 /**
- * Admin Studio helpers for listing / enqueueing / bulk-filling the portrait queue.
+ * Admin → Portraits helpers for listing / enqueueing / bulk-filling the portrait queue.
  */
 
 import {
@@ -19,11 +19,9 @@ import {
   type PortraitWorkerHeartbeat,
 } from "@/lib/portrait-queue"
 import {
-  getPortraitRendererMode,
   RENDER_WORKER_FRESH_MS,
   RENDERER_VERSION,
-  type PortraitRendererMode,
-} from "@/lib/portrait-render-mode"
+} from "@/lib/portrait-renderer"
 
 export type AdminEnqueueAction =
   | "enqueued"
@@ -73,7 +71,7 @@ export function adminEnqueuePortraitCharacter(
     return {
       name,
       action: "hidden",
-      reason: "studio mannequin (vam/vaf) excluded",
+      reason: "mannequin account (vam/vaf) excluded",
     }
   }
 
@@ -181,7 +179,6 @@ export function adminBulkEnqueuePortraits(
 }
 
 export type RenderWorkerStatus = {
-  mode: PortraitRendererMode
   rendererVersion: number
   /** A usable heartbeat (three kind, this RENDERER_VERSION) in the last 60 s. */
   online: boolean
@@ -189,7 +186,7 @@ export type RenderWorkerStatus = {
   counts: ReturnType<typeof summarizePortraitQueue>["counts"]
 }
 
-/** Render worker card (Admin Studio, three mode): heartbeats + queue counts. */
+/** Render worker card (Admin → Portraits): heartbeats + queue counts. */
 export function getRenderWorkerStatus(now = Date.now()): RenderWorkerStatus {
   const workers = listPortraitWorkerHeartbeats().map((hb) => ({
     ...hb,
@@ -197,7 +194,6 @@ export function getRenderWorkerStatus(now = Date.now()): RenderWorkerStatus {
     usable: isPortraitWorkerHeartbeatUsable(hb, now),
   }))
   return {
-    mode: getPortraitRendererMode(),
     rendererVersion: RENDERER_VERSION,
     online: workers.some((w) => w.usable),
     workers,

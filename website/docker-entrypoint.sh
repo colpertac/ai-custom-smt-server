@@ -1,6 +1,6 @@
 #!/bin/sh
 # nextjs is uid 1001. Bind-mounted portrait dirs are often root:root — chmod
-# here so studio ingest cannot 500 with EACCES (the old image-only public/ dir).
+# here so portrait ingest cannot 500 with EACCES (the old image-only public/ dir).
 set -e
 
 ensure_writable() {
@@ -14,7 +14,6 @@ ensure_writable /app/public/armory/portraits
 data=${WEBSITE_DATA_DIR:-/website-data}
 if [ -d "$data" ]; then
   ensure_writable "$data/armory/portraits"
-  ensure_writable "$data/portrait-captures"
   ensure_writable "$data/events"
 fi
 if [ -d /updater ]; then

@@ -38,7 +38,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/content/events ./content/events
 COPY --chown=nextjs:nodejs server-entry.cjs ./server-entry.cjs
 COPY --chmod=0755 docker-entrypoint.sh ./docker-entrypoint.sh
 
-# Studio ingest writes PNGs here. Image copy is root-owned without --chown;
+# Render worker ingest writes PNGs here. Image copy is root-owned without --chown;
 # bind mounts hide this dir, so the entrypoint also chmod's the mount.
 RUN mkdir -p /app/public/armory/portraits \
   && chown -R nextjs:nodejs /app/public/armory \

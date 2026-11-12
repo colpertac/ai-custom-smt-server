@@ -1,44 +1,23 @@
 /**
- * Manual Path 1 worker helper. Does not screenshot — claims a job and
- * prints @va lines for the mannequin client.
+ * Portrait queue CLI (portraits.db). The render worker (avatar/worker) claims and renders jobs;
+ * this is for inspecting the queue and fixing it by hand.
  *
- *   npm run portrait-queue
- *   npm run portrait-queue -- claim
- *   npm run portrait-queue -- complete <fingerprint>
- *   npm run portrait-queue -- ingest <png> <fingerprint>
- *   npm run portrait-queue -- fail <fingerprint> <reason>
- *   npm run portrait-queue -- clear          # wipe hash PNGs + queue DB
- *   npm run portrait-queue -- clear --stubs  # also delete cat2.png-style stubs
+ *   pnpm portrait-queue
+ *   pnpm portrait-queue -- complete <fingerprint>
+ *   pnpm portrait-queue -- ingest <png> <fingerprint>
+ *   pnpm portrait-queue -- fail <fingerprint> <reason>
+ *   pnpm portrait-queue -- clear          # wipe hash PNGs + queue DB
+ *   pnpm portrait-queue -- clear --stubs  # also delete other PNGs (legacy cat2.png-style)
  */
 import {
-  claimPortraitJob,
   clearPortraitCache,
   completePortraitJob,
   failPortraitJob,
-  gmDressCommands,
   ingestPortraitFile,
   listPortraitJobs,
 } from "../lib/portrait-queue.ts"
 
 const [, , cmd = "list", arg, ...rest] = process.argv
-
-function printJob(
-  job: NonNullable<ReturnType<typeof claimPortraitJob>>,
-  header: string
-) {
-  console.log(header)
-  console.log(`  fingerprint  ${job.fingerprint}`)
-  console.log(`  character    ${job.characterName}`)
-  console.log(`  status       ${job.status}`)
-  console.log(`  canonical    ${job.payload.canonical}`)
-  console.log("")
-  console.log(gmDressCommands(job.payload).join("\n"))
-  console.log("")
-  console.log(`Save the crop, then:`)
-  console.log(
-    `  npm run portrait-queue -- ingest /path/to/crop.png ${job.fingerprint}`
-  )
-}
 
 if (cmd === "list") {
   const jobs = listPortraitJobs()
@@ -49,13 +28,6 @@ if (cmd === "list") {
   for (const job of jobs) {
     console.log(`${job.status.padEnd(8)} ${job.fingerprint}  ${job.characterName}`)
   }
-} else if (cmd === "claim") {
-  const job = claimPortraitJob()
-  if (!job) {
-    console.log("Queue empty.")
-    process.exit(0)
-  }
-  printJob(job, "Claimed:")
 } else if (cmd === "complete") {
   if (!arg) {
     console.error("usage: portrait-queue complete <fingerprint>")
@@ -89,15 +61,9 @@ if (cmd === "list") {
     console.log(`  - ${name}`)
   }
   if (!includeStubs) {
-    console.log("(name stubs like cat2.png kept; pass --stubs to remove)")
+    console.log("(other PNGs like cat2.png kept; pass --stubs to remove)")
   }
-  console.log(
-    "Also reset camera if clients will relog:\n" +
-      "  npm run portrait-worker -- reset-camera"
-  )
 } else {
-  console.error(
-    "usage: portrait-queue [list|claim|complete|ingest|fail|clear]"
-  )
+  console.error("usage: portrait-queue [list|complete|ingest|fail|clear]")
   process.exit(1)
 }

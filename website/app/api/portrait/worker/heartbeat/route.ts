@@ -2,10 +2,7 @@ import { z } from "zod"
 
 import { apiFail, apiOk } from "@/lib/api-response"
 import { recordPortraitWorkerHeartbeat } from "@/lib/portrait-queue"
-import {
-  getPortraitRendererMode,
-  RENDERER_VERSION,
-} from "@/lib/portrait-render-mode"
+import { RENDERER_VERSION } from "@/lib/portrait-renderer"
 import { requirePortraitWorker } from "@/lib/portrait-worker-auth"
 
 export const dynamic = "force-dynamic"
@@ -28,8 +25,8 @@ const heartbeatSchema = z.object({
 })
 
 /**
- * Render worker liveness (avatar/docs/WORKER.md). In three mode a heartbeat in the last 60 s
- * makes armory misses enqueue. Auth: X-Portrait-Worker-Token
+ * Render worker liveness (avatar/docs/WORKER.md). A heartbeat in the last 60 s makes armory
+ * misses enqueue. Auth: X-Portrait-Worker-Token
  */
 export async function POST(request: Request) {
   const denied = requirePortraitWorker(request)
@@ -62,7 +59,6 @@ export async function POST(request: Request) {
     })
     return apiOk({
       ok: true as const,
-      mode: getPortraitRendererMode(),
       rendererVersion: RENDERER_VERSION,
       versionMismatch: hb.rendererVersion !== RENDERER_VERSION,
       lastSeen: hb.lastSeen,

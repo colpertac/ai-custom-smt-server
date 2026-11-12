@@ -1,14 +1,12 @@
 /**
- * Server-only proxy to channel studio API.
+ * Server-only client for the channel's studio HTTP API (StudioHttpPort / StudioToken).
  * Never expose StudioToken to the browser.
+ *
+ * Only `/studio/health` lives here: player counts subtract the vam/vaf mannequin accounts when
+ * the channel reports them in-world. Live armory stats (`/armory/stats`) are in armory-live.ts.
  */
 
-import { isRenderWorkerAvailable } from "@/lib/portrait-queue"
-import { getPortraitRendererMode } from "@/lib/portrait-render-mode"
-import { fetchQueueProcessing } from "@/lib/studio-agent-remote"
 import {
-  getEffectivePortraitPreviewUrl,
-  getEffectivePortraitWorkerToken,
   getEffectiveStudioToken,
   getEffectiveStudioUrl,
 } from "@/lib/studio-settings-store"
@@ -23,37 +21,20 @@ export type StudioHealth = {
   error?: string
 }
 
-export type StudioDressResult = {
-  ok: boolean
-  mannequin?: string
-  source?: string
-  posed?: boolean
-  dressed?: boolean
-  error?: string
-}
-
-function studioBaseUrl(): string {
-  return getEffectiveStudioUrl()
-}
-
-function studioToken(): string {
-  return getEffectiveStudioToken()
-}
-
 async function studioFetch(
   path: string,
   init?: RequestInit
 ): Promise<{ status: number; json: Record<string, unknown> }> {
-  const token = studioToken()
+  const token = getEffectiveStudioToken()
   if (!token) {
     throw new Error(
-      "PORTRAIT_STUDIO_TOKEN is not set (Admin → Studio, or website .env)"
+      "PORTRAIT_STUDIO_TOKEN is not set (Admin → Portraits, or website .env)"
     )
   }
-  const url = `${studioBaseUrl()}${path}`
+  const base = getEffectiveStudioUrl()
   let res: Response
   try {
-    res = await fetch(url, {
+    res = await fetch(`${base}${path}`, {
       ...init,
       headers: {
         "X-Studio-Token": token,
@@ -65,8 +46,8 @@ async function studioFetch(
   } catch (e) {
     throw new Error(
       e instanceof Error
-        ? `Studio API unreachable (${studioBaseUrl()}): ${e.message}`
-        : "Studio API unreachable"
+        ? `Channel studio API unreachable (${base}): ${e.message}`
+        : "Channel studio API unreachable"
     )
   }
   let json: Record<string, unknown> = {}
@@ -78,6 +59,7 @@ async function studioFetch(
   return { status: res.status, json }
 }
 
+/** Channel `/studio/health`: which mannequin accounts (vam1 / vaf1) are in-world. */
 export async function getStudioHealth(init?: {
   signal?: AbortSignal
 }): Promise<StudioHealth> {
@@ -91,202 +73,6 @@ export async function getStudioHealth(init?: {
     vam: Boolean(json.vam1 ?? json.vam),
     vaf: Boolean(json.vaf1 ?? json.vaf),
     va: Boolean(json.va),
-    error: typeof json.error === "string" ? json.error : undefined,
-  }
-}
-
-const CAPTURE_PROBE_MS = 1500
-const CAPTURE_OK_TTL_MS = 60_000
-const CAPTURE_DOWN_TTL_MS = 20_000
-
-type CaptureProbeCache = {
-  checkedAt: number
-  /** Studio reachable + Process queue On. */
-  pipelineReady: boolean
-  vam1: boolean
-  vaf1: boolean
-}
-
-let captureAvailabilityCache: CaptureProbeCache | null = null
-
-/** For tests — clear the armory enqueue probe cache. */
-export function resetPortraitCaptureAvailabilityCacheForTests(): void {
-  captureAvailabilityCache = null
-}
-
-function mannequinOnlineForGender(
-  probe: Pick<CaptureProbeCache, "vam1" | "vaf1">,
-  gender?: number | null
-): boolean {
-  // 0 = male → vam1; 1 = female → vaf1
-  if (gender === 0) return probe.vam1
-  if (gender === 1) return probe.vaf1
-  return probe.vam1 || probe.vaf1
-}
-
-function availableFromProbe(
-  probe: CaptureProbeCache,
-  gender?: number | null
-): boolean {
-  return (
-    probe.pipelineReady && mannequinOnlineForGender(probe, gender)
-  )
-}
-
-/**
- * True when a portrait can actually be captured soon: studio token set,
- * gender-matching mannequin online (vam1/vaf1), and Admin Process queue On.
- * Armory uses this so a paused/offline studio shows a placeholder instead of
- * "Capturing portrait…".
- *
- * PORTRAIT_RENDERER=three: a render worker on this RENDERER_VERSION sent a
- * heartbeat in the last 60 s (no studio / mannequin checks).
- */
-export async function isPortraitCaptureAvailable(opts?: {
-  gender?: number | null
-  now?: number
-}): Promise<boolean> {
-  const now = opts?.now ?? Date.now()
-  const gender = opts?.gender
-
-  if (getPortraitRendererMode() === "three") {
-    try {
-      return isRenderWorkerAvailable(now)
-    } catch {
-      return false
-    }
-  }
-
-  if (!studioToken()) {
-    captureAvailabilityCache = {
-      checkedAt: now,
-      pipelineReady: false,
-      vam1: false,
-      vaf1: false,
-    }
-    return false
-  }
-
-  const cached = captureAvailabilityCache
-  if (cached) {
-    const available = availableFromProbe(cached, gender)
-    const ttl = available ? CAPTURE_OK_TTL_MS : CAPTURE_DOWN_TTL_MS
-    if (now - cached.checkedAt < ttl) return available
-  }
-
-  let probe: CaptureProbeCache = {
-    checkedAt: now,
-    pipelineReady: false,
-    vam1: false,
-    vaf1: false,
-  }
-
-  try {
-    const agentConfigured =
-      Boolean(getEffectivePortraitPreviewUrl()) &&
-      Boolean(getEffectivePortraitWorkerToken())
-
-    const [healthResult, queueResult] = await Promise.all([
-      getStudioHealth({
-        signal: AbortSignal.timeout(CAPTURE_PROBE_MS),
-      }).then(
-        (health) => ({ ok: true as const, health }),
-        () => ({ ok: false as const })
-      ),
-      agentConfigured
-        ? fetchQueueProcessing({ timeoutMs: CAPTURE_PROBE_MS }).then(
-            (q) => ({ ok: true as const, q }),
-            () => ({ ok: false as const })
-          )
-        : Promise.resolve({ ok: false as const }),
-    ])
-
-    const vam1 = healthResult.ok
-      ? Boolean(healthResult.health.vam1 || healthResult.health.vam)
-      : false
-    const vaf1 = healthResult.ok
-      ? Boolean(healthResult.health.vaf1 || healthResult.health.vaf)
-      : false
-    const queueEnabled =
-      queueResult.ok && Boolean(queueResult.q.queueProcessing.enabled)
-    const studioOk = healthResult.ok && healthResult.health.ok
-
-    probe = {
-      checkedAt: now,
-      pipelineReady: studioOk && queueEnabled,
-      vam1,
-      vaf1,
-    }
-  } catch {
-    // leave probe as not ready
-  }
-
-  captureAvailabilityCache = probe
-  return availableFromProbe(probe, gender)
-}
-
-export async function dressStudioMannequin(input: {
-  mannequin: string
-  source: string
-  pose?: boolean
-  /** Floating name/title. Default true (admin). Worker uses false. */
-  plate?: boolean
-  zone?: number
-  x?: number
-  y?: number
-}): Promise<StudioDressResult> {
-  const mannequin = input.mannequin.trim()
-  const source = input.source.trim()
-  if (!mannequin || !source) {
-    return { ok: false, error: "mannequin and source are required" }
-  }
-  const body: Record<string, unknown> = {
-    mannequin,
-    source,
-    pose: input.pose !== false,
-    plate: input.plate !== false,
-  }
-  if (input.zone != null) body.zone = input.zone
-  if (input.x != null) body.x = input.x
-  if (input.y != null) body.y = input.y
-
-  const { json } = await studioFetch("/studio/dress", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  })
-  return {
-    ok: Boolean(json.ok),
-    mannequin:
-      typeof json.mannequin === "string" ? json.mannequin : mannequin,
-    source: typeof json.source === "string" ? json.source : source,
-    posed: typeof json.posed === "boolean" ? json.posed : undefined,
-    dressed: typeof json.dressed === "boolean" ? json.dressed : undefined,
-    error: typeof json.error === "string" ? json.error : undefined,
-  }
-}
-
-export async function ensureStudioMannequinName(mannequin: string): Promise<{
-  ok: boolean
-  mannequin?: string
-  name?: string
-  repaired?: boolean
-  error?: string
-}> {
-  const name = mannequin.trim()
-  if (!name) {
-    return { ok: false, error: "mannequin is required" }
-  }
-  const { json } = await studioFetch("/studio/ensure-name", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mannequin: name }),
-  })
-  return {
-    ok: Boolean(json.ok),
-    mannequin: typeof json.mannequin === "string" ? json.mannequin : name,
-    name: typeof json.name === "string" ? json.name : undefined,
-    repaired: typeof json.repaired === "boolean" ? json.repaired : undefined,
     error: typeof json.error === "string" ? json.error : undefined,
   }
 }

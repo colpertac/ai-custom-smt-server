@@ -269,7 +269,6 @@ New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-conten
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "server-content\report-rewards\dungeons") | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "armory\portraits") | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $WebsiteData "portrait-captures") | Out-Null
 
 function Seed-ServerContentSubdir([string] $Subdir) {
   $dest = Join-Path $WebsiteData "server-content\$Subdir"

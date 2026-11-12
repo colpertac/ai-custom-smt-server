@@ -16,7 +16,7 @@ import {
   WorldDbMissingError,
 } from "@/lib/armory"
 
-/** Always re-run profile load so portrait miss can enqueue when studio is up. */
+/** Always re-run profile load so portrait miss can enqueue while the render worker is up. */
 export const dynamic = "force-dynamic"
 
 type Props = { params: Promise<{ name: string }> }

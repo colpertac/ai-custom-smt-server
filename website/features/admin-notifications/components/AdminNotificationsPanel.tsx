@@ -22,7 +22,6 @@ type NotificationSettings = {
   mention: string
   offlineThresholdSec: number
   notifyServicesDown: boolean
-  notifyMannequins: boolean
   notifyFeedback: boolean
   notifyReports: boolean
 }
@@ -55,7 +54,6 @@ const DEFAULT_SETTINGS: NotificationSettings = {
   mention: "",
   offlineThresholdSec: 60,
   notifyServicesDown: true,
-  notifyMannequins: true,
   notifyFeedback: false,
   notifyReports: false,
 }
@@ -64,7 +62,6 @@ type ToggleRow = {
   key: keyof Pick<
     NotificationSettings,
     | "notifyServicesDown"
-    | "notifyMannequins"
     | "notifyFeedback"
     | "notifyReports"
   >
@@ -78,12 +75,6 @@ const TOGGLE_ROWS: ToggleRow[] = [
     label: "Services down",
     description:
       "Discord when lobby, world, or channel stays offline past the threshold (crash watchdog).",
-  },
-  {
-    key: "notifyMannequins",
-    label: "Mannequins / studio",
-    description:
-      "Discord when portrait-watchdog reports mannequins or studio offline.",
   },
   {
     key: "notifyFeedback",
@@ -160,7 +151,6 @@ export function AdminNotificationsPanel() {
           mention: settings.mention,
           offlineThresholdSec: Number(settings.offlineThresholdSec),
           notifyServicesDown: settings.notifyServicesDown,
-          notifyMannequins: settings.notifyMannequins,
           notifyFeedback: settings.notifyFeedback,
           notifyReports: settings.notifyReports,
         },
@@ -221,7 +211,7 @@ export function AdminNotificationsPanel() {
           <CardTitle>Discord notifications</CardTitle>
         </div>
         <CardDescription>
-          One outgoing webhook for crash / studio alerts, new feedback, and new
+          One outgoing webhook for crash alerts, new feedback, and new
           player reports. Toggle each event independently.
         </CardDescription>
       </CardHeader>

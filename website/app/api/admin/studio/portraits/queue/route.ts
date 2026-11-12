@@ -14,7 +14,7 @@ const enqueueSchema = z.object({
   force: z.boolean().optional(),
 })
 
-/** List portrait queue jobs + status counts for Admin Studio. */
+/** List portrait queue jobs + status counts for Admin → Portraits. */
 export async function GET() {
   const session = await requireWebSession()
   if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")
@@ -45,7 +45,7 @@ export async function GET() {
   }
 }
 
-/** Enqueue one character for portrait capture. */
+/** Enqueue one character for a portrait render. */
 export async function POST(request: Request) {
   const blocked = await guardApiMutation(
     "admin-studio-portraits-enqueue",
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     }
     if (result.action === "hidden") {
       return apiFail(
-        result.reason || "Cannot enqueue studio mannequins",
+        result.reason || "Cannot enqueue mannequin accounts",
         400,
         "HIDDEN"
       )

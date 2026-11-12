@@ -195,9 +195,6 @@ asset on the existing release (`--clobber` overwrites `smt-deploy-ops.zip`):
 ./deploy/scripts/make-release-zip.sh -o /tmp/smt-deploy-ops.zip --upload v1.0.0
 ```
 
-Studio zip is separate (`make-studio-release-zip.sh`) — only if `deploy-studio/`
-changed.
-
 On the server after image and/or zip updates:
 
 ```bash

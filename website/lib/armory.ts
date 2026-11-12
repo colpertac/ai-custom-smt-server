@@ -36,7 +36,7 @@ export {
   type EquipSlotKey,
 } from "@/lib/armory-equipment"
 
-/** Studio mannequin chars — not real players; hidden from public armory. */
+/** Mannequin chars (vam/vaf, old portrait accounts) — not real players; hidden from public armory. */
 const DEFAULT_ARMORY_HIDDEN_NAMES = ["vam", "vaf", "vam1", "vaf1"] as const
 
 function armoryHiddenNameSet(): Set<string> {
@@ -165,7 +165,7 @@ export type ArmoryProfile = {
   activeDemon: ArmoryActiveDemon | null
   /** Public URL for a captured portrait, or null until the worker/cache has one. */
   portraitUrl: string | null
-  /** Content hash of appearance + VA + weapon + partner; cache key for PNG. */
+  /** v3 hash of the resolved avatar recipe (portraits/{fingerprint}.png); "" if unresolvable. */
   portraitFingerprint: string
   portraitStatus: "ready" | "queued" | "missing"
   /** Live channel stats when online; otherwise offline estimate. */
@@ -515,7 +515,7 @@ function statsFromRow(row: CharacterRow): ArmoryStats | null {
 /**
  * Exact-name public profile from world DB.
  * Returns null when the character does not exist.
- * Portrait enqueue only runs when studio capture is available.
+ * Portrait enqueue only runs when a render worker is online.
  */
 export async function loadArmoryProfile(
   rawName: string,
@@ -745,7 +745,6 @@ export async function loadArmoryProfile(
   const { portrait, status: portraitStatus } =
     await resolveArmoryProfilePortrait(portraitInput, row.Name, {
       enqueue: opts?.enqueuePortrait !== false,
-      gender: row.Gender,
     })
 
   return {
@@ -788,7 +787,7 @@ function buildPortraitFingerprintInput(args: {
 }
 
 /**
- * Portrait enqueue context for Admin Studio (no auto-enqueue).
+ * Portrait enqueue context for Admin → Portraits (no auto-enqueue).
  * Returns null for missing / hidden characters (vam/vaf/…).
  */
 export function getArmoryPortraitEnqueueTarget(rawName: string): {

@@ -18,7 +18,7 @@ export type OnlinePresencePlayer = {
   x?: number
   /** Map Y when the channel has reported coordinates. */
   y?: number
-  /** Studio portrait mannequin (vam / vaf), not a real player. */
+  /** Mannequin account (vam / vaf), not a real player. */
   mannequin?: boolean
 }
 
@@ -27,7 +27,7 @@ export type OnlinePresenceRoster = {
   players: OnlinePresencePlayer[]
 }
 
-/** Character names used by studio dress mannequins. */
+/** Character names of the vam/vaf mannequin accounts (still in the world DB). */
 const MANNEQUIN_NAMES = new Set(["vam", "vaf", "vam1", "vaf1"])
 
 export function isStudioMannequinName(character: string): boolean {

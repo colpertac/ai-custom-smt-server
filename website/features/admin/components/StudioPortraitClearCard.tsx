@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { useConfirm } from "@/components/confirm-dialog"
 import { api } from "@/lib/kyClient"
 
-/** Clear one character's cached armory portrait so the next visit re-captures. */
+/** Clear one character's cached armory portrait so the next visit re-renders. */
 export function StudioPortraitClearCard() {
   const confirm = useConfirm()
   const [name, setName] = useState("")
@@ -25,7 +25,7 @@ export function StudioPortraitClearCard() {
     const okConfirm = await confirm({
       title: `Clear portrait for ${trimmed}?`,
       description:
-        "Deletes the cached PNG and queue row. Opening the armory page will show the placeholder, then re-enqueue capture (worker must be running with Process queue on).",
+        "Deletes the cached PNG and queue row. Opening the armory page will show the placeholder, then re-enqueue a render (render worker must be online).",
       confirmLabel: "Clear portrait",
       variant: "destructive",
     })
@@ -69,8 +69,8 @@ export function StudioPortraitClearCard() {
         <p className="text-xs text-muted-foreground mt-0.5">
           Wipe a character&apos;s armory PNG so{" "}
           <span className="font-mono text-foreground">/armory/name</span> shows
-          the placeholder, then recaptures after a few seconds (studio worker
-          must be up).
+          the placeholder, then re-renders after a few seconds (render worker
+          must be online).
         </p>
       </div>
       <div className="flex flex-wrap items-end gap-2">

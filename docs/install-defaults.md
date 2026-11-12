@@ -28,7 +28,7 @@ and is never overwritten by later image pulls.
 | **World loot eggs** | `LootEggDuration` **300**; `LootEggRestrictedDuration` **0** (immediately free-for-all) | `deploy/seed/config/world.xml` (`WorldSharedConfig`) |
 | **Casino / config / email / SQL / …** | Current code + empty runtime DBs | Website / ops images as published |
 | **Website feedback** | Empty `feedback` / `feedback_images` in new `web.sqlite` | Public `/feedback` form; Admin → Feedback |
-| **Discord notifications** | **No webhook**; services/feedback/reports off until configured; mannequin toggle defaults **on** once a webhook exists (legacy portrait behavior) | Admin → Notifications → `site_settings` / optional `SERVER_ALERT_DISCORD_WEBHOOK` |
+| **Discord notifications** | **No webhook**; services/feedback/reports off until configured | Admin → Notifications → `site_settings` / optional `SERVER_ALERT_DISCORD_WEBHOOK` |
 | **Armory expertise / digi editor** | **Off** (`enabled: false`); min GM level **0** when enabled | Admin → Website (expertise digi settings) |
 | **Recovery hub** | No snapshots; stock-knob reset uses `deploy/seed/config` templates | Admin → Recovery; snapshots under `data/releases/recovery/` |
 | **Backups / rclone** | Empty `deploy/backups/`; no schedule; no rclone.conf | Admin → Backups; never in image or release zip |

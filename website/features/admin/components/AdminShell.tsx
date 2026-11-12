@@ -242,14 +242,7 @@ export function AdminShell({
             still work; other admin tools stay disabled until lobby is up.
           </div>
         ) : null}
-        <div
-          className={cn(
-            "mx-auto w-full flex-1 px-4 py-5",
-            pathname.startsWith("/admin/studio")
-              ? "max-w-none"
-              : "max-w-[1400px]"
-          )}
-        >
+        <div className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-5">
           {children}
         </div>
       </div>

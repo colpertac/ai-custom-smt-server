@@ -10,7 +10,6 @@ describe("studio-settings-store", () => {
   const prevToken = process.env.PORTRAIT_STUDIO_TOKEN
   const prevComp = process.env.COMP_STUDIO_TOKEN
   const prevWorker = process.env.PORTRAIT_WORKER_TOKEN
-  const prevPreview = process.env.PORTRAIT_PREVIEW_URL
 
   beforeEach(() => {
     dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "studio-settings-"))
@@ -19,7 +18,6 @@ describe("studio-settings-store", () => {
     delete process.env.PORTRAIT_STUDIO_TOKEN
     delete process.env.COMP_STUDIO_TOKEN
     delete process.env.PORTRAIT_WORKER_TOKEN
-    delete process.env.PORTRAIT_PREVIEW_URL
     vi.resetModules()
   })
 
@@ -34,8 +32,6 @@ describe("studio-settings-store", () => {
     else process.env.COMP_STUDIO_TOKEN = prevComp
     if (prevWorker === undefined) delete process.env.PORTRAIT_WORKER_TOKEN
     else process.env.PORTRAIT_WORKER_TOKEN = prevWorker
-    if (prevPreview === undefined) delete process.env.PORTRAIT_PREVIEW_URL
-    else process.env.PORTRAIT_PREVIEW_URL = prevPreview
     fs.rmSync(dataDir, { recursive: true, force: true })
   })
 

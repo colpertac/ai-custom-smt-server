@@ -471,7 +471,6 @@ const KEY_SERVER_ALERT_WEBHOOK = "server_alert_discord_webhook"
 const KEY_SERVER_ALERT_ENABLED = "server_alert_enabled"
 const KEY_SERVER_ALERT_THRESHOLD_SEC = "server_alert_threshold_sec"
 const KEY_SERVER_ALERT_MENTION = "server_alert_mention"
-const KEY_NOTIFY_MANNEQUINS = "notify_mannequins"
 const KEY_NOTIFY_FEEDBACK = "notify_feedback"
 const KEY_NOTIFY_REPORTS = "notify_reports"
 
@@ -495,7 +494,6 @@ export type NotificationSettings = {
   mention: string
   offlineThresholdSec: number
   notifyServicesDown: boolean
-  notifyMannequins: boolean
   notifyFeedback: boolean
   notifyReports: boolean
 }
@@ -506,7 +504,6 @@ export type ServerAlertSettings = {
   enabled: boolean
   offlineThresholdSec: number
   mention: string
-  notifyMannequins: boolean
   notifyFeedback: boolean
   notifyReports: boolean
 }
@@ -522,7 +519,6 @@ export function getNotificationSettings(): NotificationSettings {
   let dbEnabled: string | null = null
   let dbThreshold: string | null = null
   let dbMention: string | null = null
-  let dbMannequins: string | null = null
   let dbFeedback: string | null = null
   let dbReports: string | null = null
 
@@ -531,7 +527,6 @@ export function getNotificationSettings(): NotificationSettings {
     dbEnabled = getSiteSetting(KEY_SERVER_ALERT_ENABLED)
     dbThreshold = getSiteSetting(KEY_SERVER_ALERT_THRESHOLD_SEC)
     dbMention = getSiteSetting(KEY_SERVER_ALERT_MENTION)
-    dbMannequins = getSiteSetting(KEY_NOTIFY_MANNEQUINS)
     dbFeedback = getSiteSetting(KEY_NOTIFY_FEEDBACK)
     dbReports = getSiteSetting(KEY_NOTIFY_REPORTS)
   } catch {
@@ -544,8 +539,6 @@ export function getNotificationSettings(): NotificationSettings {
     envEnabled,
     Boolean(discordWebhook)
   )
-  // Portrait alerts historically fired whenever a webhook existed (ignored master enable).
-  const notifyMannequins = parseBoolSetting(dbMannequins, undefined, true)
   const notifyFeedback = parseBoolSetting(dbFeedback, undefined, false)
   const notifyReports = parseBoolSetting(dbReports, undefined, false)
 
@@ -559,7 +552,6 @@ export function getNotificationSettings(): NotificationSettings {
     mention,
     offlineThresholdSec,
     notifyServicesDown,
-    notifyMannequins,
     notifyFeedback,
     notifyReports,
   }
@@ -587,9 +579,6 @@ export function setNotificationSettings(
     if (input.mention !== undefined) {
       setSiteSetting(KEY_SERVER_ALERT_MENTION, input.mention.trim())
     }
-    if (input.notifyMannequins !== undefined) {
-      setSiteSetting(KEY_NOTIFY_MANNEQUINS, input.notifyMannequins ? "1" : "0")
-    }
     if (input.notifyFeedback !== undefined) {
       setSiteSetting(KEY_NOTIFY_FEEDBACK, input.notifyFeedback ? "1" : "0")
     }
@@ -609,7 +598,6 @@ export function getServerAlertSettings(): ServerAlertSettings {
     enabled: n.notifyServicesDown,
     offlineThresholdSec: n.offlineThresholdSec,
     mention: n.mention,
-    notifyMannequins: n.notifyMannequins,
     notifyFeedback: n.notifyFeedback,
     notifyReports: n.notifyReports,
   }
@@ -623,7 +611,6 @@ export function setServerAlertSettings(
   const {
     enabled,
     notifyServicesDown,
-    notifyMannequins,
     notifyFeedback,
     notifyReports,
     discordWebhook,
@@ -640,7 +627,6 @@ export function setServerAlertSettings(
         : enabled !== undefined
           ? enabled
           : undefined,
-    notifyMannequins,
     notifyFeedback,
     notifyReports,
   })

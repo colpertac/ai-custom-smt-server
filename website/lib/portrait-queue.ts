@@ -3,12 +3,7 @@ import path from "node:path"
 
 import { DatabaseSync } from "./node-sqlite.ts"
 
-import {
-  appearanceFingerprint,
-  portraitFingerprintCanonical,
-  portraitsDir,
-  type PortraitFingerprintInput,
-} from "./armory-portrait.ts"
+import { portraitsDir } from "./armory-portrait.ts"
 import type { AvatarRecipe } from "./avatar-recipe.ts"
 import {
   portraitFingerprintV3,
@@ -20,7 +15,7 @@ import {
   THREE_PORTRAIT_HEIGHT,
   THREE_PORTRAIT_PRESET,
   THREE_PORTRAIT_WIDTH,
-} from "./portrait-render-mode.ts"
+} from "./portrait-renderer.ts"
 
 export const PORTRAIT_CLAIM_TIMEOUT_MS = 15 * 60 * 1000
 /** After a failed capture, ignore armory re-enqueue until this elapses. */
@@ -28,15 +23,8 @@ export const PORTRAIT_FAIL_RETRY_MS = 60 * 1000
 
 export type PortraitJobStatus = "pending" | "claimed" | "ready" | "failed"
 
-/** Wine studio job (v2 fingerprint): the character's look as world-DB fields. */
-export type PortraitJobPayloadWine = PortraitFingerprintInput & {
-  fingerprint: string
-  characterName: string
-  canonical: string
-}
-
-/** three.js render worker job (v3 fingerprint): the resolved avatar recipe. */
-export type PortraitJobPayloadThree = {
+/** Render worker job (v3 fingerprint): the resolved avatar recipe. */
+export type PortraitJobPayload = {
   fingerprint: string
   characterName: string
   canonical: string
@@ -47,17 +35,6 @@ export type PortraitJobPayloadThree = {
   width: number
   height: number
 }
-
-export type PortraitJobPayload = PortraitJobPayloadWine | PortraitJobPayloadThree
-
-export function isThreePortraitPayload(
-  payload: PortraitJobPayload
-): payload is PortraitJobPayloadThree {
-  return "recipe" in payload && payload.recipe != null
-}
-
-/** Which jobs a claim may take: Wine studio jobs (no recipe) or render-worker jobs. */
-export type PortraitClaimKind = "wine" | "three"
 
 export type PortraitJob = {
   fingerprint: string
@@ -171,41 +148,11 @@ function rowToJob(row: JobRow): PortraitJob {
   }
 }
 
-export function buildPortraitJobPayload(
-  characterName: string,
-  input: PortraitFingerprintInput
-): PortraitJobPayloadWine {
-  const withName: PortraitFingerprintInput = {
-    ...input,
-    characterName: input.characterName?.trim() || characterName,
-    equippedItems: input.equippedItems ?? [],
-  }
-  const fingerprint = appearanceFingerprint(withName)
-  return {
-    ...withName,
-    fingerprint,
-    characterName,
-    canonical: portraitFingerprintCanonical(withName),
-  }
-}
-
-/**
- * Insert or refresh a pending capture job. Existing pending/claimed rows
- * keep their status (payload is updated). ready/failed rows retry as pending.
- */
-export function enqueuePortraitJob(
-  characterName: string,
-  input: PortraitFingerprintInput,
-  now = Date.now()
-): { fingerprint: string; status: PortraitJobStatus } {
-  return upsertPortraitJob(buildPortraitJobPayload(characterName, input), now)
-}
-
 export function buildPortraitRecipeJobPayload(
   characterName: string,
   recipe: AvatarRecipe,
   catalogVersion: number
-): PortraitJobPayloadThree {
+): PortraitJobPayload {
   return {
     fingerprint: portraitFingerprintV3(recipe, catalogVersion),
     characterName,
@@ -219,7 +166,11 @@ export function buildPortraitRecipeJobPayload(
   }
 }
 
-/** Render-worker job (three mode): v3 fingerprint, payload carries the recipe. */
+/**
+ * Insert or refresh a pending render job (v3 fingerprint, payload carries the recipe).
+ * Existing pending/claimed rows keep their status (payload is updated); ready/failed rows retry
+ * as pending, except a failure younger than PORTRAIT_FAIL_RETRY_MS.
+ */
 export function enqueuePortraitRecipeJob(
   characterName: string,
   recipe: AvatarRecipe,
@@ -283,26 +234,17 @@ function upsertPortraitJob(
   })
 }
 
-/** SQL filter on payload_json for one claim kind (schema unchanged; payload is JSON). */
-function claimKindSql(kind: PortraitClaimKind): string {
-  return kind === "three"
-    ? `json_extract(payload_json, '$.recipe') IS NOT NULL
+/** Jobs the render worker may take: recipe jobs of this site's RENDERER_VERSION. */
+const CLAIMABLE_SQL = `json_extract(payload_json, '$.recipe') IS NOT NULL
        AND json_extract(payload_json, '$.rendererVersion') = ${RENDERER_VERSION}`
-    : `json_extract(payload_json, '$.recipe') IS NULL`
-}
 
 /**
- * One job at a time (per kind). Returns the in-flight claim, or the oldest pending.
- * `wine` (the default, used by body-less claims) only sees jobs without a recipe, so the Wine
- * worker never picks up a render-worker job; `three` only sees recipe jobs of the current
- * RENDERER_VERSION (older recipe jobs are failed as stale — their fingerprint is no longer used).
+ * One job at a time. Returns the in-flight claim, or the oldest pending recipe job of the
+ * current RENDERER_VERSION. Pending jobs that can never render (an older rendererVersion, or a
+ * legacy row without a recipe) are failed instead — their fingerprint is no longer used.
  */
-export function claimPortraitJob(
-  now = Date.now(),
-  opts?: { kind?: PortraitClaimKind }
-): PortraitJob | null {
-  const kind = opts?.kind ?? "wine"
-  const filter = claimKindSql(kind)
+export function claimPortraitJob(now = Date.now()): PortraitJob | null {
+  const filter = CLAIMABLE_SQL
   return withPortraitDbWrite((database) => {
     const staleBefore = now - PORTRAIT_CLAIM_TIMEOUT_MS
 
@@ -316,19 +258,26 @@ export function claimPortraitJob(
         )
         .run(now, staleBefore)
 
-      if (kind === "three") {
-        database
-          .prepare(
-            `UPDATE portrait_jobs
-             SET status = 'failed', claimed_at = NULL, updated_at = ?,
-                 error = 'stale rendererVersion (site is ${RENDERER_VERSION})'
-             WHERE status = 'pending'
-               AND json_extract(payload_json, '$.recipe') IS NOT NULL
-               AND coalesce(json_extract(payload_json, '$.rendererVersion'), -1)
-                   != ${RENDERER_VERSION}`
-          )
-          .run(now)
-      }
+      database
+        .prepare(
+          `UPDATE portrait_jobs
+           SET status = 'failed', claimed_at = NULL, updated_at = ?,
+               error = 'stale rendererVersion (site is ${RENDERER_VERSION})'
+           WHERE status = 'pending'
+             AND json_extract(payload_json, '$.recipe') IS NOT NULL
+             AND coalesce(json_extract(payload_json, '$.rendererVersion'), -1)
+                 != ${RENDERER_VERSION}`
+        )
+        .run(now)
+      database
+        .prepare(
+          `UPDATE portrait_jobs
+           SET status = 'failed', claimed_at = NULL, updated_at = ?,
+               error = 'legacy job without an avatar recipe'
+           WHERE status IN ('pending', 'claimed')
+             AND json_extract(payload_json, '$.recipe') IS NULL`
+        )
+        .run(now)
 
       const inflight = database
         .prepare(
@@ -469,7 +418,7 @@ function workerRowToHeartbeat(row: WorkerRow): PortraitWorkerHeartbeat {
   }
 }
 
-/** Latest heartbeats first (admin Studio). */
+/** Latest heartbeats first (Admin → Portraits). */
 export function listPortraitWorkerHeartbeats(limit = 20): PortraitWorkerHeartbeat[] {
   const rows = getDb()
     .prepare(`SELECT * FROM portrait_workers ORDER BY last_seen DESC LIMIT ?`)
@@ -498,7 +447,7 @@ export function isPortraitWorkerHeartbeatUsable(
   )
 }
 
-/** Three-mode capture availability: a matching render worker sent a heartbeat in the last 60 s. */
+/** Render availability: a matching render worker sent a heartbeat in the last 60 s. */
 export function isRenderWorkerAvailable(now = Date.now()): boolean {
   return listPortraitWorkerHeartbeats().some((hb) =>
     isPortraitWorkerHeartbeatUsable(hb, now)
@@ -586,21 +535,7 @@ export function listPortraitJobs(status?: PortraitJobStatus): PortraitJob[] {
   return rows.map(rowToJob)
 }
 
-/** Copy-paste GM lines for a human-operated first capture. */
-export function gmDressCommands(payload: PortraitJobPayload): string[] {
-  const lines = [
-    `# ${payload.characterName}  ${payload.fingerprint}`,
-    `# do not dress live cat/catm — mannequin only (vam1/vaf1)`,
-    `# preferred: npm run portrait-worker -- once (look-only; no @zone/@pos)`,
-    `# framing (pose + Home/PageUp + hold S) is init-camera / orch up`,
-    `@copylook ${payload.characterName}`,
-    `@dummyweapon`,
-    `# dismiss partner if summoned — portraits are character-only`,
-  ]
-  return lines
-}
-
-/** Copy a capture onto `portraits/{fingerprint}.png` and mark the job ready. */
+/** Copy a PNG onto `portraits/{fingerprint}.png` and mark the job ready (CLI). */
 export function ingestPortraitFile(
   srcPath: string,
   fingerprint: string
@@ -615,7 +550,7 @@ export function ingestPortraitFile(
   return ingestPortraitBytes(fs.readFileSync(src), fingerprint)
 }
 
-/** Same as ingestPortraitFile but from an in-memory PNG (HTTP worker upload). */
+/** Same as ingestPortraitFile but from an in-memory PNG (render worker upload). */
 export function ingestPortraitBytes(
   png: Buffer | Uint8Array,
   fingerprint: string
@@ -658,7 +593,7 @@ export function resetPortraitQueueForTests(): void {
 
 /**
  * Wipe cached portrait images + queue so armory misses and re-enqueues.
- * Keeps name-keyed stubs like `cat2.png` (not 16-hex fingerprints) unless
+ * Keeps other files (e.g. legacy name-keyed `cat2.png`, no longer served) unless
  * `includeStubs` is true.
  */
 export function clearPortraitCache(opts?: {
@@ -701,7 +636,7 @@ function unlinkPortraitBasename(basename: string): string[] {
 
 /**
  * Clear portrait cache + queue rows for one character so `/armory/{name}`
- * shows the placeholder and re-enqueues a capture on next visit.
+ * shows the placeholder and re-enqueues a render on next visit.
  */
 export function clearPortraitForCharacter(
   rawName: string,
@@ -738,7 +673,7 @@ export function clearPortraitForCharacter(
   for (const fp of fingerprints) {
     removedFiles.push(...unlinkPortraitBasename(fp))
   }
-  // PoC name-keyed stubs (catm.png)
+  // Legacy name-keyed files (catm.png); no longer served, removed for tidiness.
   removedFiles.push(...unlinkPortraitBasename(characterName))
   if (characterName.toLowerCase() !== characterName) {
     removedFiles.push(...unlinkPortraitBasename(characterName.toLowerCase()))
@@ -814,5 +749,5 @@ export function claimRenderWorkerJob(
           : `worker rendererVersion ${workerVersion} != site ${RENDERER_VERSION}; not claiming`,
     }
   }
-  return { versionMismatch: false, job: claimPortraitJob(now, { kind: "three" }) }
+  return { versionMismatch: false, job: claimPortraitJob(now) }
 }

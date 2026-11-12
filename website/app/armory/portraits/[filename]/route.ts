@@ -11,7 +11,7 @@ type Params = { params: Promise<{ filename: string }> }
 
 /**
  * Next standalone only serves `public/` files that existed at image build.
- * Studio ingest writes PNGs later onto the bind mount — serve them here.
+ * Render worker ingest writes PNGs later onto the bind mount — serve them here.
  */
 async function servePortrait(filename: string): Promise<Response> {
   const full = portraitFilePath(filename)

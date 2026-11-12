@@ -1,15 +1,10 @@
 import { apiFail, apiOk } from "@/lib/api-response"
+import { claimRenderWorkerJob, type PortraitJob } from "@/lib/portrait-queue"
 import { requirePortraitWorker } from "@/lib/portrait-worker-auth"
-import {
-  claimPortraitJob,
-  claimRenderWorkerJob,
-  isThreePortraitPayload,
-  type PortraitJob,
-} from "@/lib/portrait-queue"
 
 export const dynamic = "force-dynamic"
 
-/** Optional JSON body; anything but `{kind: "three", …}` is a Wine studio claim. */
+/** Optional JSON body; null when empty or not a JSON object. */
 async function readClaimBody(
   request: Request
 ): Promise<Record<string, unknown> | null> {
@@ -27,75 +22,61 @@ async function readClaimBody(
 
 function jobResponse(job: PortraitJob) {
   const payload = job.payload
-  const base = {
+  return {
     fingerprint: job.fingerprint,
     characterName: job.characterName,
     status: job.status,
     canonical: payload.canonical,
     payload,
     claimedAt: job.claimedAt,
-  }
-  if (isThreePortraitPayload(payload)) {
-    return {
-      ...base,
-      recipe: payload.recipe,
-      preset: payload.preset,
-      width: payload.width,
-      height: payload.height,
-      rendererVersion: payload.rendererVersion,
-      catalogVersion: payload.catalogVersion,
-    }
-  }
-  const gender = payload.appearance?.gender ?? 0
-  return {
-    ...base,
-    gender,
-    /** 0 → vam1, 1 → vaf1 (worker may override via env). */
-    mannequinHint: gender === 1 ? "vaf1" : "vam1",
+    recipe: payload.recipe,
+    preset: payload.preset,
+    width: payload.width,
+    height: payload.height,
+    rendererVersion: payload.rendererVersion,
+    catalogVersion: payload.catalogVersion,
   }
 }
 
 /**
- * Claim the next pending portrait job (or return empty).
- * Auth: X-Portrait-Worker-Token
+ * Claim the next pending portrait job (or return empty) for the render worker
+ * (avatar/docs/WORKER.md). Auth: X-Portrait-Worker-Token
  *
- * No body (Wine studio worker): jobs without a recipe, as before.
- * `{kind: "three", rendererVersion?, workerId?}` (render worker, avatar/docs/WORKER.md): only
- * recipe jobs; `empty` + `versionMismatch` when the worker's rendererVersion differs.
+ * Body `{kind: "three", rendererVersion?, workerId?}`; anything else is a 400. `empty` +
+ * `versionMismatch` when the worker's rendererVersion differs from the site's.
  */
 export async function POST(request: Request) {
   const denied = requirePortraitWorker(request)
   if (denied) return denied
 
   const body = await readClaimBody(request)
+  if (body?.kind !== "three") {
+    return apiFail(
+      'Claim body must be JSON {"kind": "three", ...} (render worker only)',
+      400,
+      "VALIDATION"
+    )
+  }
 
   try {
-    if (body?.kind === "three") {
-      const result = claimRenderWorkerJob(body)
-      if (result.versionMismatch) {
-        return apiOk(
-          {
-            empty: true as const,
-            job: null,
-            versionMismatch: true as const,
-            note: result.note,
-            siteRendererVersion: result.siteRendererVersion,
-            workerRendererVersion: result.workerRendererVersion,
-          },
-          result.note
-        )
-      }
-      if (!result.job) {
-        return apiOk({ empty: true as const, job: null })
-      }
-      return apiOk({ empty: false as const, job: jobResponse(result.job) })
+    const result = claimRenderWorkerJob(body)
+    if (result.versionMismatch) {
+      return apiOk(
+        {
+          empty: true as const,
+          job: null,
+          versionMismatch: true as const,
+          note: result.note,
+          siteRendererVersion: result.siteRendererVersion,
+          workerRendererVersion: result.workerRendererVersion,
+        },
+        result.note
+      )
     }
-
-    const job = claimPortraitJob()
-    if (!job) {
+    if (!result.job) {
       return apiOk({ empty: true as const, job: null })
     }
-    return apiOk({ empty: false as const, job: jobResponse(job) })
+    return apiOk({ empty: false as const, job: jobResponse(result.job) })
   } catch (error) {
     return apiFail(
       error instanceof Error ? error.message : "Claim failed",

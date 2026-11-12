@@ -3,29 +3,16 @@ import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
-import type { PortraitFingerprintInput } from "@/lib/armory-portrait"
+import type { AvatarRecipe } from "@/lib/avatar-recipe"
 
-function sample(
-  over: Partial<PortraitFingerprintInput> = {}
-): PortraitFingerprintInput {
+function recipe(hair = 10): AvatarRecipe {
   return {
-    characterName: "cat2",
-    appearance: {
-      gender: 0,
-      skinType: 101,
-      hairType: 6,
-      faceType: 5,
-      eyeType: 2,
-      hairColor: 91,
-      leftEyeColor: 42,
-      rightEyeColor: 42,
-    },
-    title: 0,
-    equippedVA: [{ slot: 3, itemType: 23602 }],
-    equippedItems: [],
-    weaponType: 0,
-    demonType: 0,
-    ...over,
+    gender: "M",
+    skinType: 101,
+    skeleton: { nif: "M.nif", scale: 1, idle: "idle.kf", stance: null },
+    parts: { Hair: { file: "M_Hair.nif", why: "w", exists: true } },
+    colors: { hair: [hair, 0, 0], eyeRight: [0, 0, 0], eyeLeft: [0, 0, 0] },
+    notes: [],
   }
 }
 
@@ -50,49 +37,35 @@ describe("portrait-queue", () => {
     return mod
   }
 
-  it("keeps one pending job per character fingerprint (name is part of hash)", async () => {
+  it("keeps one pending job per look fingerprint", async () => {
     const q = await load()
-    const first = q.enqueuePortraitJob("cat2", sample({ characterName: "cat2" }))
-    const again = q.enqueuePortraitJob("cat2", sample({ characterName: "cat2" }))
+    const first = q.enqueuePortraitRecipeJob("cat2", recipe(), 2)
+    const again = q.enqueuePortraitRecipeJob("cat2", recipe(), 2)
     expect(first.fingerprint).toBe(again.fingerprint)
     expect(again.status).toBe("pending")
     expect(q.listPortraitJobs("pending")).toHaveLength(1)
 
-    // Same look, different character → different fingerprint (no shared PNG).
-    const other = q.enqueuePortraitJob(
-      "mannequin",
-      sample({ characterName: "mannequin" })
-    )
-    expect(other.fingerprint).not.toBe(first.fingerprint)
+    q.enqueuePortraitRecipeJob("cat2", recipe(11), 2)
     expect(q.listPortraitJobs("pending")).toHaveLength(2)
-
-    q.enqueuePortraitJob(
-      "cat2",
-      sample({
-        characterName: "cat2",
-        equippedVA: [{ slot: 3, itemType: 1 }],
-      })
-    )
-    expect(q.listPortraitJobs("pending")).toHaveLength(3)
   })
 
   it("claims one job at a time and returns the in-flight claim", async () => {
     const q = await load()
-    const a = q.enqueuePortraitJob("a", sample({ title: 1 }))
-    const b = q.enqueuePortraitJob("b", sample({ title: 2 }))
+    const a = q.enqueuePortraitRecipeJob("a", recipe(1), 2, 1000)
+    const b = q.enqueuePortraitRecipeJob("b", recipe(2), 2, 2000)
     expect(a.fingerprint).not.toBe(b.fingerprint)
 
-    const claimed = q.claimPortraitJob()
+    const claimed = q.claimPortraitJob(3000)
     expect(claimed?.fingerprint).toBe(a.fingerprint)
     expect(claimed?.status).toBe("claimed")
-    expect(q.claimPortraitJob()?.fingerprint).toBe(a.fingerprint)
+    expect(q.claimPortraitJob(3100)?.fingerprint).toBe(a.fingerprint)
     expect(q.listPortraitJobs("pending")[0]?.fingerprint).toBe(b.fingerprint)
   })
 
   it("reclaims a stale claim then still prefers that oldest job", async () => {
     const q = await load()
-    const a = q.enqueuePortraitJob("a", sample({ title: 1 }), 1000)
-    q.enqueuePortraitJob("b", sample({ title: 2 }), 2000)
+    const a = q.enqueuePortraitRecipeJob("a", recipe(1), 2, 1000)
+    q.enqueuePortraitRecipeJob("b", recipe(2), 2, 2000)
     expect(q.claimPortraitJob(3000)?.fingerprint).toBe(a.fingerprint)
     const later = 3000 + q.PORTRAIT_CLAIM_TIMEOUT_MS + 1
     expect(q.claimPortraitJob(later)?.fingerprint).toBe(a.fingerprint)
@@ -100,36 +73,36 @@ describe("portrait-queue", () => {
 
   it("retries a failed job on the next enqueue", async () => {
     const q = await load()
-    const { fingerprint } = q.enqueuePortraitJob("cat2", sample(), 1000)
+    const { fingerprint } = q.enqueuePortraitRecipeJob("cat2", recipe(), 2, 1000)
     q.claimPortraitJob(2000)
-    q.failPortraitJob(fingerprint, "client crashed", 3000)
+    q.failPortraitJob(fingerprint, "render crashed", 3000)
     expect(q.getPortraitJob(fingerprint)?.status).toBe("failed")
     expect(
-      q.enqueuePortraitJob("cat2", sample(), 3000 + q.PORTRAIT_FAIL_RETRY_MS + 1)
+      q.enqueuePortraitRecipeJob("cat2", recipe(), 2, 3000 + q.PORTRAIT_FAIL_RETRY_MS + 1)
         .status
     ).toBe("pending")
   })
 
   it("does not immediately re-enqueue a recently failed job", async () => {
     const q = await load()
-    const { fingerprint } = q.enqueuePortraitJob("cat2", sample(), 1000)
+    const { fingerprint } = q.enqueuePortraitRecipeJob("cat2", recipe(), 2, 1000)
     q.claimPortraitJob(2000)
     q.failPortraitJob(fingerprint, "EACCES", 3000)
-    expect(q.enqueuePortraitJob("cat2", sample(), 4000).status).toBe("failed")
+    expect(q.enqueuePortraitRecipeJob("cat2", recipe(), 2, 4000).status).toBe("failed")
     expect(q.getPortraitJob(fingerprint)?.error).toBe("EACCES")
     expect(q.getPortraitJob(fingerprint)?.updatedAt).toBe(3000)
   })
 
   it("refuses complete until the hash-named PNG exists", async () => {
     const q = await load()
-    const { fingerprint } = q.enqueuePortraitJob("cat2", sample())
+    const { fingerprint } = q.enqueuePortraitRecipeJob("cat2", recipe(), 2)
     q.claimPortraitJob()
     expect(() => q.completePortraitJob(fingerprint)).toThrow(/No portraits/)
   })
 
   it("ingests PNG bytes and marks ready", async () => {
     const q = await load()
-    const { fingerprint } = q.enqueuePortraitJob("cat2", sample())
+    const { fingerprint } = q.enqueuePortraitRecipeJob("cat2", recipe(), 2)
     q.claimPortraitJob()
     // Minimal header our ingest checks (not a full decode).
     const png = Buffer.from([
@@ -141,21 +114,22 @@ describe("portrait-queue", () => {
     expect(q.getPortraitJob(fingerprint)?.status).toBe("ready")
   })
 
-  it("prints mannequin GM dress lines", async () => {
+  it("fails legacy jobs without a recipe instead of claiming them", async () => {
     const q = await load()
-    const payload = q.buildPortraitJobPayload(
-      "cat2",
-      sample({
-        equippedVA: [
-          { slot: 24, itemType: 2004 },
-          { slot: 3, itemType: 23602 },
-        ],
-        weaponType: 2001,
-      })
-    )
-    const lines = q.gmDressCommands(payload)
-    expect(lines.some((l) => l.includes("mannequin"))).toBe(true)
-    expect(lines).toContain("@copylook cat2")
-    expect(lines).toContain("@dummyweapon")
+    q.enqueuePortraitRecipeJob("cat2", recipe(), 2, 1000)
+    const { DatabaseSync } = await import("@/lib/node-sqlite")
+    const db = new DatabaseSync(path.join(dataDir, "portraits.db"))
+    db.prepare(
+      `INSERT INTO portrait_jobs (fingerprint, character_name, payload_json, status,
+         claimed_at, error, created_at, updated_at)
+       VALUES ('00000000000000aa', 'old', '{"fingerprint":"00000000000000aa"}', 'pending',
+         NULL, NULL, 500, 500)`
+    ).run()
+    db.close()
+    expect(q.claimPortraitJob(2000)?.characterName).toBe("cat2")
+    expect(q.getPortraitJob("00000000000000aa")).toMatchObject({
+      status: "failed",
+      error: "legacy job without an avatar recipe",
+    })
   })
 })

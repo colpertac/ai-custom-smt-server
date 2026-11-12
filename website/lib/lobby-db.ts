@@ -55,7 +55,7 @@ export class LobbyDbMissingError extends Error {
   }
 }
 
-/** Studio mannequin login names — not real player accounts. */
+/** Mannequin login names (vam1 / vaf1) — not real player accounts. */
 const DEFAULT_MANNEQUIN_USERNAMES = ["vam1", "vaf1"] as const
 
 function mannequinUsernameSet(): Set<string> {
@@ -71,7 +71,7 @@ function mannequinUsernameSet(): Set<string> {
 }
 
 /**
- * Count enabled player accounts in lobby SQLite (excludes studio mannequins).
+ * Count enabled player accounts in lobby SQLite (excludes mannequin accounts).
  * Used for public “offline ≈ accounts − online” presence.
  */
 export function countEnabledPlayerAccounts(): number {

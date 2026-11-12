@@ -3,31 +3,9 @@ import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
-import type { PortraitFingerprintInput } from "@/lib/armory-portrait"
 import type { AvatarRecipe } from "@/lib/avatar-recipe"
 import { portraitFingerprintV3 } from "@/lib/portrait-fingerprint-v3"
-import { RENDERER_VERSION } from "@/lib/portrait-render-mode"
-
-function look(): PortraitFingerprintInput {
-  return {
-    characterName: "cat2",
-    appearance: {
-      gender: 0,
-      skinType: 101,
-      hairType: 6,
-      faceType: 5,
-      eyeType: 2,
-      hairColor: 91,
-      leftEyeColor: 42,
-      rightEyeColor: 42,
-    },
-    title: 0,
-    equippedVA: [],
-    equippedItems: [],
-    weaponType: 0,
-    demonType: 0,
-  }
-}
+import { RENDERER_VERSION } from "@/lib/portrait-renderer"
 
 function recipe(hair = 10): AvatarRecipe {
   return {
@@ -40,7 +18,7 @@ function recipe(hair = 10): AvatarRecipe {
   }
 }
 
-describe("portrait queue — render worker (three)", () => {
+describe("portrait queue — render worker", () => {
   let dataDir: string
 
   beforeEach(() => {
@@ -79,7 +57,6 @@ describe("portrait queue — render worker (three)", () => {
       width: 768,
       height: 925,
     })
-    expect(q.isThreePortraitPayload(job.payload)).toBe(true)
 
     // Same look under another name shares the job (name is not in v3).
     expect(q.enqueuePortraitRecipeJob("alt", r, 2, 2_000).fingerprint).toBe(
@@ -88,25 +65,7 @@ describe("portrait queue — render worker (three)", () => {
     expect(q.listPortraitJobs()).toHaveLength(1)
   })
 
-  it("claims by kind: body-less (wine) skips recipe jobs, three skips wine jobs", async () => {
-    const q = await load()
-    const wine = q.enqueuePortraitJob("cat2", look(), 1_000)
-    const three = q.enqueuePortraitRecipeJob("cat3", recipe(), 2, 2_000)
-
-    const c3 = q.claimPortraitJob(3_000, { kind: "three" })
-    expect(c3?.fingerprint).toBe(three.fingerprint)
-    // in-flight three claim does not block or leak into the wine claim
-    const cw = q.claimPortraitJob(3_100)
-    expect(cw?.fingerprint).toBe(wine.fingerprint)
-    expect(q.isThreePortraitPayload(cw!.payload)).toBe(false)
-    // each kind gets its own in-flight job back
-    expect(q.claimPortraitJob(3_200, { kind: "three" })?.fingerprint).toBe(
-      three.fingerprint
-    )
-    expect(q.claimPortraitJob(3_300)?.fingerprint).toBe(wine.fingerprint)
-  })
-
-  it("three claim fails stale-rendererVersion recipe jobs instead of claiming them", async () => {
+  it("claim fails stale-rendererVersion recipe jobs instead of claiming them", async () => {
     const q = await load()
     const r = recipe()
     const enq = q.enqueuePortraitRecipeJob("cat2", r, 2, 1_000)
@@ -119,7 +78,7 @@ describe("portrait queue — render worker (three)", () => {
       enq.fingerprint
     )
     db.close()
-    expect(q.claimPortraitJob(2_000, { kind: "three" })).toBeNull()
+    expect(q.claimPortraitJob(2_000)).toBeNull()
     expect(q.getPortraitJob(enq.fingerprint)?.status).toBe("failed")
     expect(q.getPortraitJob(enq.fingerprint)?.error).toMatch(/stale rendererVersion/)
   })
@@ -215,7 +174,7 @@ describe("portrait queue — render worker (three)", () => {
       t0
     )
     q.recordPortraitWorkerHeartbeat(
-      { workerId: "wine", kind: "wine", rendererVersion: RENDERER_VERSION, assetsVersion: null, chrome: null, busy: false },
+      { workerId: "other", kind: "other", rendererVersion: RENDERER_VERSION, assetsVersion: null, chrome: null, busy: false },
       t0
     )
     expect(q.isRenderWorkerAvailable(t0 + 1_000)).toBe(false)

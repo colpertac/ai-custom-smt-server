@@ -16,12 +16,11 @@ import { requireWebSession } from "@/lib/web-session"
 
 const putSchema = z.object({
   studioUrl: z.string().trim().max(500).optional(),
-  previewUrl: z.string().trim().max(500).optional(),
   studioToken: z.string().max(500).optional(),
   workerToken: z.string().max(500).optional(),
   clearStudioToken: z.boolean().optional(),
   clearWorkerToken: z.boolean().optional(),
-  /** When true (default if studioToken set), also write channel.xml + publish/restart. */
+  /** When true (default if studioToken set), also write the channel.xml draft StudioToken. */
   syncChannelToken: z.boolean().optional(),
 })
 
@@ -95,11 +94,7 @@ export async function PUT(request: Request) {
   }
 
   if (parsed.data.studioUrl !== undefined) {
-    const err = validateHttpUrl(parsed.data.studioUrl, "Studio URL")
-    if (err) return apiFail(err, 400, "VALIDATION")
-  }
-  if (parsed.data.previewUrl !== undefined && parsed.data.previewUrl) {
-    const err = validateHttpUrl(parsed.data.previewUrl, "Preview URL")
+    const err = validateHttpUrl(parsed.data.studioUrl, "Channel studio API URL")
     if (err) return apiFail(err, 400, "VALIDATION")
   }
 
@@ -134,7 +129,7 @@ export async function PUT(request: Request) {
             warning: e instanceof Error ? e.message : "channel sync failed",
           },
         },
-        "Website studio settings saved (channel sync failed)"
+        "Website settings saved (channel sync failed)"
       )
     }
   }
@@ -152,7 +147,7 @@ export async function PUT(request: Request) {
     /* ignore */
   }
 
-  const message = channelSync?.message || "Studio connection settings saved"
+  const message = channelSync?.message || "Connection settings saved"
 
   return apiOk(
     {

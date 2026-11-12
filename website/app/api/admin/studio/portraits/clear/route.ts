@@ -13,7 +13,7 @@ const bodySchema = z.object({
 
 /**
  * Delete a character's cached portrait (+ queue row) so the next armory visit
- * shows the placeholder (and re-enqueues only if studio capture is available).
+ * shows the placeholder (and re-enqueues only while a render worker is online).
  */
 export async function POST(request: Request) {
   const blocked = await guardApiMutation(
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
         armoryPath,
       },
       profile
-        ? `Cleared portrait for ${profile.name} — open ${armoryPath} to recapture`
+        ? `Cleared portrait for ${profile.name} — open ${armoryPath} to re-render`
         : `Cleared portrait files/jobs for ${name} (character not in world DB)`
     )
   } catch (e) {

@@ -15,7 +15,6 @@ const settingsSchema = z.object({
   mention: z.string().optional(),
   offlineThresholdSec: z.number().int().min(5).max(3600).optional(),
   notifyServicesDown: z.boolean().optional(),
-  notifyMannequins: z.boolean().optional(),
   notifyFeedback: z.boolean().optional(),
   notifyReports: z.boolean().optional(),
 })

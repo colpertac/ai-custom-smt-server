@@ -83,7 +83,7 @@ export function StudioPortraitQueueCard() {
       const okConfirm = await confirm({
         title: `Force re-queue ${trimmed}?`,
         description:
-          "Deletes any existing portrait PNG and queue row, then enqueues a fresh capture.",
+          "Deletes any existing portrait PNG and queue row, then enqueues a fresh render.",
         confirmLabel: "Force queue",
         variant: "destructive",
       })
@@ -123,7 +123,7 @@ export function StudioPortraitQueueCard() {
           : "Queue portraits for all missing characters?",
       description:
         mode === "force"
-          ? "Clears existing PNGs and re-queues every public character except vam/vaf mannequins. Worker must be running with Process queue on."
+          ? "Clears existing PNGs and re-queues every public character except the vam/vaf mannequin accounts. The render worker must be running."
           : "Scans the world DB (excluding vam/vaf) and enqueues anyone without a cached portrait. Already-queued jobs are left alone.",
       confirmLabel: mode === "force" ? "Force all" : "Queue missing",
       variant: mode === "force" ? "destructive" : "default",
@@ -174,10 +174,9 @@ export function StudioPortraitQueueCard() {
         <div>
           <p className="text-sm font-medium">Portrait queue</p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Inspect pending captures, enqueue one character, or bulk-fill
-            everyone except vam/vaf. Turn{" "}
-            <span className="font-medium text-foreground">Process queue</span>{" "}
-            on when mannequins are ready.
+            Inspect pending renders, enqueue one character, or bulk-fill
+            everyone except the vam/vaf mannequin accounts. The render worker
+            picks jobs up while it is online.
           </p>
         </div>
         <Button

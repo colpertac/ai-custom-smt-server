@@ -101,7 +101,7 @@ class Worker {
     this.busy = false;
     this.stopping = false;
     this.wake = null;
-    this.state = {};   // last logged mode / heartbeat error / claim note, to log changes only
+    this.state = {};   // last logged heartbeat error / version / claim note, to log changes only
     this.stats = { done: 0, failed: 0 };
   }
 
@@ -118,9 +118,7 @@ class Worker {
       const d = await api('/api/portrait/worker/heartbeat', { workerId: cfg.workerId, kind: 'three',
         rendererVersion: RENDERER_VERSION, assetsVersion: assetsVersion(cfg.assets), chrome: this.renderer.chromeName,
         busy: this.busy });
-      this.logChange('hbErr', 'info', 'heartbeat ok', null, { mode: d.mode });
-      this.logChange('mode', d.mode === 'three' ? 'info' : 'warn', 'site renderer mode', d.mode,
-        { mode: d.mode, note: d.mode === 'three' ? undefined : 'site PORTRAIT_RENDERER is not "three": claims stay empty' });
+      this.logChange('hbErr', 'info', 'heartbeat ok', null);
       if (d.versionMismatch != null) this.logChange('hbVersion', d.versionMismatch ? 'warn' : 'info', 'renderer version',
         d.versionMismatch, { worker: RENDERER_VERSION, site: d.rendererVersion, match: !d.versionMismatch });
     } catch (e) {

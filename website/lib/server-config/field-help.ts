@@ -69,7 +69,7 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
   ImportMaxPayload: "Max import XML payload size in kilobytes.",
   ImportWorld: "World ID stamped onto imported characters.",
   MaxClients:
-    "Max Imagine clients allowed per machine UUID (comp_client). 0 = unlimited. This is not a total lobby player cap — set ≥2 (or 0) for dual studio mannequins on one Wine host.",
+    "Max Imagine clients allowed per machine UUID (comp_client). 0 = unlimited. This is not a total lobby player cap — set ≥2 (or 0) to run several clients on one machine.",
 
   // World
   ID: "World ID presented to the lobby/clients.",
@@ -92,7 +92,7 @@ export const CONFIG_FIELD_HELP: Record<string, string> = {
   PerfMonitorEnabled: "Enable channel performance monitoring counters.",
   VerifyServerData: "Validate server data packages more strictly on load.",
   StudioHttpPort:
-    "HTTP port for the portrait studio API (0 = disabled). Binds all interfaces — protect with StudioToken.",
+    "HTTP port for the channel studio API (website live armory stats; 0 = disabled). Binds all interfaces — protect with StudioToken.",
   StudioToken: "Shared secret required by studio HTTP requests.",
 
   // WorldSharedConfig

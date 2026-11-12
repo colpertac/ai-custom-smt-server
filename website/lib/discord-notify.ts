@@ -19,7 +19,6 @@ import {
 
 export type NotifyKind =
   | "services"
-  | "mannequins"
   | "feedback"
   | "reports"
 
@@ -30,8 +29,6 @@ function toggleForKind(
   switch (kind) {
     case "services":
       return settings.notifyServicesDown
-    case "mannequins":
-      return settings.notifyMannequins
     case "feedback":
       return settings.notifyFeedback
     case "reports":

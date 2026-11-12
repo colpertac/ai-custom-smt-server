@@ -279,7 +279,6 @@ mkdir -p \
   "$WEBSITE_DATA/server-content/report-rewards" \
   "$WEBSITE_DATA/server-content/report-rewards/dungeons" \
   "$WEBSITE_DATA/armory/portraits" \
-  "$WEBSITE_DATA/portrait-captures" \
   "$DATA_DIR/webroot"
 # Website image runs as uid 1001 (nextjs); open perms so bind-mount writes work.
 chmod -R a+rwX "$WEBSITE_DATA" || true

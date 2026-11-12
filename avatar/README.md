@@ -1,7 +1,7 @@
 # Avatar renderer
 
-Builds armory portraits from the Imagine client's own model files instead of
-screenshotting a Wine client. Plan and milestones:
+Builds armory portraits from the Imagine client's own model files (no game client or
+screenshots involved). Plan and milestones:
 [IMAGINE Avatar Renderer](https://claude.ai/artifact/9AUCb4daVj56GXFYu9Xwow).
 Research notes (local only): `AI/avatar-renderer.md`.
 
@@ -70,7 +70,7 @@ rebuilds everything, `-j N` limits workers. Per-file failures and warnings land 
 ## Render worker (`worker/`)
 
 Headless portrait renderer for the website's queue (milestone M5; contract
-[docs/WORKER.md](docs/WORKER.md)). It replaces the Wine mannequin studio: one persistent
+[docs/WORKER.md](docs/WORKER.md)); the website's only portrait renderer. One persistent
 chrome-headless-shell page (`viewer/renderCore.mjs`, shared with `viewer/render.mjs`) renders
 each claimed recipe with `buildScene()` at front 768×925, select stance, glow off, ssaa 3, and
 uploads the PNG. Each image gets a fresh WebGL context, so it is byte-identical to the CLI
@@ -100,7 +100,7 @@ node avatar/worker/golden.mjs            # golden hashes (exit 1 on mismatch); -
 | File | What |
 | --- | --- |
 | `worker.mjs` | The service; logs one JSON object per line (`browser started`, `job done` with sha256/timings, `job failed`, mode / version changes) |
-| `portrait.mjs` | `RENDERER_VERSION` (must equal `website/lib/portrait-render-mode.ts`), contract settings, recipe validation, `renderPortrait()` (a 404 for any asset fails the job), `assetsVersion()` |
+| `portrait.mjs` | `RENDERER_VERSION` (must equal `website/lib/portrait-renderer.ts`), contract settings, recipe validation, `renderPortrait()` (a 404 for any asset fails the job), `assetsVersion()` |
 | `golden.mjs`, `golden.json` | cat, catm, cat3 in canonical form (skeleton, existing parts, colours) + their PNG SHA-256 and the Chrome build they were made with; renders each, then the first again in the same page. `--update` re-imports the recipes from `build/recipes` (`python3 tools/recipe.py cat catm cat3`) and rewrites the hashes |
 | `Dockerfile`, `Dockerfile.dockerignore`, `entrypoint.sh` | Image (build from the repo root): node 24, python3, playwright-core 1.58.2, three 0.170.0, Chrome for Testing headless shell 148.0.7778.96 (`chromium_headless_shell-1223`, sha256-checked). The entrypoint updates the assets volume from the mounted client, then starts the worker. Compose service `avatar-worker`, profile `renderer` (`deploy/README.md`) |
 

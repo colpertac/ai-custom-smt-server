@@ -1,5 +1,8 @@
 /**
- * Portrait studio connection settings (admin UI + env fallback).
+ * Admin → Portraits connection settings (admin UI + env fallback):
+ * - channel studio HTTP API URL + token (StudioHttpPort / StudioToken; live armory stats,
+ *   mannequin presence), see armory-live.ts / studio-api.ts;
+ * - render worker token (portrait queue auth), see portrait-worker-auth.ts.
  * Secrets stay server-side; admin GET only returns configured flags.
  */
 
@@ -12,11 +15,9 @@ import {
 const KEY_STUDIO_URL = "portrait_studio_url"
 const KEY_STUDIO_TOKEN = "portrait_studio_token"
 const KEY_WORKER_TOKEN = "portrait_worker_token"
-const KEY_PREVIEW_URL = "portrait_preview_url"
 
 export type StudioConnectionSettings = {
   studioUrl: string
-  previewUrl: string
 }
 
 export type StudioConnectionAdminView = StudioConnectionSettings & {
@@ -29,7 +30,6 @@ export type StudioConnectionAdminView = StudioConnectionSettings & {
 
 export type StudioConnectionInput = {
   studioUrl?: string
-  previewUrl?: string
   /** Non-empty replaces; empty string leaves unchanged. */
   studioToken?: string
   workerToken?: string
@@ -48,7 +48,6 @@ function seedFromEnvOnce(): void {
     process.env.PORTRAIT_STUDIO_TOKEN?.trim() ||
     process.env.COMP_STUDIO_TOKEN?.trim()
   const envWorker = process.env.PORTRAIT_WORKER_TOKEN?.trim()
-  const envPreview = process.env.PORTRAIT_PREVIEW_URL?.trim()
 
   if (envUrl && !getSiteSetting(KEY_STUDIO_URL)) {
     setSiteSetting(KEY_STUDIO_URL, envUrl.replace(/\/$/, ""))
@@ -58,9 +57,6 @@ function seedFromEnvOnce(): void {
   }
   if (envWorker && !getSiteSetting(KEY_WORKER_TOKEN)) {
     setSiteSetting(KEY_WORKER_TOKEN, envWorker)
-  }
-  if (envPreview && !getSiteSetting(KEY_PREVIEW_URL)) {
-    setSiteSetting(KEY_PREVIEW_URL, envPreview.replace(/\/$/, ""))
   }
 }
 
@@ -93,7 +89,7 @@ export function getEffectiveStudioToken(): string {
 }
 
 /**
- * Homelab worker / preview agent auth.
+ * Render worker auth (portrait queue).
  * Prefer dedicated worker token; fall back to studio token.
  */
 export function getEffectivePortraitWorkerToken(): string {
@@ -105,18 +101,9 @@ export function getEffectivePortraitWorkerToken(): string {
   )
 }
 
-/** Homelab preview agent base (no trailing slash), or empty. */
-export function getEffectivePortraitPreviewUrl(): string {
-  seedFromEnvOnce()
-  const fromStore = getSiteSetting(KEY_PREVIEW_URL)?.trim()
-  if (fromStore) return fromStore.replace(/\/$/, "")
-  return (process.env.PORTRAIT_PREVIEW_URL || "").trim().replace(/\/$/, "")
-}
-
 export function getStudioConnectionSettings(): StudioConnectionSettings {
   return {
     studioUrl: getEffectiveStudioUrl(),
-    previewUrl: getEffectivePortraitPreviewUrl(),
   }
 }
 
@@ -143,11 +130,6 @@ export function setStudioConnectionSettings(
   if (input.studioUrl !== undefined) {
     const url = input.studioUrl.trim().replace(/\/$/, "")
     setSiteSetting(KEY_STUDIO_URL, url)
-  }
-  if (input.previewUrl !== undefined) {
-    const url = input.previewUrl.trim().replace(/\/$/, "")
-    if (url) setSiteSetting(KEY_PREVIEW_URL, url)
-    else deleteSiteSetting(KEY_PREVIEW_URL)
   }
   if (input.clearStudioToken) {
     deleteSiteSetting(KEY_STUDIO_TOKEN)

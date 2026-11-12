@@ -4,12 +4,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Must equal RENDERER_VERSION in website/lib/portrait-render-mode.ts. Bump both whenever the PNG for
+ * Must equal RENDERER_VERSION in website/lib/portrait-renderer.ts. Bump both whenever the PNG for
  * the same recipe changes (golden.mjs --update tells you): it is part of the v3 fingerprint.
  */
 export const RENDERER_VERSION = 1;
 
-/** Contract portrait settings: front camera, Wine portrait size, select stance, no glow. */
+/** Contract portrait settings: front camera, 768x925 armory portrait, select stance, no glow. */
 export const PORTRAIT = Object.freeze({ preset: 'front', width: 768, height: 925, pose: 'stance', glow: false, ssaa: 3 });
 const PRESETS = ['front', 'select', 'bust', 'face'];
 

@@ -20,7 +20,6 @@ const settingsSchema = z.object({
   offlineThresholdSec: z.number().int().min(5).max(3600).optional(),
   mention: z.string().optional(),
   notifyServicesDown: z.boolean().optional(),
-  notifyMannequins: z.boolean().optional(),
   notifyFeedback: z.boolean().optional(),
   notifyReports: z.boolean().optional(),
 })
@@ -39,7 +38,6 @@ export async function GET() {
     offlineThresholdSec: n.offlineThresholdSec,
     mention: n.mention,
     notifyServicesDown: n.notifyServicesDown,
-    notifyMannequins: n.notifyMannequins,
     notifyFeedback: n.notifyFeedback,
     notifyReports: n.notifyReports,
   }

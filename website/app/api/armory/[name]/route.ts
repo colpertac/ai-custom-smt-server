@@ -14,7 +14,7 @@ import {
 
 type Params = { params: Promise<{ name: string }> }
 
-/** Portrait miss enqueues only when studio capture is available. */
+/** Portrait miss enqueues only while a render worker is online. */
 export const dynamic = "force-dynamic"
 
 export async function GET(_request: Request, { params }: Params) {

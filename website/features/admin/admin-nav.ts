@@ -122,7 +122,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         icon: FolderArchive,
         match: "prefix",
       },
-      { href: "/admin/studio", label: "Studio", icon: Camera, match: "prefix" },
+      { href: "/admin/studio", label: "Portraits", icon: Camera, match: "prefix" },
     ],
   },
   {
@@ -180,7 +180,7 @@ export function adminPageTitle(pathname: string): string {
   if (pathname.startsWith("/admin/dungeon-loot")) return "Dungeon loot"
   if (pathname.startsWith("/admin/report-rewards")) return "Dungeon loot"
   if (pathname.startsWith("/admin/casino")) return "Casino"
-  if (pathname.startsWith("/admin/studio")) return "Studio"
+  if (pathname.startsWith("/admin/studio")) return "Portraits"
   if (pathname.startsWith("/admin/sql")) return "SQL"
   if (pathname.startsWith("/admin/backups")) return "Backups"
   return "Admin"

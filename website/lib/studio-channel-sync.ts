@@ -1,5 +1,6 @@
 /**
- * Keep channel.xml StudioToken draft in sync with Admin → Studio.
+ * Keep channel.xml StudioToken draft in sync with Admin → Portraits (channel studio API token,
+ * used for live armory stats).
  * Writes working config only — does not publish or restart.
  * Overview blue-dot (channelDirty) signals publish/restart needed.
  */

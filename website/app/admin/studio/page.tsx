@@ -1,30 +1,29 @@
 import type { Metadata } from "next"
 
-import { StudioDressPanel } from "@/features/admin/components/StudioDressPanel"
+import { StudioConnectionCard } from "@/features/admin/components/StudioConnectionCard"
+import { StudioPortraitClearCard } from "@/features/admin/components/StudioPortraitClearCard"
+import { StudioPortraitQueueCard } from "@/features/admin/components/StudioPortraitQueueCard"
 import { StudioRenderWorkerCard } from "@/features/admin/components/StudioRenderWorkerCard"
 import { requireAdmin } from "@/features/auth/server"
-import { getPortraitRendererMode } from "@/lib/portrait-render-mode"
 
 export const metadata: Metadata = {
-  title: "Portrait studio",
+  title: "Portraits",
 }
 
+/** Armory portraits: three.js render worker (avatar/docs/WORKER.md), queue, clear, settings. */
 export default async function AdminStudioPage() {
   await requireAdmin()
-  const threeMode = getPortraitRendererMode() === "three"
 
   return (
-    <div className="w-full space-y-2">
-      {threeMode ? <StudioRenderWorkerCard /> : null}
-      <p className="text-xs text-muted-foreground">
-        Ops console for Wine mannequins — connection, clients, dress, preview,
-        login debug. Agent on the Wine host:{" "}
-        <span className="font-mono text-foreground">./studio up</span>.
-        {threeMode
-          ? " Armory portraits use the render worker above; Wine controls stay for fallback (PORTRAIT_RENDERER=wine)."
-          : null}
-      </p>
-      <StudioDressPanel />
+    <div className="w-full space-y-3">
+      <StudioRenderWorkerCard />
+      <div className="grid gap-3 xl:grid-cols-2 xl:items-start">
+        <StudioPortraitQueueCard />
+        <div className="space-y-3 min-w-0">
+          <StudioPortraitClearCard />
+          <StudioConnectionCard />
+        </div>
+      </div>
     </div>
   )
 }

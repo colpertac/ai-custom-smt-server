@@ -185,7 +185,6 @@ describe("server-watchdog", () => {
         enabled: true,
         offlineThresholdSec: 60,
         mention: "",
-        notifyMannequins: true,
         notifyFeedback: false,
         notifyReports: false,
       })
@@ -246,7 +245,6 @@ describe("server-watchdog", () => {
         enabled: true,
         offlineThresholdSec: 60,
         mention: "",
-        notifyMannequins: true,
         notifyFeedback: false,
         notifyReports: false,
       })

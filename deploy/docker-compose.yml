@@ -112,7 +112,7 @@ services:
     command: ["comp_channel", "/comp/config/channel.xml"]
     ports:
       - "${CHANNEL_PORT:-14666}:14666"
-      # Portrait studio HTTP (Admin → Studio / deploy-studio). Same token as StudioToken.
+      # Channel studio HTTP API (live armory stats; Admin → Portraits). Same token as StudioToken.
       - "${STUDIO_HTTP_PORT:-14700}:14700"
     healthcheck: *hc-channel
     depends_on:
@@ -192,7 +192,6 @@ services:
       OPS_BACKEND: ${OPS_BACKEND:-native}
       # Standalone image has no repo tree — pin writable paths (nextjs uid 1001).
       WEBSITE_DATA_DIR: /website-data
-      PORTRAIT_PREVIEW_DIR: /website-data/portrait-captures
       OPS_RUNTIME: /comp
       COMP_CONFIG_LIVE_DIR: /comp/config
       COMP_CONFIG_DIR: /website-data/server-content/config
@@ -285,9 +284,10 @@ services:
       updater:
         condition: service_healthy
 
-  # Armory portrait render worker (three.js + headless Chrome; replaces the Wine studio).
-  # Off by default. Enable with COMPOSE_PROFILES=renderer (or --profile renderer) and set
-  # PORTRAIT_RENDERER=three on the website. Image is built here from the repo checkout:
+  # Armory portrait render worker (three.js + headless Chrome); the only portrait renderer.
+  # Behind a profile because it is built from the repo checkout (Hub installs have none) and
+  # needs the Imagine client + nif.xml. Enable with COMPOSE_PROFILES=renderer (or
+  # --profile renderer); without it armory pages show the placeholder portrait. Build:
   #   docker compose --profile renderer build avatar-worker
   # First start converts the read-only game client into the avatar-assets volume (~420 MB).
   # See avatar/docs/WORKER.md and the "Portrait render worker" section of deploy/README.md.
@@ -305,7 +305,7 @@ services:
     networks: [smt]
     environment:
       PORTRAIT_QUEUE_URL: ${PORTRAIT_QUEUE_URL:-http://website:3000}
-      # Same value as the website's worker token (Admin → Studio, or website env).
+      # Same value as the website's worker token (Admin → Portraits, or website env).
       PORTRAIT_WORKER_TOKEN: ${PORTRAIT_WORKER_TOKEN:-}
       PORTRAIT_WORKER_ID: ${PORTRAIT_WORKER_ID:-three-docker}
       PORTRAIT_POLL_MS: ${PORTRAIT_POLL_MS:-2000}

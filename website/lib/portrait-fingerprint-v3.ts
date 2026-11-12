@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 
 import type { AvatarRecipe } from "./avatar-recipe.ts"
-import { RENDERER_VERSION, THREE_PORTRAIT_PRESET } from "./portrait-render-mode.ts"
+import { RENDERER_VERSION, THREE_PORTRAIT_PRESET } from "./portrait-renderer.ts"
 
 /**
  * v3 portrait fingerprint (three.js render worker, avatar/docs/WORKER.md): a hash of what changes

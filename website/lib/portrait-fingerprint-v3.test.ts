@@ -6,7 +6,7 @@ import {
   portraitFingerprintV3,
   portraitFingerprintV3Canonical,
 } from "@/lib/portrait-fingerprint-v3"
-import { RENDERER_VERSION } from "@/lib/portrait-render-mode"
+import { RENDERER_VERSION } from "@/lib/portrait-renderer"
 
 function recipe(over: Partial<AvatarRecipe> = {}): AvatarRecipe {
   return {

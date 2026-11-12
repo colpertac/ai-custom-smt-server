@@ -3,14 +3,10 @@ import os from "node:os"
 import path from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-// devil-catalog (via armory) imports server-only; the studio probe is the capture gate.
+// devil-catalog (via armory) imports server-only.
 vi.mock("server-only", () => ({}))
-const capture = vi.hoisted(() => ({ available: true }))
-vi.mock("@/lib/studio-api", () => ({
-  isPortraitCaptureAvailable: vi.fn(async () => capture.available),
-}))
 
-import { appearanceFingerprint, type PortraitFingerprintInput } from "@/lib/armory-portrait"
+import type { PortraitFingerprintInput } from "@/lib/armory-portrait"
 import {
   avatarCharacterFromPortraitInput,
   planArmoryPortrait,
@@ -20,10 +16,12 @@ import { loadAvatarCatalog } from "@/lib/avatar-catalog"
 import { resolveAvatarRecipe } from "@/lib/avatar-recipe"
 import { portraitFingerprintV3 } from "@/lib/portrait-fingerprint-v3"
 import {
-  isThreePortraitPayload,
   listPortraitJobs,
+  recordPortraitWorkerHeartbeat,
   resetPortraitQueueForTests,
+  resetPortraitWorkersForTests,
 } from "@/lib/portrait-queue"
+import { RENDERER_VERSION } from "@/lib/portrait-renderer"
 import { getWorldDbPath } from "@/lib/world-db"
 
 function look(name = "cat2"): PortraitFingerprintInput {
@@ -47,21 +45,33 @@ function look(name = "cat2"): PortraitFingerprintInput {
   }
 }
 
-describe("armory portrait enqueue by PORTRAIT_RENDERER", () => {
+/** A fresh heartbeat from a render worker on this RENDERER_VERSION (render available). */
+function workerOnline(rendererVersion = RENDERER_VERSION) {
+  recordPortraitWorkerHeartbeat({
+    workerId: "test",
+    kind: "three",
+    rendererVersion,
+    assetsVersion: null,
+    chrome: null,
+    busy: false,
+  })
+}
+
+describe("armory portrait (render worker)", () => {
   let dataDir: string
 
   beforeEach(() => {
     dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smt-armory-render-"))
     process.env.WEBSITE_DATA_DIR = dataDir
-    capture.available = true
     resetPortraitQueueForTests()
+    resetPortraitWorkersForTests()
   })
 
   afterEach(() => {
     resetPortraitQueueForTests()
+    resetPortraitWorkersForTests()
     fs.rmSync(dataDir, { recursive: true, force: true })
     delete process.env.WEBSITE_DATA_DIR
-    delete process.env.PORTRAIT_RENDERER
   })
 
   function stub(name: string) {
@@ -70,33 +80,16 @@ describe("armory portrait enqueue by PORTRAIT_RENDERER", () => {
     fs.writeFileSync(path.join(dir, `${name}.png`), "x")
   }
 
-  it("wine (default): v2 fingerprint, Wine job without recipe", async () => {
-    const r = await resolveArmoryProfilePortrait(look(), "cat2", {
-      enqueue: true,
-      gender: 0,
-    })
-    expect(r.status).toBe("queued")
-    expect(r.portrait.fingerprint).toBe(appearanceFingerprint(look()))
-    const [job] = listPortraitJobs()
-    expect(job!.fingerprint).toBe(r.portrait.fingerprint)
-    expect(isThreePortraitPayload(job!.payload)).toBe(false)
-  })
-
-  it("three: v3 fingerprint over the resolved recipe, job carries the recipe", async () => {
-    process.env.PORTRAIT_RENDERER = "three"
+  it("v3 fingerprint over the resolved recipe, job carries the recipe", async () => {
+    workerOnline()
     const catalog = loadAvatarCatalog().data
     const recipe = resolveAvatarRecipe(avatarCharacterFromPortraitInput(look()), catalog)
 
-    const r = await resolveArmoryProfilePortrait(look(), "cat2", {
-      enqueue: true,
-      gender: 0,
-    })
+    const r = await resolveArmoryProfilePortrait(look(), "cat2", { enqueue: true })
     expect(r.status).toBe("queued")
     expect(r.portrait.fingerprint).toBe(portraitFingerprintV3(recipe, catalog.version))
-    expect(r.portrait.fingerprint).not.toBe(appearanceFingerprint(look()))
     const [job] = listPortraitJobs()
     expect(job!.fingerprint).toBe(r.portrait.fingerprint)
-    expect(isThreePortraitPayload(job!.payload)).toBe(true)
     expect(job!.payload).toMatchObject({ recipe, preset: "front", width: 768, height: 925 })
 
     // Same look, other name → same fingerprint (no new job).
@@ -105,29 +98,22 @@ describe("armory portrait enqueue by PORTRAIT_RENDERER", () => {
     )
   })
 
-  it("no enqueue when capture is unavailable or enqueue is off", async () => {
-    for (const mode of ["wine", "three"]) {
-      process.env.PORTRAIT_RENDERER = mode
-      capture.available = false
-      const off = await resolveArmoryProfilePortrait(look(), "cat2", {
-        enqueue: true,
-        gender: 0,
-      })
-      expect(off.status).toBe("missing")
-      capture.available = true
-      const skip = await resolveArmoryProfilePortrait(look(), "cat2", {
-        enqueue: false,
-        gender: 0,
-      })
-      expect(skip.status).toBe("missing")
-    }
+  it("no enqueue when no render worker is online or enqueue is off", async () => {
+    const off = await resolveArmoryProfilePortrait(look(), "cat2", { enqueue: true })
+    expect(off.status).toBe("missing")
+    workerOnline(RENDERER_VERSION + 1)
+    const wrongVersion = await resolveArmoryProfilePortrait(look(), "cat2", {
+      enqueue: true,
+    })
+    expect(wrongVersion.status).toBe("missing")
+    workerOnline()
+    const skip = await resolveArmoryProfilePortrait(look(), "cat2", { enqueue: false })
+    expect(skip.status).toBe("missing")
     expect(listPortraitJobs()).toHaveLength(0)
   })
 
-  it("name-keyed stub is served in wine mode only; hash file in both", async () => {
+  it("serves the hash-named file only, not a name-keyed stub", async () => {
     stub("cat2")
-    expect(planArmoryPortrait(look(), "cat2").portrait.status).toBe("ready")
-    process.env.PORTRAIT_RENDERER = "three"
     const plan = planArmoryPortrait(look(), "cat2")
     expect(plan.portrait.status).toBe("missing")
     stub(plan.portrait.fingerprint)
@@ -139,20 +125,18 @@ describe("armory portrait enqueue by PORTRAIT_RENDERER", () => {
   })
 
   it.skipIf(!fs.existsSync(getWorldDbPath()))(
-    "loadArmoryProfile enqueues per mode (local world DB)",
+    "loadArmoryProfile enqueues a recipe job (local world DB)",
     async () => {
+      workerOnline()
       const { loadArmoryProfile } = await import("@/lib/armory")
-      const wine = await loadArmoryProfile("admin")
-      if (!wine) return
-      process.env.PORTRAIT_RENDERER = "three"
-      const three = await loadArmoryProfile("admin")
-      expect(three!.portraitFingerprint).not.toBe(wine.portraitFingerprint)
-      // Empty temp portraits dir + capture mocked on → both modes enqueue.
-      expect(wine.portraitStatus).toBe("queued")
-      expect(three!.portraitStatus).toBe("queued")
-      const byFp = new Map(listPortraitJobs().map((j) => [j.fingerprint, j]))
-      expect(isThreePortraitPayload(byFp.get(wine.portraitFingerprint)!.payload)).toBe(false)
-      expect(isThreePortraitPayload(byFp.get(three!.portraitFingerprint)!.payload)).toBe(true)
+      const profile = await loadArmoryProfile("admin")
+      if (!profile) return
+      // Empty temp portraits dir + worker online → enqueues.
+      expect(profile.portraitStatus).toBe("queued")
+      const job = listPortraitJobs().find(
+        (j) => j.fingerprint === profile.portraitFingerprint
+      )
+      expect(job?.payload.recipe).toBeTruthy()
     }
   )
 })

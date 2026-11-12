@@ -1,13 +1,9 @@
 /**
- * Mode-aware armory portrait lookup + enqueue (PORTRAIT_RENDERER, avatar/docs/WORKER.md).
- *
- * - wine: v2 fingerprint (name + world-DB look), name-keyed fallback, Wine studio job.
- * - three: v3 fingerprint over the resolved avatar recipe, hash-named PNG only, recipe job.
+ * Armory portrait lookup + enqueue for the three.js render worker (avatar/docs/WORKER.md):
+ * v3 fingerprint over the resolved avatar recipe, hash-named PNG, recipe job.
  */
 
 import {
-  appearanceFingerprint,
-  resolveArmoryPortrait,
   resolveHashedPortrait,
   type ArmoryPortrait,
   type PortraitFingerprintInput,
@@ -20,15 +16,10 @@ import {
 } from "@/lib/avatar-recipe"
 import { portraitFingerprintV3 } from "@/lib/portrait-fingerprint-v3"
 import {
-  enqueuePortraitJob,
   enqueuePortraitRecipeJob,
+  isRenderWorkerAvailable,
   type PortraitJobStatus,
 } from "@/lib/portrait-queue"
-import {
-  getPortraitRendererMode,
-  type PortraitRendererMode,
-} from "@/lib/portrait-render-mode"
-import { isPortraitCaptureAvailable } from "@/lib/studio-api"
 
 /** Same shape loadAvatarCharacter builds from the world DB, from the armory's portrait input. */
 export function avatarCharacterFromPortraitInput(
@@ -42,39 +33,25 @@ export function avatarCharacterFromPortraitInput(
 }
 
 export type ArmoryPortraitPlan = {
-  mode: PortraitRendererMode
   portrait: ArmoryPortrait
-  /** Queue a capture/render for this look; returns the job's fingerprint + status. */
+  /** Queue a render for this look; returns the job's fingerprint + status. */
   enqueue: () => { fingerprint: string; status: PortraitJobStatus }
 }
 
-/** Fingerprint, cached file and enqueue for one character in the current renderer mode. */
+/** Fingerprint, cached file and enqueue for one character. */
 export function planArmoryPortrait(
   input: PortraitFingerprintInput,
   characterName: string
 ): ArmoryPortraitPlan {
-  const mode = getPortraitRendererMode()
-  if (mode === "wine") {
-    return {
-      mode,
-      portrait: resolveArmoryPortrait(input, characterName),
-      enqueue: () => enqueuePortraitJob(characterName, input),
-    }
-  }
   const catalog = loadAvatarCatalog().data
   let recipe: AvatarRecipe
   try {
     recipe = resolveAvatarRecipe(avatarCharacterFromPortraitInput(input), catalog)
   } catch (err) {
-    // Unresolvable look: show the placeholder; enqueue reports the resolver error.
+    // Unresolvable look: no fingerprint, show the placeholder; enqueue reports the error.
     const message = err instanceof Error ? err.message : String(err)
     return {
-      mode,
-      portrait: {
-        fingerprint: appearanceFingerprint({ ...input, characterName }),
-        url: null,
-        status: "missing",
-      },
+      portrait: { fingerprint: "", url: null, status: "missing" },
       enqueue: () => {
         throw new Error(`avatar recipe failed for ${characterName}: ${message}`)
       },
@@ -82,13 +59,12 @@ export function planArmoryPortrait(
   }
   const fingerprint = portraitFingerprintV3(recipe, catalog.version)
   return {
-    mode,
     portrait: resolveHashedPortrait(fingerprint),
     enqueue: () => enqueuePortraitRecipeJob(characterName, recipe, catalog.version),
   }
 }
 
-/** Mode-aware enqueue for Admin Studio (no availability check). */
+/** Enqueue for Admin → Portraits (no availability check). */
 export function enqueueArmoryPortrait(
   characterName: string,
   input: PortraitFingerprintInput
@@ -96,14 +72,23 @@ export function enqueueArmoryPortrait(
   return planArmoryPortrait(input, characterName).enqueue()
 }
 
+/** A render worker on this RENDERER_VERSION sent a heartbeat in the last 60 s. */
+function isPortraitRenderAvailable(): boolean {
+  try {
+    return isRenderWorkerAvailable()
+  } catch {
+    return false
+  }
+}
+
 /**
  * loadArmoryProfile's portrait step: look up the cached PNG and, on a miss, enqueue when a
- * capture is available (Wine studio probes, or a fresh render-worker heartbeat in three mode).
+ * render worker is online (so an offline worker shows the placeholder, not "Rendering…").
  */
 export async function resolveArmoryProfilePortrait(
   input: PortraitFingerprintInput,
   characterName: string,
-  opts: { enqueue: boolean; gender: number }
+  opts: { enqueue: boolean }
 ): Promise<{
   portrait: ArmoryPortrait
   status: "ready" | "queued" | "missing"
@@ -112,8 +97,7 @@ export async function resolveArmoryProfilePortrait(
   if (plan.portrait.status === "ready" || !opts.enqueue) {
     return { portrait: plan.portrait, status: plan.portrait.status }
   }
-  const canCapture = await isPortraitCaptureAvailable({ gender: opts.gender })
-  if (!canCapture) return { portrait: plan.portrait, status: "missing" }
+  if (!isPortraitRenderAvailable()) return { portrait: plan.portrait, status: "missing" }
   try {
     plan.enqueue()
     return { portrait: plan.portrait, status: "queued" }

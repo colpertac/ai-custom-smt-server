@@ -4,7 +4,7 @@ import { apiFail } from "@/lib/api-response"
 import { getEffectivePortraitWorkerToken } from "@/lib/studio-settings-store"
 
 /**
- * Shared secret for the remote portrait worker (homelab).
+ * Shared secret for the portrait render worker (avatar/worker).
  * Header: `X-Portrait-Worker-Token: …`
  *
  * Prefer dedicated worker token. Falls back to studio token.
@@ -27,7 +27,7 @@ export function requirePortraitWorker(
   const expected = portraitWorkerToken()
   if (!expected) {
     return apiFail(
-      "Portrait worker token is not set (Admin → Studio, or website .env)",
+      "Portrait worker token is not set (Admin → Portraits, or website .env)",
       503,
       "CONFIG"
     )

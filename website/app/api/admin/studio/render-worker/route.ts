@@ -5,7 +5,7 @@ import { requireWebSession } from "@/lib/web-session"
 
 export const dynamic = "force-dynamic"
 
-/** Render worker heartbeats + queue counts for Admin Studio (PORTRAIT_RENDERER=three). */
+/** Render worker heartbeats + queue counts for Admin → Portraits. */
 export async function GET() {
   const session = await requireWebSession()
   if (!session) return apiFail("Unauthorized", 401, "UNAUTHORIZED")

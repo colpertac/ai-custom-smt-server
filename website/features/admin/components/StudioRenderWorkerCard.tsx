@@ -19,7 +19,6 @@ type WorkerRow = {
 }
 
 type RenderWorkerStatus = {
-  mode: string
   rendererVersion: number
   online: boolean
   workers: WorkerRow[]
@@ -62,7 +61,7 @@ async function loadStatus(): Promise<
   }
 }
 
-/** Admin: three.js render worker heartbeat + queue counts (PORTRAIT_RENDERER=three). */
+/** Admin: three.js render worker heartbeat + queue counts. */
 export function StudioRenderWorkerCard() {
   const [status, setStatus] = useState<RenderWorkerStatus | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -116,8 +115,8 @@ export function StudioRenderWorkerCard() {
             </span>
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Armory portraits come from the three.js worker
-            (PORTRAIT_RENDERER=three). Online = heartbeat on renderer v
+            Armory portraits come from the three.js render worker
+            (avatar/worker). Online = heartbeat on renderer v
             {status?.rendererVersion ?? "?"} in the last 60 s.
           </p>
         </div>

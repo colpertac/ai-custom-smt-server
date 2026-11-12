@@ -87,7 +87,7 @@ try {
     console.log(`golden: wrote ${path.relative(process.cwd(), GOLDEN)} (${chrome})`);
     if (changed.length && sameChrome && golden.rendererVersion === RENDERER_VERSION)
       console.warn(`golden: ${changed.join(', ')} changed on the same Chrome build: if the renderer changed, bump RENDERER_VERSION `
-        + 'in avatar/worker/portrait.mjs and website/lib/portrait-render-mode.ts');
+        + 'in avatar/worker/portrait.mjs and website/lib/portrait-renderer.ts');
   }
 } finally {
   await renderer.close();

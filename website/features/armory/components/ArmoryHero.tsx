@@ -1,6 +1,6 @@
 /**
- * Armory profile hero: captured Path 1 portrait when present,
- * else CSS 3D name stub + capture progress (auto-polls while queued).
+ * Armory profile hero: rendered portrait when present,
+ * else CSS 3D name stub + render progress (auto-polls while queued).
  */
 "use client"
 
@@ -66,9 +66,9 @@ export function ArmoryHero({
   }
 
   const statusCopy = timedOut
-    ? "Capture is taking longer than usual — try refreshing."
+    ? "Rendering is taking longer than usual — try refreshing."
     : portraitStatus === "queued"
-      ? "Capturing portrait…"
+      ? "Rendering portrait…"
       : "Portrait not available yet"
 
   return (

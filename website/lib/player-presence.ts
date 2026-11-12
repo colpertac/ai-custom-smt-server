@@ -1,5 +1,5 @@
 /**
- * Public player presence: real online count (minus studio mannequins) and
+ * Public player presence: real online count (minus vam/vaf mannequins) and
  * offline ≈ enabled accounts − online.
  */
 import {

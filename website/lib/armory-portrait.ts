@@ -1,17 +1,13 @@
-import { createHash } from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
 
-/** Bump when the canonical string format changes (invalidates all hashes). */
-export const PORTRAIT_FINGERPRINT_VERSION = 2
-
 export type EquippedVAEntry = { slot: number; itemType: number }
 
+/**
+ * A character's look from the world DB. armory-portrait-render.ts resolves it to an avatar
+ * recipe; the v3 fingerprint is taken over that recipe (name, title and demon are not in it).
+ */
 export type PortraitFingerprintInput = {
-  /**
-   * Character identity for the hash. Two chars with the same default face /
-   * empty VA must not share one PNG (Lain vs slowdan on production).
-   */
   characterName: string
   appearance: {
     gender: number
@@ -23,20 +19,14 @@ export type PortraitFingerprintInput = {
     leftEyeColor: number
     rightEyeColor: number
   }
-  /** CurrentTitle — shows as floating nameplate in captures. */
+  /** CurrentTitle (not part of the render). */
   title: number
   equippedVA: EquippedVAEntry[]
-  /**
-   * Real EquippedItems slot→type (top/bottom/etc.). Many alts never write
-   * EquippedVA; without this the hash only sees face + weapon.
-   */
+  /** Real EquippedItems slot→type (top/bottom/etc.); many alts never write EquippedVA. */
   equippedItems: EquippedVAEntry[]
   /** Real weapon item Type (slot 13); 0 if empty. VA guns need a matching class. */
   weaponType: number
-  /**
-   * Kept for API compatibility; portraits are character-only (no summon).
-   * Ignored in the hash so COMP / summon state does not bust the cache.
-   */
+  /** Kept for API compatibility; portraits are character-only (no summon). */
   demonType: number
 }
 
@@ -77,49 +67,6 @@ export function decodeEquippedVA(
   return out
 }
 
-function slotTypeKey(entries: EquippedVAEntry[]): string {
-  return [...entries]
-    .filter((e) => e.itemType)
-    .sort((a, b) => a.slot - b.slot || a.itemType - b.itemType)
-    .map((e) => `${e.slot}:${e.itemType}`)
-    .join(",")
-}
-
-export function portraitFingerprintCanonical(
-  input: PortraitFingerprintInput
-): string {
-  const va = slotTypeKey(input.equippedVA)
-  const eq = slotTypeKey(input.equippedItems ?? [])
-  const a = input.appearance
-  const name = input.characterName.trim().toLowerCase()
-  return [
-    `v${PORTRAIT_FINGERPRINT_VERSION}`,
-    `n=${name}`,
-    `g=${a.gender}`,
-    `skin=${a.skinType}`,
-    `hair=${a.hairType}`,
-    `face=${a.faceType}`,
-    `eye=${a.eyeType}`,
-    `hc=${a.hairColor}`,
-    `el=${a.leftEyeColor}`,
-    `er=${a.rightEyeColor}`,
-    `title=${input.title}`,
-    `eq=${eq}`,
-    `va=${va}`,
-    `w=${input.weaponType}`,
-    // Always 0: armory PNGs never include the partner demon.
-    `d=0`,
-  ].join("|")
-}
-
-/** 16-hex SHA-256 prefix; filename-safe, enough for this population. */
-export function appearanceFingerprint(input: PortraitFingerprintInput): string {
-  return createHash("sha256")
-    .update(portraitFingerprintCanonical(input), "utf8")
-    .digest("hex")
-    .slice(0, 16)
-}
-
 function publicPortraitUrl(basename: string, ext: ".webp" | ".png"): string {
   return `/armory/portraits/${encodeURIComponent(basename)}${ext}`
 }
@@ -151,38 +98,10 @@ function findPortraitFile(basename: string): string | null {
   return null
 }
 
-/**
- * Hash-named file only (`{fingerprint}.png|.webp`), no name-keyed fallback. Three mode: v3
- * fingerprints drop the character name, so a name-keyed stub would mask the render.
- */
+/** `{fingerprint}.png|.webp` (v3 recipe fingerprint, written by the render worker). */
 export function resolveHashedPortrait(fingerprint: string): ArmoryPortrait {
-  const url = findPortraitFile(fingerprint)
+  const url = fingerprint ? findPortraitFile(fingerprint) : null
   return url
     ? { fingerprint, url, status: "ready" }
     : { fingerprint, url: null, status: "missing" }
-}
-
-/**
- * Prefer `{fingerprint}.png|.webp`. Name-keyed files (`cat2.png`) are a PoC
- * fallback until the worker writes hash-named captures.
- */
-export function resolveArmoryPortrait(
-  input: PortraitFingerprintInput,
-  characterName: string
-): ArmoryPortrait {
-  const fingerprint = appearanceFingerprint({
-    ...input,
-    characterName: input.characterName || characterName,
-  })
-  const hashed = findPortraitFile(fingerprint)
-  if (hashed) {
-    return { fingerprint, url: hashed, status: "ready" }
-  }
-  const trimmed = characterName.trim()
-  const nameHit =
-    findPortraitFile(trimmed) ?? findPortraitFile(trimmed.toLowerCase())
-  if (nameHit) {
-    return { fingerprint, url: nameHit, status: "ready" }
-  }
-  return { fingerprint, url: null, status: "missing" }
 }
