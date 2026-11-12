@@ -7,8 +7,6 @@ import {
   pruneOldSamples,
   recordSample,
 } from "@/lib/player-count-store"
-import { realOnlineCount } from "@/lib/player-presence"
-import { getStudioHealth } from "@/lib/studio-api"
 
 export const PLAYER_COUNT_SAMPLE_INTERVAL_MS = 60_000
 
@@ -29,23 +27,6 @@ function getServiceCredentials(): { user: string; password: string } | null {
   const password = process.env.COMP_ANNOUNCE_PASSWORD
   if (!user || password == null || password === "") return null
   return { user, password }
-}
-
-async function countMannequinsOnline(): Promise<number> {
-  try {
-    const health = await getStudioHealth({
-      signal: AbortSignal.timeout(1_500),
-    })
-    if (!(health.ok || health.vam1 || health.vaf1 || health.vam || health.vaf)) {
-      return 0
-    }
-    let n = 0
-    if (health.vam1 || health.vam) n += 1
-    if (health.vaf1 || health.vaf) n += 1
-    return n
-  } catch {
-    return 0
-  }
 }
 
 function logErrorOnce(key: string, message: string): void {
@@ -71,13 +52,13 @@ export async function runPlayerCountSample(): Promise<PlayerCountSampleSummary> 
   }
 
   try {
-    const [auth, mannequinOnline] = await Promise.all([
-      authenticate(creds.user, creds.password, { timeoutMs: 4_000 }),
-      countMannequinsOnline(),
-    ])
+    const auth = await authenticate(creds.user, creds.password, {
+      timeoutMs: 4_000,
+    })
     const online = await adminGetOnline(auth)
     const raw = online.total
-    const real = realOnlineCount(raw, mannequinOnline)
+    // `real` once excluded portrait mannequins; it now equals `raw`.
+    const real = raw
     const ts = Date.now()
     recordSample({ ts, raw, real })
     const pruned = pruneOldSamples(ts)

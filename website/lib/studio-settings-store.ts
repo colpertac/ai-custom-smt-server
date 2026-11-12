@@ -2,7 +2,7 @@
  * Portrait / live-stats connection settings. Zero-config: deploy/install.sh generates the
  * secrets into deploy/.env and docker-compose passes them to the website:
  * - PORTRAIT_STUDIO_URL / PORTRAIT_STUDIO_TOKEN: channel studio HTTP API (StudioHttpPort /
- *   StudioToken; live armory stats, mannequin presence), see armory-live.ts / studio-api.ts;
+ *   StudioToken; live armory stats), see armory-live.ts / studio-api.ts;
  * - PORTRAIT_WORKER_TOKEN: render worker auth (portrait queue), see portrait-worker-auth.ts.
  *
  * Env is the source of truth. Values an admin saved in site_settings before this became

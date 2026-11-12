@@ -123,8 +123,8 @@ export function StudioPortraitQueueCard() {
           : "Queue portraits for all missing characters?",
       description:
         mode === "force"
-          ? "Clears existing PNGs and re-queues every public character except the vam/vaf mannequin accounts. The render worker must be running."
-          : "Scans the world DB (excluding vam/vaf) and enqueues anyone without a cached portrait. Already-queued jobs are left alone.",
+          ? "Clears existing PNGs and re-queues every public character. The render worker must be running."
+          : "Scans the world DB and enqueues anyone without a cached portrait. Already-queued jobs are left alone.",
       confirmLabel: mode === "force" ? "Force all" : "Queue missing",
       variant: mode === "force" ? "destructive" : "default",
     })
@@ -175,8 +175,8 @@ export function StudioPortraitQueueCard() {
           <p className="text-sm font-medium">Portrait queue</p>
           <p className="text-xs text-muted-foreground mt-0.5">
             Inspect pending renders, enqueue one character, or bulk-fill
-            everyone except the vam/vaf mannequin accounts. The render worker
-            picks jobs up while it is online.
+            every public character. The render worker picks jobs up while it
+            is online.
           </p>
         </div>
         <Button

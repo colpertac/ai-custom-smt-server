@@ -16,7 +16,7 @@ const bodySchema = z.object({
 })
 
 /**
- * Bulk enqueue portraits for all public characters (excludes vam/vaf).
+ * Bulk enqueue portraits for all public armory characters.
  * - missing: only chars without a cached PNG
  * - force: clear + re-queue everyone
  */

@@ -2,7 +2,6 @@ import { adminGetOnline } from "@/lib/comp-api"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
 import { getOpsMetrics } from "@/lib/ops-sidecar"
-import { getStudioHealth } from "@/lib/studio-api"
 import {
   CompSessionMissingError,
   requireWebSession,
@@ -21,10 +20,9 @@ export async function GET() {
     worlds: { worldId: number; characterCount: number }[]
     error?: string
   }
-  let mannequins: { online: number; names: string[] } | null
   let metrics: Awaited<ReturnType<typeof getOpsMetrics>>
   try {
-    ;[players, mannequins, metrics] = await Promise.all([
+    ;[players, metrics] = await Promise.all([
       (async () => {
         try {
           return await withCompSession(async (session) => {
@@ -42,28 +40,6 @@ export async function GET() {
               error instanceof Error ? error.message : "lobby online failed",
           }
         }
-      })(),
-      (async () => {
-        try {
-          const health = await getStudioHealth({
-            signal: AbortSignal.timeout(1_500),
-          })
-          if (
-            health.ok ||
-            health.vam1 ||
-            health.vaf1 ||
-            health.vam ||
-            health.vaf
-          ) {
-            const names: string[] = []
-            if (health.vam1 || health.vam) names.push("vam")
-            if (health.vaf1 || health.vaf) names.push("vaf")
-            return { online: names.length, names }
-          }
-        } catch {
-          /* studio down / unset token */
-        }
-        return null
       })(),
       getOpsMetrics(gate.username).catch((error: unknown) => ({
         ok: false,
@@ -83,7 +59,6 @@ export async function GET() {
   }
   return apiOk({
     players,
-    mannequins,
     host: metrics.host ?? null,
     processes: metrics.processes ?? [],
     backend: metrics.backend ?? null,

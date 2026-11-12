@@ -1,6 +1,6 @@
 /**
  * Shared concurrent-player metrics query for admin + public APIs.
- * Only exposes the "real" series (mannequins already excluded at sample time).
+ * Only exposes the "real" series (equal to the lobby online total).
  */
 import {
   latestSample,

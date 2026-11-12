@@ -593,7 +593,7 @@ export async function sendTestDiscordAlert(
     fields: [
       {
         name: "Events",
-        value: "services · mannequins · feedback · reports",
+        value: "services · feedback · reports",
         inline: true,
       },
       {

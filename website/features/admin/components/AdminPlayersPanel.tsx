@@ -16,8 +16,6 @@ import { cn } from "@/lib/utils"
 type OnlineRosterResponse = {
   total: number
   players: OnlinePresencePlayer[]
-  realPlayers: number
-  mannequins: number
 }
 
 const REFRESH_MS = 12_000
@@ -71,20 +69,9 @@ export function AdminPlayersPanel() {
             {roster ? (
               <>
                 <span className="tabular-nums text-foreground">
-                  {roster.realPlayers}
+                  {roster.total}
                 </span>{" "}
-                player{roster.realPlayers === 1 ? "" : "s"}
-                {roster.mannequins > 0 ? (
-                  <>
-                    {" "}
-                    ·{" "}
-                    <span className="tabular-nums">{roster.mannequins}</span>{" "}
-                    studio mannequin
-                    {roster.mannequins === 1 ? "" : "s"}
-                  </>
-                ) : null}
-                {" · "}
-                <span className="tabular-nums">{roster.total}</span> total
+                player{roster.total === 1 ? "" : "s"} online
               </>
             ) : loading ? (
               "Loading…"
@@ -156,19 +143,9 @@ export function AdminPlayersPanel() {
               players.map((p) => (
                 <tr
                   key={`${p.account}:${p.character}:${p.zoneId}`}
-                  className={cn(
-                    "border-b border-border/70 last:border-0",
-                    p.mannequin && "bg-sky-500/5"
-                  )}
+                  className="border-b border-border/70 last:border-0"
                 >
-                  <td className="px-3 py-2 font-medium">
-                    {p.character}
-                    {p.mannequin ? (
-                      <span className="ml-2 text-[10px] font-normal tracking-wide text-sky-400 uppercase">
-                        mannequin
-                      </span>
-                    ) : null}
-                  </td>
+                  <td className="px-3 py-2 font-medium">{p.character}</td>
                   <td className="px-3 py-2">
                     <Link
                       href={`/admin/accounts?u=${encodeURIComponent(p.account)}`}

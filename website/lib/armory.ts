@@ -36,15 +36,13 @@ export {
   type EquipSlotKey,
 } from "@/lib/armory-equipment"
 
-/** Mannequin chars (vam/vaf, old portrait accounts) — not real players; hidden from public armory. */
-const DEFAULT_ARMORY_HIDDEN_NAMES = ["vam", "vaf", "vam1", "vaf1"] as const
-
+/** Character names hidden from the public armory: comma-separated `ARMORY_HIDDEN_NAMES` (none by default). */
 function armoryHiddenNameSet(): Set<string> {
   const fromEnv = process.env.ARMORY_HIDDEN_NAMES?.trim()
-  const names = fromEnv
-    ? fromEnv.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
-    : [...DEFAULT_ARMORY_HIDDEN_NAMES]
-  return new Set(names)
+  if (!fromEnv) return new Set()
+  return new Set(
+    fromEnv.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
+  )
 }
 
 /** True when this character should not appear in public armory browse/search. */
@@ -788,7 +786,7 @@ function buildPortraitFingerprintInput(args: {
 
 /**
  * Portrait enqueue context for Admin → Portraits (no auto-enqueue).
- * Returns null for missing / hidden characters (vam/vaf/…).
+ * Returns null for missing / hidden characters (ARMORY_HIDDEN_NAMES).
  */
 export function getArmoryPortraitEnqueueTarget(rawName: string): {
   name: string
@@ -895,7 +893,7 @@ export function getArmoryPortraitEnqueueTarget(rawName: string): {
   }
 }
 
-/** All public armory character names (excludes vam/vaf/…), alphabetical. */
+/** All public armory character names (excludes ARMORY_HIDDEN_NAMES), alphabetical. */
 export function listAllArmoryCharacterNames(): string[] {
   const out: string[] = []
   let offset = 0

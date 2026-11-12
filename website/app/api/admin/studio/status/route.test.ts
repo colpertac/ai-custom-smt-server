@@ -111,7 +111,7 @@ describe("GET /api/admin/studio/status", () => {
   it("connected when /studio/health answers; never leaks tokens or URLs", async () => {
     mockedSession.mockResolvedValue(ADMIN)
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ ok: true, vam1: false }), { status: 200 })
+      new Response(JSON.stringify({ ok: true }), { status: 200 })
     )
     const { status, body, text } = await call()
     expect(status).toBe(200)

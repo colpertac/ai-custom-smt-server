@@ -55,33 +55,32 @@ export class LobbyDbMissingError extends Error {
   }
 }
 
-/** Mannequin login names (vam1 / vaf1) — not real player accounts. */
-const DEFAULT_MANNEQUIN_USERNAMES = ["vam1", "vaf1"] as const
-
-function mannequinUsernameSet(): Set<string> {
+/** Login names listed in `ARMORY_HIDDEN_NAMES` (none by default) are left out of the census. */
+function hiddenUsernameSet(): Set<string> {
   const fromEnv = process.env.ARMORY_HIDDEN_NAMES?.trim()
-  if (!fromEnv) return new Set(DEFAULT_MANNEQUIN_USERNAMES)
-  // Armory hides character names (vam/vaf) and sometimes account names (vam1/vaf1).
-  // Always exclude default mannequin *accounts* for census.
-  const names = fromEnv
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean)
-  return new Set([...DEFAULT_MANNEQUIN_USERNAMES, ...names])
+  if (!fromEnv) return new Set()
+  return new Set(
+    fromEnv
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean)
+  )
 }
 
 /**
- * Count enabled player accounts in lobby SQLite (excludes mannequin accounts).
+ * Count enabled player accounts in lobby SQLite (excludes ARMORY_HIDDEN_NAMES).
  * Used for public “offline ≈ accounts − online” presence.
  */
 export function countEnabledPlayerAccounts(): number {
-  const hidden = [...mannequinUsernameSet()]
-  const placeholders = hidden.map(() => "?").join(", ")
+  const hidden = [...hiddenUsernameSet()]
+  const hiddenSql =
+    hidden.length > 0
+      ? ` AND lower(Username) NOT IN (${hidden.map(() => "?").join(", ")})`
+      : ""
   const row = getLobbyDb()
     .prepare(
       `SELECT COUNT(*) AS c FROM Account
-       WHERE Enabled = 1
-         AND lower(Username) NOT IN (${placeholders})`
+       WHERE Enabled = 1${hiddenSql}`
     )
     .get(...hidden) as { c: number } | undefined
   return Number(row?.c ?? 0)

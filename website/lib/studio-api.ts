@@ -2,25 +2,14 @@
  * Server-only client for the channel's studio HTTP API (StudioHttpPort / StudioToken).
  * Never expose StudioToken to the browser.
  *
- * Only `/studio/health` lives here: player counts subtract the vam/vaf mannequin accounts when
- * the channel reports them in-world, and Admin → Portraits shows whether live armory stats can
- * reach the channel. Live armory stats (`/armory/stats`) are in armory-live.ts.
+ * Only `/studio/health` lives here: Admin → Portraits shows whether live armory stats can reach
+ * the channel. Live armory stats (`/armory/stats`) are in armory-live.ts.
  */
 
 import {
   getEffectiveStudioToken,
   getEffectiveStudioUrl,
 } from "@/lib/studio-settings-store"
-
-export type StudioHealth = {
-  ok: boolean
-  vam1?: boolean
-  vaf1?: boolean
-  vam?: boolean
-  vaf?: boolean
-  va?: boolean
-  error?: string
-}
 
 async function studioFetch(
   path: string,
@@ -58,24 +47,6 @@ async function studioFetch(
     json = { ok: false, error: `HTTP ${res.status}` }
   }
   return { status: res.status, json }
-}
-
-/** Channel `/studio/health`: which mannequin accounts (vam1 / vaf1) are in-world. */
-export async function getStudioHealth(init?: {
-  signal?: AbortSignal
-}): Promise<StudioHealth> {
-  const { json } = await studioFetch("/studio/health", {
-    signal: init?.signal ?? AbortSignal.timeout(1_500),
-  })
-  return {
-    ok: Boolean(json.ok),
-    vam1: Boolean(json.vam1 ?? json.vam),
-    vaf1: Boolean(json.vaf1 ?? json.vaf),
-    vam: Boolean(json.vam1 ?? json.vam),
-    vaf: Boolean(json.vaf1 ?? json.vaf),
-    va: Boolean(json.va),
-    error: typeof json.error === "string" ? json.error : undefined,
-  }
 }
 
 /**

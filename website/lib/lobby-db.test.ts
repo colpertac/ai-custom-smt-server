@@ -48,16 +48,6 @@ describe("verifyLobbyAdminPassword", () => {
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).run("u-disabled", "disabled", "Disabled", disabledHash, salt, 1000, 0)
 
-    const mannequinHash = passwordHash("vam1vam1", salt)
-    db.prepare(
-      `INSERT INTO Account (UID, Username, DisplayName, Password, Salt, UserLevel, Enabled)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).run("u-vam1", "vam1", "vam1", mannequinHash, salt, 1000, 1)
-    db.prepare(
-      `INSERT INTO Account (UID, Username, DisplayName, Password, Salt, UserLevel, Enabled)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).run("u-vaf1", "vaf1", "vaf1", mannequinHash, salt, 1000, 1)
-
     db.close()
   })
 
@@ -68,13 +58,26 @@ describe("verifyLobbyAdminPassword", () => {
     delete process.env.COMP_LOBBY_DB
   })
 
-  it("counts enabled player accounts excluding mannequins", async () => {
+  it("counts enabled player accounts", async () => {
     const { countEnabledPlayerAccounts, resetLobbyDbCache } = await import(
       "@/lib/lobby-db"
     )
     resetLobbyDbCache()
-    // admin + player (enabled); disabled + vam1 + vaf1 excluded
+    // admin + player (enabled); disabled excluded
     expect(countEnabledPlayerAccounts()).toBe(2)
+  })
+
+  it("leaves ARMORY_HIDDEN_NAMES accounts out of the census", async () => {
+    const { countEnabledPlayerAccounts, resetLobbyDbCache } = await import(
+      "@/lib/lobby-db"
+    )
+    resetLobbyDbCache()
+    process.env.ARMORY_HIDDEN_NAMES = "Player"
+    try {
+      expect(countEnabledPlayerAccounts()).toBe(1)
+    } finally {
+      delete process.env.ARMORY_HIDDEN_NAMES
+    }
   })
 
   it("accepts enabled admin with correct password", async () => {

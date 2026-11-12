@@ -13,7 +13,7 @@ export function AdminPlayerChart({
     <PlayerConcurrentChart
       apiPath="admin/metrics/players"
       defaultRange={defaultRange}
-      description="Real players over time (studio mannequins excluded). Sampled every minute while the website is running."
+      description="Players online over time. Sampled every minute while the website is running."
       emptyMessage="Collecting samples… the chart fills after a few minutes once the website sampler is running."
     />
   )

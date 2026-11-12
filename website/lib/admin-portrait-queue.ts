@@ -71,7 +71,7 @@ export function adminEnqueuePortraitCharacter(
     return {
       name,
       action: "hidden",
-      reason: "mannequin account (vam/vaf) excluded",
+      reason: "hidden from armory (ARMORY_HIDDEN_NAMES)",
     }
   }
 
@@ -142,7 +142,7 @@ export type AdminBulkEnqueueResult = {
   results: AdminEnqueueResult[]
 }
 
-/** Walk all public characters (excludes vam/vaf). */
+/** Walk all public armory characters. */
 export function adminBulkEnqueuePortraits(
   mode: AdminBulkMode
 ): AdminBulkEnqueueResult {

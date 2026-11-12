@@ -57,9 +57,20 @@ describe("isValidCharacterName", () => {
 })
 
 describe("isArmoryHiddenCharacter", () => {
-  it("hides studio mannequin names", () => {
-    expect(isArmoryHiddenCharacter("vam")).toBe(true)
-    expect(isArmoryHiddenCharacter("VAF1")).toBe(true)
+  afterEach(() => {
+    delete process.env.ARMORY_HIDDEN_NAMES
+  })
+
+  it("hides nothing by default", () => {
+    delete process.env.ARMORY_HIDDEN_NAMES
+    expect(isArmoryHiddenCharacter("someone")).toBe(false)
+    expect(isArmoryHiddenCharacter("admin")).toBe(false)
+  })
+
+  it("hides names listed in ARMORY_HIDDEN_NAMES", () => {
+    process.env.ARMORY_HIDDEN_NAMES = " Bot1, bot2 "
+    expect(isArmoryHiddenCharacter("bot1")).toBe(true)
+    expect(isArmoryHiddenCharacter("BOT2")).toBe(true)
     expect(isArmoryHiddenCharacter("admin")).toBe(false)
   })
 })

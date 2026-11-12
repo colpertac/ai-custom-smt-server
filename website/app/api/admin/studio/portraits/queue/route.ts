@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     }
     if (result.action === "hidden") {
       return apiFail(
-        result.reason || "Cannot enqueue mannequin accounts",
+        result.reason || "Character is hidden from the armory",
         400,
         "HIDDEN"
       )

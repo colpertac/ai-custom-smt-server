@@ -1,7 +1,6 @@
 import { adminListOnline } from "@/lib/comp-api"
 import { apiFail, apiOk } from "@/lib/api-response"
 import { isAdminLevel } from "@/lib/admin-level"
-import { tagMannequins } from "@/lib/presence"
 import {
   CompSessionMissingError,
   requireWebSession,
@@ -20,13 +19,7 @@ export async function GET() {
     const roster = await withCompSession(async (session) =>
       adminListOnline(session)
     )
-    const players = tagMannequins(roster.players)
-    return apiOk({
-      total: roster.total,
-      players,
-      realPlayers: players.filter((p) => !p.mannequin).length,
-      mannequins: players.filter((p) => p.mannequin).length,
-    })
+    return apiOk({ total: roster.total, players: roster.players })
   } catch (error) {
     if (error instanceof CompSessionMissingError) {
       return apiFail("Unauthorized", 401, "UNAUTHORIZED")

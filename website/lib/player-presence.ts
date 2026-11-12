@@ -1,5 +1,5 @@
 /**
- * Public player presence: real online count (minus vam/vaf mannequins) and
+ * Public player presence: lobby online count and
  * offline ≈ enabled accounts − online.
  */
 import {
@@ -10,14 +10,13 @@ import {
   countEnabledPlayerAccounts,
   LobbyDbMissingError,
 } from "@/lib/lobby-db"
-import { getStudioHealth } from "@/lib/studio-api"
 
 export type PlayerPresence = {
-  /** In-world players after subtracting vam/vaf mannequins when known. */
+  /** In-world players (lobby online total). */
   online: number | null
   /** Enabled accounts not currently in-world. */
   offline: number | null
-  /** Enabled non-mannequin accounts. */
+  /** Enabled player accounts. */
   accounts: number | null
   error?: string
 }
@@ -33,36 +32,11 @@ function getServiceCredentials(): { user: string; password: string } | null {
   return { user, password }
 }
 
-/** Same mannequin subtraction as AdminOpsMetrics “real players”. */
-export function realOnlineCount(
-  lobbyTotal: number,
-  mannequinOnline: number
-): number {
-  return Math.max(0, lobbyTotal - Math.max(0, mannequinOnline))
-}
-
 export function offlineFromAccounts(
   accounts: number,
   online: number
 ): number {
   return Math.max(0, accounts - online)
-}
-
-async function countMannequinsOnline(): Promise<number> {
-  try {
-    const health = await getStudioHealth({
-      signal: AbortSignal.timeout(1_500),
-    })
-    if (!(health.ok || health.vam1 || health.vaf1 || health.vam || health.vaf)) {
-      return 0
-    }
-    let n = 0
-    if (health.vam1 || health.vam) n += 1
-    if (health.vaf1 || health.vaf) n += 1
-    return n
-  } catch {
-    return 0
-  }
 }
 
 async function fetchOnlineRaw(): Promise<
@@ -102,10 +76,7 @@ async function collectPlayerPresenceUncached(): Promise<PlayerPresence> {
           : "account census failed"
   }
 
-  const [onlineResult, mannequinOnline] = await Promise.all([
-    fetchOnlineRaw(),
-    countMannequinsOnline(),
-  ])
+  const onlineResult = await fetchOnlineRaw()
 
   if ("error" in onlineResult) {
     return {
@@ -116,7 +87,7 @@ async function collectPlayerPresenceUncached(): Promise<PlayerPresence> {
     }
   }
 
-  const online = realOnlineCount(onlineResult.total, mannequinOnline)
+  const online = onlineResult.total
   const offline =
     accounts != null ? offlineFromAccounts(accounts, online) : null
 

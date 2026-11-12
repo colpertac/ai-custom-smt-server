@@ -125,7 +125,7 @@ export function PlayerPresenceStats({
       </div>
       {!compact ? (
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          Online is players in-world (studio mannequins excluded). Offline is
+          Online is players in-world. Offline is
           registered accounts that are not currently online
           {players?.accounts != null
             ? ` (${players.accounts} accounts total)`

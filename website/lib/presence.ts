@@ -18,32 +18,11 @@ export type OnlinePresencePlayer = {
   x?: number
   /** Map Y when the channel has reported coordinates. */
   y?: number
-  /** Mannequin account (vam / vaf), not a real player. */
-  mannequin?: boolean
 }
 
 export type OnlinePresenceRoster = {
   total: number
   players: OnlinePresencePlayer[]
-}
-
-/** Character names of the vam/vaf mannequin accounts (still in the world DB). */
-const MANNEQUIN_NAMES = new Set(["vam", "vaf", "vam1", "vaf1"])
-
-export function isStudioMannequinName(character: string): boolean {
-  const key = character.trim().toLowerCase()
-  if (!key) return false
-  if (MANNEQUIN_NAMES.has(key)) return true
-  // Allow vam2 / vaf2 style suffixes if added later.
-  return /^va[mf]\d*$/i.test(key)
-}
-
-export function tagMannequins(
-  players: OnlinePresencePlayer[]
-): OnlinePresencePlayer[] {
-  return players.map((p) =>
-    isStudioMannequinName(p.character) ? { ...p, mannequin: true } : p
-  )
 }
 
 export function formatPresencePos(x?: number, y?: number): string {

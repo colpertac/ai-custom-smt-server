@@ -221,7 +221,7 @@ export const GM_COMMANDS: readonly GmCommand[] = [
     name: "copygear",
     usage: "@copygear NAME",
     description:
-      "Copy NAME's real EquippedItems (by Type) onto your mannequin. Skips COMP. Generates studio copies and equips them. Use for characters with no VA. Gender mismatch is refused.",
+      "Copy NAME's real EquippedItems (by Type) onto your character. Skips COMP. Generates studio copies and equips them. Use for characters with no VA. Gender mismatch is refused.",
     level: 25,
     category: "Creative",
   },
@@ -229,7 +229,7 @@ export const GM_COMMANDS: readonly GmCommand[] = [
     name: "copylook",
     usage: "@copylook NAME",
     description:
-      "Copy NAME's skin/hair/face/eyes/colors, EquippedVA, and active title onto your mannequin. Gender is not copied; mismatch is refused. Online source uses channel RAM, else world SQLite. If NAME has no VA, also runs @copygear. Does not copy partner demon.",
+      "Copy NAME's skin/hair/face/eyes/colors, EquippedVA, and active title onto your character. Gender is not copied; mismatch is refused. Online source uses channel RAM, else world SQLite. If NAME has no VA, also runs @copygear. Does not copy partner demon.",
     level: 25,
     category: "Creative",
   },
