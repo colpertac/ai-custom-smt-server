@@ -1,5 +1,6 @@
 "use client"
 
+import { PlayerConcurrentChart } from "@/features/status/components/PlayerConcurrentChart"
 import { PlayerPresenceStats } from "@/features/status/components/PlayerPresenceStats"
 import { useServerStatus } from "@/features/status/hooks"
 import type { ProbeState, ServiceStatus } from "@/lib/status"
@@ -222,6 +223,8 @@ export function StatusPanel() {
         </p>
         <PlayerPresenceStats className="mt-3" />
       </div>
+
+      <PlayerConcurrentChart />
 
       <ul className="divide-y divide-border border border-border bg-muted/40">
         <li className="px-4 py-2">

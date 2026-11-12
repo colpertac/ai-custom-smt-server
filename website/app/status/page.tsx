@@ -9,14 +9,15 @@ export const metadata: Metadata = {
 
 export default function StatusPage() {
   return (
-    <section className="mx-auto max-w-2xl px-4 py-10">
+    <section className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="font-heading text-3xl font-semibold tracking-[0.12em] uppercase">
         Server status
       </h1>
       <div className="gold-rule mt-3 max-w-xs" />
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
         Quick check before you blame your internet: are the game servers and
-        client updater up, or is it just your connection or client?
+        client updater up, or is it just your connection or client? Concurrent
+        player history is below.
       </p>
       <StatusPanel />
     </section>
