@@ -4,7 +4,6 @@ import { AdminAnnouncePanel } from "@/features/admin/components/AdminAnnouncePan
 import { AdminLobbyDownBanner } from "@/features/admin/components/AdminLobbyDownBanner"
 import { AdminOpsFirstBoot } from "@/features/admin/components/AdminOpsFirstBoot"
 import { AdminOpsHealth } from "@/features/admin/components/AdminOpsHealth"
-import { AdminPlayerChart } from "@/features/admin/components/AdminPlayerChart"
 import { requireAdmin } from "@/features/auth/server"
 
 export const metadata: Metadata = {
@@ -28,8 +27,6 @@ export default async function AdminPage() {
       <AdminOpsFirstBoot />
 
       <AdminOpsHealth />
-
-      <AdminPlayerChart compact defaultRange="24h" />
 
       <AdminAnnouncePanel />
     </div>

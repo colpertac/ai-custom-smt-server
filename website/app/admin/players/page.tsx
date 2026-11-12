@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { AdminPlayerChart } from "@/features/admin/components/AdminPlayerChart"
 import { AdminPlayersPanel } from "@/features/admin/components/AdminPlayersPanel"
 import { requireAdmin } from "@/features/auth/server"
 
@@ -13,9 +14,10 @@ export default async function AdminPlayersPage() {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Who is online right now — character, account, zone, and map position.
-        Auto-refreshes; studio mannequins are marked.
+        Live roster and concurrent players over time. Auto-refreshes; studio
+        mannequins are marked and excluded from the chart.
       </p>
+      <AdminPlayerChart />
       <AdminPlayersPanel />
     </div>
   )

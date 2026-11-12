@@ -1,7 +1,11 @@
 import type { Metadata } from "next"
 
 import { AccountImportPanel } from "@/features/admin/components/AccountImportPanel"
-import { AdminAccountsPanel } from "@/features/admin/components/AdminAccountsPanel"
+import {
+  AdminAccountsPanel,
+  DemonReunionEditGlobalCard,
+  ExpertiseDigiEditGlobalCard,
+} from "@/features/admin/components/AdminAccountsPanel"
 import { requireAdmin } from "@/features/auth/server"
 
 export const metadata: Metadata = {
@@ -29,6 +33,10 @@ export default async function AdminAccountsPage() {
           </p>
         </div>
         <AccountImportPanel />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <ExpertiseDigiEditGlobalCard />
+        <DemonReunionEditGlobalCard />
       </div>
     </div>
   )

@@ -94,9 +94,6 @@ export function AdminAccountsPanel() {
 
   return (
     <div className="mt-3 space-y-6">
-      <ExpertiseDigiEditGlobalCard />
-      <DemonReunionEditGlobalCard />
-
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading accounts…</p>
       ) : isError ? (
@@ -212,7 +209,7 @@ export function AdminAccountsPanel() {
   )
 }
 
-function ExpertiseDigiEditGlobalCard() {
+export function ExpertiseDigiEditGlobalCard() {
   const { data, isLoading, isError, error } = useExpertiseDigiEditSettings()
   const saveMutation = useUpdateExpertiseDigiEditSettings()
   const [enabled, setEnabled] = useState(false)
@@ -234,11 +231,10 @@ function ExpertiseDigiEditGlobalCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Armory expertise / digi edit</CardTitle>
+        <CardTitle className="text-base">Armory expertise / digi</CardTitle>
         <CardDescription>
-          Global: when enabled, any account with GM/admin level at or above the
-          minimum can edit expertise and digi on their own characters at
-          /armory/mychar (must be logged out of the game).
+          Let accounts at or above the GM level edit expertise and digi on
+          /armory/mychar (character must be logged out).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -322,7 +318,7 @@ function ExpertiseDigiEditGlobalCard() {
   )
 }
 
-function DemonReunionEditGlobalCard() {
+export function DemonReunionEditGlobalCard() {
   const { data, isLoading, isError, error } = useDemonReunionEditSettings()
   const saveMutation = useUpdateDemonReunionEditSettings()
   const [enabled, setEnabled] = useState(false)
@@ -344,14 +340,10 @@ function DemonReunionEditGlobalCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          Armory demon reunion / mitama edit
-        </CardTitle>
+        <CardTitle className="text-base">Armory demon reunion</CardTitle>
         <CardDescription>
-          Global: when enabled, any account with GM/admin level at or above the
-          minimum can edit reunion ranks, mitama reunion slots, mitama rank, and
-          mitama type on their own demons at /armory/demon/… (must be logged out
-          of the game).
+          Let accounts at or above the GM level edit reunion / mitama on
+          /armory/demon/… (character must be logged out).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">

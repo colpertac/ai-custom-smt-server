@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   Area,
@@ -13,7 +12,7 @@ import {
 } from "recharts"
 
 import { FormAlert } from "@/components/form-alert"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { fetcher } from "@/lib/fetcher"
 import { cn } from "@/lib/utils"
 
@@ -76,12 +75,10 @@ function StatCell({ label, value }: { label: string; value: string }) {
 }
 
 export function AdminPlayerChart({
-  compact = false,
   defaultRange = "24h",
 }: {
-  compact?: boolean
   defaultRange?: PlayerMetricsRange
-}) {
+} = {}) {
   const [range, setRange] = useState<PlayerMetricsRange>(defaultRange)
   const [data, setData] = useState<PlayerMetricsResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -124,26 +121,18 @@ export function AdminPlayerChart({
   )
 
   const empty = !loading && !error && chartData.length === 0
-  const chartHeight = compact ? 160 : 280
 
   return (
-    <div
-      className={cn(
-        "border border-border/80 bg-muted/20",
-        compact ? "px-4 py-3" : "px-4 py-4"
-      )}
-    >
+    <div className="border border-border/80 bg-muted/20 px-4 py-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="text-[0.65rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
             Concurrent players
           </div>
-          {!compact ? (
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Real players over time (studio mannequins excluded). Sampled every
-              minute while the website is running.
-            </p>
-          ) : null}
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Real players over time (studio mannequins excluded). Sampled every
+            minute while the website is running.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex border border-border/80">
@@ -163,28 +152,19 @@ export function AdminPlayerChart({
               </Button>
             ))}
           </div>
-          {compact ? (
-            <Link
-              href="/admin/metrics"
-              className={cn(buttonVariants({ variant: "outline", size: "xs" }))}
-            >
-              Open
-            </Link>
-          ) : (
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              disabled={loading}
-              onClick={() => void refresh()}
-            >
-              {loading ? "Loading…" : "Refresh"}
-            </Button>
-          )}
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            disabled={loading}
+            onClick={() => void refresh()}
+          >
+            {loading ? "Loading…" : "Refresh"}
+          </Button>
         </div>
       </div>
 
-      <div className={cn("mt-3 flex flex-wrap gap-x-8 gap-y-3", compact && "mt-2")}>
+      <div className="mt-3 flex flex-wrap gap-x-8 gap-y-3">
         <StatCell
           label="Current"
           value={data?.current != null ? String(data.current) : "—"}
@@ -211,7 +191,7 @@ export function AdminPlayerChart({
         </div>
       ) : null}
 
-      <div className="mt-3" style={{ height: chartHeight }}>
+      <div className="mt-3 h-[280px]">
         {empty ? (
           <div className="flex h-full items-center justify-center border border-dashed border-border/60 px-4 text-center text-xs text-muted-foreground">
             Collecting samples… the chart fills after a few minutes once the
@@ -250,7 +230,7 @@ export function AdminPlayerChart({
                 tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                 axisLine={{ stroke: "var(--border)" }}
                 tickLine={false}
-                minTickGap={compact ? 48 : 64}
+                minTickGap={64}
               />
               <YAxis
                 allowDecimals={false}
