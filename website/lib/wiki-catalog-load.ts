@@ -18,7 +18,7 @@ import type {
   WikiValuablesPayload,
 } from "@/content/wiki/types"
 
-type CacheEntry<T> = {
+export type CacheEntry<T> = {
   path: string | null
   mtimeMs: number
   data: T
@@ -53,7 +53,7 @@ function readJsonFile<T>(filePath: string): T | null {
   }
 }
 
-function loadCached<T>(
+export function loadCached<T>(
   cache: CacheEntry<T> | null,
   filePath: string | null,
   baked: T

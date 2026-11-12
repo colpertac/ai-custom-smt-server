@@ -5,7 +5,8 @@ screenshotting a Wine client. Plan and milestones:
 [IMAGINE Avatar Renderer](https://claude.ai/artifact/9AUCb4daVj56GXFYu9Xwow).
 Research notes (local only): `AI/avatar-renderer.md`.
 
-Nothing derived from the client is committed. Every tool reads the client
+Nothing derived from the client is committed, except the resolver catalog the website bakes in
+(`website/content/avatar/catalog.json`, like the wiki catalogs). Every tool reads the client
 install and writes to `avatar/build/` (gitignored).
 
 ## Setup
@@ -29,6 +30,10 @@ cd avatar/tools
 python3 tables.py                  # decode CEquip*/CEquipModel/Item/CItem tables + exe palette → build/tables
 python3 resolve.py cat catm        # world DB character → skeleton, idle pose, Avatar parts, hair/eye colours
 python3 render_char.py catm        # resolve + PoC software render → build/renders/catm.png
+python3 catalog.py                 # resolver catalog → build/assets/catalog.json (~950 KB)
+python3 catalog.py --out ../../website/content/avatar/catalog.json   # refresh the website's baked copy
+python3 crosscheck_recipes.py --fuzz 20000   # resolve.py vs website/lib/avatar-recipe.ts on every DB character (+ synthetic)
+python3 crosscheck_recipes.py --golden ../../website/lib/avatar-recipe.golden.json   # refresh the vitest golden fixture
 python3 render.py out.png SKEL.nif POSE.kf PART.nif [PART.nif@AttachNode ...]   # render explicit parts
 python3 convert.py all             # NIF → GLB: 6 skeletons, 48 poses, rig.json, 6,114 parts → build/assets (~10 s, ~420 MB)
 python3 convert.py parts Hair/W_01_Hair_Lg_006.nif   # rebuild named parts (also skeletons | poses | rig | manifest)
@@ -50,7 +55,9 @@ rebuilds everything, `-j N` limits workers. Per-file failures and warnings land 
 | `check_glb.py` | Verifies converted GLBs: rebinds skins by bone name on the posed skeleton GLB and compares every vertex and base texture with `render.py` |
 | `glb.py`, `png.py`, `dxt.py` | GLB writer/reader and transform helpers; PNG encoder/decoder; DXT1/3/5, NiPixelData and `.dds` decoding |
 | `tables.py` | Client tables and the 139-colour hair/eye palette (switch at `0x461b40` in the exe) |
-| `resolve.py` | Character → parts rule as the client applies it (merge order, skips, VA rules, variants); prototype for the website resolver |
+| `resolve.py` | Character → parts rule as the client applies it (merge order, skips, VA rules, variants); reference for the website resolver |
+| `catalog.py` | Everything the resolver looks up (appearance tables, skeletons, palette, equippable items, their CEquipModelData rows, client file lists for `exists`) as one versioned JSON. The website loads `{runtime}/avatar/catalog.json` when present, else the baked copy (`website/lib/avatar-catalog.ts`) |
+| `crosscheck_recipes.py` | Runs `resolve.py` and the TypeScript port (`website/lib/avatar-recipe.ts`, via `website/scripts/avatar-recipe-crosscheck.ts` and tsx) on every world-DB character plus `--fuzz N` seeded synthetic ones; diffs skeleton, part files, `exists`, colours (and reports `why`/notes differences). Exit 1 on a mismatch. `--golden` writes the website test fixture |
 | `render_char.py` | End-to-end PoC: resolve a character and render it with the client's attach rules |
 | `survey.py`, `tree.py` | Format survey and node-tree dump |
 | `nsb.py`, `d3dasm.py`, `nifcolor.py` | Gamebryo NSB shader library parser, D3D9 bytecode disassembler, NIF colour extra-data dump |
