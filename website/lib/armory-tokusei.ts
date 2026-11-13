@@ -75,6 +75,8 @@ export type TokuseiCharacterContext = {
   inParty: boolean
   /** Unique Demonic Compendium entries (DEMON_BOOK_DIVIDE). */
   compendiumCount: number
+  /** Completed NORMAL/REPEATABLE quests (QUEST_BONUS_DIVIDE). */
+  questBonusCount: number
 }
 
 const LNC_LAW = 0
@@ -275,9 +277,13 @@ export function calculateAttributeValue(
       return multValue !== 0
         ? result * Math.floor(ctx.compendiumCount / multValue)
         : 0
+    case "QUEST_BONUS_DIVIDE":
+      return multValue !== 0
+        ? result * Math.floor(ctx.questBonusCount / multValue)
+        : 0
     default:
-      // DEMON_BOOK_FAMILY/RACE (summoned demon), MITAMA_*, QUEST_BONUS_DIVIDE
-      // and NONE: not known offline / zero in the server's default branch.
+      // DEMON_BOOK_FAMILY/RACE (summoned demon), MITAMA_* and NONE: not known
+      // offline / zero in the server's default branch.
       return 0
   }
 }

@@ -478,6 +478,8 @@ type ItemRow = {
   SpecialEffect: number
   ModSlots: Uint8Array | Buffer | null
   FuseBonuses: Uint8Array | Buffer | null
+  Durability: number
+  RentalExpiration: number
 }
 
 function decodeS8Array(
@@ -554,13 +556,15 @@ export async function loadArmoryProfile(
     const placeholders = present.map(() => "?").join(",")
     const rows = db
       .prepare(
-        `SELECT UID, Type, Tarot, Soul, BasicEffect, SpecialEffect, ModSlots, FuseBonuses
+        `SELECT UID, Type, Tarot, Soul, BasicEffect, SpecialEffect, ModSlots, FuseBonuses,
+                Durability, RentalExpiration
          FROM Item WHERE UID IN (${placeholders})`
       )
       .all(...present) as ItemRow[]
     for (const it of rows) items.set(it.UID, it)
   }
 
+  const nowSeconds = Math.floor(Date.now() / 1000)
   const fuseBySlot = new Map<string, number[]>()
   const equipment: ArmoryEquipmentSlot[] = EQUIP_SLOTS.map((slot) => {
     const uid = equipUids[slot.index]
@@ -585,6 +589,9 @@ export async function loadArmoryProfile(
       modSlots: decodeU16Array(it?.ModSlots ?? null, 5).filter(
         (v) => v !== 0 && v !== 0x00ff
       ),
+      durability: it?.Durability,
+      rentalExpired:
+        it != null && it.RentalExpiration > 0 && it.RentalExpiration <= nowSeconds,
     }
   })
 
@@ -631,8 +638,15 @@ export async function loadArmoryProfile(
   // Digitalize is session-only; live channel stats cover it when transformed.
 
   const progressRow = db
-    .prepare(`SELECT Valuables FROM CharacterProgress WHERE Character = ?`)
-    .get(row.UID) as { Valuables: Uint8Array | Buffer | null } | undefined
+    .prepare(
+      `SELECT Valuables, CompletedQuests FROM CharacterProgress WHERE Character = ?`
+    )
+    .get(row.UID) as
+    | {
+        Valuables: Uint8Array | Buffer | null
+        CompletedQuests: Uint8Array | Buffer | null
+      }
+    | undefined
 
   let devilBook: Uint8Array | Buffer | null = null
   if (row.Account && row.Account !== NULL_UUID) {
@@ -655,6 +669,7 @@ export async function loadArmoryProfile(
           digitalizeDemonStats,
           devilBook,
           valuables: progressRow?.Valuables ?? null,
+          completedQuests: progressRow?.CompletedQuests ?? null,
         })
       : null
   const computedStats = estimate?.computedStats ?? null

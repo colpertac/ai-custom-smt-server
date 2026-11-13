@@ -6,9 +6,12 @@ import {
   computeArmoryTotalStats,
   computeDisabledExpertiseSkills,
   cooldownTimeFromStats,
+  countQuestBonus,
   decodeLearnedSkillIds,
   LB_CAP_BASE,
+  questBonusTokusei,
 } from "@/lib/armory-stats"
+import questBonusPayload from "@/content/armory/quest-bonus.json"
 import type { ArmoryEquipmentSlot, ArmoryStats } from "@/lib/armory"
 
 const emptyBase: ArmoryStats = {
@@ -133,6 +136,94 @@ describe("computeArmoryTotalStats", () => {
     })
     expect(result.total.magic).toBeGreaterThan(emptyBase.magic)
     expect(result.bonus.magic).toBeGreaterThan(0)
+  })
+})
+
+describe("broken or expired gear (GetEquipmentStats / RecalcEquipState)", () => {
+  const bullets = (over: Partial<ArmoryEquipmentSlot>): ArmoryEquipmentSlot => ({
+    slot: "bullets",
+    label: "Bullets",
+    index: 14,
+    itemType: 2745, // LNGR +7
+    name: "Bullets",
+    level: null,
+    iconSrc: null,
+    tarot: 0,
+    soul: 0,
+    basicEffect: 0,
+    specialEffect: 0,
+    modSlots: [],
+    ...over,
+  })
+  const lngr = (slot: ArmoryEquipmentSlot) =>
+    computeArmoryTotalStats({
+      base: emptyBase,
+      equipment: [slot],
+      learnedSkills: [],
+      expertisePoints: new Map(),
+      fuseBySlot: new Map(),
+    }).total.lngr
+  const none = lngr(bullets({ itemType: null }))
+
+  it("keeps bullet stats at durability 0", () => {
+    expect(lngr(bullets({ durability: 0 }))).toBe(none + 7)
+  })
+
+  it("drops stats once the rental has expired", () => {
+    expect(lngr(bullets({ durability: 0, rentalExpired: true }))).toBe(none)
+  })
+
+  it("drops stats of other broken gear", () => {
+    expect(lngr(bullets({ slot: "weapon", index: 13, durability: 0 }))).toBe(none)
+  })
+})
+
+describe("quest bonus tokusei", () => {
+  const completed = (ids: number[]) => {
+    const mask = new Uint8Array(128)
+    for (const id of ids) mask[id >> 3]! |= 1 << (id & 7)
+    return mask
+  }
+  const bonusIds = questBonusPayload.bonusQuestIds
+
+  it("counts only NORMAL/REPEATABLE quests from the CompletedQuests mask", () => {
+    const other = Array.from({ length: 1000 }, (_, i) => i).find(
+      (id) => !bonusIds.includes(id)
+    )!
+    expect(countQuestBonus(completed([...bonusIds.slice(0, 3), other]))).toBe(3)
+    expect(countQuestBonus(null)).toBe(0)
+  })
+
+  it("takes every QUEST_BONUS tier reached", () => {
+    expect(questBonusTokusei(9)).toEqual([])
+    expect(questBonusTokusei(24)).toEqual([20010000, 20010001])
+  })
+
+  it("adds HP and STR/SPD/MAG by quest count (cat 18 → +9 HP, catm 24 → +12 HP, +3)", () => {
+    const input = {
+      base: emptyBase,
+      equipment: [],
+      learnedSkills: [],
+      expertisePoints: new Map(),
+      fuseBySlot: new Map(),
+    }
+    const none = computeArmoryTotalStats(input).total
+    const cat = computeArmoryTotalStats({
+      ...input,
+      completedQuests: completed(bonusIds.slice(0, 18)),
+    }).total
+    expect(cat.maxHp - none.maxHp).toBe(9)
+    expect(cat.str).toBe(none.str)
+    const catm = computeArmoryTotalStats({
+      ...input,
+      completedQuests: completed(bonusIds.slice(0, 24)),
+    }).total
+    expect([catm.str, catm.speed, catm.magic]).toEqual([
+      none.str + 3,
+      none.speed + 3,
+      none.magic + 3,
+    ])
+    expect(catm.maxHp).toBeGreaterThanOrEqual(none.maxHp + 12)
   })
 })
 

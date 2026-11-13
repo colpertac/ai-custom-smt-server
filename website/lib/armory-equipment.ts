@@ -32,4 +32,8 @@ export type ArmoryEquipmentSlot = {
   basicEffect: number
   specialEffect: number
   modSlots: number[]
+  /** Item.Durability; 0 = broken (no stats except bullets). Unset = intact. */
+  durability?: number
+  /** Rental ran out (Item.RentalExpiration in the past): no stats or effects. */
+  rentalExpired?: boolean
 }

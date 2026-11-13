@@ -24,6 +24,7 @@ function ctx(over: Partial<TokuseiCharacterContext> = {}): TokuseiCharacterConte
     mpPercent: 100,
     inParty: false,
     compendiumCount: 0,
+    questBonusCount: 0,
     ...over,
   }
 }

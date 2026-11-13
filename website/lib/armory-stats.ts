@@ -7,6 +7,7 @@ import equipmentSetsPayload from "@/content/armory/equipment-sets.json"
 import passiveSkillsPayload from "@/content/armory/passive-skills.json"
 import expertiseRankSkillsPayload from "@/content/armory/expertise-rank-skills.json"
 import sitemTokuseiPayload from "@/content/armory/sitem-tokusei.json"
+import questBonusPayload from "@/content/armory/quest-bonus.json"
 import {
   getWikiEnchant,
   getWikiItem,
@@ -520,6 +521,38 @@ export function collectCompendiumTokusei(
   return tokuseiIds
 }
 
+const questBonus = questBonusPayload as unknown as {
+  questBonus: [number, number][]
+  bonusQuestIds: number[]
+}
+const bonusQuestIds = new Set(questBonus.bonusQuestIds)
+
+/**
+ * CharacterState::UpdateQuestState: completed quests of type NORMAL or
+ * REPEATABLE, read from the CharacterProgress.CompletedQuests bitmask.
+ */
+export function countQuestBonus(
+  completedQuests: Uint8Array | Buffer | null | undefined
+): number {
+  if (!completedQuests) return 0
+  let count = 0
+  for (let index = 0; index < completedQuests.length; index++) {
+    const block = completedQuests[index]!
+    if (block === 0) continue
+    for (let bit = 0; bit < 8; bit++) {
+      if (block & (1 << bit) && bonusQuestIds.has(index * 8 + bit)) count++
+    }
+  }
+  return count
+}
+
+/** QUEST_BONUS server constant: every tier the count has reached. */
+export function questBonusTokusei(count: number): number[] {
+  return questBonus.questBonus
+    .filter(([threshold]) => threshold <= count)
+    .map(([, tokuseiId]) => tokuseiId)
+}
+
 function applyDigitalizeToMap(
   stats: StatMap,
   demonStats: ArmoryStats,
@@ -546,6 +579,17 @@ function applyDigitalizeToMap(
     const bonus = Math.trunc(value * scale)
     if (bonus !== 0) stats.set(id, (stats.get(id) ?? 0) + bonus)
   }
+}
+
+/** CharacterState::GetEquipmentStats: correctTbl rows (bullets ignore durability). */
+function equipStatsActive(slot: ArmoryEquipmentSlot): boolean {
+  if (slot.rentalExpired) return false
+  return slot.durability !== 0 || slot.slot === "bullets"
+}
+
+/** CharacterState::RecalcEquipState: tokusei, enchants, mods, sets, fusion. */
+function equipEffectsActive(slot: ArmoryEquipmentSlot): boolean {
+  return !slot.rentalExpired && slot.durability !== 0
 }
 
 function collectAdjustments(input: {
@@ -576,10 +620,12 @@ function collectAdjustments(input: {
   }
 
   tokuseiIds.push(...(input.extraTokuseiIds ?? []))
-  tokuseiIds.push(...collectModSlotTokusei(input.equipment))
+  const effectEquipment = input.equipment.filter(equipEffectsActive)
+  tokuseiIds.push(...collectModSlotTokusei(effectEquipment))
 
   for (const slot of input.equipment) {
     if (slot.itemType == null) continue
+    const effectsActive = equipEffectsActive(slot)
     const basicId =
       slot.basicEffect > 0 && slot.basicEffect !== slot.itemType
         ? slot.basicEffect
@@ -590,7 +636,7 @@ function collectAdjustments(input: {
         : slot.itemType
 
     const basicItem = getWikiItem(basicId)
-    if (basicItem) {
+    if (basicItem && equipStatsActive(slot)) {
       for (const row of wikiBasicFeatures(basicItem)) {
         rows.push({ id: row.id, type: row.type, value: row.value })
       }
@@ -599,6 +645,7 @@ function collectAdjustments(input: {
       }
     }
 
+    if (!effectsActive) continue
     tokuseiIds.push(...(sitemTokusei[String(specialId)] ?? []))
 
     if (slot.tarot > 0) {
@@ -613,9 +660,9 @@ function collectAdjustments(input: {
     }
   }
 
-  tokuseiIds.push(...collectEquipmentSetTokusei(input.equipment))
+  tokuseiIds.push(...collectEquipmentSetTokusei(effectEquipment))
 
-  const effectIds = collectEnchantEffectIds(input.equipment)
+  const effectIds = collectEnchantEffectIds(effectEquipment)
   const enchantSetBonuses = collectEnchantSetBonuses(effectIds)
   tokuseiIds.push(...enchantSetBonuses.tokuseiIds)
   addConditionTokusei(tokuseiIds, deferred, enchantSetBonuses.conditions, ctx)
@@ -970,6 +1017,8 @@ export type ArmoryEstimateInput = {
   digitalizeStatRate?: number
   devilBook?: Uint8Array | Buffer | null
   valuables?: Uint8Array | Buffer | null
+  /** CharacterProgress.CompletedQuests bitmask (quest bonus tokusei). */
+  completedQuests?: Uint8Array | Buffer | null
   /** PARTY-target tokusei need a party; offline estimate assumes solo. */
   inParty?: boolean
   /** Additional direct tokusei (one entry per source), e.g. quest bonuses. */
@@ -1011,6 +1060,7 @@ export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimat
     input.devilBook ?? null,
     input.valuables ?? null
   )
+  const questBonusCount = countQuestBonus(input.completedQuests)
   const ctx = {
     level: input.base.level,
     lnc: input.lnc ?? 0,
@@ -1025,6 +1075,7 @@ export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimat
     mpPercent: hpPercent(input.base.mp, input.base.maxMp),
     inParty: input.inParty ?? false,
     compendiumCount: countCompendiumEntries(input.devilBook ?? null),
+    questBonusCount,
   }
   const adjustCtx: AdjustContext = { base: input.base, tokusei: tokuseiCtx }
 
@@ -1032,7 +1083,11 @@ export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimat
     equipment: input.equipment,
     learnedSkills: input.learnedSkills,
     disabledSkills,
-    extraTokuseiIds: [...compendiumTokusei, ...(input.extraTokuseiIds ?? [])],
+    extraTokuseiIds: [
+      ...compendiumTokusei,
+      ...questBonusTokusei(questBonusCount),
+      ...(input.extraTokuseiIds ?? []),
+    ],
     activeSwitchSkills: new Set(input.activeSwitchSkills ?? []),
     ...ctx,
   })
@@ -1076,7 +1131,11 @@ export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimat
     adjustStats(working, statConditionalPass, true, adjustCtx)
   }
 
-  applyFuseBonuses(working, input.equipment, input.fuseBySlot)
+  applyFuseBonuses(
+    working,
+    input.equipment.filter(equipEffectsActive),
+    input.fuseBySlot
+  )
   calculateDependentStats(working, input.base.level)
   adjustStats(working, [...adjustments, ...statConditionalPass], false, adjustCtx)
 

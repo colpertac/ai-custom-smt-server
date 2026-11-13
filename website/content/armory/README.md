@@ -45,7 +45,9 @@ directory. Regenerate catalogs after content changes:
 
 ### Included in the website estimate
 
-- Item `CorrectTbl` (basic + characteristic rows from wiki export)
+- Item `CorrectTbl` (basic + characteristic rows from wiki export). Gear with an
+  expired rental gives nothing; broken gear (durability 0) gives nothing either,
+  except bullets keep their `CorrectTbl`
 - Tarot/Soul crystal tokusei, including LNC/level/expertise conditions and enchant sets
 - Equipment set tokusei
 - SItem special-effect tokusei
@@ -54,6 +56,11 @@ directory. Regenerate catalogs after content changes:
   `activeSwitchSkills`; the server keeps toggles per session, so offline
   they are **off**, like a fresh login
 - Expertise rank gates (skills above current rank treated as disabled)
+- Quest bonus tokusei: completed NORMAL/REPEATABLE quests
+  (`CharacterProgress.CompletedQuests`) against the `QUEST_BONUS` server
+  constant, with `QUEST_BONUS_DIVIDE` values. `quest-bonus.json` holds the
+  table (from `deploy/seed/config/constants.xml`) and the bonus quest IDs (from
+  `content/wiki/quests.json`); rebuild it when either changes
 
 - Passive (and toggled-on switch) skill charastic tokusei (`passive-skills.json` `tokuseiIds`)
 - Tokusei target/conditions/attributes from `tokusei-effects.json`
@@ -73,7 +80,7 @@ Green `(base +bonus)` on `/armory/[name]` shows DB base vs the offline estimate.
 | **Digitalize** | Requires live partner demon calc + `DigitalizeAssists`; only applies while digitalized | Often ~30% of partner demon stats; can explain tens of MAG/STR |
 | **Equipment mod slots** | `ModSlots` are in DB but `ModifiedEffectData` / `ModificationExtEffectData` catalogs are not exported yet | See `CharacterState::RecalcEquipState` |
 | **Demonic Compendium** | Tokusei from `CharacterProgress` compendium counts | `TokuseiManager` + `GetCompendiumTokuseiIDs` |
-| **Quest / title / valuable bonuses** | Quest flags and titles not modeled | |
+| **Title / valuable bonuses** | Titles not modeled | |
 | **Session buffs & status effects** | Not persisted as stat totals | Buffs, resting Medical Sciences regen, etc. |
 | **Catalog gaps** | Incomplete tokusei/skill export vs live datastore | Re-run export script after Shield/tokusei updates |
 
@@ -85,7 +92,8 @@ Green `(base +bonus)` on `/armory/[name]` shows DB base vs the offline estimate.
    including digitalize and buffs. Shown as **live** on the profile with a
    snapshot timestamp (may be stale until refresh).
 2. **Extend offline calc** — mod slots + compendium are applied from exported
-   catalogs. Digitalize, quest/title bonuses, and session buffs stay live-only.
+   catalogs, and quest bonuses from `CompletedQuests`. Digitalize, title
+   bonuses, switch toggles, and session buffs stay live-only.
    Regenerate catalogs: `scripts/wiki-export-armory-stats.sh`
 
 Until live stats are available (character offline), treat totals as an
