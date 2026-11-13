@@ -84,11 +84,27 @@ describe("computeArmoryTotalStats", () => {
       base: emptyBase,
       equipment,
       learnedSkills: [5079, 5595],
+      activeSwitchSkills: [5079, 5595],
       expertisePoints: new Map(),
       fuseBySlot: new Map(),
       lnc: -10000,
     })
     expect(result.total.magic).toBeGreaterThan(emptyBase.magic + 30)
+  })
+
+  it("leaves learned switch skills off unless toggled on", () => {
+    // 5595 is a switch: MAG +25, PDEF -15 while on (session-only on the server)
+    const input = {
+      base: emptyBase,
+      equipment: [],
+      learnedSkills: [5595],
+      expertisePoints: new Map(),
+      fuseBySlot: new Map(),
+    }
+    expect(computeArmoryTotalStats(input).total.magic).toBe(emptyBase.magic)
+    expect(
+      computeArmoryTotalStats({ ...input, activeSwitchSkills: [5595] }).total.magic
+    ).toBe(emptyBase.magic + 25)
   })
 
   it("adds MAG when tarot fusion is on worn gear", () => {

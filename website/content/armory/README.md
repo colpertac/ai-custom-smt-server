@@ -50,10 +50,12 @@ directory. Regenerate catalogs after content changes:
 - Equipment set tokusei
 - SItem special-effect tokusei
 - Spirit fusion (`FuseBonuses` on equipped items)
-- Learned passive + switch skills (switch skills assumed **on**)
+- Learned passive skills. Switch skills count only when listed in
+  `activeSwitchSkills`; the server keeps toggles per session, so offline
+  they are **off**, like a fresh login
 - Expertise rank gates (skills above current rank treated as disabled)
 
-- Passive/switch skill charastic tokusei (`passive-skills.json` `tokuseiIds`)
+- Passive (and toggled-on switch) skill charastic tokusei (`passive-skills.json` `tokuseiIds`)
 - Tokusei target/conditions/attributes from `tokusei-effects.json`
   (`lib/armory-tokusei.ts`): PARTNER and skill-conditioned tokusei are skipped,
   PARTY tokusei need a party (offline = solo), partner/party/status/time

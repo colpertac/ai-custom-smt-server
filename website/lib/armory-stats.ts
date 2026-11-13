@@ -556,6 +556,7 @@ function collectAdjustments(input: {
   lnc: number
   expertisePoints: ReadonlyMap<number, number>
   extraTokuseiIds?: readonly number[]
+  activeSwitchSkills: ReadonlySet<number>
 }): {
   /** Item + skill CorrectTbl rows (always applied). */
   rows: Adjustment[]
@@ -627,8 +628,13 @@ function collectAdjustments(input: {
     if (input.disabledSkills.has(skillId)) continue
     const skill = passiveSkills[String(skillId)]
     if (!skill) continue
-    // Passive (0) always applies; switch (2) applies when learned (active toggles are session-only).
-    if (skill.mainCategory !== 0 && skill.mainCategory !== 2) continue
+    // Passive (0) always applies; switch (2) only while toggled on
+    // (ApplySkillCorrectTbls, TokuseiManager.cpp:1117-1122).
+    if (
+      skill.mainCategory !== 0 &&
+      !(skill.mainCategory === 2 && input.activeSwitchSkills.has(skillId))
+    )
+      continue
     skillIds.add(skillId)
     for (const row of skill.correctTbl) {
       rows.push(row)
@@ -968,6 +974,11 @@ export type ArmoryEstimateInput = {
   inParty?: boolean
   /** Additional direct tokusei (one entry per source), e.g. quest bonuses. */
   extraTokuseiIds?: readonly number[]
+  /**
+   * Switch skills toggled on. Session-only on the server (a fresh login starts
+   * with none, AccountManager.cpp:182), so the offline estimate defaults to [].
+   */
+  activeSwitchSkills?: readonly number[]
 }
 
 export type ArmoryEstimate = {
@@ -1022,6 +1033,7 @@ export function computeArmoryEstimate(input: ArmoryEstimateInput): ArmoryEstimat
     learnedSkills: input.learnedSkills,
     disabledSkills,
     extraTokuseiIds: [...compendiumTokusei, ...(input.extraTokuseiIds ?? [])],
+    activeSwitchSkills: new Set(input.activeSwitchSkills ?? []),
     ...ctx,
   })
 
